@@ -1,0 +1,120 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>登录 @this.Suffix()</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/bootstrap/css/bootstrap.min.css")" />
+    <style type="text/css">
+        .container {
+            max-width: 450px;
+            margin-top: 20px;
+        }
+        .btn {
+            width: 75%;
+        }
+        form {
+            color: #808080;
+        }
+    </style>
+</head>
+<body style="background-color: rgb(175, 188, 200)">
+    <div class="container" style="text-align: center; color: #596573; font-size: 23px;
+        font-weight: 800">
+        Work IN Cooper
+    </div>
+    <div class="container well" style="background-color: #fff;">
+        <h2>
+            LOGIN
+        </h2>
+        <div>
+            <form class="form-horizontal">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label">
+                    </label>
+                    <div class="controls">
+                        <button type="button" class="btn btn-success" onclick="window.open('@ViewBag.GoogleUrl')">
+                            使用Google账号登录</button>
+                    </div>
+                </div>
+            </fieldset>
+            </form>
+        </div>
+        <div style="border-top: 1px #c0ccd7 solid; margin: 30px; position: relative">
+            <div style="position: absolute; top: -8px; left: 38%; color: #c0ccd7; padding: 0 16px;
+                background-color: #fff; font-size: 11px">
+                OR
+            </div>
+        </div>
+        <div>
+            @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "form-horizontal" }))
+            {
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label">
+                            账号</label>
+                        <div class="controls">
+                            <input type="text" name="username" value="">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">
+                            密码</label>
+                        <div class="controls">
+                            <input type="password" name="password">
+                            <p class="help-block">
+                                忘记密码？</p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">
+                        </label>
+                        <div class="controls">
+                            <button type="submit" class="btn btn-info">
+                                登录</button>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+        </div>
+    </div>
+    <div class="container">
+        <div class="pull-left">
+        </div>
+        <div class="pull-right">
+            <a target="_blank" href="https://github.com/codesharp/Cooper/license.txt">License</a> |
+            <a target="_blank" href="https://github.com/codesharp/Cooper">OpenSouce</a> |
+            @Html.ActionLink("Logout", "Logout")
+        </div>
+    </div>
+    <div id="loading" class="container hide">
+        <div class="progress progress-striped active">
+            <div class="bar" style="width: 100%;">
+                正在处理，请稍后...</div>
+        </div>
+    </div>
+    @{ Html.RenderSettings(); }
+    <script type="text/javascript" src="@Url.Content("~/scripts/account.js")"></script>
+    <script type="text/javascript">
+        //用于提供外部登录成功后回调
+        function loginSuccess(i) {
+            $('.container').hide();
+            $('#loading').show();
+
+            var fn = function () { location.href = url_home; };
+            if (!i)
+                setTimeout(fn, 500);
+            else
+            //首次外部连接登录需要先强制执行一次数据同步
+                doSyncStart(i, fn);
+        }
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+        });
+    </script>
+</body>
+</html>

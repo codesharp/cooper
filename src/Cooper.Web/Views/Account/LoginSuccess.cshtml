@@ -1,0 +1,7 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "登录成功，正在跳转...";
+}
+<script type="text/javascript">
+    if (window.opener && window.opener.loginSuccess) { window.opener.loginSuccess(@ViewBag.ConnectionId); window.close(); }
+</script>

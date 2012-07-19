@@ -1,0 +1,40 @@
+﻿@{
+    var url = Request.Url.ToString().ToLower();
+    var active="class=\"active\"";
+    var isAccount = url.Contains("/account") ? active : string.Empty;
+    var isTask = url.Contains("/per") ? active : string.Empty;
+    var isFetch = url.Contains("/fetch") ? active : string.Empty;
+}
+
+<div class="span2" style=" border: 0px #ccc solid; padding: 5px; margin:0;">
+    <ul class="nav nav-list">
+        <li class="nav-header">Cooper Task</li>
+        <li @Html.Raw(isTask)>
+            <a href="@Url.Action("Index", "Per", null)">
+                <i class="icon-inbox"></i> 我的任务
+            </a>
+        </li>
+        <li @Html.Raw(isFetch)><a href="@Url.Action("Index", "Fetch", null)"><i class="icon-list-alt"></i> 连接的任务New!</a></li>
+        <li @Html.Raw(isAccount)><a href="@Url.Action("Connection", "Account", null)"><i class="icon-user"></i> 我的设置</a></li>
+        <li class="nav-header">我的团队</li>
+        <li><a><i class="icon-wrench"></i> 即将推出</a> </li>
+        <li class="nav-header">最近更新v0.1</li>
+        <li>
+            <a target="_blank" onclick="$('#mobi_app').modal('show')">
+                <i class="icon-download"></i> 
+                点击获取ios版本
+            </a>
+        </li>
+        <li><a><i class="icon-hand-right"></i> 支持移动终端显示，可以直接在移动浏览器输入incooper.net</a></li>
+        <li><a href="@Url.Action("Mini")" title="更小更简洁的界面，还可以嵌入在您自己的站点里"><i class="icon-resize-small"></i> Mini模式管理界面</a></li>
+        <li><a><i class="icon-eye-open"></i> 可以直接在Cooper查看其他系统的任务了</a></li>
+        <li><a><i class="icon-repeat"></i> 不用担心不小心删除任务了，新增撤销删除功能</a></li>
+        <li><a><i class="icon-flag"></i> 团队、组织任务协同将在v0.2版本提供预览</a></li>
+    </ul>
+    <br />
+    <div class="alert alert-success">
+        <strong>Like it ?</strong>
+        <a onclick="feedback()">feedback</a>!
+    </div>
+    <div id="error" class="alert alert-danger hide">错误，请稍后再试</div>
+</div>

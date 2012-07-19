@@ -1,0 +1,51 @@
+﻿@{
+    var cs = ViewBag.Connections as IEnumerable<Cooper.Model.Accounts.AccountConnection>;
+    var url = Request.Url.ToString().ToLower();
+    var active = "class=\"active\"";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title @this.Suffix()</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/bootstrap/css/bootstrap.min.css")" />
+    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/jquery/css/smoothness/jquery-ui-1.8.21.custom.css")" />
+</head>
+<body>
+    <div class="container-fluid" style="margin-top: 10px;">
+        <div class="row-fluid">
+            <!--leftbar-->
+            @{ Html.RenderLeftBar(); }
+            <!--Main-->
+            <div class="span10">
+                <ul class="nav nav-pills">
+                    @foreach (var c in cs)
+                    {
+                        var name = c.ConnectionName();
+                        <li @Html.Raw(url.Contains(name.ToLower()) ? active : string.Empty)>
+                            @Html.ActionLink(name, name) </li>
+                    }
+                </ul>
+                <div class="alert">
+                    <strong>任务集成</strong>
+                    我们根据您添加的连接自动获取相应系统的任务，您可以在这里 @Html.ActionLink("添加连接", "Connection", "Account", null, null)
+                </div>
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    @{ Html.RenderSettings(); }
+    <script type="text/javascript">
+        $(function () {
+            $.ajaxSetup({
+                cache: false,
+                error: function (x, e) {
+                    $('#error').fadeIn(500);
+                    setTimeout(function () { $('#error').fadeOut(500); }, 1000);
+                }
+            });
+        });
+    </script>
+    @RenderSection("Bottom", false)
+</body>
+</html>

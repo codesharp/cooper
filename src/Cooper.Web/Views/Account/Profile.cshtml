@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Views/Shared/_Layout_Account.cshtml";
+    var account = ViewBag.Account as Cooper.Model.Accounts.Account;
+}
+
+<ul class="nav nav-pills">
+  <li class="active">@Html.ActionLink("基本信息", "Profile")</li>
+  <li>@Html.ActionLink("连接", "Connection")</li>
+  @*<li>@Html.ActionLink("提醒", "Notification")</li>*@
+</ul>
+
+<div class="well">
+  <label>Hi, @account.Name</label>
+</div>
+
+<div class="alert">更多个人设置功能稍后推出</div>
+

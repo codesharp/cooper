@@ -1,6 +1,17 @@
-# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+#folders
+external-work
+build
+packages
+
+# dotnet
+%APPDATA%
+Debug
 bin
 obj
+*.suo
+*.user
+*.sln.cache
+*.nupkg
+TestResult.xml
 
-# mstest test results
-TestResults
+#objc

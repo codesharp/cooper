@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "GitHub Issues";
+    Layout = "~/Views/Shared/_Layout_Fetch.cshtml";
+    var issues = ViewBag.Issues;
+}
+<ul id="list" class="nav nav-tabs nav-stacked">
+</ul>
+@section Bottom{
+    <script type="text/javascript">
+    var issues=@Html.Raw(issues);
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $.each(issues, function (i, n) {
+                $('#list').append('<li><a><code>#'
+                + n['number'] + '</code> '
+                + '<span class="label label-important">' + n['state'] + '</span> '
+                + '<span class="label label-warning">' + n['labels'][0]['name'] + '</span> '
+                + '<img src="' + n['assignee']['avatar_url'] + '" width="20px" style="border:1px #ccc solid"/> '
+                + n['title']
+                + ' <span class="badge badge-inverse">' + n['comments'] + '</span> '
+                + '<span class="label label-info">by ' + n['user']['login'] + '</span> '
+                + n['created_at']
+                + '</a></li>');
+            });
+        });
+    </script>
+}

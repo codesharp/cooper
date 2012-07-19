@@ -1,0 +1,218 @@
+﻿/***************************************************************************************/
+/*---outside ui---*/
+div#cancel_delete {
+	padding: 5px;
+	position: absolute;
+	margin: 10px 0 0 130px;
+	display: none;
+}
+div#cancel_delete a {
+	cursor: pointer;
+}
+div#error_lose_connect {
+	position: absolute;
+	width:180px;
+	z-index: 999;
+	margin-top: -155px;
+	margin-left: 5px;
+}
+div#error_lose_connect .progress {
+	margin: auto;
+	margin-top: 20px;
+}
+div#error_lose_connect .progress .bar {
+	width: 100%;
+}
+/***************************************************************************************/
+.todolist_wrapper {
+	border-top: 1px #2f96b4 solid;
+	padding-right: 10px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	position: relative /*必须relative，否则position:absolute无法跟随*/;
+}
+.todolist {
+	width: 100%;
+}
+.todolist td {
+	border-top: 1px #ccc solid;
+	line-height: 25px;
+}
+/***************************************************************************************/
+/*---row---*/
+.todolist .row_header td {
+	color: #808080;
+	font-weight: 800;
+}
+.todolist:first-child .row_header td {
+	border-top: 0;
+}
+.todolist .row_header .cell_icon {
+	border-right: 1px #ccc solid;
+	border-top: 0;
+	width: 30px;
+	text-align: center;
+}
+.todolist .row_task {
+}
+
+.todolist .row_task:hover td {
+	background-color: #FAEBD7;
+	border-color: #ccc;
+}
+.todolist .row_task:hover input {
+	background-color: #FAEBD7;
+}
+
+.todolist .row_active td {
+	background-color: #B0E0E6;
+}
+.todolist .row_active td.cell_num {
+	border-top: 1px #ccc solid;
+}
+.todolist .row_active input {
+	background-color: #B0E0E6;
+}
+.todolist .row_active:hover td {
+	background-color: #B0E0E6;
+}
+.todolist .row_active:hover input {
+	background-color: #B0E0E6;
+}
+
+
+.todolist .row_completed input {
+	text-decoration: line-through;
+	color: #808080;
+}
+/***************************************************************************************/
+/*---row cells---*/
+.todolist .row_task .cell_num {
+	width: 30px;
+	text-align: center;
+	border-right: 1px #ccc solid;
+	border-top: 0;
+	color: #808080;
+}
+.todolist .row_task .cell_num span {
+}
+.todolist .row_task .cell_num .icon-th {
+	float: left;
+	position: relative;
+	display: none;
+	left: 6px;
+	cursor: move;
+}
+.todolist .row_task .cell_bool {
+	width: 53px;/*ie7存在此宽度的兼容问题*/
+	text-align: center;
+	border-right: 1px #ccc solid;
+}
+.todolist .row_task .cell_bool .icon-check {
+	cursor: pointer;
+}
+.todolist .row_task .cell_bool .icon-inbox {
+	cursor: pointer;
+}
+.todolist .row_task .cell_bool ul {
+	margin: 0;
+}
+.todolist .row_task .cell_bool ul.nav li {
+	margin-left: 5px;
+}
+.todolist .row_task .cell_string {
+	z-index: 60;
+}
+.todolist .row_task .cell_string input {
+	border: 0;
+	outline-width: 0;
+	position: absolute;
+	height: 17px;
+	width: 75%;
+	z-index: 50;
+	margin-top: 0px;
+	margin-left: 2px;
+}
+.todolist .row_task .cell_string div {
+	float: right;
+	position: relative;
+	z-index: 60;
+	margin-right: 5px;
+}
+.todolist .row_task .cell_duetime {
+	color: #34AD00;
+	margin: 0 5px;
+}
+.todolist .row_task .cell_duetime_expired {
+	color: red;
+}
+.todolist .row_task .cell_label {
+	font-weight: normal;
+}
+/***************************************************************************************/
+.detail, .feed, .comment {
+	margin-bottom: 10px;
+}
+.detail {
+	width: 100%;
+}
+.detail tr {
+	line-height: 40px;
+}
+.detail input.detail-title {
+	font-weight: bold;
+	width: 90%;
+	font-size: 15px;
+}
+.detail textarea.detail-note {
+	width: 90%;
+	font-size: 14px;
+	line-height: 20px;
+	height: auto;
+	min-height: 70px;
+}
+.detail .detail-item {
+	width: 60px;
+	vertical-align: top;
+}
+.detail .detail-content {
+	color: #808080;
+}
+/***************************************************************************************/
+.feed {
+	color: #808080;
+}
+.feed li {
+	line-height: 20px;
+	font-size: 11px;
+}
+/***************************************************************************************/
+.comment {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.comment li {
+	clear: both;
+}
+.comment .comment-icon {
+	float: left;
+	position: relative;
+	padding-top: 3px;
+}
+.comment .comment-content {
+	float: left;
+	position: relative;
+	margin-left: 10px;
+	line-height: 20px;
+}
+.comment .comment-content .comment-creator {
+	font-weight: bold;
+}
+.comment .comment-content .comment-text {
+}
+.comment .comment-content .comment-time {
+	color: #808080;
+	font-size: 11px;
+	padding-bottom: 15px;
+}

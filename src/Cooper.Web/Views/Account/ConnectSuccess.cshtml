@@ -1,0 +1,7 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "连接成功，正在跳转...";
+}
+<script type="text/javascript">
+    if (window.opener && window.opener.connectSuccess) { window.opener.connectSuccess(); window.close(); }
+</script>

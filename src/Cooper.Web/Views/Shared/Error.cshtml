@@ -1,0 +1,15 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>发生错误 @this.Suffix()</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/bootstrap/css/bootstrap.css")" />
+</head>
+<body>
+    <div class="container alert alert-danger" style="margin-top:50px">@ViewBag.Error</div>
+</body>
+</html>

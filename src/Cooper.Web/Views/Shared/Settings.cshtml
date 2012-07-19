@@ -1,0 +1,110 @@
+﻿<script type="text/javascript" src="@Url.Content("~/content/jquery/jquery-1.7.2.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/content/jquery/jquery-ui-1.8.21.custom.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/content/jquery/jquery.json-2.3.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/content/bootstrap/js/bootstrap.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/scripts/common.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/scripts/lang.js")"></script>
+<script type="text/javascript">
+    //输出运行时动态设置用于脚本使用
+    var sys_versionFlag = '@this.VersionFlag()';
+    var url_home = '@Url.Content("~/")';
+    var url_account = '@Url.Action("", "Account", null)';
+    var url_sync_start = '@Url.Action("StartSync", "Account", null)';
+    var url_sync_query = '@Url.Action("QuerySync", "Account", null)';
+    var url_m_detail = '@Url.Action("MobileDetail", "Per", null)';
+
+    var url_task_byPriority = '@Url.Action("GetByPriority", "Personal", null)';
+    var url_task_byPriority_incompleted = '@Url.Action("GetIncompletedByPriority", "Personal", null)';
+    var url_task_byDueTime = '@Url.Action("GetByDueTime", "Personal", null)';
+    var url_task_sync = '@Url.Action("Sync", "Personal", null)';
+    var url_task_mini = '@Url.Action("Mini", "Personal", null)';
+
+    var url_feedback = '@Url.Action("Feedback", "Home", null)';
+
+    //简易feedback
+    function feedback() {
+        $('#feedback').modal('show');
+    }
+    function doFeedback() {
+        $('#feedback').modal('hide');
+        $.get(url_feedback, {
+            level: $('#feedback .btn-group button.active').val(),
+            content: $('#feedback textarea').val()
+        }, function () { });
+    }
+</script>
+<div class="modal hide" id="feedback">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+            ×</button>
+        <h3>
+            意见反馈</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+        <div class="btn-group" data-toggle="buttons-radio">
+            <button type="button" class="btn btn-inverse" value="一般">
+                一般，加把劲</button>
+            <button type="button" class="btn btn-info active" value="不错，继续努力">
+                不错，继续努力</button>
+            <button type="button" class="btn btn-success" value="很棒，加油">
+                很棒，加油</button>
+        </div>
+        <br />
+        <textarea name="content" style="width: 80%" placeholder="意见、问题"></textarea>
+        <form>
+    </div>
+    <div class="modal-footer">
+        <a class="btn" data-dismiss="modal">取消</a> <a class="btn btn-primary" onclick="doFeedback()">
+            提交</a>
+    </div>
+</div>
+<div class="modal hide" id="mobi_app">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+            ×</button>
+        <h3>
+            客户端安装</h3>
+    </div>
+    <div class="modal-body">
+        iphone
+        <img src="@Url.Content("~/content/images/qr_iphone.png")" width="100px" />
+        ipad
+        <img src="@Url.Content("~/content/images/qr_ipad.png")" width="100px" />
+        <br />
+        下载地址：<input type="text" value="https://www.incooper.net/" />
+    </div>
+    <div class="modal-footer">
+    </div>
+</div>
+@if (!CodeSharp.Framework.SystemConfig.Settings.VersionFlag.Equals("Release"))
+{
+    <script type="text/javascript">
+        $(function () {
+            $(document.body).prepend($('#devbar').show());
+        });
+    </script>
+    <div id="devbar" class="alert alert-danger hide" style="margin: 10px">
+        <button class="close" data-dismiss="alert">
+            ×</button>
+        DevToolBar -
+        @if (HttpContext.Current.User != null && HttpContext.Current.User.Identity != null && HttpContext.Current.User.Identity.IsAuthenticated)
+        {
+            <code>Hi! AccountId=@HttpContext.Current.User.Identity.Name</code>
+        }
+        <code><a href="https://github.com/codesharp/Cooper/issues" target="_blank" title="缺陷跟踪">
+            BugTrace</a> | <a href="https://github.com/codesharp/Cooper" target="_blank">OpenSource</a></code>
+        | <a href="@Url.Action("Index", "Per", null)">TaskPage</a> | <a href="@Url.Action("Mobile", "Per", null)">
+            Mobile Web</a> | <a href="@Url.Action("", "Account", null)">Account</a> | <a href="@Url.Action("Login", "Account", null)">
+                Login</a> | <a href="@Url.Action("Logout", "Account", null)">Logout</a>
+        | UI Auto Tests：
+        <button type="button" class="btn btn-success" onclick="$('#qunit').show();runTests()"
+            style="width: 110px">
+            Run Tests Full</button>
+        <div id="qunit" style="display: none; margin-top: 20px">
+        </div>
+    </div>
+    <link href="../Content/jquery/css/qunit-1.9.0.css" rel="stylesheet" type="text/css" />
+    <script src="../Content/jquery/qunit-1.9.0.js" type="text/javascript"></script>
+    <script src="@Url.Content("~/scripts/tests.js")" type="text/javascript"></script>
+}

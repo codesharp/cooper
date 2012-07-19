@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<project name="NSF" default="rebuild">
+  <property name="args0" value="" dynamic="true"/>
+  <property name="args1" value="" dynamic="true"/>
+  <property name="project.config" value="${args0}" dynamic="true" />
+  <!--path-->
+  <property name="dir" value="."/>
+  <property name="dir.tools" value=".\external-work\tools"/>
+  <property name="build.base" value="build\${project.config}"/>
+  <property name="build.absolutepath" value="${path::get-full-path(build.base)}" />
+  <property name="xpath.flag" value="/configuration/appSettings/add[@key='EnvironmentVersionFlag']/@value"/>
+  <property name="xpath.flag_refresh" value="/configuration/appSettings/add[@key='AutoRefreshSettingsFlag']/@value"/>
+  <!--nuget-->
+  <property name="nuget" value="${path::get-full-path(dir.tools)}" />
+  <property name="nuget.packages" value="${dir}\packages" />
+  <property name="nuget.cache" value="C:\Users\${environment::get-user-name()}\AppData\Local\NuGet\Cache" />
+  <property name="nuget.install" value="${dir}\nuget.install.bat" />
+  <property name="nuget.params.install" value="${nuget} ${path::get-full-path(nuget.packages)}" />
+  <!--msbuild-->
+  <property name="msbuild" value="C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe" />
+  <property name="msbuild.config" value="Debug" dynamic="true"/>
+  <if test="${project.config=='Release'}">
+    <property name="msbuild.config" value="Release"/>
+  </if>
+  <property name="msbuild.params"
+            value="/t:rebuild 
+            /p:Configuration=${msbuild.config} 
+            /t:ResolveReferences" />
+  <property name="msbuild.params.weboutput" value="/t:_CopyWebApplication /p:WebProjectOutputDir=${build.absolutepath}" />
+  <property name="msbuild.params.mvcoutput" value="/t:_CopyWebApplication /p:mvcbuildviews=true /p:WebProjectOutputDir=${build.absolutepath}" />
+  <property name="msbuild.params.output" value="/p:OutputPath=${build.absolutepath}" />
+  <!--NUnit-->
+  <property name="nunit" value="${path::get-full-path(dir.tools)}\nunit\nunit-console.exe" />
+  
+  <!--clean-->
+  <target name="clean" description="clean build folder">
+    <delete dir="${build.absolutepath}"></delete>
+  </target>
+  <target name="nuget" description="nuget install and update">
+    <delete dir="${nuget.packages}"></delete>
+    <delete dir="${nuget.cache}"></delete>
+    <exec program="${nuget.install}"
+          commandline="${nuget.params.install}"
+          workingdir="${dir}" />
+  </target>
+  
+  <target name="web">
+    <exec program="${msbuild}"
+          commandline="${msbuild.params} 
+          ${msbuild.params.mvcoutput}\cooper_web
+          ${msbuild.params.output}\cooper_web\bin"
+          workingdir="${dir}\src\Cooper.Web" />
+    <xmlpoke file="${build.absolutepath}\cooper_web\web.config"
+             xpath="${xpath.flag}"
+             value="${project.config}" />
+    <xmlpoke file="${build.absolutepath}\cooper_web\web.config"
+             xpath="${xpath.flag_refresh}"
+             value="true" />
+    <!--change scripts-->
+    <echo file="${build.absolutepath}\cooper_web\scripts\common.js" append="true" if="${msbuild.config=='Release'}">
+      <![CDATA[
+debuger.isProfileEnable = debuger.enable && false;
+debuger.isDebugEnable = debuger.enable && false;
+debuger.isInfoEnable = debuger.enable && false;
+debuger.isWarnEnable = debuger.enable && true;
+debuger.isErrorEnable = debuger.enable && true;
+      ]]>
+    </echo>
+    <!--compress-->
+    <yuicompressor todir="${build.absolutepath}\cooper_web\scripts\">
+      <fileset basedir="${build.absolutepath}\cooper_web\scripts\">
+        <include name="common.js" />
+        <include name="task.js" />
+        <include name="task_common.js" />
+        <include name="task_priority.js" />
+        <include name="task_due.js" />
+        <include name="account.js" />
+        <include name="mobile.js" />
+      </fileset>
+    </yuicompressor>
+    <yuicompressor todir="${build.absolutepath}\cooper_web\content\css">
+      <fileset basedir="${build.absolutepath}\cooper_web\content\css">
+        <include name="task.css" />
+      </fileset>
+    </yuicompressor>
+  </target>
+  
+  <target name="test_model">
+    <exec program="${msbuild}"
+          commandline="${msbuild.params} ${msbuild.params.output}\cooper_model_test"
+          workingdir="${dir}\src\Cooper.Model.Test" />
+    <exec program="${nunit}" commandline="Cooper.Model.Test.dll" workingdir="${build.absolutepath}\cooper_model_test"/>
+  </target>
+</project>
