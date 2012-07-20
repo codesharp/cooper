@@ -5,7 +5,7 @@
   <property name="project.config" value="${args0}" dynamic="true" />
   <!--path-->
   <property name="dir" value="."/>
-  <property name="dir.tools" value=".\external-work\tools"/>
+  <property name="dir.tools" value="..\work-tool"/>
   <property name="build.base" value="build\${project.config}"/>
   <property name="build.absolutepath" value="${path::get-full-path(build.base)}" />
   <property name="xpath.flag" value="/configuration/appSettings/add[@key='EnvironmentVersionFlag']/@value"/>
