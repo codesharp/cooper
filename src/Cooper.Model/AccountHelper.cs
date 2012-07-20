@@ -68,6 +68,8 @@ namespace Cooper.Model.Accounts
                 connection = new GoogleConnection(connectionAccountName, token, account);
             else if (connectionType == typeof(GitHubConnection))
                 connection = new GitHubConnection(connectionAccountName, token, account);
+            else
+                connection = this.GenerateConnection(account, connectionType, connectionAccountName, token);
             //指定令牌
             connection.SetToken(token);
             this._connectionService.Create(connection);
@@ -81,5 +83,10 @@ namespace Cooper.Model.Accounts
             return account;
         }
         #endregion
+
+        protected virtual AccountConnection GenerateConnection(Account account, Type connectionType, string connectionAccountName, string token)
+        {
+            throw new NotSupportedException();
+        }
     }
 }

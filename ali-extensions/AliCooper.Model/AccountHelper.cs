@@ -21,5 +21,14 @@ namespace AliCooper.Model.Accounts
             : base(factory
             , accountService
             , connectionService) { }
+
+        protected override AccountConnection GenerateConnection(Account account, Type connectionType, string connectionAccountName, string token)
+        {
+            //增加Ark连接
+            if (connectionType == typeof(ArkConnection))
+                return new ArkConnection(connectionAccountName, token, account);
+
+            return base.GenerateConnection(account, connectionType, connectionAccountName, token);
+        }
     }
 }
