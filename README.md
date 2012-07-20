@@ -2,6 +2,8 @@
 
 OpenSource Task-based Multiplayer Online Collaboration System.
 
+## ICON
+
 ![cooper](http://www.icodesharp.com/cooper_logo1.png)
 
 ![cooper](http://www.icodesharp.com/cooper_logo2.png)
@@ -10,7 +12,7 @@ OpenSource Task-based Multiplayer Online Collaboration System.
 
 ======
 
-# Build
+## Build
 
 ```shell
 runfirst
@@ -19,7 +21,7 @@ build test_model Debug
 build web [Debug/Test/Release]
 ```
 
-# License
+## License
 
 ![GPL](http://www.gnu.org/graphics/gplv3-127x51.png)
 
