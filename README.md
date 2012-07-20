@@ -21,9 +21,10 @@ build web [Debug/Test/Release]
 
 # License
 
-	[GPL](http://www.gnu.org/copyleft/gpl.html)
+![GPL](http://www.gnu.org/graphics/gplv3-127x51.png)
 
-	![GPL](http://www.gnu.org/graphics/gplv3-127x51.png)
+	[GPL](http://www.gnu.org/copyleft/gpl.html)
+	
 
 	Copyright (C) 2012  CodeSharp
 
