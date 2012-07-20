@@ -1,6 +1,8 @@
 # Cooper
 
-Task-based Multiplayer Online Collaboration System.
+OpenSource Task-based Multiplayer Online Collaboration System.
+
+![cooper](http://www.incooper.net/cooper.png)
 
 ======
 
