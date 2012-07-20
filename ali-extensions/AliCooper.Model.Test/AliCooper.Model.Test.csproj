@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EB8605CE-983B-48CB-ADCF-C9F1B0EDD2E5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AliCooper.Model.Test</RootNamespace>
+    <AssemblyName>AliCooper.Model.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\packages\Castle.Core.3.0.0.4001\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\..\packages\Castle.Windsor.3.0.0.4001\lib\net40\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="CodeSharp.Core">
+      <HintPath>..\..\packages\CodeSharp.Core.2.0\lib\net40\CodeSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="CodeSharp.Core.Castles">
+      <HintPath>..\..\packages\CodeSharp.Core.Castles.2.0\lib\net40\CodeSharp.Core.Castles.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\..\packages\FluentNHibernate.1.3.0.733\lib\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\CodeSharp.Package.MSTest.10.0\lib\net40\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\packages\NHibernate.3.3.1.4000\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.2.6.0.12054\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
+      <Visible>False</Visible>
+    </CodeAnalysisDependentAssemblyPaths>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccountConnectionTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ConfigFiles\facilities.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConfigFiles\log4net.config" />
+    <EmbeddedResource Include="ConfigFiles\properties.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Cooper.Model.Mappings\Cooper.Model.Mappings.csproj">
+      <Project>{D77B5EDE-FB5E-476E-9B3B-6F3940A5EB08}</Project>
+      <Name>Cooper.Model.Mappings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Cooper.Model\Cooper.Model.csproj">
+      <Project>{3B0D9250-5A81-455E-8AC1-700840DB909F}</Project>
+      <Name>Cooper.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Cooper.Repositories\Cooper.Repositories.csproj">
+      <Project>{B11C1DA3-29C6-4312-8790-17DB4F900C51}</Project>
+      <Name>Cooper.Repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AliCooper.Model.Mappings\AliCooper.Model.Mappings.csproj">
+      <Project>{38F8434D-DA0E-4A7A-BB46-F165E4BC9E1E}</Project>
+      <Name>AliCooper.Model.Mappings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AliCooper.Model\AliCooper.Model.csproj">
+      <Project>{1AF6AA3F-D7AB-4FF4-84C9-32A2891A08C3}</Project>
+      <Name>AliCooper.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AliCooper.Repositories\AliCooper.Repositories.csproj">
+      <Project>{0DFA7556-CAE3-451C-835D-DAD2C47CFDBF}</Project>
+      <Name>AliCooper.Repositories</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

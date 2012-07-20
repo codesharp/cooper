@@ -207,6 +207,18 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ali-extensions\AliCooper.Model.Mappings\AliCooper.Model.Mappings.csproj">
+      <Project>{38F8434D-DA0E-4A7A-BB46-F165E4BC9E1E}</Project>
+      <Name>AliCooper.Model.Mappings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ali-extensions\AliCooper.Model\AliCooper.Model.csproj">
+      <Project>{1AF6AA3F-D7AB-4FF4-84C9-32A2891A08C3}</Project>
+      <Name>AliCooper.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ali-extensions\AliCooper.Repositories\AliCooper.Repositories.csproj">
+      <Project>{0DFA7556-CAE3-451C-835D-DAD2C47CFDBF}</Project>
+      <Name>AliCooper.Repositories</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ConfigFiles\ConfigFiles.csproj">
       <Project>{0D3B0610-7FC5-43E6-8B51-DDCFFF7DF855}</Project>
       <Name>ConfigFiles</Name>

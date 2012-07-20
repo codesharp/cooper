@@ -57,6 +57,10 @@ namespace Cooper.Web
             windsor.RegisterRepositories(Assembly.Load("Cooper.Repositories"));
             windsor.RegisterServices(Assembly.Load("Cooper.Model"));
             windsor.RegisterComponent(Assembly.Load("Cooper.Model"));
+            //ALiCooper扩展
+            windsor.RegisterRepositories(Assembly.Load("AliCooper.Repositories"));
+            windsor.RegisterServices(Assembly.Load("AliCooper.Model"));
+            windsor.RegisterComponent(Assembly.Load("AliCooper.Model"));
             //Controller注入
             windsor.ControllerFactory();
             windsor.RegisterControllers(Assembly.GetExecutingAssembly());

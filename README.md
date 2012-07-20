@@ -5,8 +5,6 @@ Fork from Cooper OpenSource.
 来自Cooper进行二次开发和定制用于企业内部使用.
 
 
-OpenSource Task-based Multiplayer Online Collaboration System.
-
 ## ICON
 
 ![cooper](http://www.icodesharp.com/cooper_logo1.png)
