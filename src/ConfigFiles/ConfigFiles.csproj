@@ -42,15 +42,21 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CooperWeb\Debug.properties.config" />
-    <EmbeddedResource Include="CooperWeb\properties.config" />
+    <EmbeddedResource Include="CooperWeb\Debug.properties.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CooperWeb\properties.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="CooperWeb\Release.properties.config" />
     <EmbeddedResource Include="Debug.log4net.config" />
     <EmbeddedResource Include="Debug.properties.config">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Release.log4net.config" />
-    <EmbeddedResource Include="Release.properties.config" />
+    <EmbeddedResource Include="Release.properties.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
