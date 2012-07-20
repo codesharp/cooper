@@ -3,7 +3,9 @@
 OpenSource Task-based Multiplayer Online Collaboration System.
 
 ![cooper](http://www.icodesharp.com/cooper_logo1.png)
+
 ![cooper](http://www.icodesharp.com/cooper_logo2.png)
+
 ![cooper](http://www.icodesharp.com/cooper_logo3.png)
 
 ======
