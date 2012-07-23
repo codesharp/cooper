@@ -175,7 +175,7 @@ namespace Cooper.Web.Controllers
         public ActionResult GoogleLogin(string error, string code, string state)
         {
             if (!string.IsNullOrWhiteSpace(error))
-                throw new CooperknownException("授权失败：" + error);
+                throw new CooperknownException(error);
 
             //根据google回调获取对应google账号
             var grant = this.GetGoogleGrantByCode(code);
@@ -194,7 +194,7 @@ namespace Cooper.Web.Controllers
         public ActionResult GitLogin(string error, string code, string state)
         {
             if (!string.IsNullOrWhiteSpace(error))
-                throw new CooperknownException("授权失败：" + error);
+                throw new CooperknownException(error);
             //根据Git回调获取对应Git账号
             var grant = this.GetGitGrantByCode(code, state);
             this._log.Debug(grant);
@@ -243,7 +243,7 @@ namespace Cooper.Web.Controllers
             if (this._context.Current == null
                 || (c != null && c.AccountId == a.ID)) return;
             if (c != null && c.AccountId != a.ID)
-                throw new Exception(string.Format("抱歉，{0}已经被连接至其他用户", name));
+                throw new Exception(string.Format(this.Lang().sorry_already_connect_another, name));
 
             if (typeof(T) == typeof(GoogleConnection))
                 this._accountConnectionService.Create(new GoogleConnection(name, token, a));

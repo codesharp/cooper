@@ -138,6 +138,8 @@
     <Content Include="Content\css\task.css" />
     <Content Include="Content\images\appstore.jpg" />
     <Content Include="Content\images\chrome.gif" />
+    <Content Include="Content\images\cooper.png" />
+    <Content Include="Content\images\laptop-small.png" />
     <Content Include="Content\images\qr_ipad.png" />
     <Content Include="Content\images\firefox.gif" />
     <Content Include="Content\images\qr_iphone.png" />
@@ -262,6 +264,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\IFrame.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Account\Nav.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Personal\MainRegion.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Personal\TemplateRegion.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

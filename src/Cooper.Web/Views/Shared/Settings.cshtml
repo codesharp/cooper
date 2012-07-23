@@ -18,53 +18,13 @@
     var url_task_byDueTime = '@Url.Action("GetByDueTime", "Personal", null)';
     var url_task_sync = '@Url.Action("Sync", "Personal", null)';
     var url_task_mini = '@Url.Action("Mini", "Personal", null)';
-
-    var url_feedback = '@Url.Action("Feedback", "Home", null)';
-
-    //简易feedback
-    function feedback() {
-        $('#feedback').modal('show');
-    }
-    function doFeedback() {
-        $('#feedback').modal('hide');
-        $.get(url_feedback, {
-            level: $('#feedback .btn-group button.active').val(),
-            content: $('#feedback textarea').val()
-        }, function () { });
-    }
 </script>
-<div class="modal hide" id="feedback">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">
-            ×</button>
-        <h3>
-            意见反馈</h3>
-    </div>
-    <div class="modal-body">
-        <form>
-        <div class="btn-group" data-toggle="buttons-radio">
-            <button type="button" class="btn btn-inverse" value="一般">
-                一般，加把劲</button>
-            <button type="button" class="btn btn-info active" value="不错，继续努力">
-                不错，继续努力</button>
-            <button type="button" class="btn btn-success" value="很棒，加油">
-                很棒，加油</button>
-        </div>
-        <br />
-        <textarea name="content" style="width: 80%" placeholder="意见、问题"></textarea>
-        <form>
-    </div>
-    <div class="modal-footer">
-        <a class="btn" data-dismiss="modal">取消</a> <a class="btn btn-primary" onclick="doFeedback()">
-            提交</a>
-    </div>
-</div>
 <div class="modal hide" id="mobi_app">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">
             ×</button>
         <h3>
-            客户端安装</h3>
+            @this.Lang().mobi_install</h3>
     </div>
     <div class="modal-body">
         iphone
@@ -72,7 +32,7 @@
         ipad
         <img src="@Url.Content("~/content/images/qr_ipad.png")" width="100px" />
         <br />
-        下载地址：<input type="text" value="https://www.incooper.net/" />
+        @this.Lang().download_address：<input type="text" value="https://www.incooper.net/" />
     </div>
     <div class="modal-footer">
     </div>

@@ -4,15 +4,14 @@
     Layout = "~/Views/Shared/_Layout_Account.cshtml";
     var cs = ViewBag.Connections as IEnumerable<AccountConnection>;
 }
-<ul class="nav nav-pills">
-    <li>@Html.ActionLink("基本信息", "Profile")</li>
-    <li class="active">@Html.ActionLink("连接", "Connection")</li>
-</ul>
+
+@{ Html.RenderPartial("Nav"); }
+
 <div class="alert alert-info">
-    <strong>账号连接</strong> 您可以添加其他服务与您的Cooper账号连接，以便获得信息同步支持
+    <strong>@this.Lang().account_connection</strong> @this.Lang().account_connection_description
 </div>
 <div class="alert">
-    <strong>关于同步</strong> Cooper支持与您连接的账号进行同步，双向同步内容包含：任务、日历，一次性同步包含：通讯录、联系人
+    <strong>@this.Lang().about_sync</strong> @this.Lang().about_sync_description
 </div>
 @using (Html.BeginForm())
 {
@@ -22,20 +21,19 @@
             <li><a>
                 <button class="btn btn_sync" 
                 type="button" 
-                title="立刻与该账号进行任务数据同步"
-                data-loading-text="<i class='icon-refresh'></i> 正在同步..." 
-                data-complete-text="<i class='icon-random'></i> 已同步" 
+                title="@this.Lang().sync_now"
+                data-loading-text="<i class='icon-refresh'></i> @this.Lang().sync_loading" 
+                data-complete-text="<i class='icon-random'></i> @this.Lang().sync_complete" 
                 id="@c.ID">
                     <i class="icon-random"></i>
                 </button>
                 <code>@c.GetType().Name.ConnectionName()</code>
                 @c.Name
                 <button type="submit" class="close" 
-                title="取消连接" 
+                title="@this.Lang().cancel_connection" 
                 name="connectionId" 
                 value="@c.ID" 
-                onclick="return confirm('确定要取消该账号连接？')">
-                    ×</button>
+                onclick="return confirm('@this.Lang().confirm_cancel_connection')">×</button>
             </a></li>
         }
     </ul>
@@ -44,14 +42,13 @@
     @if (!cs.Any(o => o is GoogleConnection))
     {
         <button class="btn btn-primary" onclick="window.open('@ViewBag.GoogleUrl')">
-            添加Google连接</button>
+            @this.Lang().add_google_connection</button>
     }
     @if (!cs.Any(o => o is GitHubConnection))
     {
         <button class="btn btn-inverse" onclick="window.open('@ViewBag.GitUrl')">
-            添加Git连接</button>
+            @this.Lang().add_git_connection</button>
     }
-    更多第三方系统连接稍后陆续推出
 </div>
 @section Bottom{
     <script type="text/javascript">

@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>登录 @this.Suffix()</title>
+    <title>@this.Lang().login @this.Suffix()</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/bootstrap/css/bootstrap.min.css")" />
     <style type="text/css">
@@ -21,13 +21,14 @@
     </style>
 </head>
 <body style="background-color: rgb(175, 188, 200)">
-    <div class="container" style="text-align: center; color: #596573; font-size: 23px;
+    <div class="container" style="text-align: center; color: #596573; font-size: 20px;
         font-weight: 800">
-        Work IN Cooper
+        WORK IN
+        <img src="@Url.Content("~/content/images/cooper.png")" width="300px" />
     </div>
     <div class="container well" style="background-color: #fff;">
         <h2>
-            LOGIN
+            @this.Lang().login
         </h2>
         <div>
             <form class="form-horizontal">
@@ -37,7 +38,7 @@
                     </label>
                     <div class="controls">
                         <button type="button" class="btn btn-success" onclick="window.open('@ViewBag.GoogleUrl')">
-                            使用Google账号登录</button>
+                            @this.Lang().login_with_goole</button>
                     </div>
                 </div>
             </fieldset>
@@ -55,18 +56,18 @@
                 <fieldset>
                     <div class="control-group">
                         <label class="control-label">
-                            账号</label>
+                            @this.Lang().account</label>
                         <div class="controls">
                             <input type="text" name="username" value="">
                         </div>
                     </div>
                     <div class="control-group">
                         <label class="control-label">
-                            密码</label>
+                            @this.Lang().passwork</label>
                         <div class="controls">
                             <input type="password" name="password">
                             <p class="help-block">
-                                忘记密码？</p>
+                                @this.Lang().forget_password</p>
                         </div>
                     </div>
                     <div class="control-group">
@@ -74,7 +75,7 @@
                         </label>
                         <div class="controls">
                             <button type="submit" class="btn btn-info">
-                                登录</button>
+                                @this.Lang().login</button>
                         </div>
                     </div>
                 </fieldset>
@@ -93,7 +94,7 @@
     <div id="loading" class="container hide">
         <div class="progress progress-striped active">
             <div class="bar" style="width: 100%;">
-                正在处理，请稍后...</div>
+                @this.Lang().zhcn_loading</div>
         </div>
     </div>
     @{ Html.RenderSettings(); }
