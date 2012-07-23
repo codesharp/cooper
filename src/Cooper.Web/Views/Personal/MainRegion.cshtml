@@ -1,0 +1,78 @@
+﻿@{
+    var mini = Convert.ToBoolean(Model);
+}
+<!--撤销删除区域-->
+<div id="cancel_delete" class="alert alert-danger">
+    @this.Lang().confirm_delete_task<code>1</code>@this.Lang().confirm_delete_task_end
+    <a id="cancel_delete_true" onclick="cancelDelete()">@this.Lang().yes</a> <a id="cancel_delete_false"
+        onclick="continueDelete()">@this.Lang().no</a> <span></span>...
+</div>
+<div style="padding: 10px 5px 0;">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>@this.Lang().personal_task_management </a></li>
+        <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">@this.Lang().more
+            <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li><a onclick="syncAccount()"><i class="icon-refresh"></i>@this.Lang().sync_to</a></li>
+        </li>
+        <li><a href="@Url.Action("", "Account", null)"><i class="icon-user"></i>@this.Lang().my_profile</a>
+        </li>
+        <li><a><i class="icon-print"></i>@this.Lang().print</a></li>
+    </ul>
+    </li> </ul>
+    <div class="btn-toolbar">
+        <div class="btn-group pull-left" data-toggle="buttons-radio">
+            <button class="btn active" title="@this.Lang().by_priority_title" onclick="byPriority()">
+                <i class="icon-time"></i>@this.Lang().priority</button>
+            <button class="btn" title="@this.Lang().by_duetime_title" onclick="byDueTime()">
+                <i class="icon-bell"></i>@this.Lang().time</button>
+        </div>
+        <div class="btn-group pull-left" style="padding-top: 5px;">
+            @*<span class="todolist-total label label-info" style="font-weight:normal">100</span>*@
+        </div>
+        @if (!mini)
+        {
+            <div class="btn-group pull-right" data-toggle="buttons-radio">
+                <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-briefcase"></i>
+                    @this.Lang().archive <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a onclick="archiveTasks()">@this.Lang().archive_finish</a></li>
+                    <li><a onclick="hideArchive()">@this.Lang().hide_archive</a></li>
+                    <li><a onclick="showArchive()">@this.Lang().show_archive</a></li>
+                </ul>
+            </div>
+        }
+        <div class="btn-group pull-right">
+            @if (!mini)
+            {
+                <button class="btn" onclick="toggleTasks()">
+                    <i class="icon-eject"></i>@this.Lang().collapse
+                </button>
+            }
+            <button class="btn" onclick="appendTask()">
+                <i class="icon-plus"></i>@this.Lang().addNew</button>
+            <button class="btn" onclick="deleteTask()">
+                <i class="icon-trash"></i>@this.Lang().delete</button>
+        </div>
+    </div>
+    <div style="clear: both; height: 10px">
+    </div>
+</div>
+<div id="todolist_wrapper" class="todolist_wrapper">
+</div>
+<div style="border-top: 1px #ccc solid; padding: 10px;">
+    <span class="label label-info">↵ @this.Lang().addNew</span> <span class="label label-success">
+        Ctrl+↵
+        @this.Lang().complete</span> <span class="label ">Ctrl+↓ @this.Lang().sort</span>
+    <span class="label label-inverse">Ctrl/Shift+@this.Lang().mouse @this.Lang().select_inverse</span>
+    <span class="label label-warning">Backspace @this.Lang().delete</span>
+</div>
+<div id="error_lose_connect" class="alert alert-error hide">
+    <strong>Oops !</strong><br />
+    @this.Lang().lose_conn<br />
+    @this.Lang().retry_lose_conn<br />
+    <div class="progress progress-danger progress-striped active">
+        <div class="bar">
+            retrying...</div>
+    </div>
+</div>

@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "个人任务";
+    ViewBag.Title = this.Lang().my_task;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="container-fluid" style="margin-top: 10px;">
@@ -8,210 +8,27 @@
         @{ Html.RenderLeftBar(); }
         <!--Main-->
         <div class="span6" style="border: 1px #ccc solid; background-color: #fff">
-            <!--撤销删除区域-->
-            <div id="cancel_delete" class="alert alert-danger">
-                是否取消刚才删除的<code>1</code>个任务？
-                <a id="cancel_delete_true" onclick="cancelDelete()">是</a>
-                <a id="cancel_delete_false" onclick="continueDelete()">否</a>
-                <span></span>...
-            </div>
-            <div style="padding: 10px 5px 0;">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a>个人任务管理 </a> </li>
-                    <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">More<b
-                        class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a onclick="syncAccount()"><i class="icon-refresh"></i>立刻同步至日历</a></li>
-                            <li><a href="@Url.Action("Mini")"><i class="icon-resize-small"></i> Try Cooper Mini</a> </li>
-                            <li><a><i class="icon-print"></i>打印</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <div class="btn-toolbar">
-                    <div class="btn-group pull-left" data-toggle="buttons-radio">
-                        <button class="btn active" title="以优先级排序方式查看任务" onclick="byPriority()">
-                            <i class="icon-time"></i>优先级</button>
-                        <button class="btn" title="以截止时间排序查看任务" onclick="byDueTime()">
-                            <i class="icon-bell"></i>时间</button>
-                    </div>
-                    <div class="btn-group pull-left" style="padding-top: 5px;">
-                        @*<span class="todolist-total label label-info" style="font-weight:normal">100</span>*@
-                    </div>
-                    <div class="btn-group pull-right" data-toggle="buttons-radio">
-                        <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-briefcase"></i>
-                            归档 <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a onclick="archiveTasks()">归档已完成的任务</a></li>
-                            <li><a onclick="hideArchive()">隐藏归档任务</a></li>
-                            <li><a onclick="showArchive()">显示归档任务</a></li>
-                        </ul>
-                    </div>
-                    <div class="btn-group pull-right">
-                        <button class="btn" onclick="toggleTasks()">
-                            <i class="icon-eject"></i>折叠
-                        </button>
-                        <button class="btn" onclick="appendTask()">
-                            <i class="icon-plus"></i>新建</button>
-                        <button class="btn" onclick="deleteTask()">
-                            <i class="icon-trash"></i>删除</button>
-                    </div>
-                </div>
-                <div style="clear: both; height: 10px">
-                </div>
-            </div>
-            <div id="todolist_wrapper" class="todolist_wrapper">
-            </div>
-            <div style="border-top: 1px #ccc solid; padding: 10px;">
-                <span class="label label-info">↵ 新建</span> <span class="label label-success">Ctrl+↵
-                    完成</span> <span class="label ">Ctrl+↓ 调整顺序</span> <span class="label label-inverse">
-                        Ctrl/Shift+鼠标 多选/反选</span> <span class="label label-warning">Backspace 删除</span>
-            </div>
-            <div id="error_lose_connect" class="alert alert-error hide">
-                <strong>Oops !</strong><br />
-                与Cooper失去连接<br />
-                正在尝试重新连接...<br />
-                <div class="progress progress-danger progress-striped active">
-                    <div class="bar">retrying...</div>
-                </div>
-            </div>
+            @{ Html.RenderPartial("MainRegion"); }
         </div>
         <!--Detail-->
-        <div id="detail_wrapper" class="span4" style="border: 1px #ccc solid; border-left:0; padding: 5px 15px;
-            overflow-y: auto; overflow-x: hidden; position: relative;">
+        <div id="detail_wrapper" class="span4" style="border: 1px #ccc solid; border-left: 0;
+            padding: 5px 15px; overflow-y: auto; overflow-x: hidden; position: relative;">
         </div>
     </div>
 </div>
 <!--template-->
-<div style="display: none">
-    <div id="tmp_region">
-        <table class="todolist" by="{by}" key="{key}">
-            <thead>
-                <tr class="row_header">
-                    <td class="cell_icon">
-                        <i class="icon-inbox"></i>
-                    </td>
-                    <td colspan="2" style="padding-left: 10px">
-                        <span class="pull-left">{name}</span> <span class="badge pull-right" style="margin-top: 5px;
-                            cursor: pointer" onclick="$(this).parents('thead').next().toggle()">0</span>
-                    </td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="row_task" id="{id}">
-                    <td class="cell_num">
-                        <span></span><i class="icon-th" title="目前您可以使用快捷键调整顺序"></i>
-                    </td>
-                    <td class="cell_bool">
-                        <!--状态显示-->
-                        <ul class="nav nav-pills">
-                            <li>
-                                <div style="display:inline-block; min-width: 15px;">
-                                    <i class="icon-ok" style="display: block"></i>
-                                </div>
-                            </li>
-                            <li class="priority"><i class="icon-time" style="display:block"></i></li>
-                        </ul>
-                        <!--操作按钮-->
-                        <ul class="nav nav-pills">
-                            <li><i class="icon-check" style="display: none"></i></li>
-                            <li class="dropdown"><i class="icon-inbox dropdown-toggle" data-toggle="dropdown"
-                                style="display: none"></i>
-                                <ul class="dropdown-menu" style="z-index: 100">
-                                    <li><a priority="today">今天完成</a></li>
-                                    <li><a priority="upcoming">稍后完成</a></li>
-                                    <li><a priority="later">迟些再说</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </td>
-                    <td class="cell_string">
-                        <input value="{subject}" maxlength="500" />
-                        <div>
-                            <span class="cell_duetime"></span>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div id="tmp_detail">
-        <div class="region_detail" id="{id}">
-            <div class="btn-toolbar">
-                <div class="btn-group pull-left">
-                    <button id="isCompleted" class="btn_complete btn btn-large">
-                        <i class="icon-check"></i>完成
-                    </button>
-                </div>
-                <div class="btn-group pull-right" data-toggle="buttons-radio">
-                    <a class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a><i class="icon-share-alt"></i>分享到</a></li>
-                        <li><a><i class="icon-info-sign"></i>调试帮助-标识#{id}</a></li>
-                    </ul>
-                </div>
-                <div style="clear: both; height: 5px">
-                </div>
-            </div>
-            <!--item-->
-            <table class="detail">
-                <tbody>
-                    <tr>
-                        <td colspan="2">
-                            <input id="subject" type="text" class="detail-title" value="{subject}" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <textarea id="body" class="detail-note">{body}</textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="detail-item">
-                            优先级
-                        </td>
-                        <td class="detail-content">
-                            <div id="priority" class="btn-group" data-toggle="buttons-radio" title="指定任务希望在何时处理">
-                                <button class="btn" title="" priority="0">
-                                    <i class="icon-time" priority="0"></i>
-                                </button>
-                                <button class="btn" title="" priority="1">
-                                    <i class="icon-tag" priority="1"></i>
-                                </button>
-                                <button class="btn" title="" priority="2">
-                                    <i class="icon-inbox" priority="2"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="detail-item">
-                            截止日期
-                        </td>
-                        <td class="detail-content">
-                            <input id="dueTime" type="text" class="input-small" value="" />
-                            <i class="icon-bell"></i>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="alert alert-success">
-                <i class="icon-wrench"></i>更多设置功能稍后推出^_^</div>
-        </div>
-    </div>
-</div>
-
+@{ Html.RenderPartial("TemplateRegion"); }
 @section Bottom{
-<script type="text/javascript">
-    $(function () {
-        //自动调整到mini模式
-        if ($(window).width() < 600) {
-            location.href = url_task_mini;
-            return;
-        }
-        //TODO:仅在变更时处理
-        if (sys_versionFlag != 'debug')
-            window.onbeforeunload = function () { return 'Cooper Task'; };
-    });
-</script>
+    <script type="text/javascript">
+        $(function () {
+            //自动调整到mini模式
+            if ($(window).width() < 600) {
+                location.href = url_task_mini;
+                return;
+            }
+            //TODO:仅在变更时处理
+            if (sys_versionFlag != 'debug')
+                window.onbeforeunload = function () { return 'Cooper Task'; };
+        });
+    </script>
 }

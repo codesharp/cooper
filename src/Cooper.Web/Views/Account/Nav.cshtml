@@ -1,0 +1,12 @@
+﻿@{
+    var url = Request.Url.ToString().ToLower();
+    var active="class=\"active\"";
+    var isProfile = url.Contains("/profile") ? active : string.Empty;
+    var isConnection = url.Contains("/connection") ? active : string.Empty;
+}
+
+
+<ul class="nav nav-pills">
+    <li @Html.Raw(isProfile)>@Html.ActionLink(this.Lang("profile"), "Profile")</li>
+    <li @Html.Raw(isConnection)>@Html.ActionLink(this.Lang("connection"), "Connection")</li>
+</ul>

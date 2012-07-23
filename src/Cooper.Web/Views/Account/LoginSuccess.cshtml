@@ -1,6 +1,6 @@
 ﻿@{
     Layout = null;
-    ViewBag.Title = "登录成功，正在跳转...";
+    ViewBag.Title = this.Lang().login_success_and_redirect;
 }
 <script type="text/javascript">
     if (window.opener && window.opener.loginSuccess) { window.opener.loginSuccess(@ViewBag.ConnectionId); window.close(); }

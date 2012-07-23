@@ -101,7 +101,7 @@ public static class WebExtensions
     /// <returns></returns>
     public static string Suffix(this object obj)
     {
-        return CodeSharp.Framework.SystemConfig.Settings["webSiteSuffix"];
+        return obj.Lang().webSiteSuffix;
     }
     /// <summary>输出全局设置脚本，主要用于解决url，服务器设置在js中共享等问题
     /// </summary>
@@ -144,5 +144,45 @@ public static class WebExtensions
     public static string VersionFlag(this object obj)
     {
         return CodeSharp.Framework.SystemConfig.Settings.VersionFlag.ToLower();
+    }
+
+
+    /// <summary>获取文案
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static string Text(this object obj, string key)
+    {
+        return CodeSharp.Framework.SystemConfig.Settings[key];
+    }
+    public static dynamic _lang;
+    /// <summary>获取文案/语言
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public static dynamic Lang(this object obj)
+    {
+        if (_lang != null) return _lang;
+        _lang = new LangExpando();
+        return _lang;
+    }
+    /// <summary>获取文案/语言
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static string Lang(this object obj, string key)
+    {
+        return CodeSharp.Framework.SystemConfig.Settings["zhcn_" + key] ?? key;
+    }
+    public class LangExpando : System.Dynamic.DynamicObject
+    {
+        public override bool TryGetMember(System.Dynamic.GetMemberBinder binder, out object result)
+        {
+            //HACK:目前默认zh-cn语言
+            result = CodeSharp.Framework.SystemConfig.Settings["zhcn_" + binder.Name] ?? binder.Name;
+            return true;
+        }
     }
 }

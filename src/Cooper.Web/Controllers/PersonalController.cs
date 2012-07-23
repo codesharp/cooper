@@ -89,7 +89,7 @@ namespace Cooper.Web.Controllers
             var task = this._taskService.GetTask(i) ?? new Task(this.Context.Current);
 
             if (task.CreatorAccountId != this.Context.Current.ID)
-                throw new CooperknownException("抱歉，不能编辑其他人的任务");
+                throw new CooperknownException(this.Lang().can_not_edit_others_task);
 
             task.SetSubject(subject);
             task.SetBody(body);
