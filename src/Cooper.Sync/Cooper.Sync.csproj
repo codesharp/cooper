@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F8990C39-342D-4FE2-B9A4-66383531D568}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Cooper.Sync</RootNamespace>
+    <AssemblyName>Cooper.Sync</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CodeSharp.Core">
+      <HintPath>..\..\packages\CodeSharp.Core.2.0\lib\net40\CodeSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="CodeSharp.Core.Castles">
+      <HintPath>..\..\packages\CodeSharp.Core.Castles.2.0\lib\net40\CodeSharp.Core.Castles.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth, Version=4.0.0.11165, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DotNetOpenAuth 4.0\DotNetOpenAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis, Version=1.2.4568.33143, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Google.Apis 1.2\Google.Apis.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.GData.AccessControl, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b4b8eb9a7afc8328, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Google.GData 2.1\Google.GData.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.GData.Client, Version=2.1.0.0, Culture=neutral, PublicKeyToken=04a59ca9b0273830, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Google.GData 2.1\Google.GData.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.GData.Contacts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=7e065189dd4b982f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Google.GData 2.1\Google.GData.Contacts.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.GData.Extensions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=0b4c5df2ebf20876, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Google.GData 2.1\Google.GData.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.0.5.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.4.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ExternalServiceProvider.cs" />
+    <Compile Include="Google\IGoogleSyncService.cs" />
+    <Compile Include="Infrastructure\SyncResult.cs" />
+    <Compile Include="SyncDatas\ContactSyncData.cs" />
+    <Compile Include="Google\GoogleTokenService.cs" />
+    <Compile Include="Google\Calendar\TaskSyncGoogleCalendarEventDataService.cs" />
+    <Compile Include="Google\Calendar\GoogleCalendarEventSyncDataService.cs" />
+    <Compile Include="Google\Calendar\GoogleCalendarEventSyncData.cs" />
+    <Compile Include="Google\Contact\GoogleContactSyncData.cs" />
+    <Compile Include="Google\Contact\GoogleContactSyncDataService.cs" />
+    <Compile Include="Google\Contact\GoogleContactSyncService.cs" />
+    <Compile Include="Google\Contact\ContactSyncGoogleContactDataService.cs" />
+    <Compile Include="Google\Google.Apis.Oauth2.v2.cs" />
+    <Compile Include="Google\GoogleSyncSettings.cs" />
+    <Compile Include="Infrastructure\SyncInfo.cs" />
+    <Compile Include="SyncDatas\TaskSyncData.cs" />
+    <Compile Include="Google\Task\GoogleTaskSyncDataService.cs" />
+    <Compile Include="Google\Task\GoogleTaskSyncData.cs" />
+    <Compile Include="Google\Task\TaskSyncGoogleTaskDataService.cs" />
+    <Compile Include="Infrastructure\ISyncDataService.cs" />
+    <Compile Include="Infrastructure\ISyncData.cs" />
+    <Compile Include="Google\Calendar\GoogleCalendarEventSyncService.cs" />
+    <Compile Include="Google\Task\GoogleTaskSyncService.cs" />
+    <Compile Include="Infrastructure\ISyncService.cs" />
+    <Compile Include="Infrastructure\SyncService.cs" />
+    <Compile Include="Misc\Rfc3339DateTime.cs" />
+    <Compile Include="Misc\Utils.cs" />
+    <Compile Include="Google\Google.Apis.Calendar.v3.cs" />
+    <Compile Include="Google\Google.Apis.Task.v1.cs" />
+    <Compile Include="Google\INativeAuthorizationFlow.cs" />
+    <Compile Include="Google\LoopbackServerAuthorizationFlow.cs" />
+    <Compile Include="SyncDataType.cs" />
+    <Compile Include="BusinessSyncService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SyncResults\ContactSyncResult.cs" />
+    <Compile Include="SyncResults\TaskSyncResult.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
