@@ -10,7 +10,7 @@
     <style type="text/css">
         .container {
             max-width: 450px;
-            margin-top: 20px;
+            margin-top: 10px;
         }
         .btn {
             width: 75%;
@@ -23,8 +23,7 @@
 <body style="background-color: rgb(175, 188, 200)">
     <div class="container" style="text-align: center; color: #596573; font-size: 20px;
         font-weight: 800">
-        WORK IN
-        <img src="@Url.Content("~/content/images/cooper.png")" width="300px" />
+        <img src="@Url.Content("~/content/images/cooper.png")" width="230px" />
     </div>
     <div class="container well" style="background-color: #fff;">
         <h2>
@@ -86,15 +85,15 @@
         <div class="pull-left">
         </div>
         <div class="pull-right">
-            <a target="_blank" href="https://github.com/codesharp/Cooper/license.txt">License</a> |
-            <a target="_blank" href="https://github.com/codesharp/Cooper">OpenSouce</a> |
+            <a target="_blank" href="https://github.com/codesharp/cooper/blob/master/license.txt">License</a>
+            | <a target="_blank" href="https://github.com/codesharp/Cooper">OpenSouce</a> |
             @Html.ActionLink("Logout", "Logout")
         </div>
     </div>
     <div id="loading" class="container hide">
         <div class="progress progress-striped active">
             <div class="bar" style="width: 100%;">
-                @this.Lang().zhcn_loading</div>
+                @this.Lang().loading</div>
         </div>
     </div>
     @{ Html.RenderSettings(); }

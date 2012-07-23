@@ -1,4 +1,4 @@
-﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.codesharp.cn/
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
 using System.Text;
@@ -40,6 +40,7 @@ namespace Cooper.Model.Test
             //Assert.AreEqual(task.LastUpdateTime, task2.LastUpdateTime);
             Assert.AreEqual(task.CreatorAccountId, task2.CreatorAccountId);
             Assert.AreEqual(task.AssignedContacterId, task2.AssignedContacterId);
+            Assert.AreEqual(task.TasklistId, task2.TasklistId);
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
@@ -50,11 +51,15 @@ namespace Cooper.Model.Test
             //subjet
             var old = task.LastUpdateTime;
             this.Idle();
+            task.SetSubject(task.Subject);
+            Assert.AreEqual(task.LastUpdateTime, old);
             task.SetSubject(string.Empty);
             Assert.Greater(task.LastUpdateTime, old);
             //body
             old = task.LastUpdateTime;
             this.Idle();
+            task.SetBody(task.Body);
+            Assert.AreEqual(task.LastUpdateTime, old);
             task.SetBody(string.Empty);
             Assert.Greater(task.LastUpdateTime, old);
             //duetime
@@ -65,23 +70,62 @@ namespace Cooper.Model.Test
             //priority
             old = task.LastUpdateTime;
             this.Idle();
-            task.SetPriority(Priority.Today);
+            task.SetPriority(task.Priority);
+            Assert.AreEqual(task.LastUpdateTime, old);
+            task.SetPriority(Priority.Upcoming);
             Assert.Greater(task.LastUpdateTime, old);
+            //tasklist
+            old = task.LastUpdateTime;
+            this.Idle();
+            var list = this.CreatePersonalTasklist(a);
+            task.SetTasklist(list);
+            Assert.Greater(task.LastUpdateTime, old);
+            old = task.LastUpdateTime;
+            task.SetTasklist(list);
+            Assert.AreEqual(task.LastUpdateTime, old);
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void GetAll()
+        {
+            var a = this.CreateAccount();
+            var list = this.CreatePersonalTasklist(a);
+            
+            var task = new Task(a);
+            this._taskService.Create(task);
+
+            task = new Task(a);
+            task.SetTasklist(list);
+            this._taskService.Create(task);
+
+            task = new Task(a);
+            task.SetTasklist(list);
+            this._taskService.Create(task);
+
+            Assert.AreEqual(3, this._taskService.GetTasks(a).Count());
+            Assert.AreEqual(2, this._taskService.GetTasks(a, list).Count());
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void GetIncompleted()
         {
             var a = this.CreateAccount();
+            var list = this.CreatePersonalTasklist(a);
+
             var task = new Task(a);
             this._taskService.Create(task);
+
             task = new Task(a);
+            task.SetTasklist(list);
             this._taskService.Create(task);
+
             task = new Task(a);
             task.MarkAsCompleted();
+            task.SetTasklist(list);
             this._taskService.Create(task);
 
             Assert.AreEqual(2, this._taskService.GetIncompletedTasks(a).Count());
+            Assert.AreEqual(1, this._taskService.GetIncompletedTasks(a, list).Count());
         }
 
         private void Dump(params Task[] tasks)

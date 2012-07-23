@@ -1,4 +1,4 @@
-﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.codesharp.cn/
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
 using System.Collections.Generic;
@@ -14,6 +14,8 @@ namespace Cooper.Model.Tasks
     public interface ITaskRepository : IRepository<long, Task>
     {
         IEnumerable<Task> FindBy(Account account);
+        IEnumerable<Task> FindBy(Account account, Tasklist tasklist);
         IEnumerable<Task> FindBy(Account account, bool isCompleted);
+        IEnumerable<Task> FindBy(Account account, bool isCompleted, Tasklist tasklist);
     }
 }

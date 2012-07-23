@@ -1,4 +1,4 @@
-﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.codesharp.cn/
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
 using System.Text;
@@ -24,7 +24,7 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void Account()
         {
-            var a = new Account(this.RandomUser());
+            var a = new Account(this.RandomString());
             a.SetName("houkun");
             Assert.AreEqual("houkun", a.Name);
             Assert.Catch(() => a.SetName(null));
@@ -40,7 +40,7 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void Profile()
         {
-            var a = new Account(this.RandomUser());
+            var a = new Account(this.RandomString());
             Assert.IsNullOrEmpty(a.GetProfile("test"));
             a.SetProfile("test", "test");
             Assert.AreEqual("test", a.GetProfile("test"));
@@ -56,7 +56,7 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void ProfileUpdate()
         {
-            var a = new Account(this.RandomUser());
+            var a = new Account(this.RandomString());
             //未初始化profile
             this._accountService.Create(a);
             //此时才初始化profile
@@ -73,7 +73,7 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateDuplicate()
         {
-            var name = this.RandomUser();
+            var name = this.RandomString();
             //不可重复
             this.AssertParallel(() => this._accountService.Create(new Account(name)), 4, 1);
             Assert.Catch(typeof(AssertionException), () => this._accountService.Create(new Account(name)));
@@ -82,14 +82,14 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void UpdateDuplicate()
         {
-            var a = new Account(this.RandomUser());
+            var a = new Account(this.RandomString());
             this._accountService.Create(a);
             //不可重复
-            a.SetName(this.RandomUser());
+            a.SetName(this.RandomString());
             this.AssertParallel(() => this._accountService.Update(a), 4, 1);
 
             //不可与其他重复
-            var a2 = new Account(this.RandomUser());
+            var a2 = new Account(this.RandomString());
             this._accountService.Create(a2);
             a.SetName(a2.Name);
             Assert.Catch(typeof(AssertionException), () => this._accountService.Update(a));
@@ -99,7 +99,7 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateBy()
         {
-            var u = this.RandomUser();
+            var u = this.RandomString();
             var a = this._accountHelper.CreateBy<GoogleConnection>(u, _token);
             Assert.IsNotNull(this._accountConnectionService.GetConnection<GoogleConnection>(u));
             Assert.AreEqual(a.ID, this._accountConnectionService.GetConnection<GoogleConnection>(u).AccountId);
@@ -109,7 +109,7 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateByDuplicate()
         {
-            var u = this.RandomUser();
+            var u = this.RandomString();
             this.AssertParallel(() => this._accountHelper.CreateBy<GoogleConnection>(u, _token), 4, 1);
         }
         [Test(Description = "模拟外部连接登录逻辑")]
@@ -117,7 +117,7 @@ namespace Cooper.Model.Test
         public void LoginBy()
         {
             //实际编写时，根据不同类型获得外部账号标识
-            var u = this.RandomUser();
+            var u = this.RandomString();
             //先尝试获取账号连接
             this._accountConnectionService.GetConnection<GoogleConnection>(u);
             if (u != null) return;

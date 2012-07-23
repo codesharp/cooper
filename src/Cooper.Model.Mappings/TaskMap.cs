@@ -1,4 +1,4 @@
-﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.codesharp.cn/
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
 using System.Collections.Generic;
@@ -26,6 +26,7 @@ namespace Cooper.Model.Mappings
 
             Map(m => m.CreatorAccountId);
             Map(m => m.AssignedContacterId);
+            Map(m => m.TasklistId).Nullable();
         }
     }
 }

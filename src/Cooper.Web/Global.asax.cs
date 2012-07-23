@@ -1,4 +1,4 @@
-﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.codesharp.cn/
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
 using System.Collections.Generic;
@@ -184,5 +184,18 @@ public static class WebExtensions
             result = CodeSharp.Framework.SystemConfig.Settings["zhcn_" + binder.Name] ?? binder.Name;
             return true;
         }
+    }
+}
+//扩展断言
+internal class Assert : NUnit.Framework.Assert
+{
+    /// <summary>断言是否空白字符串
+    /// </summary>
+    /// <param name="input"></param>
+    public static void IsNotNullOrWhiteSpace(string input)
+    {
+        Assert.IsNotNullOrEmpty(input);
+        Assert.IsNotNullOrEmpty(input.Trim());
+        //Assert.IsFalse(string.IsNullOrWhiteSpace(input));
     }
 }

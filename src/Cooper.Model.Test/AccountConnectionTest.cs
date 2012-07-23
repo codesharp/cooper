@@ -1,4 +1,4 @@
-﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.codesharp.cn/
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
 using System.Text;
@@ -18,7 +18,7 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateGoole()
         {
-            var u = this.RandomUser();
+            var u = this.RandomString();
             var c = new GoogleConnection(u, _token, this.CreateAccount());
             this._accountConnectionService.Create(c);
             Assert.Greater(c.ID, 0);
@@ -32,7 +32,7 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateGit()
         {
-            var u = this.RandomUser();
+            var u = this.RandomString();
             var c = new GitHubConnection(u, _token, this.CreateAccount());
             this._accountConnectionService.Create(c);
             Assert.Greater(c.ID, 0);
@@ -47,7 +47,7 @@ namespace Cooper.Model.Test
         public void CreateDuplicate()
         {
             var a = this.CreateAccount();
-            var u = this.RandomUser();
+            var u = this.RandomString();
             //每个类型的连接内用户名不可重复
             this.AssertParallel(() => this._accountConnectionService.Create(new GoogleConnection(u, _token, a)), 4, 1);
             this.AssertParallel(() => this._accountConnectionService.Create(new GitHubConnection(u, _token, a)), 4, 1);
@@ -57,8 +57,8 @@ namespace Cooper.Model.Test
         public void Get()
         {
             var a = this.CreateAccount();
-            this._accountConnectionService.Create(new GoogleConnection(this.RandomUser(), _token, a));
-            this._accountConnectionService.Create(new GitHubConnection(this.RandomUser(), _token, a));
+            this._accountConnectionService.Create(new GoogleConnection(this.RandomString(), _token, a));
+            this._accountConnectionService.Create(new GitHubConnection(this.RandomString(), _token, a));
             Assert.AreEqual(2, this._accountConnectionService.GetConnections(a).Count());
             Assert.DoesNotThrow(() => this._accountConnectionService.GetConnections(a).First(o => o is GoogleConnection));
             Assert.DoesNotThrow(() => this._accountConnectionService.GetConnections(a).First(o => o is GitHubConnection));

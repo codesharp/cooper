@@ -1,4 +1,4 @@
-﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.codesharp.cn/
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
 using System.Collections.Generic;
@@ -38,11 +38,24 @@ namespace Cooper.Model.Tasks
         /// <param name="account"></param>
         /// <returns></returns>
         IEnumerable<Task> GetTasks(Account account);
+        /// <summary>获取指定账号指定任务表的所有任务
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="tasklist"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetTasks(Account account,Tasklist tasklist);
         /// <summary>获取指定账号的所有未完成任务
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
         IEnumerable<Task> GetIncompletedTasks(Account account);
+        /// <summary>获取指定账号指定任务表的所有未完成任务
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="tasklist"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetIncompletedTasks(Account account, Tasklist tasklist);
+
     }
     /// <summary>任务DomainService
     /// </summary>
@@ -88,9 +101,17 @@ namespace Cooper.Model.Tasks
         {
             return _repository.FindBy(account);
         }
+        IEnumerable<Task> ITaskService.GetTasks(Account account, Tasklist tasklist)
+        {
+            return _repository.FindBy(account, tasklist);
+        }
         IEnumerable<Task> ITaskService.GetIncompletedTasks(Account account)
         {
             return _repository.FindBy(account, false);
+        }
+        IEnumerable<Task> ITaskService.GetIncompletedTasks(Account account, Tasklist tasklist)
+        {
+            return _repository.FindBy(account, false, tasklist);
         }
         #endregion
     }
