@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using CodeSharp.Core.Services;
 using Cooper.Model.Accounts;
@@ -440,18 +439,7 @@ namespace Cooper.Sync.Test
             if (connection != null)
             {
                 _account = _accountService.GetAccount(connection.AccountId);
-                if (_account != null)
-                {
-                    var accountConnection = _accountConnectionService.GetConnections(_account).SingleOrDefault(x => x.ID == connectionId);
-
-                    if (accountConnection != null)
-                    {
-                        if (accountConnection.GetType() == typeof(GoogleConnection))
-                        {
-                            _googleConnection = accountConnection as GoogleConnection;
-                        }
-                    }
-                }
+                _googleConnection = connection as GoogleConnection;
             }
         }
         /// <summary>

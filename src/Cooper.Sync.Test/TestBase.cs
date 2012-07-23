@@ -27,7 +27,7 @@ namespace Cooper.Sync.Test
         protected IAccountHelper _accountHelper;
         protected IExternalServiceProvider _externalServiceProvider;
         protected IGoogleTokenService _googleTokenService;
-        protected ISyncProcesser _syncProcessor;
+        protected IGoogleSyncProcesser _syncProcessor;
 
         [TestFixtureSetUp]
         [TestInitialize]
@@ -51,7 +51,7 @@ namespace Cooper.Sync.Test
             _externalServiceProvider = DependencyResolver.Resolve<IExternalServiceProvider>();
             _googleTokenService = DependencyResolver.Resolve<IGoogleTokenService>();
 
-            _syncProcessor = DependencyResolver.Resolve<ISyncProcesser>();
+            _syncProcessor = DependencyResolver.Resolve<IGoogleSyncProcesser>();
 
             GoogleSyncSettings.ClientIdentifier = "234919028272-gsmmng06nheoih4ajp60oq8s33at1os0.apps.googleusercontent.com";
             GoogleSyncSettings.ClientSecret = "jXcjxFzCQGferMI37I0GSc05";
