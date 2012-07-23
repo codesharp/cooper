@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="AccountTest.cs" />
     <Compile Include="AccountConnectionTest.cs" />
+    <Compile Include="TasklistTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskTest.cs" />
     <Compile Include="TestBase.cs" />

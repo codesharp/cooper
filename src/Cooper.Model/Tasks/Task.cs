@@ -1,4 +1,4 @@
-﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.codesharp.cn/
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
 using System.Collections.Generic;
@@ -50,6 +50,10 @@ namespace Cooper.Model.Tasks
         /// </summary>
         public virtual int? AssignedContacterId { get; private set; }
 
+        /// <summary>获取任务所在的任务表标识
+        /// </summary>
+        public int? TasklistId { get; private set; }
+
         protected Task() { this.CreateTime = this.LastUpdateTime = DateTime.Now; }
         public Task(Account creator)
             : this()
@@ -64,6 +68,7 @@ namespace Cooper.Model.Tasks
         /// </summary>
         public virtual void MarkAsCompleted()
         {
+            if (this.IsCompleted) return;
             this.IsCompleted = true;
             this.MakeChange();
         }
@@ -71,6 +76,7 @@ namespace Cooper.Model.Tasks
         /// </summary>
         public virtual void MarkAsInCompleted()
         {
+            if (!this.IsCompleted) return;
             this.IsCompleted = false;
             this.MakeChange();
         }
@@ -80,7 +86,9 @@ namespace Cooper.Model.Tasks
         /// <param name="subject"></param>
         public virtual void SetSubject(string subject)
         {
-            Assert.LessOrEqual(subject.Length, 500);
+            if (subject != null)
+                Assert.LessOrEqual(subject.Length, 500);
+            if (this.Subject == subject) return;
             this.Subject = subject;
             this.MakeChange();
         }
@@ -90,7 +98,9 @@ namespace Cooper.Model.Tasks
         /// <param name="body"></param>
         public virtual void SetBody(string body)
         {
-            Assert.LessOrEqual(body.Length, 5000);
+            if (body != null)
+                Assert.LessOrEqual(body.Length, 5000);
+            if (this.Body == body) return;
             this.Body = body;
             this.MakeChange();
         }
@@ -99,6 +109,7 @@ namespace Cooper.Model.Tasks
         /// <param name="priority"></param>
         public virtual void SetPriority(Priority priority)
         {
+            if (this.Priority == priority) return;
             this.Priority = priority;
             this.MakeChange();
         }
@@ -116,6 +127,19 @@ namespace Cooper.Model.Tasks
         public virtual void SetLastUpdateTime(DateTime lastUpdateTime)
         {
             this.LastUpdateTime = lastUpdateTime;
+        }
+        /// <summary>设置任务所在的任务表
+        /// </summary>
+        /// <param name="tasklist"></param>
+        public void SetTasklist(Tasklist tasklist)
+        {
+            Assert.IsValid(tasklist);
+            if (this.TasklistId == tasklist.ID) return;
+            //个人任务表与任务的关系严格对应
+            if (tasklist is PersonalTasklist)
+                Assert.AreEqual(this.CreatorAccountId, (tasklist as PersonalTasklist).OwnerAccountId);
+            this.TasklistId = tasklist.ID;
+            this.MakeChange();
         }
 
         private void MakeChange()

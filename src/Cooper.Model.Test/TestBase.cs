@@ -1,4 +1,4 @@
-﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.codesharp.cn/
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
 using System.Text;
@@ -25,6 +25,7 @@ namespace Cooper.Model.Test
         protected IAccountService _accountService;
         protected IAccountConnectionService _accountConnectionService;
         protected IAccountHelper _accountHelper;
+        protected ITasklistService _tasklistService;
 
         [TestFixtureSetUp]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestInitialize]
@@ -56,6 +57,7 @@ namespace Cooper.Model.Test
             this._accountService = DependencyResolver.Resolve<IAccountService>();
             this._accountConnectionService = DependencyResolver.Resolve<IAccountConnectionService>();
             this._taskService = DependencyResolver.Resolve<ITaskService>();
+            this._tasklistService = DependencyResolver.Resolve<ITasklistService>();
         }
 
         protected virtual void Resolve(Castle.Windsor.IWindsorContainer windsor)
@@ -77,7 +79,7 @@ namespace Cooper.Model.Test
         {
             System.Threading.Thread.Sleep(second * 1000);
         }
-        protected string RandomUser()
+        protected string RandomString()
         {
             return "Cooper_" + DateTime.Now.ToString("yyyyMMddHHmmss") + DateTime.Now.Ticks + _rd.Next(100);
         }
@@ -97,9 +99,15 @@ namespace Cooper.Model.Test
         }
         protected Account CreateAccount()
         {
-            var a = new Account(this.RandomUser());
+            var a = new Account(this.RandomString());
             this._accountService.Create(a);
             return a;
+        }
+        protected PersonalTasklist CreatePersonalTasklist(Account a)
+        {
+            var list = new PersonalTasklist(this.RandomString(), a);
+            this._tasklistService.Create(list);
+            return list;
         }
     }
 }

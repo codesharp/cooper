@@ -1,5 +1,6 @@
 ﻿@{
     var mini = Convert.ToBoolean(Model);
+    var tasklists = ViewBag.Tasklists as IEnumerable<Cooper.Model.Tasks.PersonalTasklist>;
 }
 <!--撤销删除区域-->
 <div id="cancel_delete" class="alert alert-danger">
@@ -9,17 +10,29 @@
 </div>
 <div style="padding: 10px 5px 0;">
     <ul class="nav nav-tabs">
-        <li class="active"><a>@this.Lang().personal_task_management </a></li>
+        <li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown">
+            <span id="tasklist_title"></span>
+            <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <!--任务表-->
+                <li><a class="changelist" id=""><i class="icon-list-alt"></i> <span> @this.Lang().personal_task_management</span></a></li>
+                @foreach (var l in tasklists)
+                {
+                    <li><a class="changelist" id="@l.ID"><i class="icon-list-alt"></i> <span>@l.Name</span></a></li>
+                }
+                <li><a onclick="newTasklist()"><i class="icon-edit"></i> @this.Lang().manageTasklist</a></li>
+            </ul>
+        </li>
         <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">@this.Lang().more
             <b class="caret"></b></a>
             <ul class="dropdown-menu">
                 <li><a onclick="syncAccount()"><i class="icon-refresh"></i>@this.Lang().sync_to</a></li>
+                <li><a href="@Url.Action("", "Account", null)"><i class="icon-user"></i>@this.Lang().my_profile</a>
+                </li>
+                <li><a><i class="icon-print"></i>@this.Lang().print</a></li>
+            </ul>
         </li>
-        <li><a href="@Url.Action("", "Account", null)"><i class="icon-user"></i>@this.Lang().my_profile</a>
-        </li>
-        <li><a><i class="icon-print"></i>@this.Lang().print</a></li>
     </ul>
-    </li> </ul>
     <div class="btn-toolbar">
         <div class="btn-group pull-left" data-toggle="buttons-radio">
             <button class="btn active" title="@this.Lang().by_priority_title" onclick="byPriority()">
