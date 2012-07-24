@@ -267,8 +267,10 @@
                 $('#tasklist_delete')[isNaN(temp) ? 'hide' : 'show']();
             });
         }
-        function addTasklist(l) {
-            $('#tasklists').append(render($('#tmp_tasklist_item').html(), l));
+        function addTasklist(id, name) {
+            var $e = $(render($('#tmp_tasklist_item').html(), { id: id }));
+            $e.find('span').text(name);
+            $('#tasklists').append($e);
             refreshTasklists();
         }
         function removeTasklist(i) {
@@ -287,7 +289,7 @@
                 debuger.info('new tasklist#' + d);
                 $btn.prev().val('');
                 $('#tasklistModal').modal('hide');
-                addTasklist({ id: d, name: val });
+                addTasklist(d, val);
                 list(d);
             });
         }

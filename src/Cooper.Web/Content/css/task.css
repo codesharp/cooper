@@ -24,7 +24,7 @@ div#error_lose_connect .progress .bar {
 	width: 100%;
 }
 ul#tasklists {
-	max-height: 400px;
+	max-height: 350px;
 	overflow: auto;
 }
 ul#tasklists span {

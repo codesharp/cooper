@@ -160,6 +160,7 @@ namespace Cooper.Web.Controllers
         /// <param name="type">任务表类型，如：personal，team，project...</param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult CreateTasklist(string name, string type)
         {
             //目前只提供个人任务表
