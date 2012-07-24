@@ -53,6 +53,8 @@
     <Compile Include="Accounts\Profile.cs" />
     <Compile Include="AddressBooks\AddressBook.cs" />
     <Compile Include="AddressBooks\AddressBookService.cs" />
+    <Compile Include="AddressBooks\SystemAddressBook.cs" />
+    <Compile Include="AddressBooks\PersonalAddressBook.cs" />
     <Compile Include="AddressBooks\IAddressBookRepository.cs" />
     <Compile Include="ContactGroups\ContactGroup.cs" />
     <Compile Include="ContactGroups\ContactGroupService.cs" />

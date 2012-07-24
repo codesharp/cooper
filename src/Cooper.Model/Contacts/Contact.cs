@@ -1,8 +1,9 @@
-﻿using System;
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
+
+using System;
 using CodeSharp.Core.DomainBase;
 using Cooper.Model.Accounts;
 using Cooper.Model.AddressBooks;
-using Cooper.Model.ContactGroups;
 
 namespace Cooper.Model.Contacts
 {
@@ -14,75 +15,46 @@ namespace Cooper.Model.Contacts
     /// </summary>
     public class Contact : EntityBase<int>, IAggregateRoot
     {
-        public Contact(AddressBook addressBook)
+        protected Contact() { this.CreateTime = this.LastUpdateTime = DateTime.Now; }
+        public Contact(AddressBook addressBook, string fullName, string email) : this()
         {
             Assert.IsNotNull(addressBook);
-            AddressBookId = addressBook.ID;
-            this.CreateTime = this.LastUpdateTime = DateTime.Now;
+
+            this.AddressBookId = addressBook.ID;
+            this.SetFullName(fullName);
+            this.SetEmail(email);
         }
 
-        /// <summary>
-        /// 关联的账号，可以为空
+        /// <summary>关联的账号，可以为空
         /// </summary>
-        public virtual int? AccountId { get; private set; }
-        /// <summary>
-        /// 所属通讯簿ID
+        public int? AccountId { get; private set; }
+        /// <summary>所属通讯簿ID
         /// </summary>
-        public virtual int AddressBookId { get; private set; }
-        /// <summary>
-        /// 所属的联系人组ID
+        public int AddressBookId { get; private set; }
+        /// <summary>全名
         /// </summary>
-        public virtual int? GroupId { get; private set; }
-
-        /// <summary>
-        /// 全名
+        public string FullName { get; private set; }
+        /// <summary>邮箱
         /// </summary>
-        public virtual string FullName { get; private set; }
-        /// <summary>
-        /// 邮箱
+        public string Email { get; private set; }
+        /// <summary>联系电话
         /// </summary>
-        public virtual string Email { get; private set; }
-        /// <summary>
-        /// 联系电话
+        public string Phone { get; private set; }
+        /// <summary>创建时间
         /// </summary>
-        public virtual string Phone { get; private set; }
-        /// <summary>
-        /// 创建时间
+        public DateTime CreateTime { get; private set; }
+        /// <summary>最后更新时间
         /// </summary>
-        public virtual DateTime CreateTime { get; private set; }
-        /// <summary>
-        /// 最后更新时间
-        /// </summary>
-        public virtual DateTime LastUpdateTime { get; private set; }
+        public DateTime LastUpdateTime { get; private set; }
 
         /// <summary>设置关联账号
         /// </summary>
-        public virtual void SetAccount(Account account)
+        public void SetAccount(Account account)
         {
             Assert.IsNotNull(account);
-            Assert.Greater(account.ID, 0);
 
-            if (this.AccountId != null && this.AccountId.Value == account.ID)
-            {
-                return;
-            }
-
+            if (this.AccountId != null && this.AccountId.Value == account.ID) return;
             this.AccountId = account.ID;
-            this.MakeChange();
-        }
-        /// <summary>设置关联的联系人组
-        /// </summary>
-        public virtual void SetGroup(ContactGroup group)
-        {
-            Assert.IsNotNull(group);
-            Assert.Greater(group.ID, 0);
-
-            if (this.GroupId != null && this.GroupId.Value == group.ID)
-            {
-                return;
-            }
-
-            this.GroupId = group.ID;
             this.MakeChange();
         }
         /// <summary>设置全名
@@ -90,7 +62,7 @@ namespace Cooper.Model.Contacts
         /// 长度应小于200
         /// </remarks>
         /// </summary>
-        public virtual void SetFullName(string fullName)
+        public void SetFullName(string fullName)
         {
             Assert.IsNotNullOrWhiteSpace(fullName);
             Assert.LessOrEqual(fullName.Length, 200);
@@ -103,7 +75,7 @@ namespace Cooper.Model.Contacts
         }
         /// <summary>设置邮箱
         /// </summary>
-        public virtual void SetEmail(string email)
+        public void SetEmail(string email)
         {
             Assert.IsNotNullOrWhiteSpace(email);
 
@@ -115,21 +87,13 @@ namespace Cooper.Model.Contacts
         }
         /// <summary>设置联系电话
         /// </summary>
-        public virtual void SetPhone(string phone)
+        public void SetPhone(string phone)
         {
             if (this.Phone != phone)
             {
                 this.Phone = phone;
                 this.MakeChange();
             }
-        }
-        //UNDONE:允许外部直接更改LastUpdateTime可能对后期业务设计带来隐患，
-        //目前需要这样做是因为与外部系统同步联系人的需要
-        /// <summary>设置最后更新时间
-        /// </summary>
-        public virtual void SetLastUpdateTime(DateTime lastUpdateTime)
-        {
-            this.LastUpdateTime = lastUpdateTime;
         }
 
         private void MakeChange()
