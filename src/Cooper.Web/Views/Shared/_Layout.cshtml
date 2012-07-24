@@ -147,6 +147,10 @@
         var currentMode = byPriority; //当前列表模式，默认使用优先级列表模式
         var currentList = null; //当前任务表标识
 
+        var timer;
+        var idChanges = {};
+        var preSorts = null;
+
         $(function () {
 
             resize();
@@ -220,8 +224,7 @@
             if (ui_list_helper == ui_list_helper_priority) byPriority();
         }
         function list(id) {
-            currentList = id;
-            currentMode();
+            currentMode(function () { currentList = id; });
         }
         function newTasklist() {
             $('#tasklistModal').modal('show');
@@ -230,13 +233,14 @@
         //切换tab时将总是从server读取最新数据以及正确的索引信息
         //切换之间需要内存清理
         //b=是否加载完整列表（包含已完成的）
-        function byPriority() {
+        function byPriority(fn) {
             var b = isShowArchive;
             currentMode = byPriority;
             $el_wrapper_region.empty().append($('#loading').html());
             $el_wrapper_detail.empty();
-            fixBeforeSync();
+            fixBeforeSyncOrReload();
             sync(function () {
+                if (fn) fn();
                 $.ajax({
                     url: b ? url_task_byPriority : url_task_byPriority_incompleted,
                     //任务表标识
@@ -248,16 +252,18 @@
                         init(data.List, data.Sorts);
                         (ui_list_helper = ui_list_helper_priority).render(b);
                         firstClick();
+                        fixAfterSyncOrReload(data.Editable);
                     }
                 });
             });
         }
-        function byDueTime() {
+        function byDueTime(fn) {
             currentMode = byDueTime;
             $el_wrapper_region.empty().append($('#loading').html());
             $el_wrapper_detail.empty();
-            fixBeforeSync();
+            fixBeforeSyncOrReload();
             sync(function () {
+                if (fn) fn();
                 $.ajax({
                     url: url_task_byDueTime,
                     //任务表标识
@@ -269,26 +275,33 @@
                         init(data.List, data.Sorts);
                         (ui_list_helper = ui_list_helper_due).render();
                         firstClick();
+                        fixAfterSyncOrReload(data.Editable);
                     }
                 });
             });
         }
 
-        //同步执行一些额外的修正工作，主要针对缓冲数据
-        function fixBeforeSync() {
+        //同步执行一些额外的修正工作，主要针对缓冲数据以及模式切换时的全局变量
+        function fixBeforeSyncOrReload() {
             if (!ui_list_helper) return;
             //由于此时缓冲的删除记录可能由于delete_timer而未被提交
             ui_list_helper.continueDelete();
+        }
+        function fixAfterSyncOrReload(e) {
+            //全局变量
+            preSorts = null;
+            //设置是否编辑状态
+            setEditable(e);
+        }
+        function setEditable(b) {
+            ui_list_helper.setEditable(b);
+            $('.flag_editable')[b ? 'show' : 'hide']();
         }
         function firstClick() {
             $el_wrapper_region.find('tr.row_task input').first().click();
         }
         ////////////////////////////////////////////////////////////////////////////////////////
         //TODO:增加网络异常修正逻辑
-        var timer;
-        var idx_sync = true;
-        var idChanges = {};
-        var preSorts = null;
         function sync(fn) {
             if (timer)
                 clearTimeout(timer);
@@ -323,8 +336,10 @@
                     'Indexs': cached_idxs[i].getIndexs()
                 }]);
             var sorts = $.toJSON(idxs);
-            if (preSorts == null)
+            if (preSorts == null) {
                 preSorts = sorts;
+                debuger.debug('preSorts=sorts');
+            }
             if (sorts != preSorts)
                 debuger.info('将排序索引同步至Server', idxs);
             if (arr.length > 0)

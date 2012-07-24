@@ -24,8 +24,10 @@ var Task = function () { this._init.apply(this, arguments); }
 Task.prototype = {
     $el_row: null,
     $el_detail: null,
+    editable: true,
     _init: function () {
         var t = arguments.length > 0 ? arguments[0] : {};
+        this.editable = t['Editable'] == undefined ? true : t['Editable'];
         this['data'] = {
             'id': t['ID'] != undefined ? t['ID'].toString() : 'temp_' + (++identity) + '_' + new Date().getTime(), //可自动构建临时id 总是以string使用
             'subject': t['Subject'] != undefined ? t['Subject'] : '',
@@ -53,7 +55,8 @@ Task.prototype = {
             this.$el_detail = this._generateDetail(this['data']);
         //datepicker重复初始化问题
         this.$el_detail.find('#dueTime').removeClass('hasDatepicker');
-        this.$el_detail.find('#dueTime').datepicker();
+        if (this.editable)
+            this.$el_detail.find('#dueTime').datepicker();
         //设置值
         this.setDetail_Completed(this.isCompleted());
         this.setDetail_Subject(this.subject());
@@ -78,6 +81,7 @@ Task.prototype = {
     },
     get: function (k) { return this['data'][k]; },
     update: function (k, v) {
+        if (!this.editable) return;
         if (this['data'][k] == v) return false;
         this['data'][k] = v;
         //设计变更列表，用于提交到server

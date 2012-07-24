@@ -62,6 +62,8 @@ namespace Cooper.Web
             windsor.RegisterControllers(Assembly.GetExecutingAssembly());
             //注册web上下文
             windsor.RegisterComponent(typeof(Cooper.Web.Controllers.WebContextService));
+            //注册Fetch扩展
+            windsor.RegisterComponent(typeof(Cooper.Web.Controllers.FetchTasklistHelper));
         }
 
         protected override bool IsKnownException(Exception e)

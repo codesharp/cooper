@@ -15,10 +15,13 @@
             <b class="caret"></b></a>
             <ul class="dropdown-menu">
                 <!--任务表-->
-                <li><a class="changelist" id=""><i class="icon-list-alt"></i> <span> @this.Lang().personal_task_management</span></a></li>
+                <li><a class="changelist" id=""><i class="icon-inbox"></i> <span> @this.Lang().personal_task_management</span></a></li>
+                
+                @{ Html.RenderPartial("FetchTasklistRegion"); }
+
                 @foreach (var l in tasklists)
                 {
-                    <li><a class="changelist" id="@l.ID"><i class="icon-list-alt"></i> <span>@l.Name</span></a></li>
+                    <li><a class="changelist" id="@l.ID"><i class="icon-list"></i> <span>@l.Name</span></a></li>
                 }
                 <li><a onclick="newTasklist()"><i class="icon-edit"></i> @this.Lang().manageTasklist</a></li>
             </ul>
@@ -45,7 +48,7 @@
         </div>
         @if (!mini)
         {
-            <div class="btn-group pull-right" data-toggle="buttons-radio">
+            <div class="btn-group pull-right flag_editable" data-toggle="buttons-radio">
                 <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-briefcase"></i>
                     @this.Lang().archive <span class="caret"></span></a>
                 <ul class="dropdown-menu">
@@ -55,7 +58,7 @@
                 </ul>
             </div>
         }
-        <div class="btn-group pull-right">
+        <div class="btn-group pull-right flag_editable">
             @if (!mini)
             {
                 <button class="btn" onclick="toggleTasks()">

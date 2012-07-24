@@ -11,7 +11,10 @@ UI_List_Common.prototype = {
     modeArgs: {
         //快捷键开关
         shortcuts_move: true,
-        CanSetCompleted_RowOfInValidRegion: false
+        //是否允许对invalid区域的任务变更完成状态非
+        shortcuts_canSetCompleted_RowOfInValidRegion: false,
+        //是否可编辑
+        editable: true
     },
     $wrapper: null, //列表容器
     $wrapper_detail: null, //详情容器
@@ -104,7 +107,8 @@ UI_List_Common.prototype = {
             this.$batchDetail.find('#priority button').removeClass('active');
         this.$wrapper_detail.empty().append(this.$batchDetail);
         //datepicker重复初始化问题 应先append再初始化
-        this.$batchDetail.find('#dueTime').removeClass('hasDatepicker').datepicker();
+        if (this.modeArgs.editable)
+            this.$batchDetail.find('#dueTime').removeClass('hasDatepicker').datepicker();
     },
     _isBatchDetailValid: function () { return this.$batchDetail && this.$batchDetail.css('display') == 'block'; },
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -126,29 +130,32 @@ UI_List_Common.prototype = {
     _prepareBinds: function () {
         var base = this;
 
-        ////////////////////////////////////////////////////////////////////////////////////////
-        //列表区域
         //取消所有已有bind
         this.$wrapper.unbind();
         this.$wrapper.find('tr.row_task').unbind();
         this.$wrapper.find('input').unbind();
+        this.$wrapper_detail.unbind();
+        ////////////////////////////////////////////////////////////////////////////////////////
+        //列表区域
         ////////////////////////////////////////////////////////////////////////////////////////
         //hover行工具菜单显示处理
-        this.$wrapper.find('tr.row_task').hover(function (e) {
-            var $el = $(e.target);
-            var $row = base.getRow($el);
-            $row.find('td.cell_num span').hide();
-            $row.find('td.cell_num i.icon-th').show();
-            $row.find('td.cell_bool ul.nav').eq(0).hide();
-            $row.find('td.cell_bool ul.nav').eq(1).find('i').show();
-        }, function (e) {
-            var $el = $(e.target);
-            var $row = base.getRow($el);
-            $row.find('td.cell_num span').show();
-            $row.find('td.cell_num i.icon-th').hide();
-            $row.find('td.cell_bool ul.nav').eq(0).show();
-            $row.find('td.cell_bool ul.nav').eq(1).find('i').hide();
-        });
+        if (this.modeArgs.editable) {
+            this.$wrapper.find('tr.row_task').hover(function (e) {
+                var $el = $(e.target);
+                var $row = base.getRow($el);
+                $row.find('td.cell_num span').hide();
+                $row.find('td.cell_num i.icon-th').show();
+                $row.find('td.cell_bool ul.nav').eq(0).hide();
+                $row.find('td.cell_bool ul.nav').eq(1).find('i').show();
+            }, function (e) {
+                var $el = $(e.target);
+                var $row = base.getRow($el);
+                $row.find('td.cell_num span').show();
+                $row.find('td.cell_num i.icon-th').hide();
+                $row.find('td.cell_bool ul.nav').eq(0).show();
+                $row.find('td.cell_bool ul.nav').eq(1).find('i').hide();
+            });
+        }
         ////////////////////////////////////////////////////////////////////////////////////////
         this.$wrapper.find('input').keyup(function () { base.getTask(base.getRow($(this))).setSubject($(this).val()); });
         //input焦点 目前需要在特定情况下对其进行修正
@@ -181,15 +188,14 @@ UI_List_Common.prototype = {
                 //此时选中情况已经变化
                 $avtives = base.getActives();
                 //呈现详情
-                if ($avtives.length == 1) {
+                if ($avtives.length == 1)
                     base._renderDetail($focus);
-                    return;
-                }
                 //批量详情
-                if ($avtives.length > 1) {
+                else if ($avtives.length > 1)
                     base._renderBatchDetail($avtives);
-                    return;
-                }
+                //设置是否可编辑
+                base._setEditable(base.$wrapper_detail);
+                return;
             }
             var task = cached_tasks[base.getTaskId($row)];
             ////////////////////////////////////////////////////////////////////////////////////////
@@ -241,7 +247,23 @@ UI_List_Common.prototype = {
             var $actives = base.getActives();
             //过滤不在合法区域的行
             var $actives2 = $actives.filter(function () { return base._isRowOfValidRegion($(this)); });
+
             ////////////////////////////////////////////////////////////////////////////////////////
+            //非编辑模式下的快捷键处理
+            //上下切换↓
+            if (!ctrl && !shift) {
+                var $prev = base._findFocusPrev();
+                var $next = base._findFocusNext();
+                if (up && $prev)
+                    base._fireRowSingleClick($prev);
+                else if (down && $next)
+                    base._fireRowSingleClick($next);
+            }
+            ////////////////////////////////////////////////////////////////////////////////////////
+            //非编辑模式则忽略快捷键
+            if (!base.modeArgs.editable) return;
+            ////////////////////////////////////////////////////////////////////////////////////////
+            //编辑模式下的快捷键处理
             //删除backspace 
             if (backspace) {
                 var txt = base.getTaskVal($focus);
@@ -275,7 +297,7 @@ UI_List_Common.prototype = {
             ////////////////////////////////////////////////////////////////////////////////////////
             //完成Ctrl+Enter
             if (ctrl && enter) {
-                var $rows = base.modeArgs.CanSetCompleted_RowOfInValidRegion ? $actives : $actives2;
+                var $rows = base.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion ? $actives : $actives2;
                 if ($rows.length == 0) return;
                 var i = cached_tasks[base.getTaskId($rows.first())].isCompleted();
                 $rows.each(function () {
@@ -289,18 +311,8 @@ UI_List_Common.prototype = {
                 return;
             }
             ////////////////////////////////////////////////////////////////////////////////////////
-            //上下切换↓
-            if (!ctrl && !shift) {
-                var $prev = base._findFocusPrev();
-                var $next = base._findFocusNext();
-                if (up && $prev)
-                    base._fireRowSingleClick($prev);
-                else if (down && $next)
-                    base._fireRowSingleClick($next);
-            }
-            ////////////////////////////////////////////////////////////////////////////////////////
             //上下移动Ctrl+↓ 需处理跨空region的移动
-            else if (ctrl) {
+            if (ctrl) {
                 if (!base.modeArgs.shortcuts_move) return;
                 if (up) {
                     var $prev = base._findAnyPrev($actives2.first());
@@ -337,77 +349,79 @@ UI_List_Common.prototype = {
         });
         ////////////////////////////////////////////////////////////////////////////////////////
         //详情区域
-        this.$wrapper_detail.unbind();
-        this.$wrapper_detail.click(function (e) {
-            var $el = $(e.target);
-            var ids = $el.parents('.region_detail');
-            if (ids.length == 0) return;
-            ids = ids.eq(0).attr('id').split(',');
-            //优先级 需处理批量场景
-            if ($el.parent().is('#priority') || ($el.is('i') && $el.parent().parent().is('#priority'))) {
-                for (var i = 0; i < ids.length; i++) {
-                    var task = cached_tasks[ids[i]];
-                    var old = task.priority();
-                    var p = $el.attr('priority');
-                    task.setPriority(p);
-                    //额外逻辑
-                    if (base.onPriorityChange)
-                        base.onPriorityChange(task.el(), task, old, p);
-                }
-                return;
-            }
-            //是否完成 需处理批量场景
-            if ($el.is('#isCompleted') || ($el = $el.parent()).is('#isCompleted')) {
-                var isCompleted = !$el.hasClass('active');
-                for (var i = 0; i < ids.length; i++) {
-                    var task = cached_tasks[ids[i]];
-                    var old = task.isCompleted();
-                    task.setCompleted(isCompleted);
-                    //额外逻辑
-                    if (base.onCompletedChange)
-                        base.onCompletedChange(task, old, isCompleted);
-                }
-                //批量情况的修正 TODO:与task内的setdetailcompleted逻辑调整进行复用
-                if (ids.length > 1)
-                    $el
-                        [isCompleted ? 'addClass' : 'removeClass']('active')
-                        [isCompleted ? 'addClass' : 'removeClass']('btn-success');
-                return;
-            }
-        });
-        this.$wrapper_detail.keyup(function (e) {
-            var $el = $(e.target);
-            var isSubject = $el.is('#subject');
-            var isBody = $el.is('#body');
-            if (!isSubject && !isBody) return;
-            var task = cached_tasks[$el.parents('.region_detail').eq(0).attr('id')];
-            if (isSubject)
-                task.setSubject($el.val(), true);
-            else if (isBody)
-                task.setBody($el.val());
-        });
-        this.$wrapper_detail.change(function (e) {
-            var $el = $(e.target);
-            //dueTime调整 需处理批量场景
-            if ($el.is('#dueTime')) {
+        ////////////////////////////////////////////////////////////////////////////////////////
+        if (this.modeArgs.editable) {
+            this.$wrapper_detail.click(function (e) {
+                var $el = $(e.target);
                 var ids = $el.parents('.region_detail');
                 if (ids.length == 0) return;
                 ids = ids.eq(0).attr('id').split(',');
-                var tasks = [ids.length];
-                var t = $.datepicker.parseDate('mm/dd/yy', $el.val());
-                for (var i = 0; i < ids.length; i++) {
-                    var task = cached_tasks[ids[i]];
-                    //若此时编辑了新增的任务，由于临时id被修正，将无法找到新的id，因此外围需调用repairBatchdetailId
-                    debuger.assert(task != null);
-                    tasks[i] = task;
-                    task.setDueTime(t); //TODO:调整格式yy-mm-dd
+                //优先级 需处理批量场景
+                if ($el.parent().is('#priority') || ($el.is('i') && $el.parent().parent().is('#priority'))) {
+                    for (var i = 0; i < ids.length; i++) {
+                        var task = cached_tasks[ids[i]];
+                        var old = task.priority();
+                        var p = $el.attr('priority');
+                        task.setPriority(p);
+                        //额外逻辑
+                        if (base.onPriorityChange)
+                            base.onPriorityChange(task.el(), task, old, p);
+                    }
+                    return;
                 }
-                if (ids.length > 0)
-                //额外逻辑
-                    if (base.onDueTimeBatchChange)
-                        base.onDueTimeBatchChange(tasks, t);
-            }
-        });
+                //是否完成 需处理批量场景
+                if ($el.is('#isCompleted') || ($el = $el.parent()).is('#isCompleted')) {
+                    var isCompleted = !$el.hasClass('active');
+                    for (var i = 0; i < ids.length; i++) {
+                        var task = cached_tasks[ids[i]];
+                        var old = task.isCompleted();
+                        task.setCompleted(isCompleted);
+                        //额外逻辑
+                        if (base.onCompletedChange)
+                            base.onCompletedChange(task, old, isCompleted);
+                    }
+                    //批量情况的修正 TODO:与task内的setdetailcompleted逻辑调整进行复用
+                    if (ids.length > 1)
+                        $el
+                        [isCompleted ? 'addClass' : 'removeClass']('active')
+                        [isCompleted ? 'addClass' : 'removeClass']('btn-success');
+                    return;
+                }
+            });
+            this.$wrapper_detail.keyup(function (e) {
+                var $el = $(e.target);
+                var isSubject = $el.is('#subject');
+                var isBody = $el.is('#body');
+                if (!isSubject && !isBody) return;
+                var task = cached_tasks[$el.parents('.region_detail').eq(0).attr('id')];
+                if (isSubject)
+                    task.setSubject($el.val(), true);
+                else if (isBody)
+                    task.setBody($el.val());
+            });
+            this.$wrapper_detail.change(function (e) {
+                var $el = $(e.target);
+                //dueTime调整 需处理批量场景
+                if ($el.is('#dueTime')) {
+                    var ids = $el.parents('.region_detail');
+                    if (ids.length == 0) return;
+                    ids = ids.eq(0).attr('id').split(',');
+                    var tasks = [ids.length];
+                    var t = $.datepicker.parseDate('mm/dd/yy', $el.val());
+                    for (var i = 0; i < ids.length; i++) {
+                        var task = cached_tasks[ids[i]];
+                        //若此时编辑了新增的任务，由于临时id被修正，将无法找到新的id，因此外围需调用repairBatchdetailId
+                        debuger.assert(task != null);
+                        tasks[i] = task;
+                        task.setDueTime(t); //TODO:调整格式yy-mm-dd
+                    }
+                    if (ids.length > 0)
+                    //额外逻辑
+                        if (base.onDueTimeBatchChange)
+                            base.onDueTimeBatchChange(tasks, t);
+                }
+            });
+        }
         //允许额外的实现
         if (this.onPrepareBinds)
             this.onPrepareBinds();
@@ -517,6 +531,10 @@ UI_List_Common.prototype = {
     _expandRowRegion: function ($row) {
         $row.parents('tbody').eq(0).show();
     },
+    _setEditable: function ($el) {
+        $el.find('input').attr('readonly', !this.modeArgs.editable);
+        $el.find('textarea').attr('readonly', !this.modeArgs.editable);
+    },
     ////////////////////////////////////////////////////////////////////////////////////////
     //行为和主要差异部分 不做实现
     //判断区域合法性
@@ -584,6 +602,13 @@ UI_List_Common.prototype = {
     toggleTasks: function () {
         var display = this.$wrapper.find('tbody').first().css('display');
         this.$wrapper.find('tbody')[display == 'none' ? 'show' : 'hide']();
+    },
+    setEditable: function (b) {
+        this.modeArgs.editable = b;
+        this.modeArgs.shortcuts_move = this.modeArgs.editable && this.modeArgs.shortcuts_move;
+        this.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion = this.modeArgs.editable && this.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion;
+        this._prepareBinds();
+        this._setEditable(this.$wrapper);
     }
 }
 //父子辅助-多态模拟

@@ -27,11 +27,13 @@ namespace Cooper.Web.Controllers
         private ITasklistService _tasklistService;
         private IAccountService _accountService;
         private IAccountConnectionService _accountConnectionService;
+        private FetchTasklistHelper _fetchTasklistHelper;
         public PersonalController(ILoggerFactory factory
             , ITaskService taskService
             , ITasklistService tasklistService
             , IAccountService accountService
-            , IAccountConnectionService accountConnectionService)
+            , IAccountConnectionService accountConnectionService
+            , FetchTasklistHelper fetchTasklistHelper)
             : base(factory)
         {
             this._log = factory.Create(typeof(PersonalController));
@@ -39,6 +41,7 @@ namespace Cooper.Web.Controllers
             this._tasklistService = tasklistService;
             this._accountService = accountService;
             this._accountConnectionService = accountConnectionService;
+            this._fetchTasklistHelper = fetchTasklistHelper;
         }
 
         public ActionResult Index(string desk)
@@ -179,6 +182,9 @@ namespace Cooper.Web.Controllers
             //模拟连接失败
             //this.TryFail();
 
+            //HACK:Fetch模式不支持同步变更
+            Assert.IsFalse(this._fetchTasklistHelper.IsFetchTasklist(tasklistId));
+
             var account = this.Context.Current;
             var list = _serializer.JsonDeserialize<ChangeLog[]>(changes);
             var idChanges = new Dictionary<string, string>();//old,new
@@ -272,22 +278,28 @@ namespace Cooper.Web.Controllers
         private ActionResult GetBy(string tasklistId
             , Func<Account, IEnumerable<Task>> func1
             , Func<Account, Tasklist, IEnumerable<Task>> func2
-            , Func<Account, Task[], Sort[]> func3
-            , Func<Account, Tasklist, Task[], Sort[]> func4)
+            , Func<Account, TaskInfo[], Sort[]> func3
+            , Func<Account, Tasklist, TaskInfo[], Sort[]> func4)
         {
             var list = this.GetTasklist(tasklistId);
             var account = this.Context.Current;
 
-            var tasks = list == null
-                ? func1(account).ToArray()
-                : func2(account, list).ToArray();
+            TaskInfo[] tasks = null;
+
+            var editable = list != null
+                || (tasks = this._fetchTasklistHelper.FetchTasks(account, tasklistId)) == null;
+
+            tasks = list == null
+                ? (tasks ?? this.ParseTasks(func1(account).ToArray()))
+                : this.ParseTasks(func2(account, list).ToArray());
 
             return Json(new
             {
-                List = this.ParseTasks(tasks),
+                Editable = editable,
+                List = tasks,
                 Sorts = list == null
                     ? func3(account, tasks)
-                    : func4(account, list, tasks)
+                    : func4(account, list, tasks),
             });
         }
         private Tasklist GetTasklist(string tasklistId)
@@ -319,62 +331,62 @@ namespace Cooper.Web.Controllers
                 IsCompleted = o.IsCompleted
             }).ToArray();
         }
-        private Sort[] ParseSortsByPriority(Account account, params Task[] tasks)
+        private Sort[] ParseSortsByPriority(Account account, params TaskInfo[] tasks)
         {
             return this.ParseSortsByPriority(account
                 , this.GetSorts(account, PROFILE_SORT_PRIORITY)
                 , tasks);
         }
-        private Sort[] ParseSortsByPriority(Account account, Tasklist tasklist, params Task[] tasks)
+        private Sort[] ParseSortsByPriority(Account account, Tasklist tasklist, params TaskInfo[] tasks)
         {
             return this.ParseSortsByPriority(account
                 , this.GetSorts(tasklist, PROFILE_SORT_PRIORITY)
                 , tasks);
         }
-        private Sort[] ParseSortsByPriority(Account account, Sort[] arr, params Task[] tasks)
+        private Sort[] ParseSortsByPriority(Account account, Sort[] sorts, params TaskInfo[] tasks)
         {
             Sort today, upcoming, later;
-            today = arr.FirstOrDefault(o => o.Key == "0") ?? new Sort() { By = "priority", Key = "0" };
+            today = sorts.FirstOrDefault(o => o.Key == "0") ?? new Sort() { By = "priority", Key = "0" };
             today.Name = "今天";
-            upcoming = arr.FirstOrDefault(o => o.Key == "1") ?? new Sort() { By = "priority", Key = "1" };
+            upcoming = sorts.FirstOrDefault(o => o.Key == "1") ?? new Sort() { By = "priority", Key = "1" };
             upcoming.Name = "稍后完成";
-            later = arr.FirstOrDefault(o => o.Key == "2") ?? new Sort() { By = "priority", Key = "2" };
+            later = sorts.FirstOrDefault(o => o.Key == "2") ?? new Sort() { By = "priority", Key = "2" };
             later.Name = "迟些再说";
             //修正索引
-            this.RepairIndexs(today, this.Parse(tasks, o => o.Priority == Priority.Today));
-            this.RepairIndexs(upcoming, this.Parse(tasks, o => o.Priority == Priority.Upcoming));
-            this.RepairIndexs(later, this.Parse(tasks, o => o.Priority == Priority.Later));
+            this.RepairIndexs(today, this.Parse(tasks, o => o.Priority == (int)Priority.Today));
+            this.RepairIndexs(upcoming, this.Parse(tasks, o => o.Priority == (int)Priority.Upcoming));
+            this.RepairIndexs(later, this.Parse(tasks, o => o.Priority == (int)Priority.Later));
 
             return new Sort[] { today, upcoming, later };
         }
-        private Sort[] ParseSortsByDueTime(Account account, params Task[] tasks)
+        private Sort[] ParseSortsByDueTime(Account account, params TaskInfo[] tasks)
         {
             return this.ParseSortsByDueTime(account, this.GetSorts(account, PROFILE_SORT_DUETIME), tasks);
         }
-        private Sort[] ParseSortsByDueTime(Account account, Tasklist tasklist, params Task[] tasks)
+        private Sort[] ParseSortsByDueTime(Account account, Tasklist tasklist, params TaskInfo[] tasks)
         {
             return this.ParseSortsByDueTime(account, this.GetSorts(tasklist, PROFILE_SORT_DUETIME), tasks);
         }
-        private Sort[] ParseSortsByDueTime(Account account, Sort[] arr, params Task[] tasks)
+        private Sort[] ParseSortsByDueTime(Account account, Sort[] sorts, params TaskInfo[] tasks)
         {
             Sort due, today, upcoming, later;
-            due = arr.FirstOrDefault(o => o.Key == "dueTime") ?? new Sort() { By = "", Key = "dueTime" };
+            due = sorts.FirstOrDefault(o => o.Key == "dueTime") ?? new Sort() { By = "", Key = "dueTime" };
             due.Name = "按截止日期排序";
-            today = arr.FirstOrDefault(o => o.Key == "0") ?? new Sort() { By = "priority", Key = "0" };
+            today = sorts.FirstOrDefault(o => o.Key == "0") ?? new Sort() { By = "priority", Key = "0" };
             today.Name = "今天";
-            upcoming = arr.FirstOrDefault(o => o.Key == "1") ?? new Sort() { By = "priority", Key = "1" };
+            upcoming = sorts.FirstOrDefault(o => o.Key == "1") ?? new Sort() { By = "priority", Key = "1" };
             upcoming.Name = "稍后完成";
-            later = arr.FirstOrDefault(o => o.Key == "2") ?? new Sort() { By = "priority", Key = "2" };
+            later = sorts.FirstOrDefault(o => o.Key == "2") ?? new Sort() { By = "priority", Key = "2" };
             later.Name = "迟些再说";
             //修正索引
-            this.RepairIndexs(due, this.Parse(tasks, o => o.DueTime.HasValue));
-            this.RepairIndexs(today, this.Parse(tasks, o => !o.DueTime.HasValue && o.Priority == Priority.Today));
-            this.RepairIndexs(upcoming, this.Parse(tasks, o => !o.DueTime.HasValue && o.Priority == Priority.Upcoming));
-            this.RepairIndexs(later, this.Parse(tasks, o => !o.DueTime.HasValue && o.Priority == Priority.Later));
+            this.RepairIndexs(due, this.Parse(tasks, o => !string.IsNullOrEmpty(o.DueTime)));
+            this.RepairIndexs(today, this.Parse(tasks, o => string.IsNullOrEmpty(o.DueTime) && o.Priority == (int)Priority.Today));
+            this.RepairIndexs(upcoming, this.Parse(tasks, o => string.IsNullOrEmpty(o.DueTime) && o.Priority == (int)Priority.Upcoming));
+            this.RepairIndexs(later, this.Parse(tasks, o => string.IsNullOrEmpty(o.DueTime) && o.Priority == (int)Priority.Later));
 
             return new Sort[] { due, today, upcoming, later };
         }
-        private void RepairIndexs(Sort sort, IDictionary<string, Task> tasks)
+        private void RepairIndexs(Sort sort, IDictionary<string, TaskInfo> tasks)
         {
             var temp = (sort.Indexs ?? new string[0]).ToList();
             if (this._log.IsDebugEnabled)
@@ -384,14 +396,14 @@ namespace Cooper.Web.Controllers
             if (this._log.IsDebugEnabled)
                 this._log.DebugFormat("过滤后排序为{0}", string.Join(",", temp));
             //合并未在索引中出现的项
-            sort.Indexs = temp.Union(tasks.Select(o => o.Value.ID.ToString())).ToArray();
+            sort.Indexs = temp.Union(tasks.Select(o => o.Value.ID)).ToArray();
             if (this._log.IsDebugEnabled)
                 this._log.DebugFormat("合并后排序为{0}", string.Join(",", sort.Indexs));
         }
-        private IDictionary<string, Task> Parse(Task[] tasks, Func<Task, bool> filter)
+        private IDictionary<string, TaskInfo> Parse(TaskInfo[] tasks, Func<TaskInfo, bool> filter)
         {
             return tasks.Where(filter)
-                .Select(o => new KeyValuePair<string, Task>(o.ID.ToString(), o))
+                .Select(o => new KeyValuePair<string, TaskInfo>(o.ID, o))
                 .ToDictionary(o => o.Key, o => o.Value);
         }
         private Sort[] GetSorts(Account a, string key)
@@ -458,6 +470,14 @@ namespace Cooper.Web.Controllers
         /// <summary>是否完成
         /// </summary>
         public bool IsCompleted { get; set; }
+
+        //额外属性
+
+        /// <summary>是否可编辑
+        /// </summary>
+        public bool Editable { get; set; }
+
+        public TaskInfo() { this.Editable = true; }
     }
     /// <summary>描述数据变更记录
     /// </summary>
