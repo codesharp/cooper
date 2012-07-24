@@ -51,6 +51,17 @@
     <Compile Include="Accounts\AccountService.cs" />
     <Compile Include="Accounts\IAccountRepository.cs" />
     <Compile Include="Accounts\Profile.cs" />
+    <Compile Include="AddressBooks\AddressBook.cs" />
+    <Compile Include="AddressBooks\AddressBookService.cs" />
+    <Compile Include="AddressBooks\IAddressBookRepository.cs" />
+    <Compile Include="ContactGroups\ContactGroup.cs" />
+    <Compile Include="ContactGroups\ContactGroupService.cs" />
+    <Compile Include="ContactGroups\IContactGroupRepository.cs" />
+    <Compile Include="Contacts\Contact.cs" />
+    <Compile Include="Contacts\ContactService.cs" />
+    <Compile Include="Contacts\IContactRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="Lock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
