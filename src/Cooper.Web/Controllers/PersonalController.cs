@@ -361,11 +361,11 @@ namespace Cooper.Web.Controllers
         {
             Sort today, upcoming, later;
             today = sorts.FirstOrDefault(o => o.Key == "0") ?? new Sort() { By = "priority", Key = "0" };
-            today.Name = "今天";
+            today.Name = this.Lang().priority_today;
             upcoming = sorts.FirstOrDefault(o => o.Key == "1") ?? new Sort() { By = "priority", Key = "1" };
-            upcoming.Name = "稍后完成";
+            upcoming.Name = this.Lang().priority_upcoming;
             later = sorts.FirstOrDefault(o => o.Key == "2") ?? new Sort() { By = "priority", Key = "2" };
-            later.Name = "迟些再说";
+            later.Name = this.Lang().priority_later;
             //修正索引
             this.RepairIndexs(today, this.Parse(tasks, o => o.Priority == (int)Priority.Today));
             this.RepairIndexs(upcoming, this.Parse(tasks, o => o.Priority == (int)Priority.Upcoming));
@@ -385,13 +385,13 @@ namespace Cooper.Web.Controllers
         {
             Sort due, today, upcoming, later;
             due = sorts.FirstOrDefault(o => o.Key == "dueTime") ?? new Sort() { By = "", Key = "dueTime" };
-            due.Name = "按截止日期排序";
+            due.Name = this.Lang().sort_by_duetime;
             today = sorts.FirstOrDefault(o => o.Key == "0") ?? new Sort() { By = "priority", Key = "0" };
-            today.Name = "今天";
+            today.Name = this.Lang().priority_today;
             upcoming = sorts.FirstOrDefault(o => o.Key == "1") ?? new Sort() { By = "priority", Key = "1" };
-            upcoming.Name = "稍后完成";
+            upcoming.Name = this.Lang().priority_upcoming;
             later = sorts.FirstOrDefault(o => o.Key == "2") ?? new Sort() { By = "priority", Key = "2" };
-            later.Name = "迟些再说";
+            later.Name = this.Lang().priority_later;
             //修正索引
             this.RepairIndexs(due, this.Parse(tasks, o => !string.IsNullOrEmpty(o.DueTime)));
             this.RepairIndexs(today, this.Parse(tasks, o => string.IsNullOrEmpty(o.DueTime) && o.Priority == (int)Priority.Today));

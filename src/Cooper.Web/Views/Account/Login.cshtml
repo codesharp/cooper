@@ -57,14 +57,14 @@
                         <label class="control-label">
                             @this.Lang().account</label>
                         <div class="controls">
-                            <input type="text" name="username" value="">
+                            <input type="text" name="username">
                         </div>
                     </div>
                     <div class="control-group">
                         <label class="control-label">
-                            @this.Lang().passwork</label>
+                            @this.Lang().password</label>
                         <div class="controls">
-                            <input type="password" name="password">
+                            <input type="password" name="password" >
                             <p class="help-block">
                                 @this.Lang().forget_password</p>
                         </div>
@@ -73,7 +73,13 @@
                         <label class="control-label">
                         </label>
                         <div class="controls">
-                            <button type="submit" class="btn btn-info">
+                            <button type="submit" class="btn btn-info" 
+                                onclick="
+                                var u=$('input[name=username]').val()!='';
+                                var p=$('input[name=password]').val()!='';
+                                $('.control-group').eq(1)[u?'removeClass':'addClass']('error');
+                                $('.control-group').eq(2)[p?'removeClass':'addClass']('error');
+                                return u&&p;">
                                 @this.Lang().login</button>
                         </div>
                     </div>

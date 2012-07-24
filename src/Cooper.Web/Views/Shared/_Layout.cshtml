@@ -126,16 +126,40 @@
         <div class="modal-body">
             <form class="well form-search well">
             <div class="control-group">
-                @foreach (var l in tasklists)
-                {
-                    <span class="label label-info" id="@l.ID">@l.Name</span>
-                }
+                <input type="text" class="input-medium search-query" maxlength="50" placeholder="@this.Lang().tasklist" />
+                <button type="button" class="btn btn-primary" onclick="doAddTasklist(this)">@this.Lang().add</button>
             </div>
             <hr />
-            <div class="control-group">
-                <input type="text" class="input-medium search-query" maxlength="50" placeholder="@this.Lang().tasklist" />
-                <button type="button" class="btn" onclick="doAddTasklist(this)">@this.Lang().add</button>
+            <div class="control-group" style="line-height: 30px">
+                <div class="row show-grid">
+                    @foreach (var l in tasklists)
+                    {
+                        <div class="span2" title="@l.Name">
+                            <i class="icon-list"></i>
+                            @l.Name.ShortString(10)
+                        </div>
+                    }
+                </div>
             </div>
+            </form>
+        </div>
+    </div>
+    <!--share box-->
+    <div class="modal hide" id="shareModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                ×</button>
+            <h3>
+                @this.Lang().share_to</h3>
+        </div>
+        <div class="modal-body">
+            <form class="well form-search well">
+                <div class="control-group">
+                    <textarea id="share_title" style="width:80%; height:150px"></textarea>
+                </div>
+                <div class="control-group">
+                    @{ Html.RenderPartial("ShareToRegion"); }
+                </div>
             </form>
         </div>
     </div>
@@ -222,6 +246,11 @@
         function showArchive() {
             isShowArchive = true;
             if (ui_list_helper == ui_list_helper_priority) byPriority();
+        }
+        ///////////////////////////////////////////////////////////////////////////////////////
+        function share(e) {
+            $('#shareModal').modal('show');
+            $('#share_title').val($(e).parents('div.region_detail').eq(0).find('input').val() + lang.share_description);
         }
         ///////////////////////////////////////////////////////////////////////////////////////
         //tasklist ui

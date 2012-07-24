@@ -11,7 +11,7 @@ div#cancel_delete a {
 }
 div#error_lose_connect {
 	position: absolute;
-	width:180px;
+	width: 180px;
 	z-index: 999;
 	margin-top: -155px;
 	margin-left: 5px;
@@ -22,6 +22,19 @@ div#error_lose_connect .progress {
 }
 div#error_lose_connect .progress .bar {
 	width: 100%;
+}
+ul#tasklists {
+	max-height: 400px;
+	overflow: auto;
+}
+ul#tasklists span {
+	padding-left: 3px;
+}
+.btn-toolbar i {
+	margin-right: 3px;
+}
+.dropdown-menu i {
+	margin-right: 3px;
 }
 /***************************************************************************************/
 .todolist_wrapper {
@@ -41,7 +54,7 @@ div#error_lose_connect .progress .bar {
 /***************************************************************************************/
 /*---row---*/
 .todolist .row_header td {
-	color: #808080;
+	color: #747474;
 	font-weight: 800;
 }
 .todolist:first-child .row_header td {
@@ -79,12 +92,6 @@ div#error_lose_connect .progress .bar {
 .todolist .row_active:hover input {
 	background-color: #B0E0E6;
 }
-
-
-.todolist .row_completed input {
-	text-decoration: line-through;
-	color: #808080;
-}
 /***************************************************************************************/
 /*---row cells---*/
 .todolist .row_task .cell_num {
@@ -104,7 +111,7 @@ div#error_lose_connect .progress .bar {
 	cursor: move;
 }
 .todolist .row_task .cell_bool {
-	width: 53px;/*ie7存在此宽度的兼容问题*/
+	width: 53px; /*ie7存在此宽度的兼容问题*/
 	text-align: center;
 	border-right: 1px #ccc solid;
 }
@@ -132,6 +139,13 @@ div#error_lose_connect .progress .bar {
 	z-index: 50;
 	margin-top: 0px;
 	margin-left: 2px;
+	font-weight:300;
+	font-size:13px;
+}
+.todolist .row_completed .cell_string input {
+	text-decoration: line-through;
+	color: #747474;
+	font-weight:300;
 }
 .todolist .row_task .cell_string div {
 	float: right;

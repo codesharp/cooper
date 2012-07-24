@@ -150,6 +150,10 @@ namespace Cooper.Web.Controllers
         [HttpPost]
         public ActionResult Login(string userName, string password)
         {
+            if (string.IsNullOrWhiteSpace(userName) 
+                || string.IsNullOrWhiteSpace(password))
+                throw new CooperknownException(this.Lang().username_or_password_cannot_empty);
+
             var a = this._accountService.GetAccount(userName);
 
             var release = this._sysConfig_versionFlag.Equals("Release");
