@@ -154,16 +154,30 @@ namespace Cooper.Web.Controllers
         #endregion
 
         #region 变更处理
-        /// <summary>创建个人任务表
+        /// <summary>创建任务表
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="type">任务表类型，如：personal，team，project...</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult CreatePersonalTasklist(string name)
+        public ActionResult CreateTasklist(string name, string type)
         {
+            //目前只提供个人任务表
             var list = new PersonalTasklist(name, this.Context.Current);
             this._tasklistService.Create(list);
             return Json(list.ID);
+        }
+        /// <summary>删除任务表
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult DeleteTasklist(string id)
+        {
+            var list = this.GetTasklist(id);
+            if (list != null)
+                this._tasklistService.Delete(list);
+            return Json(true);
         }
         /// <summary>用于接收终端的变更同步数据，按tasklist为同步
         /// </summary>

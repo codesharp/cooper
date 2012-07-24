@@ -1,8 +1,8 @@
 ﻿@{
     var url = Request.Url.ToString().ToLower();
     var active="class=\"active\"";
-    var isProfile = url.Contains("/profile") ? active : string.Empty;
     var isConnection = url.Contains("/connection") ? active : string.Empty;
+    var isProfile = url.Contains("/profile") || url.EndsWith("account") || url.EndsWith("account/") ? active : string.Empty;
 }
 
 

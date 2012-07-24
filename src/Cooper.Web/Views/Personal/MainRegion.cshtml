@@ -10,26 +10,26 @@
 </div>
 <div style="padding: 10px 5px 0;">
     <ul class="nav nav-tabs">
-        <li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown">
-            <span id="tasklist_title"></span>
-            <b class="caret"></b></a>
-            <ul class="dropdown-menu">
+        <li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown"><span
+            id="tasklist_title"></span><b class="caret"></b></a>
+            <ul id="tasklists" class="dropdown-menu" style="max-height: 250px; overflow: auto">
+                <li><a onclick="openTasklists()"><i class="icon-edit"></i>@this.Lang().new_tasklist
+                    <span class="label label-important">New!</span></a></li>
                 <!--任务表-->
-                <li><a class="changelist" id=""><i class="icon-inbox"></i> <span> @this.Lang().personal_task_management</span></a></li>
-                
+                <li><a class="changelist" id=""><i class="icon-inbox"></i><span>@this.Lang().personal_task_management</span></a></li>
                 @{ Html.RenderPartial("FetchTasklistRegion"); }
-
                 @foreach (var l in tasklists)
                 {
-                    <li><a class="changelist" id="@l.ID"><i class="icon-list"></i> <span>@l.Name</span></a></li>
+                    <li><a class="changelist" id="@l.ID"><i class="icon-list"></i><span>@l.Name</span> </a>
+                    </li>
                 }
-                <li><a onclick="newTasklist()"><i class="icon-edit"></i> @this.Lang().manageTasklist</a></li>
             </ul>
         </li>
         <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">@this.Lang().more
             <b class="caret"></b></a>
             <ul class="dropdown-menu">
-                <li><a onclick="syncAccount()"><i class="icon-refresh"></i>@this.Lang().sync_to</a></li>
+                <li id="tasklist_delete"><a onclick="doRemoveTasklist()"><i class="icon-trash"></i>@this.Lang().delete_tasklist</a></li>
+                @*<li><a onclick="syncAccount()"><i class="icon-refresh"></i>@this.Lang().sync_to</a></li>*@
                 <li><a href="@Url.Action("", "Account", null)"><i class="icon-user"></i>@this.Lang().my_profile</a>
                 </li>
                 <li><a><i class="icon-print"></i>@this.Lang().print</a></li>
@@ -76,6 +76,7 @@
 </div>
 <div id="todolist_wrapper" class="todolist_wrapper">
 </div>
+<!--快捷键说明-->
 <div style="border-top: 1px #ccc solid; padding: 10px;">
     <span class="label label-info">↵ @this.Lang().addNew</span> <span class="label label-success">
         Ctrl+↵
@@ -83,6 +84,7 @@
     <span class="label label-inverse">Ctrl/Shift+@this.Lang().mouse @this.Lang().select_inverse</span>
     <span class="label label-warning">Backspace @this.Lang().delete</span>
 </div>
+<!--异常显示-->
 <div id="error_lose_connect" class="alert alert-error hide">
     <strong>Oops !</strong><br />
     @this.Lang().lose_conn<br />

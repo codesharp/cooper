@@ -77,6 +77,9 @@
                 </table>
             </div>
         </div>
+        <ul id="tmp_tasklist_item">
+            <li><a class="changelist" id="{id}"><i class="icon-list"></i><span>{name}</span></a></li>
+        </ul>
     </div>
     <!--sync box hide-->
     <div class="modal hide" id="syncModal">
@@ -121,18 +124,19 @@
                 @this.Lang().tasklist</h3>
         </div>
         <div class="modal-body">
-            @foreach (var l in tasklists)
-            {
-                <span class="label label-info" id="@l.ID">@l.Name</span>
-            }
-            <br />
-            <br />
-            <div>
-            <input type="text" class="input" maxlength="50" /> 
-            <button type="button" class="btn">@this.Lang().add</button>
+            <form class="well form-search well">
+            <div class="control-group">
+                @foreach (var l in tasklists)
+                {
+                    <span class="label label-info" id="@l.ID">@l.Name</span>
+                }
             </div>
-        </div>
-        <div class="modal-footer">
+            <hr />
+            <div class="control-group">
+                <input type="text" class="input-medium search-query" maxlength="50" placeholder="@this.Lang().tasklist" />
+                <button type="button" class="btn" onclick="doAddTasklist(this)">@this.Lang().add</button>
+            </div>
+            </form>
         </div>
     </div>
     @{ Html.RenderSettings(); }
@@ -174,12 +178,8 @@
             ui_list_helper_priority = create_UI_List_Priority();
             ui_list_helper_due = create_UI_List_Due();
 
-
-            $('a.changelist').click(function () {
-                var $e = $(this);
-                $('#tasklist_title').html($e.find('span').html());
-                list($e.attr('id'));
-            }).eq(0).click();
+            refreshTasklists();
+            list('');
 
             $('.btn_sync').click(function () {
                 var $e = $(this);
@@ -223,11 +223,53 @@
             isShowArchive = true;
             if (ui_list_helper == ui_list_helper_priority) byPriority();
         }
-        function list(id) {
-            currentMode(function () { currentList = id; });
+        ///////////////////////////////////////////////////////////////////////////////////////
+        //tasklist ui
+        function refreshTasklists() {
+            $('#tasklists .changelist').unbind().click(function () {
+                list($(this).attr('id'));
+            });
         }
-        function newTasklist() {
+        function list(id) {
+            $('#tasklist_title').html($('#tasklists a.changelist[id=' + id + ']').find('span').html());
+            currentMode(function () {
+                currentList = id;
+                var temp = parseInt(id);
+                $('#tasklist_delete')[isNaN(temp) ? 'hide' : 'show']();
+            });
+        }
+        function addTasklist(l) {
+            $('#tasklists').append(render($('#tmp_tasklist_item').html(), l));
+            refreshTasklists();
+        }
+        function removeTasklist(i) {
+            $('#tasklists li[id=' + i + ']').remove();
+        }
+        function openTasklists() {
             $('#tasklistModal').modal('show');
+        }
+        function doAddTasklist(btn) {
+            var $btn = $(btn);
+            var val = $.trim($btn.prev().val());
+            $btn.parent()[val == '' ? 'addClass' : 'removeClass']('error');
+            if (val == '') return;
+
+            $.post(url_tasklist_create, { name: val, type: 'personal' }, function (d) {
+                debuger.info('new tasklist#' + d);
+                $btn.prev().val('');
+                $('#tasklistModal').modal('hide');
+                addTasklist({ id: d, name: val });
+                list(d);
+            });
+        }
+        function doRemoveTasklist() {
+            if (!confirm(lang.confirm_delete_tasklist)) return;
+
+            $.post(url_tasklist_delete, { id: currentList }, function () {
+                debuger.info('remove tasklist#' + currentList);
+                removeTasklist(currentList);
+                list('');
+            });
         }
         ////////////////////////////////////////////////////////////////////////////////////////
         //切换tab时将总是从server读取最新数据以及正确的索引信息
