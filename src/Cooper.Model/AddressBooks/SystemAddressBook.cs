@@ -1,5 +1,7 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
+using System;
+
 namespace Cooper.Model.AddressBooks
 {
     /// <summary>系统通讯簿模型
@@ -10,6 +12,12 @@ namespace Cooper.Model.AddressBooks
     /// </summary>
     public class SystemAddressBook : AddressBook
     {
+        protected SystemAddressBook() : base()
+        { }
+        public SystemAddressBook(string name) : base(name)
+        {
+        }
+
         //目前不需要额外的属性或行为
     }
 }

@@ -11,6 +11,9 @@ using System.Reflection;
 using Cooper.Model.Tasks;
 using CodeSharp.Core.Services;
 using Cooper.Model.Accounts;
+using Cooper.Model.AddressBooks;
+using Cooper.Model.ContactGroups;
+using Cooper.Model.Contacts;
 
 namespace Cooper.Model.Test
 {
@@ -26,6 +29,9 @@ namespace Cooper.Model.Test
         protected IAccountConnectionService _accountConnectionService;
         protected IAccountHelper _accountHelper;
         protected ITasklistService _tasklistService;
+        protected IAddressBookService _addressBookService;
+        protected IContactGroupService _contactGroupService;
+        protected IContactService _contactService;
 
         [TestFixtureSetUp]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestInitialize]
@@ -58,6 +64,9 @@ namespace Cooper.Model.Test
             this._accountConnectionService = DependencyResolver.Resolve<IAccountConnectionService>();
             this._taskService = DependencyResolver.Resolve<ITaskService>();
             this._tasklistService = DependencyResolver.Resolve<ITasklistService>();
+            this._addressBookService = DependencyResolver.Resolve<IAddressBookService>();
+            this._contactGroupService = DependencyResolver.Resolve<IContactGroupService>();
+            this._contactService = DependencyResolver.Resolve<IContactService>();
         }
 
         protected virtual void Resolve(Castle.Windsor.IWindsorContainer windsor)
@@ -108,6 +117,10 @@ namespace Cooper.Model.Test
             var list = new PersonalTasklist(this.RandomString(), a);
             this._tasklistService.Create(list);
             return list;
+        }
+        protected DateTime FormatTime(DateTime time)
+        {
+            return new DateTime(time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
         }
     }
 }
