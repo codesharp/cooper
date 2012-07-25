@@ -48,6 +48,9 @@
   <ItemGroup>
     <Compile Include="AccountMap.cs" />
     <Compile Include="AccountConnectionMap.cs" />
+    <Compile Include="AddressBookMap.cs" />
+    <Compile Include="ContactGroupMap.cs" />
+    <Compile Include="ContactMap.cs" />
     <Compile Include="TasklistMap.cs" />
     <Compile Include="LockMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

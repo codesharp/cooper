@@ -29,9 +29,6 @@ namespace Cooper.Model.Contacts
         /// <summary>获取指定通讯簿的所有联系人
         /// </summary>
         IEnumerable<Contact> GetContacts(AddressBook addressBook);
-        /// <summary>获取指定联系人组的所有联系人
-        /// </summary>
-        IEnumerable<Contact> GetContacts(ContactGroup contactGroup);
     }
     /// <summary>联系人领域服务实现
     /// </summary>
@@ -81,10 +78,6 @@ namespace Cooper.Model.Contacts
         IEnumerable<Contact> IContactService.GetContacts(AddressBook addressBook)
         {
             return _repository.FindBy(addressBook);
-        }
-        IEnumerable<Contact> IContactService.GetContacts(ContactGroup contactGroup)
-        {
-            return _repository.FindBy(contactGroup);
         }
     }
 }

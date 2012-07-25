@@ -50,6 +50,9 @@
   <ItemGroup>
     <Compile Include="AccountRepository.cs" />
     <Compile Include="AccountConnectionRepository.cs" />
+    <Compile Include="AddressBookRepository.cs" />
+    <Compile Include="ContactGroupRepository.cs" />
+    <Compile Include="ContactRepository.cs" />
     <Compile Include="TasklistRepository.cs" />
     <Compile Include="LockRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

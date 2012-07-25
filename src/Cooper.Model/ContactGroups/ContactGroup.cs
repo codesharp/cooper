@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CodeSharp.Core.DomainBase;
 using Cooper.Model.AddressBooks;
 using Cooper.Model.Contacts;
@@ -17,6 +18,8 @@ namespace Cooper.Model.ContactGroups
     /// </summary>
     public class ContactGroup : EntityBase<int>, IAggregateRoot
     {
+        private IList<Contact> _contacts = new List<Contact>();
+
         protected ContactGroup() { this.CreateTime = DateTime.Now; }
         public ContactGroup(AddressBook addressBook, string name) : this()
         {
@@ -32,9 +35,9 @@ namespace Cooper.Model.ContactGroups
         /// <summary>所属通讯簿ID
         /// </summary>
         public int AddressBookId { get; private set; }
-        /// <summary>联系人组关联的联系人ID的集合，用一个拼接字符串表示，以分号分隔
+        /// <summary>关联的联系人
         /// </summary>
-        public string ContactIds { get; private set; }
+        public IEnumerable<Contact> Contacts { get { return _contacts; } }
         /// <summary>创建时间
         /// </summary>
         public DateTime CreateTime { get; private set; }
@@ -59,19 +62,11 @@ namespace Cooper.Model.ContactGroups
         public void AddContact(Contact contact)
         {
             Assert.IsNotNull(contact);
-            string contactId = contact.ID.ToString();
+            Assert.AreEqual(this.AddressBookId, contact.AddressBookId);
 
-            List<string> contactIdList = new List<string>();
-
-            if (!string.IsNullOrWhiteSpace(this.ContactIds))
+            if (!_contacts.Any(x => x.ID == contact.ID))
             {
-                contactIdList.AddRange(this.ContactIds.Split(';'));
-            }
-
-            if (!contactIdList.Contains(contactId))
-            {
-                contactIdList.Add(contactId);
-                this.ContactIds = string.Join(";", contactIdList.ToArray());
+                _contacts.Add(contact);
             }
         }
         /// <summary>将指定联系人从组移除
@@ -79,19 +74,11 @@ namespace Cooper.Model.ContactGroups
         public void RemoveContact(Contact contact)
         {
             Assert.IsNotNull(contact);
-            string contactId = contact.ID.ToString();
 
-            List<string> contactIdList = new List<string>();
-
-            if (!string.IsNullOrWhiteSpace(this.ContactIds))
+            var contactToRemove = _contacts.SingleOrDefault(x => x.ID == contact.ID);
+            if (contactToRemove != null)
             {
-                contactIdList.AddRange(this.ContactIds.Split(';'));
-            }
-
-            if (contactIdList.Contains(contactId))
-            {
-                contactIdList.Remove(contactId);
-                this.ContactIds = string.Join(";", contactIdList.ToArray());
+                _contacts.Remove(contactToRemove);
             }
         }
     }

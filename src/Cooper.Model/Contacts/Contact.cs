@@ -74,10 +74,14 @@ namespace Cooper.Model.Contacts
             }
         }
         /// <summary>设置邮箱
+        /// <remarks>
+        /// 长度应小于100
+        /// </remarks>
         /// </summary>
         public void SetEmail(string email)
         {
             Assert.IsNotNullOrWhiteSpace(email);
+            Assert.LessOrEqual(email.Length, 100);
 
             if (this.Email != email)
             {
@@ -86,9 +90,17 @@ namespace Cooper.Model.Contacts
             }
         }
         /// <summary>设置联系电话
+        /// <remarks>
+        /// 长度应小于100
+        /// </remarks>
         /// </summary>
         public void SetPhone(string phone)
         {
+            if (phone != null)
+            {
+                Assert.LessOrEqual(phone.Length, 100);
+            }
+
             if (this.Phone != phone)
             {
                 this.Phone = phone;

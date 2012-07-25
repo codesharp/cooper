@@ -13,6 +13,5 @@ namespace Cooper.Model.Contacts
     public interface IContactRepository : IRepository<int, Contact>
     {
         IEnumerable<Contact> FindBy(AddressBook addressBook);
-        IEnumerable<Contact> FindBy(ContactGroup contactGroup);
     }
 }
