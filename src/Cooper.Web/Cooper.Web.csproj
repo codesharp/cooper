@@ -175,7 +175,18 @@
     <Content Include="Global.asax" />
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="Hybrid\css\base.css" />
     <Content Include="Hybrid\images\cooper.png" />
+    <Content Include="Hybrid\images\task.png" />
+    <Content Include="Hybrid\images\tasklist.png" />
+    <Content Include="Hybrid\images\refresh.png" />
+    <Content Include="Hybrid\images\complete.png" />
+    <Content Include="Hybrid\images\incomplete.png" />
+    <Content Include="Hybrid\images\add.png" />
+    <Content Include="Hybrid\images\bg-line.png" />
+    <Content Include="Hybrid\images\edit.png" />
+    <Content Include="Hybrid\images\setting.png" />
+    <Content Include="Hybrid\images\back.png" />
     <Content Include="Hybrid\login.htm" />
     <Content Include="Hybrid\scripts\cooper.js" />
     <Content Include="Hybrid\scripts\lang.js" />
@@ -305,9 +316,7 @@
     <None Include="README.md" />
     <Content Include="Views\Shared\ShareToRegion.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Hybrid\css\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

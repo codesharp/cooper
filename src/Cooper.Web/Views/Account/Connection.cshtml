@@ -10,23 +10,23 @@
 <div class="alert alert-info">
     <strong>@this.Lang().account_connection</strong> @this.Lang().account_connection_description
 </div>
-<div class="alert">
+@*<div class="alert">
     <strong>@this.Lang().about_sync</strong> @this.Lang().about_sync_description
-</div>
+</div>*@
 @using (Html.BeginForm())
 {
     <ul class="nav nav-tabs nav-stacked">
         @foreach (var c in cs)
         {
             <li><a>
-                <button class="btn btn_sync" 
+                @*<button class="btn btn_sync" 
                 type="button" 
                 title="@this.Lang().sync_now"
                 data-loading-text="<i class='icon-refresh'></i> @this.Lang().sync_loading" 
                 data-complete-text="<i class='icon-random'></i> @this.Lang().sync_complete" 
                 id="@c.ID">
                     <i class="icon-random"></i>
-                </button>
+                </button>*@
                 <code>@c.GetType().Name.ConnectionName()</code>
                 @c.Name
                 <button type="submit" class="close" 
