@@ -7,6 +7,17 @@
 ///<reference path="common.js" />
 
 (function () {
-    
-    $(function () { });
+
+    //与native交互
+
+    //获取未提供的变更记录
+    function getChanges() { }
+    //增加变更记录
+    function addChange() { }
+    //创建任务表
+    function createTasklist() { }
+    //刷新/同步tasklist列表
+    function syncTasklist() { }
+    //刷新/同步任务
+    function syncTasks(tasklistId, tasklistChanges, changes, by, sorts) { }
 })();
