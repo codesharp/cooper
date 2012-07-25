@@ -118,7 +118,7 @@ UI_List_Common.prototype = {
         var base = this;
         this.$wrapper.find('.todolist:visible').each(function () {
             if (cached_idxs[$(this).attr('key')] != undefined)
-                cached_idxs[$(this).attr('key')].flush($(this).attr('by'))
+                cached_idxs[$(this).attr('key')].flush($(this).attr('by'));
         });
         //允许额外的实现
         if (this.onFlushIdxs)
