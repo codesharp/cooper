@@ -59,7 +59,7 @@
                                         <i class="icon-tag" priority="1"></i>
                                     </button>
                                     <button class="btn" title="" priority="2">
-                                        <i class="icon-inbox" priority="2"></i>
+                                        <i class="icon-pause" priority="2"></i>
                                     </button>
                                 </div>
                             </td>
@@ -326,6 +326,8 @@
                         (ui_list_helper = ui_list_helper_priority).render(b);
                         firstClick();
                         fixAfterSyncOrReload(data.Editable);
+                        $('.flag_by').hide();
+                        $('.flag_by_priority').show();
                     }
                 });
             });
@@ -349,6 +351,7 @@
                         (ui_list_helper = ui_list_helper_due).render();
                         firstClick();
                         fixAfterSyncOrReload(data.Editable);
+                        $('.flag_by').hide();
                     }
                 });
             });

@@ -104,8 +104,21 @@ UI_List_Priority.prototype.appendTask = function (p) {
         $row = $actives;
     //仅在非归档行追加
     if ($row != null && !this._isArchivedRow($row)) {
-        t.el().insertAfter($row);
+        //根据光标位置决定插入位置
+        var $input = $row.find('input');
+        t.el()[$input[0].selectionStart == 0 && $input.val() != '' ? 'insertBefore' : 'insertAfter']($row);
+        
         var active = cached_tasks[this.getTaskId($row)];
+
+        if ($input[0].selectionStart > 0) {
+            //若出现截断则拆分任务
+            var prevVal = $input.val().substring(0, $input[0].selectionStart);
+            var nextVal = $input.val().substring($input[0].selectionStart);
+            debuger.debug('prevVal=' + prevVal);
+            debuger.debug('nextVal=' + nextVal);
+            active.setSubject(prevVal, true);
+            t.setSubject(nextVal, true);
+        }
         t.setPriority(active.priority());
         cached_idxs[t.priority()].flush();
     }

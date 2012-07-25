@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="themes/cooper.css" rel="stylesheet" type="text/css" />
+    <link href="jquery/css/mobile/jquery.mobile.structure-1.1.1.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="css/base.css" rel="stylesheet" type="text/css" />
+    <style>
+    
+    </style>
+</head>
+<body>
+    <div data-role="page">
+        <div data-role="header" data-position="fixed">
+            <div class="ui-btn-left" style="line-height: 50px">
+                <img src="images/back.png" />
+            </div>
+            <h1>
+                cooper:task</h1>
+            <a class="ui-btn-right">确定</a>
+        </div>
+        <div data-role="content" style="background-color:#fff">
+            <div data-role="fieldcontain">
+                <select name="flip-1" id="flip-1" data-role="slider">
+                    <option value="false">未完成</option>
+                    <option value="true">完成</option>
+                </select>
+            </div>
+            <div data-role="fieldcontain">
+                优先级
+                <fieldset data-role="controlgroup" data-type="horizontal" >
+     	            <input type="radio" name="priority" id="radio-choice-1" value="0" @Html.Raw(task != null && task.Priority == Priority.Today ? "checked='checked'" : "")/>
+     	            <label for="radio-choice-1">今天</label>
+     	            <input type="radio" name="priority" id="radio-choice-2" value="1"  @Html.Raw(task != null && task.Priority == Priority.Upcoming ? "checked='checked'" : "")/>
+     	            <label for="radio-choice-2">稍后</label>
+     	            <input type="radio" name="priority" id="radio-choice-3" value="2"  @Html.Raw(task != null && task.Priority == Priority.Later ? "checked='checked'" : "")/>
+     	            <label for="radio-choice-3">迟些</label>
+                </fieldset>
+            </div>
+            <div data-role="fieldcontain">
+                截止日期
+                <input type="date"/>
+            </div>
+            <div data-role="fieldcontain">
+                <input type="text" placeholder="标题" />
+            </div>
+            <div data-role="fieldcontain">
+                <textarea placeholder="备注" style="height:200px"></textarea>
+            </div>
+        </div>
+    </div>
+    <script src="jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="jquery/jquery.mobile-1.1.0.min.js" type="text/javascript"></script>
+</body>
+</html>

@@ -13,6 +13,8 @@
         <li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown" title="@this.Lang().tasklist">
             <span id="tasklist_title"></span><b class="caret"></b></a>
             <ul id="tasklists" class="dropdown-menu">
+                <li><a onclick="openTasklists()"><i class="icon-edit"></i><span>@this.Lang().new_tasklist</span>
+                    <span class="label label-important">New</span></a></li>
                 <!--任务表-->
                 <li><a class="changelist" id=""><i class="icon-inbox"></i><span>@this.Lang().personal_task_management</span></a></li>
                 @{ Html.RenderPartial("FetchTasklistRegion"); }
@@ -26,8 +28,6 @@
         <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">@this.Lang().more
             <b class="caret"></b></a>
             <ul class="dropdown-menu">
-                <li><a onclick="openTasklists()"><i class="icon-edit"></i><span>@this.Lang().new_tasklist</span>
-                    <span class="label label-important">New!</span></a></li>
                 <li id="tasklist_delete"><a onclick="doRemoveTasklist()"><i class="icon-trash"></i>@this.Lang().delete_tasklist</a></li>
                 @*<li><a onclick="syncAccount()"><i class="icon-refresh"></i>@this.Lang().sync_to</a></li>*@
                 <li><a href="@Url.Action("", "Account", null)"><i class="icon-user"></i>@this.Lang().my_profile</a>
@@ -48,7 +48,7 @@
         </div>
         @if (!mini)
         {
-            <div class="btn-group pull-right flag_editable" data-toggle="buttons-radio">
+            <div class="btn-group pull-right flag_editable flag_by flag_by_priority" data-toggle="buttons-radio">
                 <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-briefcase"></i>
                     @this.Lang().archive <span class="caret"></span></a>
                 <ul class="dropdown-menu">

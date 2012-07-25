@@ -175,6 +175,27 @@
     <Content Include="Global.asax" />
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="Hybrid\images\cooper.png" />
+    <Content Include="Hybrid\login.htm" />
+    <Content Include="Hybrid\scripts\cooper.js" />
+    <Content Include="Hybrid\scripts\lang.js" />
+    <Content Include="Hybrid\task.htm" />
+    <Content Include="Hybrid\detail-edit.htm" />
+    <Content Include="Hybrid\detail.htm" />
+    <Content Include="Hybrid\tasklist.htm" />
+    <Content Include="Hybrid\index.htm" />
+    <Content Include="Hybrid\jquery\css\qunit-1.9.0.css" />
+    <Content Include="Hybrid\jquery\jquery-1.7.2.min.js" />
+    <Content Include="Hybrid\jquery\jquery.json-2.3.min.js" />
+    <Content Include="Hybrid\jquery\jquery.mobile-1.1.0.min.js" />
+    <Content Include="Hybrid\jquery\qunit-1.9.0.js" />
+    <Content Include="Hybrid\themes\cooper.css" />
+    <Content Include="Hybrid\themes\cooper.min.css" />
+    <Content Include="Hybrid\themes\images\ajax-loader.gif" />
+    <Content Include="Hybrid\themes\images\icons-18-black.png" />
+    <Content Include="Hybrid\themes\images\icons-18-white.png" />
+    <Content Include="Hybrid\themes\images\icons-36-black.png" />
+    <Content Include="Hybrid\themes\images\icons-36-white.png" />
     <Content Include="Scripts\account.js" />
     <Content Include="Scripts\common.js" />
     <Content Include="Scripts\tests.js" />
@@ -283,6 +304,9 @@
   <ItemGroup>
     <None Include="README.md" />
     <Content Include="Views\Shared\ShareToRegion.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Hybrid\css\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
