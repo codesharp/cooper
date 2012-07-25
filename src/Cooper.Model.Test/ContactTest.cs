@@ -27,7 +27,7 @@ namespace Cooper.Model.Test
         public void CreateContact()
         {
             var personalAddressBook = this.CreatePersonalAddressBook();
-            var contact = new Contact(personalAddressBook, "hewang.txh", "hewang.txh@taobao.com");
+            var contact = new Contact(personalAddressBook, "tangxuehua", "tangxuehua@163.com");
 
             contact.SetPhone("+8613777891550");
 
@@ -50,7 +50,7 @@ namespace Cooper.Model.Test
         public void UpdateContact()
         {
             var personalAddressBook = this.CreatePersonalAddressBook();
-            var contact = new Contact(personalAddressBook, "hewang.txh", "hewang.txh@taobao.com");
+            var contact = new Contact(personalAddressBook, "tangxuehua", "tangxuehua@163.com");
 
             contact.SetPhone("+8613777891550");
 
@@ -82,7 +82,7 @@ namespace Cooper.Model.Test
         public void DeleteContact()
         {
             var personalAddressBook = this.CreatePersonalAddressBook();
-            var contact = new Contact(personalAddressBook, "hewang.txh", "hewang.txh@taobao.com");
+            var contact = new Contact(personalAddressBook, "tangxuehua", "tangxuehua@163.com");
 
             this._contactService.Create(contact);
             this.Evict(contact);
@@ -102,9 +102,9 @@ namespace Cooper.Model.Test
         public void GetContacts()
         {
             var personalAddressBook = this.CreatePersonalAddressBook();
-            var contact1 = new Contact(personalAddressBook, "hewang.txh", "hewang.txh@taobao.com");
-            var contact2 = new Contact(personalAddressBook, "hewang.txh", "hewang.txh@taobao.com");
-            var contact3 = new Contact(personalAddressBook, "hewang.txh", "hewang.txh@taobao.com");
+            var contact1 = new Contact(personalAddressBook, "tangxuehua", "tangxuehua@163.com");
+            var contact2 = new Contact(personalAddressBook, "tangxuehua", "tangxuehua@163.com");
+            var contact3 = new Contact(personalAddressBook, "tangxuehua", "tangxuehua@163.com");
 
             this._contactService.Create(contact1);
             this._contactService.Create(contact2);
