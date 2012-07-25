@@ -143,7 +143,7 @@ namespace Cooper.Model.Test
         }
         private Contact CreateContact(AddressBook addressBook)
         {
-            var contact = new Contact(addressBook, "hewang.txh", "hewang.txh@taobao.com");
+            var contact = new Contact(addressBook, "tangxuehua", "tangxuehua@163.com");
             this._contactService.Create(contact);
             return contact;
         }
