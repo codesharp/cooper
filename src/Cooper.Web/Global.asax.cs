@@ -178,15 +178,6 @@ public static class WebExtensions
         return input.Length <= l ? input : input.Substring(0, l) + end;
     }
 
-    /// <summary>获取文案
-    /// </summary>
-    /// <param name="obj"></param>
-    /// <param name="key"></param>
-    /// <returns></returns>
-    public static string Text(this object obj, string key)
-    {
-        return CodeSharp.Framework.SystemConfig.Settings[key];
-    }
     public static dynamic _lang;
     /// <summary>获取文案/语言
     /// </summary>

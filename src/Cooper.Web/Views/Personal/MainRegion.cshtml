@@ -31,14 +31,16 @@
                 }
             </ul>
         </li>
-        <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">@this.Lang().more
+        <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">@this.Lang().more <span class="label label-warning">New!</span>
             <b class="caret"></b></a>
             <ul class="dropdown-menu">
                 <li id="tasklist_delete"><a onclick="doRemoveTasklist()"><i class="icon-trash"></i>@this.Lang().delete_tasklist</a></li>
                 @*<li><a onclick="syncAccount()"><i class="icon-refresh"></i>@this.Lang().sync_to</a></li>*@
                 <li><a href="@Url.Action("", "Account", null)"><i class="icon-user"></i>@this.Lang().my_profile</a>
                 </li>
-                <li><a><i class="icon-print"></i>@this.Lang().print</a></li>
+                <li><a onclick="window.print()"><i class="icon-print"></i>@this.Lang().print</a></li>
+                <li><a href="@Request.Url" target="_blank"><i class="icon-share-alt"></i>@this.Lang().open_in_new_window</a></li>
+                <li><a onclick="$('#mobi_app').modal('show')"><i class="icon-download"></i> @this.Lang().download_mobi <span class="label label-important">HOT!</span></a></li>
             </ul>
         </li>
     </ul>
