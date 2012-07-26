@@ -63,5 +63,16 @@ namespace Cooper.Web.Controllers
             }
             return null;
         }
+        //获取
+        public virtual IDictionary<string, string> GetFetchTasklists(Account account)
+        {
+            var dict = new Dictionary<string, string>();
+
+            var git = this._connectionService.GetConnections(account).FirstOrDefault(o => o is GitHubConnection);
+            if (git != null)
+                dict.Add("github", this.Lang().from + "GitHub" + this.Lang().of + this.Lang().task);
+
+            return dict;
+        }
     }
 }

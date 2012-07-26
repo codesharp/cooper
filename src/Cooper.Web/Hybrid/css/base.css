@@ -1,4 +1,11 @@
 ﻿.ui-page {
-	background-image:url('../images/bg-line.png');
-	background-repeat:repeat;
+	background-image: url('../images/bg-line.png');
+	background-repeat: repeat;
+}
+
+.ui-header img {
+	cursor: pointer;
+}
+.ui-header img:hover {
+	width: 28px;
 }

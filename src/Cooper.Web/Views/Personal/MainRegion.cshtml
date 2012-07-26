@@ -1,6 +1,7 @@
 ﻿@{
     var mini = Convert.ToBoolean(Model);
     var tasklists = ViewBag.Tasklists as IEnumerable<Cooper.Model.Tasks.PersonalTasklist>;
+    var fetchs = ViewBag.FetchTasklists as IDictionary<string, string>;
 }
 <!--撤销删除区域-->
 <div id="cancel_delete" class="alert alert-danger">
@@ -15,9 +16,14 @@
             <ul id="tasklists" class="dropdown-menu">
                 <li><a onclick="openTasklists()"><i class="icon-edit"></i><span>@this.Lang().new_tasklist</span>
                     <span class="label label-important">New</span></a></li>
-                <!--任务表-->
+                <!--default-->
                 <li><a class="changelist" id=""><i class="icon-inbox"></i><span>@this.Lang().personal_task_management</span></a></li>
-                @{ Html.RenderPartial("FetchTasklistRegion"); }
+                <!--fetch tasklists-->
+                @foreach (var f in fetchs)
+                {
+                    <li><a class="changelist" id="@f.Key"><i class="icon-list-alt"></i><span>@f.Value</span></a></li>
+                }
+                <!--personal tasklists-->
                 @foreach (var l in tasklists)
                 {
                     <li><a class="changelist" id="@l.ID"><i class="icon-list"></i><span>@l.Name</span> </a>

@@ -8,8 +8,16 @@
         type="text/css" />
     <link href="css/base.css" rel="stylesheet" type="text/css" />
     <style>
-    span.ui-btn-inner{ padding:0; height:30px; }
-    span.ui-btn-text{font-size:10px}
+        span.ui-btn-inner {
+            padding: 0;
+            height: 2.5em
+        }
+        span.ui-btn-text {
+            font-size: 12px;
+        }
+        span.ui-btn-text a.ui-link-inherit {
+            padding: 0;
+        }
     </style>
 </head>
 <body>
@@ -26,18 +34,19 @@
                 <img src="images/edit.png" /></div>
         </div>
         <div data-role="content">
-            <ul data-role="listview" data-icon="star" data-theme="c">
+            <ul data-role="listview" data-theme="c">
                 <li style="background-color: #ebebeb">马上完成 <span class="ui-li-count">2</span></li>
                 <li><a>
                     <h3>
-                        <img src="images/complete-small.png">
+                        <img src="images/incomplete-small.png">
                         任务标题</h3>
                     <p>
                         Hey Stephen, if you're available at 10am tomorrow, we've got a meeting with the
                         jQuery team.</p>
-                    <p>
-                        <strong>9-1</strong></p>
-                    <span class="ui-li-count">328</span> </a></li>
+                    <p class="ui-li-aside">
+                        <strong>12:47</strong>
+                    </p>
+                </a></li>
                 <li><a>
                     <h3>
                         <img src="images/incomplete-small.png">
@@ -45,43 +54,36 @@
                     <p>
                         Hey Stephen, if you're available at 10am tomorrow, we've got a meeting with the
                         jQuery team.</p>
-                    <p>
-                        <strong>9-1</strong></p>
-                    <span class="ui-li-count">328</span> </a></li>
-                <li><a>
-                    <h3>
-                        <img src="images/incomplete-small.png">
-                        任务标题</h3>
-                    <p>
-                        Hey Stephen, if you're available at 10am tomorrow, we've got a meeting with the
-                        jQuery team.</p>
-                    <p>
-                        <strong>9-1</strong></p>
-                    <span class="ui-li-count">328</span> </a></li>
+                    <p class="ui-li-aside">
+                        <strong>12:47</strong>
+                    </p>
+                </a></li>
                 <li style="background-color: #ebebeb">稍后完成 <span class="ui-li-count">2</span></li>
                 <li><a>
                     <h3>
-                        <img src="images/incomplete-small.png">
-                        任务标题</h3>
-                    <p>
-                        Hey Stephen, if you're available at 10am tomorrow, we've got a meeting with the
-                        jQuery team.</p>
-                    <p>
-                        <strong>9-1</strong></p>
-                    <span class="ui-li-count">328</span> </a></li>
-                <li><a>
-                    <h3>
                         <img src="images/complete-small.png">
                         任务标题</h3>
                     <p>
                         Hey Stephen, if you're available at 10am tomorrow, we've got a meeting with the
                         jQuery team.</p>
+                    <p class="ui-li-aside">
+                        <strong>12:47</strong>
+                    </p>
+                </a></li>
+                <li><a>
+                    <h3>
+                        <img src="images/incomplete-small.png">
+                        任务标题</h3>
                     <p>
-                        <strong>9-1</strong></p>
-                    <span class="ui-li-count">328</span> </a></li>
+                        Hey Stephen, if you're available at 10am tomorrow, we've got a meeting with the
+                        jQuery team.</p>
+                    <p class="ui-li-aside">
+                        <strong>12:47</strong>
+                    </p>
+                </a></li>
             </ul>
         </div>
-        <div data-role="footer" data-position="fixed" data-theme="a" >
+        <div data-role="footer" data-position="fixed" data-theme="a">
             <div data-role="navbar">
                 <ul>
                     <li><a>

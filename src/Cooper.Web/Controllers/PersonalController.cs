@@ -153,7 +153,15 @@ namespace Cooper.Web.Controllers
         }
         #endregion
 
-        #region 变更处理
+        #region Tasklist处理
+        //返回所有可用的tasklists id|name
+        public ActionResult GetTasklists()
+        {
+            var dict = this._fetchTasklistHelper.GetFetchTasklists(this.Context.Current);
+            this._tasklistService.GetTasklists(this.Context.Current).ToList()
+                .ForEach(o => dict.Add(o.ID.ToString(), o.Name));
+            return Json(dict);
+        }
         /// <summary>创建任务表
         /// </summary>
         /// <param name="name"></param>
@@ -180,6 +188,8 @@ namespace Cooper.Web.Controllers
                 this._tasklistService.Delete(list);
             return Json(true);
         }
+        #endregion
+
         /// <summary>用于接收终端的变更同步数据，按tasklist为同步
         /// </summary>
         /// <param name="tasklistId">任务表标识，允许为空，客户端在同步数据前应先确保tasklist已经创建，通过CreateTasklist</param>
@@ -288,7 +298,6 @@ namespace Cooper.Web.Controllers
             //返回修正列表
             return Json(idChanges.Select(o => new Correction() { OldId = o.Key, NewId = o.Value }));
         }
-        #endregion
 
         private ActionResult GetBy(string tasklistId
             , Func<Account, IEnumerable<Task>> func1
@@ -332,6 +341,7 @@ namespace Cooper.Web.Controllers
             var a = this.Context.Current;
             ViewBag.Connections = this._accountConnectionService.GetConnections(a);
             ViewBag.Tasklists = this._tasklistService.GetTasklists(a);
+            ViewBag.FetchTasklists = this._fetchTasklistHelper.GetFetchTasklists(a);
         }
 
         private TaskInfo[] ParseTasks(params Task[] tasks)

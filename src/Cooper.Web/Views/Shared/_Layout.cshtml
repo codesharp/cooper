@@ -265,6 +265,10 @@
                 currentList = id;
                 var temp = parseInt(id);
                 $('#tasklist_delete')[isNaN(temp) ? 'hide' : 'show']();
+            }, function () {
+                var temp = parseInt(id);
+                if (isNaN(temp))
+                    $('.flag_by').hide();
             });
         }
         function addTasklist(id, name) {
@@ -306,14 +310,14 @@
         //切换tab时将总是从server读取最新数据以及正确的索引信息
         //切换之间需要内存清理
         //b=是否加载完整列表（包含已完成的）
-        function byPriority(fn) {
+        function byPriority(fn1,fn2) {
             var b = isShowArchive;
             currentMode = byPriority;
             $el_wrapper_region.empty().append($('#loading').html());
             $el_wrapper_detail.empty();
             fixBeforeSyncOrReload();
             sync(function () {
-                if (fn) fn();
+                if (fn1) fn1();
                 $.ajax({
                     url: b ? url_task_byPriority : url_task_byPriority_incompleted,
                     //任务表标识
@@ -324,21 +328,21 @@
                     success: function (data) {
                         init(data.List, data.Sorts);
                         (ui_list_helper = ui_list_helper_priority).render(b);
-                        firstClick();
                         fixAfterSyncOrReload(data.Editable);
                         $('.flag_by').hide();
                         $('.flag_by_priority').show();
+                        if (fn2) fn2();
                     }
                 });
             });
         }
-        function byDueTime(fn) {
+        function byDueTime(fn1,fn2) {
             currentMode = byDueTime;
             $el_wrapper_region.empty().append($('#loading').html());
             $el_wrapper_detail.empty();
             fixBeforeSyncOrReload();
             sync(function () {
-                if (fn) fn();
+                if (fn1) fn1();
                 $.ajax({
                     url: url_task_byDueTime,
                     //任务表标识
@@ -349,9 +353,9 @@
                     success: function (data) {
                         init(data.List, data.Sorts);
                         (ui_list_helper = ui_list_helper_due).render();
-                        firstClick();
                         fixAfterSyncOrReload(data.Editable);
                         $('.flag_by').hide();
+                        if (fn2) fn2();
                     }
                 });
             });
@@ -368,6 +372,8 @@
             preSorts = null;
             //设置是否编辑状态
             setEditable(e);
+            //自动选中首行
+            firstClick();
         }
         function setEditable(b) {
             ui_list_helper.setEditable(b);

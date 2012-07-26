@@ -604,6 +604,7 @@ UI_List_Common.prototype = {
         this.$wrapper.find('tbody')[display == 'none' ? 'show' : 'hide']();
     },
     setEditable: function (b) {
+        debuger.debug('setEditable=' + b);
         this.modeArgs.editable = b;
         this.modeArgs.shortcuts_move = this.modeArgs.editable && this.modeArgs.shortcuts_move;
         this.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion = this.modeArgs.editable && this.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion;

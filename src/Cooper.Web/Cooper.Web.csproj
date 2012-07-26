@@ -175,6 +175,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="Hybrid\setting.htm" />
     <Content Include="Hybrid\css\base.css" />
     <Content Include="Hybrid\images\complete-small.png" />
     <Content Include="Hybrid\images\cooper.png" />
@@ -310,9 +311,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Personal\TemplateRegion.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Personal\FetchTasklistRegion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
