@@ -78,7 +78,7 @@ namespace Cooper.Sync.Test
         /// 实现同步任务的完整过程
         /// </summary>
         /// <param name="taskSyncServices">参与同步任务的具体服务</param>
-        protected virtual void SyncTasks(IEnumerable<ISyncService<TaskSyncData, ISyncData, TaskSyncResult>> taskSyncServices)
+        protected void SyncTasks(IEnumerable<ISyncService<TaskSyncData, ISyncData, TaskSyncResult>> taskSyncServices)
         {
             _logger.Info("--------开始进行任务同步--------");
 
@@ -127,7 +127,7 @@ namespace Cooper.Sync.Test
         /// 实现同步联系人的完整过程
         /// </summary>
         /// <param name="contactSyncServices">参与同步联系人的具体服务</param>
-        protected virtual void SyncContacts(IEnumerable<ISyncService<ContactSyncData, ISyncData, ContactSyncResult>> contactSyncServices)
+        protected void SyncContacts(IEnumerable<ISyncService<ContactSyncData, ISyncData, ContactSyncResult>> contactSyncServices)
         {
             _logger.InfoFormat("--------开始进行联系人同步--------");
 

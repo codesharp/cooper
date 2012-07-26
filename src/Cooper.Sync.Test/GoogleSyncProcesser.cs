@@ -92,15 +92,15 @@ namespace Cooper.Sync.Test
         /// </summary>
         public void SyncTasksAndContacts(int connectionId, IEnumerable<ISyncService<TaskSyncData, ISyncData, TaskSyncResult>> taskSyncServices, IEnumerable<ISyncService<ContactSyncData, ISyncData, ContactSyncResult>> contactSyncServices)
         {
-            if (InitializeAccountAndConnection(connectionId))
+            if (Initialize(connectionId))
             {
                 if (taskSyncServices != null && taskSyncServices.Count() > 0)
                 {
-                    SyncTasks(taskSyncServices);
+                    SyncTasksWithGoogle(taskSyncServices);
                 }
                 if (contactSyncServices != null && contactSyncServices.Count() > 0)
                 {
-                    SyncContacts(contactSyncServices);
+                    SyncContactsWithGoogle(contactSyncServices);
                 }
             }
         }
@@ -109,48 +109,6 @@ namespace Cooper.Sync.Test
 
         #region Override Methods
 
-        protected override void SyncTasks(IEnumerable<ISyncService<TaskSyncData, ISyncData, TaskSyncResult>> taskSyncServices)
-        {
-            _logger.Info("------------开始与Google同步任务------------");
-
-            try
-            {
-                foreach (IGoogleSyncService taskSyncService in taskSyncServices)
-                {
-                    taskSyncService.SetGoogleToken(_token);
-                }
-                base.SyncTasks(taskSyncServices);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-            }
-            finally
-            {
-                _logger.Info("------------结束与Google同步任务------------");
-            }
-        }
-        protected override void SyncContacts(IEnumerable<ISyncService<ContactSyncData, ISyncData, ContactSyncResult>> contactSyncServices)
-        {
-            _logger.Info("------------开始与Google同步联系人------------");
-
-            try
-            {
-                foreach (IGoogleSyncService contactSyncService in contactSyncServices)
-                {
-                    contactSyncService.SetGoogleToken(_token);
-                }
-                SyncContacts(contactSyncServices);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-            }
-            finally
-            {
-                _logger.Info("------------结束与Google同步联系人------------");
-            }
-        }
         protected override void PersistSyncTaskDatas(IEnumerable<ISyncData> syncDatasToCreate, IEnumerable<ISyncData> syncDatasToUpdate, IEnumerable<ISyncData> syncDatasToDelete, Account account)
         {
             var tasksToCreate = syncDatasToCreate.Where(x => x.GetType() == typeof(GoogleTaskSyncData)).Cast<GoogleTaskSyncData>();
@@ -186,9 +144,9 @@ namespace Cooper.Sync.Test
         #region Helper Methods
 
         /// <summary>
-        /// 初始化Account以及Connection
+        /// 初始化
         /// </summary>
-        private bool InitializeAccountAndConnection(int connectionId)
+        private bool Initialize(int connectionId)
         {
             var connection = _accountConnectionService.GetConnection(connectionId) as GoogleConnection;
             if (connection == null)
@@ -212,6 +170,54 @@ namespace Cooper.Sync.Test
 
             connection.SetToken(_googleTokenService.SerializeToken(_token));
             _accountConnectionService.Update(connection);
+        }
+        /// <summary>
+        /// 将本地任务与Google进行同步
+        /// </summary>
+        private void SyncTasksWithGoogle(IEnumerable<ISyncService<TaskSyncData, ISyncData, TaskSyncResult>> taskSyncServices)
+        {
+            _logger.Info("------------开始与Google同步任务------------");
+
+            try
+            {
+                foreach (IGoogleSyncService taskSyncService in taskSyncServices)
+                {
+                    taskSyncService.SetGoogleToken(_token);
+                }
+                base.SyncTasks(taskSyncServices);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+            }
+            finally
+            {
+                _logger.Info("------------结束与Google同步任务------------");
+            }
+        }
+        /// <summary>
+        /// 将本地联系人与Google进行同步
+        /// </summary>
+        private void SyncContactsWithGoogle(IEnumerable<ISyncService<ContactSyncData, ISyncData, ContactSyncResult>> contactSyncServices)
+        {
+            _logger.Info("------------开始与Google同步联系人------------");
+
+            try
+            {
+                foreach (IGoogleSyncService contactSyncService in contactSyncServices)
+                {
+                    contactSyncService.SetGoogleToken(_token);
+                }
+                base.SyncContacts(contactSyncServices);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+            }
+            finally
+            {
+                _logger.Info("------------结束与Google同步联系人------------");
+            }
         }
 
         #region 持久化Google相关数据的函数
@@ -357,7 +363,7 @@ namespace Cooper.Sync.Test
         /// <summary>
         /// 创建Google Calendar Event
         /// </summary>
-        private void CreateGoogleCalendarEvent(GoogleCalendarEventSyncData calendarEventData, CalendarService calendarService, Calendar defaultCalendar)
+        private void CreateGoogleCalendarEvent(GoogleCalendarEventSyncData calendarEventData, CalendarService googleCalendarService, Calendar defaultCalendar)
         {
             global::Google.Apis.Calendar.v3.Data.Event calendarEvent = null;
             bool success = false;
@@ -365,7 +371,7 @@ namespace Cooper.Sync.Test
             try
             {
                 //创建Google Calendar Event
-                calendarEvent = calendarService.Events.Insert(calendarEventData.GoogleCalendarEvent, defaultCalendar.Id).Fetch();
+                calendarEvent = googleCalendarService.Events.Insert(calendarEventData.GoogleCalendarEvent, defaultCalendar.Id).Fetch();
                 _logger.InfoFormat("新增Google日历事件#{0}|{1}|{2}", calendarEvent.Id, calendarEvent.Summary, _account.ID);
                 success = true;
             }

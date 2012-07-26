@@ -1,0 +1,179 @@
+[1mdiff --git a/src/Cooper.Sync.Test/GoogleSyncProcesser.cs b/src/Cooper.Sync.Test/GoogleSyncProcesser.cs[m
+[1mindex e4b0300..f1f9baa 100644[m
+[1m--- a/src/Cooper.Sync.Test/GoogleSyncProcesser.cs[m
+[1m+++ b/src/Cooper.Sync.Test/GoogleSyncProcesser.cs[m
+[36m@@ -92,15 +92,15 @@[m [mpublic void SyncTasksAndContacts(int connectionId)[m
+         /// </summary>[m
+         public void SyncTasksAndContacts(int connectionId, IEnumerable<ISyncService<TaskSyncData, ISyncData, TaskSyncResult>> taskSyncServices, IEnumerable<ISyncService<ContactSyncData, ISyncData, ContactSyncResult>> contactSyncServices)[m
+         {[m
+[31m-            if (InitializeAccountAndConnection(connectionId))[m
+[32m+[m[32m            if (Initialize(connectionId))[m
+             {[m
+                 if (taskSyncServices != null && taskSyncServices.Count() > 0)[m
+                 {[m
+[31m-                    SyncTasks(taskSyncServices);[m
+[32m+[m[32m                    SyncTasksWithGoogle(taskSyncServices);[m
+                 }[m
+                 if (contactSyncServices != null && contactSyncServices.Count() > 0)[m
+                 {[m
+[31m-                    SyncContacts(contactSyncServices);[m
+[32m+[m[32m                    SyncContactsWithGoogle(contactSyncServices);[m
+                 }[m
+             }[m
+         }[m
+[36m@@ -109,48 +109,6 @@[m [mpublic void SyncTasksAndContacts(int connectionId, IEnumerable<ISyncService<Task[m
+ [m
+         #region Override Methods[m
+ [m
+[31m-        protected override void SyncTasks(IEnumerable<ISyncService<TaskSyncData, ISyncData, TaskSyncResult>> taskSyncServices)[m
+[31m-        {[m
+[31m-            _logger.Info("------------开始与Google同步任务------------");[m
+[31m-[m
+[31m-            try[m
+[31m-            {[m
+[31m-                foreach (IGoogleSyncService taskSyncService in taskSyncServices)[m
+[31m-                {[m
+[31m-                    taskSyncService.SetGoogleToken(_token);[m
+[31m-                }[m
+[31m-                base.SyncTasks(taskSyncServices);[m
+[31m-            }[m
+[31m-            catch (Exception ex)[m
+[31m-            {[m
+[31m-                _logger.Error(ex);[m
+[31m-            }[m
+[31m-            finally[m
+[31m-            {[m
+[31m-                _logger.Info("------------结束与Google同步任务------------");[m
+[31m-            }[m
+[31m-        }[m
+[31m-        protected override void SyncContacts(IEnumerable<ISyncService<ContactSyncData, ISyncData, ContactSyncResult>> contactSyncServices)[m
+[31m-        {[m
+[31m-            _logger.Info("------------开始与Google同步联系人------------");[m
+[31m-[m
+[31m-            try[m
+[31m-            {[m
+[31m-                foreach (IGoogleSyncService contactSyncService in contactSyncServices)[m
+[31m-                {[m
+[31m-                    contactSyncService.SetGoogleToken(_token);[m
+[31m-                }[m
+[31m-                SyncContacts(contactSyncServices);[m
+[31m-            }[m
+[31m-            catch (Exception ex)[m
+[31m-            {[m
+[31m-                _logger.Error(ex);[m
+[31m-            }[m
+[31m-            finally[m
+[31m-            {[m
+[31m-                _logger.Info("------------结束与Google同步联系人------------");[m
+[31m-            }[m
+[31m-        }[m
+         protected override void PersistSyncTaskDatas(IEnumerable<ISyncData> syncDatasToCreate, IEnumerable<ISyncData> syncDatasToUpdate, IEnumerable<ISyncData> syncDatasToDelete, Account account)[m
+         {[m
+             var tasksToCreate = syncDatasToCreate.Where(x => x.GetType() == typeof(GoogleTaskSyncData)).Cast<GoogleTaskSyncData>();[m
+[36m@@ -186,9 +144,9 @@[m [mprotected override void PersistSyncContactDatas(IEnumerable<ISyncData> syncDatas[m
+         #region Helper Methods[m
+ [m
+         /// <summary>[m
+[31m-        /// 初始化Account以及Connection[m
+[32m+[m[32m        /// 初始化[m
+         /// </summary>[m
+[31m-        private bool InitializeAccountAndConnection(int connectionId)[m
+[32m+[m[32m        private bool Initialize(int connectionId)[m
+         {[m
+             var connection = _accountConnectionService.GetConnection(connectionId) as GoogleConnection;[m
+             if (connection == null)[m
+[36m@@ -213,6 +171,54 @@[m [mprivate void RefreshConnectionToken(GoogleConnection connection)[m
+             connection.SetToken(_googleTokenService.SerializeToken(_token));[m
+             _accountConnectionService.Update(connection);[m
+         }[m
+[32m+[m[32m        /// <summary>[m
+[32m+[m[32m        /// 将本地任务与Google进行同步[m
+[32m+[m[32m        /// </summary>[m
+[32m+[m[32m        private void SyncTasksWithGoogle(IEnumerable<ISyncService<TaskSyncData, ISyncData, TaskSyncResult>> taskSyncServices)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            _logger.Info("------------开始与Google同步任务------------");[m
+[32m+[m
+[32m+[m[32m            try[m
+[32m+[m[32m            {[m
+[32m+[m[32m                foreach (IGoogleSyncService taskSyncService in taskSyncServices)[m
+[32m+[m[32m                {[m
+[32m+[m[32m                    taskSyncService.SetGoogleToken(_token);[m
+[32m+[m[32m                }[m
+[32m+[m[32m                base.SyncTasks(taskSyncServices);[m
+[32m+[m[32m            }[m
+[32m+[m[32m            catch (Exception ex)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                _logger.Error(ex);[m
+[32m+[m[32m            }[m
+[32m+[m[32m            finally[m
+[32m+[m[32m            {[m
+[32m+[m[32m                _logger.Info("------------结束与Google同步任务------------");[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m[32m        /// <summary>[m
+[32m+[m[32m        /// 将本地联系人与Google进行同步[m
+[32m+[m[32m        /// </summary>[m
+[32m+[m[32m        private void SyncContactsWithGoogle(IEnumerable<ISyncService<ContactSyncData, ISyncData, ContactSyncResult>> contactSyncServices)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            _logger.Info("------------开始与Google同步联系人------------");[m
+[32m+[m
+[32m+[m[32m            try[m
+[32m+[m[32m            {[m
+[32m+[m[32m                foreach (IGoogleSyncService contactSyncService in contactSyncServices)[m
+[32m+[m[32m                {[m
+[32m+[m[32m                    contactSyncService.SetGoogleToken(_token);[m
+[32m+[m[32m                }[m
+[32m+[m[32m                base.SyncContacts(contactSyncServices);[m
+[32m+[m[32m            }[m
+[32m+[m[32m            catch (Exception ex)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                _logger.Error(ex);[m
+[32m+[m[32m            }[m
+[32m+[m[32m            finally[m
+[32m+[m[32m            {[m
+[32m+[m[32m                _logger.Info("------------结束与Google同步联系人------------");[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+ [m
+         #region 持久化Google相关数据的函数[m
+ [m
+[36m@@ -357,7 +363,7 @@[m [mprivate void PersistGoogleCalendarEventDatas(IEnumerable<GoogleCalendarEventSync[m
+         /// <summary>[m
+         /// 创建Google Calendar Event[m
+         /// </summary>[m
+[31m-        private void CreateGoogleCalendarEvent(GoogleCalendarEventSyncData calendarEventData, CalendarService calendarService, Calendar defaultCalendar)[m
+[32m+[m[32m        private void CreateGoogleCalendarEvent(GoogleCalendarEventSyncData calendarEventData, CalendarService googleCalendarService, Calendar defaultCalendar)[m
+         {[m
+             global::Google.Apis.Calendar.v3.Data.Event calendarEvent = null;[m
+             bool success = false;[m
+[36m@@ -365,7 +371,7 @@[m [mprivate void CreateGoogleCalendarEvent(GoogleCalendarEventSyncData calendarEvent[m
+             try[m
+             {[m
+                 //创建Google Calendar Event[m
+[31m-                calendarEvent = calendarService.Events.Insert(calendarEventData.GoogleCalendarEvent, defaultCalendar.Id).Fetch();[m
+[32m+[m[32m                calendarEvent = googleCalendarService.Events.Insert(calendarEventData.GoogleCalendarEvent, defaultCalendar.Id).Fetch();[m
+                 _logger.InfoFormat("新增Google日历事件#{0}|{1}|{2}", calendarEvent.Id, calendarEvent.Summary, _account.ID);[m
+                 success = true;[m
+             }[m
+[1mdiff --git a/src/Cooper.Sync.Test/SyncProcesser.cs b/src/Cooper.Sync.Test/SyncProcesser.cs[m
+[1mindex 0f348e2..04042be 100644[m
+[1m--- a/src/Cooper.Sync.Test/SyncProcesser.cs[m
+[1m+++ b/src/Cooper.Sync.Test/SyncProcesser.cs[m
+[36m@@ -78,7 +78,7 @@[m [mprotected void InitializeAccount(AccountConnection connection)[m
+         /// 实现同步任务的完整过程[m
+         /// </summary>[m
+         /// <param name="taskSyncServices">参与同步任务的具体服务</param>[m
+[31m-        protected virtual void SyncTasks(IEnumerable<ISyncService<TaskSyncData, ISyncData, TaskSyncResult>> taskSyncServices)[m
+[32m+[m[32m        protected void SyncTasks(IEnumerable<ISyncService<TaskSyncData, ISyncData, TaskSyncResult>> taskSyncServices)[m
+         {[m
+             _logger.Info("--------开始进行任务同步--------");[m
+ [m
+[36m@@ -127,7 +127,7 @@[m [mprotected virtual void SyncTasks(IEnumerable<ISyncService<TaskSyncData, ISyncDat[m
+         /// 实现同步联系人的完整过程[m
+         /// </summary>[m
+         /// <param name="contactSyncServices">参与同步联系人的具体服务</param>[m
+[31m-        protected virtual void SyncContacts(IEnumerable<ISyncService<ContactSyncData, ISyncData, ContactSyncResult>> contactSyncServices)[m
+[32m+[m[32m        protected void SyncContacts(IEnumerable<ISyncService<ContactSyncData, ISyncData, ContactSyncResult>> contactSyncServices)[m
+         {[m
+             _logger.InfoFormat("--------开始进行联系人同步--------");[m
+ [m
