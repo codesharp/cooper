@@ -65,14 +65,14 @@
     <div id="taskPanel" data-role="page" data-theme="a">
         <div data-role="header" data-position="fixed">
             <div class="ui-btn-left" style="line-height: 50px">
-                <img src="images/tasklist.png" />
+                <img id="gotoTasklistImg" src="images/tasklist.png" />
                 &nbsp;
-                <img src="images/refresh.png" />
+                <img id="refreshTasksImg" src="images/refresh.png" />
             </div>
             <h1>
                 cooper:task</h1>
             <div class="ui-btn-right" style="line-height: 50px">
-                <img src="images/edit.png" /></div>
+                <img id="addTaskImg" src="images/edit.png" /></div>
         </div>
         <div data-role="content">
             <ul id="taskUl" data-role="listview" data-theme="c"></ul>
@@ -192,13 +192,14 @@
             </div>
             <h1>
                 cooper:task</h1>
-            <a class="ui-btn-right" data-icon="check">确定</a>
+            <a id="addOrUpdateTaskButton" class="ui-btn-right" data-icon="check">确定</a>
         </div>
         <div data-role="content" style="background-color: #fff">
+            <input type="hidden" id="taskId" value="" />
             <div data-role="fieldcontain">
                 <label for="priority">
                     是否完成</label>
-                <select name="priority" id="Select1" data-role="slider">
+                <select name="priority" id="isCompleted" data-role="slider">
                     <option value="false">未完成</option>
                     <option value="true">完成</option>
                 </select>
@@ -220,7 +221,7 @@
             <div data-role="fieldcontain">
                 <label for="duetime">
                     截止日期</label>
-                <input type="date" name="duetime" id="Date1" />
+                <input type="date" name="duetimeForEdit" id="duetimeForEdit" />
             </div>
             <div data-role="fieldcontain">
                 <label for="subject">
@@ -240,10 +241,39 @@
 
     <script type="text/javascript">
         $(function () {
+
+            //登录
             $('#loginButton').click(function () {
                 var userName = $("#username").val();
                 var password = $("#password").val();
                 login(userName, password);
+            });
+
+            //返回任务列表面板
+            $('#gotoTasklistImg').click(function () {
+                showPanel("taskListPanel");
+            });
+            //显示新增编辑任务面板
+            $('#addTaskImg').click(function () {
+                showTaskEditPanel("");
+            });
+            //刷新任务面板
+            $('#refreshTasksImg').click(function () {
+                refreshTaskPanel();
+            });
+
+            //新增编辑任务确定按钮响应函数
+            $('#addOrUpdateTaskButton').click(function () {
+                var id = $("#taskId").val();
+                var subject = $("#subject").val();
+                var body = $("#body").val();
+                var selectedPriority = $("input[name='priority']:checked");
+                var priority = selectedPriority != null ? selectedPriority.val() : 0;
+                var dueTime = $("#duetimeForEdit").val();
+                var isCompleted = $("#isCompleted").val();
+
+                //alert(id + '|' + subject + '|' + body + '|' + priority + '|' + dueTime + '|' + isCompleted);
+                addOrUpdateTask(id, subject, body, priority, dueTime, isCompleted);
             });
         });
     </script>
