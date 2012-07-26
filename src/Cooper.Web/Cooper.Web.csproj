@@ -175,6 +175,8 @@
     <Content Include="Global.asax" />
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="Hybrid\jquery\jqm.page.params.js" />
+    <Content Include="Hybrid\sample.htm" />
     <Content Include="Hybrid\setting.htm" />
     <Content Include="Hybrid\css\base.css" />
     <Content Include="Hybrid\images\complete-small.png" />
