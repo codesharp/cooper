@@ -176,13 +176,15 @@
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />
     <Content Include="Hybrid\css\base.css" />
+    <Content Include="Hybrid\images\complete-small.png" />
     <Content Include="Hybrid\images\cooper.png" />
+    <Content Include="Hybrid\images\incomplete-small.png" />
+    <Content Include="Hybrid\images\setting-small.png" />
     <Content Include="Hybrid\images\task.png" />
     <Content Include="Hybrid\images\tasklist.png" />
     <Content Include="Hybrid\images\refresh.png" />
     <Content Include="Hybrid\images\complete.png" />
     <Content Include="Hybrid\images\incomplete.png" />
-    <Content Include="Hybrid\images\add.png" />
     <Content Include="Hybrid\images\bg-line.png" />
     <Content Include="Hybrid\images\edit.png" />
     <Content Include="Hybrid\images\setting.png" />
