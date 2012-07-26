@@ -139,13 +139,16 @@ ul#tasklists span {
 	z-index: 50;
 	margin-top: 0px;
 	margin-left: 2px;
-	font-weight:300;
-	font-size:13px;
+	font-weight: 300;
+	font-size: 13px;
+}
+.todolist .row_task .cell_string input[readonly] {
+	background-color: transparent;
 }
 .todolist .row_completed .cell_string input {
 	text-decoration: line-through;
 	color: #747474;
-	font-weight:300;
+	font-weight: 300;
 }
 .todolist .row_task .cell_string div {
 	float: right;
@@ -178,12 +181,18 @@ ul#tasklists span {
 	width: 90%;
 	font-size: 15px;
 }
+.detail input.detail-title[readonly] {
+	background-color: transparent;
+}
 .detail textarea.detail-note {
 	width: 90%;
 	font-size: 14px;
 	line-height: 20px;
 	height: auto;
 	min-height: 70px;
+}
+.detail textarea.detail-note[readonly] {
+	background-color: transparent;
 }
 .detail .detail-item {
 	width: 60px;

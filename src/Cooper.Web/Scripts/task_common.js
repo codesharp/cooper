@@ -258,6 +258,8 @@ UI_List_Common.prototype = {
                     base._fireRowSingleClick($prev);
                 else if (down && $next)
                     base._fireRowSingleClick($next);
+                //修正编辑状态
+                base._setEditable(base.$wrapper_detail);
             }
             ////////////////////////////////////////////////////////////////////////////////////////
             //非编辑模式则忽略快捷键
