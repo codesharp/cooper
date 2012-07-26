@@ -32,8 +32,6 @@
 
     //当前选择的任务列表ID
     var currentTaskListId = "";
-    //当前选择的任务ID
-    var currentTaskId = "";
     //存放任务列表的数组
     var taskListArray = [];
 
@@ -190,8 +188,15 @@
     }
 
     //显示指定面板
-    function showPanel(panelId) {
-        $.mobile.changePage('#' + panelId, { transition: "slide", direction: 'reverse' });
+    function showPanel(panelId, params) {
+        if (params != null && params != undefined && params != "") {
+            var targetPage = '#' + panelId + "?" + params;
+            $.mobile.changePage(targetPage, { transition: "slide", direction: 'reverse' });
+        }
+        else {
+            var targetPage = '#' + panelId;
+            $.mobile.changePage(targetPage, { transition: "slide", direction: 'reverse' });
+        }
     }
     //显示任务面板
     function showTaskPanel(taskListId) {
@@ -201,32 +206,29 @@
     }
     //显示任务详情面板
     function showTaskDetailPanel(taskId) {
-        showPanel("taskDetailPanel");
+        showPanel("taskDetailPanel", "taskId=" + taskId);
         //获取数据，TODO
     }
     //显示任务新增编辑面板
     function showTaskEditPanel(taskId) {
-        showPanel("taskEditPanel");
-        currentTaskId = taskId;
+        showPanel("taskEditPanel", "taskId=" + taskId);
+    }
+    //根据指定的任务ID初始化任务编辑面板
+    function initializeTaskEditPanel(taskId) {
+        //先清空边界面板
+        clearTaskEditPanel();
 
+        //如果当前存在任务ID，则加载并显示在任务编辑面板
         if (taskId != null && taskId != "") {
             var task = loadTask(taskId);
-
-            //任务不存在就清空界面
-            if (task == null) {
-                clearTaskEditPanel();
-                return;
+            if (task != null) {
+                $("#taskId").val(task.id);
+                $("#subject").val(task.subject);
+                $("#body").val(task.body);
+                //set priority, TODO
+                $("#duetimeForEdit").val(task.dueTime);
+                $("#isCompleted").val(task.isCompleted);
             }
-
-            $("#taskId").val(taskId);
-            $("#subject").val(task.subject);
-            $("#body").val(task.subject);
-            //set priority, TODO
-            $("#duetimeForEdit").val(task.dueTime);
-            $("#isCompleted").val(task.isCompleted);
-        }
-        else {
-            clearTaskEditPanel();
         }
     }
     //刷新任务面板
@@ -241,6 +243,7 @@
         $("#duetimeForEdit").val("");
         $("#isCompleted").val("");
     }
+
     //验证用户有效性
     function validateUser(userName, password) {
         //TODO，在这里验证用户名和密码
@@ -258,12 +261,45 @@
         }
     }
 
+    //从当前url地址栏获取任务ID
+    //地址：http://localhost:54185/Hybrid/index.htm#taskEditPanel?taskId=1
+    //通过将参数存放在url，即便我们采用刷新页面，也不会丢失当前的任务ID
+    //我觉得任务列表的ID也可以采用这种方式，即通过保存在url中，从而即便我们
+    //刷新页面也能知道当前的任务列表ID或任务ID
+    function getTaskId() {
+        var regex = /^#taskEditPanel/;
+        var url = $.mobile.path.parseUrl(window.location.href);
+        if (url.hash.search(regex) !== -1) {
+            var taskId = url.hash.replace(/.*taskId=/, "");
+            return taskId;
+        }
+    }
+    //切换页面前执行的函数
+    function onbeforepagechange(e, data) {
+        if (typeof data.toPage === "string") {
+            var url = $.mobile.path.parseUrl(data.toPage);
+
+            //以下判断当前要切换到的页面是否是任务编辑页面，
+            //如果是则从URL取出任务ID然后初始化任务编辑页面
+            var regex = /^#taskEditPanel/;
+            if (url.hash.search(regex) !== -1) {
+                var taskId = url.hash.replace(/.*taskId=/, "");
+                initializeTaskEditPanel(taskId);
+                //以下这一句必须，因为发现如果不设置则jquery mobile不会在url地址栏显示taskId
+                data.options.dataUrl = url.href;
+            }
+
+            //将来也可以考虑将TaskList的ID也用上面类似方式实现，
+            //这样可以不需要定义内存变量保存当前的任务列表ID
+        }
+    }
+
     window.showPanel = showPanel;
     window.login = login;
     window.addOrUpdateTask = addOrUpdateTask;
     window.showTaskEditPanel = showTaskEditPanel;
     window.refreshTaskPanel = refreshTaskPanel;
-
+    window.onbeforepagechange = onbeforepagechange;
 })();
 
 

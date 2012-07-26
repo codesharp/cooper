@@ -275,6 +275,11 @@
                 //alert(id + '|' + subject + '|' + body + '|' + priority + '|' + dueTime + '|' + isCompleted);
                 addOrUpdateTask(id, subject, body, priority, dueTime, isCompleted);
             });
+
+            $(document).bind("pagebeforechange", onbeforepagechange);
+            //$(document).delegate("#taskPanel", "pageinit", function () {
+            //    alert('task panel page inited.');
+            //});
         });
     </script>
 
