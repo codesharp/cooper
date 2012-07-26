@@ -19,13 +19,13 @@ namespace Cooper.Web.Controllers
     /// </summary>
     public class AccountController : Controller
     {
-        private Serializer _serializer = new Serializer();
-        private ILog _log;
-        private IContextService _context;
-        private IAccountHelper _accountHelper;
-        private IAccountService _accountService;
-        private IAccountConnectionService _accountConnectionService;
-        private string _sysConfig_versionFlag;
+        protected Serializer _serializer = new Serializer();
+        protected ILog _log;
+        protected IContextService _context;
+        protected IAccountHelper _accountHelper;
+        protected IAccountService _accountService;
+        protected IAccountConnectionService _accountConnectionService;
+        protected string _sysConfig_versionFlag;
 
         private string _googleOAuth2Url;
         private string _googleOAuth2TokenUrl;
@@ -215,15 +215,15 @@ namespace Cooper.Web.Controllers
             return this.StateResult(state);
         }
 
-        private ActionResult Home()
+        protected ActionResult Home()
         {
             return RedirectToAction("Index", "Home");
         }
-        private void SetLogin(int accountId)
+        protected void SetLogin(int accountId)
         {
             FormsAuthentication.SetAuthCookie(accountId.ToString(), true);
         }
-        private void SetLogin<T>(string name, string token) where T : AccountConnection
+        protected void SetLogin<T>(string name, string token) where T : AccountConnection
         {
             var c = this._accountConnectionService.GetConnection<T>(name);
             var flag = c == null;
@@ -239,7 +239,7 @@ namespace Cooper.Web.Controllers
             //用于指示UI启动同步
             ViewBag.ConnectionId = c.ID;
         }
-        private void Connect<T>(string name, string token) where T : AccountConnection
+        protected void Connect<T>(string name, string token) where T : AccountConnection
         {
             var a = this._context.Current;
             var c = this._accountConnectionService.GetConnection<T>(name);
@@ -254,12 +254,12 @@ namespace Cooper.Web.Controllers
             else if (typeof(T) == typeof(GitHubConnection))
                 this._accountConnectionService.Create(new GitHubConnection(name, token, a));
         }
-        private void SetConnectionUrls(string state)
+        protected void SetConnectionUrls(string state)
         {
             ViewBag.GoogleUrl = this.GetGoogleUrl(state);
             ViewBag.GitUrl = this.GetGitUrl(state);
         }
-        private ActionResult StateResult(string state)
+        protected ActionResult StateResult(string state)
         {
             return View((string.IsNullOrWhiteSpace(state) ? "Login" : state) + "Success");
         }
