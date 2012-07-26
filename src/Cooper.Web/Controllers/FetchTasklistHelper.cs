@@ -13,14 +13,22 @@ using Cooper.Model.Tasks;
 
 namespace Cooper.Web.Controllers
 {
+    /// <summary>定义FetchTasklist行为
+    /// </summary>
+    public interface IFetchTasklistHelper
+    {
+        bool IsFetchTasklist(string tasklistId);
+        TaskInfo[] FetchTasks(Account account, string tasklistId);
+        IDictionary<string, string> GetFetchTasklists(Account account);
+    }
     /// <summary>Fetch默认实现
     /// </summary>
     [CodeSharp.Core.Component]
-    public class FetchTasklistHelper
+    public class FetchTasklistHelper : IFetchTasklistHelper
     {
-        private static readonly Serializer _serializer = new Serializer();
-        private IAccountConnectionService _connectionService;
-        private string _git_api_issues;
+        protected static readonly Serializer _serializer = new Serializer();
+        protected IAccountConnectionService _connectionService;
+        protected string _git_api_issues;
         public FetchTasklistHelper(IAccountConnectionService connectionService, string git_api_issues)
         {
             this._connectionService = connectionService;

@@ -50,22 +50,6 @@ namespace Cooper.Web
                 //.ReadProperties("CooperConfig")
                 .Resolve(this.Prepare);
         }
-        private void Prepare(WindsorResolver r)
-        {
-            var windsor = r.Container;
-            //Cooper模型相关
-            windsor.RegisterRepositories(Assembly.Load("Cooper.Repositories"));
-            windsor.RegisterServices(Assembly.Load("Cooper.Model"));
-            windsor.RegisterComponent(Assembly.Load("Cooper.Model"));
-            //Controller注入
-            windsor.ControllerFactory();
-            windsor.RegisterControllers(Assembly.GetExecutingAssembly());
-            //注册web上下文
-            windsor.RegisterComponent(typeof(Cooper.Web.Controllers.WebContextService));
-            //注册Fetch扩展
-            windsor.RegisterComponent(typeof(Cooper.Web.Controllers.FetchTasklistHelper));
-        }
-
         protected override bool IsKnownException(Exception e)
         {
             return base.IsKnownException(e) || e is CooperknownException;
@@ -90,6 +74,26 @@ namespace Cooper.Web
 </body>
 </html>", this.Lang().error_occur, this.Suffix(), (e as CooperknownException).Message));
             Response.Flush();
+        }
+        private void Prepare(WindsorResolver r)
+        {
+            var windsor = r.Container;
+            this.ParpareExtend(r);
+            //Cooper模型相关
+            windsor.RegisterRepositories(Assembly.Load("Cooper.Repositories"));
+            windsor.RegisterServices(Assembly.Load("Cooper.Model"));
+            windsor.RegisterComponent(Assembly.Load("Cooper.Model"));
+            //Controller注入
+            windsor.ControllerFactory();
+            windsor.RegisterControllers(Assembly.GetExecutingAssembly());
+            //注册web上下文
+            windsor.RegisterComponent(typeof(Cooper.Web.Controllers.WebContextService));
+            //注册Fetch扩展
+            windsor.RegisterComponent(typeof(Cooper.Web.Controllers.FetchTasklistHelper));
+        }
+        private void ParpareExtend(WindsorResolver r)
+        {
+
         }
     }
 

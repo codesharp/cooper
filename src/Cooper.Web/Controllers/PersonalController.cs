@@ -27,13 +27,13 @@ namespace Cooper.Web.Controllers
         private ITasklistService _tasklistService;
         private IAccountService _accountService;
         private IAccountConnectionService _accountConnectionService;
-        private FetchTasklistHelper _fetchTasklistHelper;
+        private IFetchTasklistHelper _fetchTasklistHelper;
         public PersonalController(ILoggerFactory factory
             , ITaskService taskService
             , ITasklistService tasklistService
             , IAccountService accountService
             , IAccountConnectionService accountConnectionService
-            , FetchTasklistHelper fetchTasklistHelper)
+            , IFetchTasklistHelper fetchTasklistHelper)
             : base(factory)
         {
             this._log = factory.Create(typeof(PersonalController));
