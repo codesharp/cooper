@@ -29,9 +29,14 @@ namespace Cooper.Web.Controllers
             }
 
             var r = filterContext.HttpContext.Request;
+
+            //Safari|Chrome|IE
+            if (this._log.IsDebugEnabled)
+                this._log.DebugFormat("{0}|{1}", r.Browser.Browser, r.Browser.MajorVersion);
             //浏览器支持判断
             if (r.HttpMethod.Equals("get", StringComparison.InvariantCultureIgnoreCase))
-                if (r.Browser.MajorVersion == 6)
+                if (r.Browser.MajorVersion == 6
+                    && r.Browser.Browser.Equals("ie", StringComparison.InvariantCultureIgnoreCase))
                 {
                     filterContext.Result = this.NotSupport();
                     return;

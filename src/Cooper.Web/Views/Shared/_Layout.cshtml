@@ -278,7 +278,7 @@
             refreshTasklists();
         }
         function removeTasklist(i) {
-            $('#tasklists li[id=' + i + ']').remove();
+            $('#tasklists a[id=' + i + ']').parent().remove();
         }
         function openTasklists() {
             $('#tasklistModal').modal('show');
