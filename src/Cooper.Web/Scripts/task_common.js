@@ -271,6 +271,7 @@ UI_List_Common.prototype = {
                 var txt = base.getTaskVal($focus);
                 var $p, $n;
                 var ary;
+                var b = false;
                 if ($actives.length > 1) { //多行删除
                     $p = base._findActivePrev();
                     $n = base._findActiveNext();
@@ -285,8 +286,9 @@ UI_List_Common.prototype = {
                     var prev = base.getTask($p);
                     //合并到上一行
                     prev.setSubject(prev.subject() + txt, true);
+                    b = true;//合并操作不需要出现撤销删除
                 }
-                base.deleteTask();
+                base.deleteTask(b);
                 if ($p != null)
                     base._fireRowClick($p);
                 else if ($n != null)
@@ -570,7 +572,7 @@ UI_List_Common.prototype = {
     ////////////////////////////////////////////////////////////////////////////////////////
     //行为和主要差异部分 部分实现
     //删除
-    deleteTask: function () {
+    deleteTask: function (b) {
         var $actives = this.getActives();
         var l = $actives.length;
         if (l == 0)
@@ -590,6 +592,10 @@ UI_List_Common.prototype = {
             active.el().remove();
         });
 
+        if (b) {
+            this.continueDelete();
+            return;
+        }
         //给予一定时间的撤销机会 
         //注意：由于定时原因，会导致重新加载操作时删除记录未被提交
         var i = 15;
