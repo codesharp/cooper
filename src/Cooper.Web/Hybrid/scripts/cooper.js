@@ -186,6 +186,14 @@
         //获取当前任务列表的所有任务
         var taskArray = loadTasksFromCurrentTaskList();
 
+        var li1 = '<li style="background-color: #ebebeb">马上完成 <span class="ui-li-count">{0}</span></li>';
+        var li2 = '<li style="background-color: #ebebeb">稍后完成 <span class="ui-li-count">{0}</span></li>';
+        var li3 = '<li style="background-color: #ebebeb">迟些再说 <span class="ui-li-count">{0}</span></li>';
+
+        var items1 = [];
+        var items2 = [];
+        var items3 = [];
+
         //填充任务
         for (var index = 0; index < taskArray.length; index++) {
             var task = taskArray[index];
@@ -197,15 +205,47 @@
                 img = "incomplete-small.png";
             }
             var li = '<li id="' + task.id + '"><a><h3><img src="images/' + img + '"><span>' + task.subject + '</span></h3><p>' + task.body + '</p><p><strong>' + task.dueTime + '</strong></p></a></li>';
-            ul.append(li);
+
+            if (task.priority == "0") {
+                items1[items1.length] = li;
+            }
+            else if (task.priority == "1") {
+                items2[items2.length] = li;
+            }
+            else if (task.priority == "2") {
+                items3[items3.length] = li;
+            }
+        }
+
+        var totalItems = [];
+
+        totalItems[totalItems.length] = li1.replace("{0}", items1.length);
+        for (var index = 0; index < items1.length; index++) {
+            totalItems[totalItems.length] = items1[index];
+        }
+        totalItems[totalItems.length] = li2.replace("{0}", items2.length);
+        for (var index = 0; index < items2.length; index++) {
+            totalItems[totalItems.length] = items2[index];
+        }
+        totalItems[totalItems.length] = li3.replace("{0}", items3.length);
+        for (var index = 0; index < items3.length; index++) {
+            totalItems[totalItems.length] = items3[index];
+        }
+
+        for (var index = 0; index < totalItems.length; index++) {
+            ul.append(totalItems[index]);
         }
 
         //刷新ul
         ul.listview('refresh');
 
         //设置li的click响应函数
-        $('#taskUl li').click(function () {
-            showTaskDetailPanel($(this).attr("id"));
+        $("#taskUl li").each(function () {
+            if ($(this).attr("id") != undefined) {
+                $(this).click(function () {
+                    showTaskDetailPanel($(this).attr("id"));
+                });
+            }
         });
     }
 
