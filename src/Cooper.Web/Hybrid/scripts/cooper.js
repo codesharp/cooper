@@ -35,6 +35,23 @@
     //存放任务列表的数组
     var taskListArray = [];
 
+    function getCurrentTaskListId() {
+        return currentTaskListId;
+    }
+
+    //新增一个TaskList
+    function addTaskList(taskListName) {
+        var taskList = new Object();
+        var displayNumber = taskListArray.length + 1;
+        taskList.id = "TaskList" + displayNumber;
+        taskList.name = taskListName;
+        taskList.tasks = [];
+        taskListArray[taskListArray.length] = taskList;
+
+        //if (fn) fn();
+        showPanel("taskListPanel");
+        showAllTasklist();
+    }
     //内存中增加或更新一个Task
     function addOrUpdateTask(id, subject, body, priority, dueTime, isCompleted, fn) {
 
@@ -83,9 +100,10 @@
             task.tags = [];
         }
 
-        if (fn) fn();
+        //if (fn) fn();
 
         showTaskPanel(currentTaskListId);
+        showTasks();
     }
 
     //获取所有任务列表
@@ -161,6 +179,10 @@
         //清空任务
         $('#taskUl > li').remove();
 
+        if (currentTaskListId == null || currentTaskListId == "") {
+            return;
+        }
+
         //获取当前任务列表的所有任务
         var taskArray = loadTasksFromCurrentTaskList();
 
@@ -183,7 +205,7 @@
 
         //设置li的click响应函数
         $('#taskUl li').click(function () {
-            showTaskEditPanel($(this).attr("id"));
+            showTaskDetailPanel($(this).attr("id"));
         });
     }
 
@@ -198,20 +220,73 @@
             $.mobile.changePage(targetPage, { transition: "slide", direction: 'reverse' });
         }
     }
+    //显示任务列表面板
+    function showTaskListPanel() {
+        showPanel("taskListPanel");
+        showAllTasklist();
+    }
+    //显示新增任务列表面板
+    function showAddTaskListPanel() {
+        $.mobile.changePage("#addTaskListPanel", { transition: "pop" });
+    }
     //显示任务面板
     function showTaskPanel(taskListId) {
-        setCurrentTaskList(taskListId);
-        showPanel("taskPanel");
+        showPanel("taskPanel", "listId=" + taskListId);
         showTasks();
     }
     //显示任务详情面板
     function showTaskDetailPanel(taskId) {
         showPanel("taskDetailPanel", "taskId=" + taskId);
-        //获取数据，TODO
+        initializeTaskDetailPanel(taskId);
     }
     //显示任务新增编辑面板
     function showTaskEditPanel(taskId) {
         showPanel("taskEditPanel", "taskId=" + taskId);
+    }
+    //详情页面调用此函数跳转到任务编辑页面
+    function showTaskEditPanelAuto() {
+        var taskId = getTaskId();
+        showPanel("taskEditPanel", "taskId=" + taskId);
+    }
+    //任务编辑页面调用此函数跳转到详情页面
+    function showTaskDetailPanelAuto() {
+        var taskId = getTaskIdFromTaskEditPanel();
+        showTaskDetailPanel(taskId);
+    }
+
+    //初始化任务面板
+    function initializeTaskPanel() {
+        showTasks();
+    }
+    //根据指定的任务ID初始化任务详情面板
+    function initializeTaskDetailPanel(taskId) {
+        //先清空边界面板
+        clearTaskDetailPanel();
+
+        //如果当前存在任务ID，则加载并显示在任务详情面板
+        if (taskId != null && taskId != "") {
+            var task = loadTask(taskId);
+            if (task != null) {
+                $("#taskId2").val(task.id);
+                $("#subject2").html(task.subject);
+                $("#body2").html(task.body);
+
+                if (task.priority == "0") {
+                    $("#radio-level-1").attr('checked', true);
+                }
+                else if (task.priority == "1") {
+                    $("#radio-level-2").attr('checked', true);
+                }
+                else if (task.priority == "2") {
+                    $("#radio-level-3").attr('checked', true);
+                }
+                $("input[type='radio']").checkboxradio("refresh");
+                $("#duetime2").val(task.dueTime);
+
+                $("#complete").val(task.isCompleted);
+                $("#complete").slider('refresh');
+            }
+        }
     }
     //根据指定的任务ID初始化任务编辑面板
     function initializeTaskEditPanel(taskId) {
@@ -225,23 +300,61 @@
                 $("#taskId").val(task.id);
                 $("#subject").val(task.subject);
                 $("#body").val(task.body);
-                //set priority, TODO
+
+                if (task.priority == "0") {
+                    $("#priority radio-choice-1").attr('checked', "checked");
+                }
+                else if (task.priority == "1") {
+                    $("#priority radio-choice-2").attr('checked', "checked");
+                }
+                else if (task.priority == "2") {
+                    $("#priority radio-choice-3").attr('checked', "checked");
+                }
+
                 $("#duetimeForEdit").val(task.dueTime);
-                $("#isCompleted").val(task.isCompleted);
+
+                if (task.isCompleted == "true") {
+                    $("#isCompleted option:last").attr('selected', "selected");
+                }
+                else if (task.isCompleted == "false") {
+                    $("#isCompleted option:first").attr('selected', "selected");
+                }
             }
         }
+    }
+    //刷新任务列表面板
+    function refreshTaskListPanel() {
+        showAllTasklist();
     }
     //刷新任务面板
     function refreshTaskPanel() {
         showTaskPanel(currentTaskListId);
     }
+    //清空任务详情面板
+    function clearTaskDetailPanel() {
+        $("#taskId2").val("");
+        $("#subject2").html("");
+        $("#body2").html("");
+        $("#radio-level-1").attr('checked', false);
+        $("#radio-level-2").attr('checked', false);
+        $("#radio-level-3").attr('checked', false);
+        $("#duetime2").val("");
+        $("#complete option").each(function () {
+            $(this).attr('selected', false);
+        });
+    }
     //清空任务编辑面板
     function clearTaskEditPanel() {
+        $("#taskId").val("");
         $("#subject").val("");
         $("#body").val("");
-        //clear priority, TODO
+        $("#priority input").each(function () {
+            $(this).attr('checked', false);
+        });
         $("#duetimeForEdit").val("");
-        $("#isCompleted").val("");
+        $("#isCompleted option").each(function () {
+            $(this).attr('selected', false);
+        });
     }
 
     //验证用户有效性
@@ -261,12 +374,32 @@
         }
     }
 
+    //从当前url地址栏获取任务列表ID
+    //地址格式如：http://localhost:54185/Hybrid/index.htm#taskPanel?listId=1
+    //通过将参数存放在url，即便我们采用刷新页面，也不会丢失当前的页面参数
+    function getTaskListId() {
+        var regex = /^#taskPanel/;
+        var url = $.mobile.path.parseUrl(window.location.href);
+        if (url.hash.search(regex) !== -1) {
+            var listId = url.hash.replace(/.*listId=/, "");
+            return listId;
+        }
+    }
     //从当前url地址栏获取任务ID
-    //地址：http://localhost:54185/Hybrid/index.htm#taskEditPanel?taskId=1
-    //通过将参数存放在url，即便我们采用刷新页面，也不会丢失当前的任务ID
-    //我觉得任务列表的ID也可以采用这种方式，即通过保存在url中，从而即便我们
-    //刷新页面也能知道当前的任务列表ID或任务ID
+    //地址格式如：http://localhost:54185/Hybrid/index.htm#taskEditPanel?taskId=1
+    //通过将参数存放在url，即便我们采用刷新页面，也不会丢失当前的页面参数
     function getTaskId() {
+        var regex = /^#taskDetailPanel/;
+        var url = $.mobile.path.parseUrl(window.location.href);
+        if (url.hash.search(regex) !== -1) {
+            var taskId = url.hash.replace(/.*taskId=/, "");
+            return taskId;
+        }
+    }
+    //从当前url地址栏获取任务ID
+    //地址格式如：http://localhost:54185/Hybrid/index.htm#taskEditPanel?taskId=1
+    //通过将参数存放在url，即便我们采用刷新页面，也不会丢失当前的页面参数
+    function getTaskIdFromTaskEditPanel() {
         var regex = /^#taskEditPanel/;
         var url = $.mobile.path.parseUrl(window.location.href);
         if (url.hash.search(regex) !== -1) {
@@ -279,6 +412,17 @@
         if (typeof data.toPage === "string") {
             var url = $.mobile.path.parseUrl(data.toPage);
 
+            //以下判断当前要切换到的页面是否是任务详情页面，
+            //如果是则从URL取出任务ID然后初始化任务详情页面
+            var regex = /^#taskDetailPanel/;
+            if (url.hash.search(regex) !== -1) {
+                //var taskId = url.hash.replace(/.*taskId=/, "");
+                //initializeTaskDetailPanel(taskId);
+                //以下这一句必须，因为发现如果不设置则jquery mobile不会在url地址栏显示taskId
+                data.options.dataUrl = url.href;
+                return;
+            }
+
             //以下判断当前要切换到的页面是否是任务编辑页面，
             //如果是则从URL取出任务ID然后初始化任务编辑页面
             var regex = /^#taskEditPanel/;
@@ -287,19 +431,38 @@
                 initializeTaskEditPanel(taskId);
                 //以下这一句必须，因为发现如果不设置则jquery mobile不会在url地址栏显示taskId
                 data.options.dataUrl = url.href;
+                return;
             }
 
-            //将来也可以考虑将TaskList的ID也用上面类似方式实现，
-            //这样可以不需要定义内存变量保存当前的任务列表ID
+            //以下判断当前要切换到的页面是否是任务页面，
+            //如果是则从URL取出任务列表ID然后初始化任务页面
+            var regex = /^#taskPanel/;
+            if (url.hash.search(regex) !== -1) {
+                var listId = url.hash.replace(/.*listId=/, "");
+                setCurrentTaskList(listId);
+                //initializeTaskPanel(listId);
+                //以下这一句必须，因为发现如果不设置则jquery mobile不会在url地址栏显示listId
+                data.options.dataUrl = url.href;
+                return;
+            }
         }
     }
 
     window.showPanel = showPanel;
     window.login = login;
+    window.showTaskListPanel = showTaskListPanel;
     window.addOrUpdateTask = addOrUpdateTask;
     window.showTaskEditPanel = showTaskEditPanel;
     window.refreshTaskPanel = refreshTaskPanel;
     window.onbeforepagechange = onbeforepagechange;
+    window.initializeTaskPanel = initializeTaskPanel;
+    window.showAddTaskListPanel = showAddTaskListPanel;
+    window.refreshTaskListPanel = refreshTaskListPanel;
+    window.addTaskList = addTaskList;
+    window.getCurrentTaskListId = getCurrentTaskListId;
+    window.showTaskDetailPanelAuto = showTaskDetailPanelAuto;
+    window.showTaskEditPanelAuto = showTaskEditPanelAuto;
+    window.showTaskPanel = showTaskPanel;
 })();
 
 

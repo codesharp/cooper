@@ -11,6 +11,12 @@
 
     <script src="scripts/cooper.js" type="text/javascript"></script>
     <script src="scripts/lang.js" type="text/javascript"></script>
+<!--    <script src="jquery/jqm.page.params.js" type="text/javascript"></script>-->
+
+    <!--全局-->
+    <script type="text/javascript">
+
+    </script>
 
     <!-- 登录面板 -->
     <div id="loginPanel" data-role="page" data-theme="a">
@@ -49,9 +55,9 @@
     <div id="taskListPanel" data-role="page" data-theme="a">
         <div data-role="header">
             <div class="ui-btn-left" style="line-height: 50px">
-                <img src="images/edit.png" />
+                <img id="addTaskListImg" src="images/edit.png" />
                 &nbsp;
-                <img src="images/refresh.png" />
+                <img id="refreshTaskListsImg" src="images/refresh.png" />
             </div>
             <h1>
                 cooper:task</h1>
@@ -104,18 +110,18 @@
     <div id="taskDetailPanel" data-role="page">
         <div data-role="header" data-position="fixed">
             <div class="ui-btn-left" style="line-height: 50px">
-                <img src="images/back.png" />
+                <img id="gotoTaskPanel" src="images/back.png" />
             </div>
             <h1>
                 cooper:task</h1>
             <div class="ui-btn-right" style="line-height: 50px">
-                <img src="images/edit.png" /></div>
+                <img id="gotoTaskEditPanel" src="images/edit.png" /></div>
         </div>
         <div data-role="content" style="background-color: #fff">
             <div data-role="fieldcontain">
-                <label for="priority">
+                <label for="complete">
                     是否完成</label>
-                <select name="priority" id="priority" data-role="slider">
+                <select name="complete" id="complete" data-role="slider">
                     <option value="false">未完成</option>
                     <option value="true">完成</option>
                 </select>
@@ -123,28 +129,26 @@
             <div data-role="fieldcontain">
                 <fieldset data-role="controlgroup" data-type="horizontal">
                     <legend>优先级</legend>
-                    <input type="radio" name="priority" id="radio-choice-1" value="0" />
-                    <label for="radio-choice-1">
+                    <input type="radio" name="level" id="radio-level-1" value="0" />
+                    <label for="radio-level-1">
                         今天</label>
-                    <input type="radio" name="priority" id="radio-choice-2" value="1" />
-                    <label for="radio-choice-2">
+                    <input type="radio" name="level" id="radio-level-2" value="1" />
+                    <label for="radio-level-2">
                         稍后</label>
-                    <input type="radio" name="priority" id="radio-choice-3" value="2" />
-                    <label for="radio-choice-3">
+                    <input type="radio" name="level" id="radio-level-3" value="2" />
+                    <label for="radio-level-3">
                         迟些</label>
                 </fieldset>
             </div>
             <div data-role="fieldcontain">
-                <label for="duetime">
+                <label for="duetime2">
                     截止日期</label>
-                <input type="date" name="duetime" id="duetime" />
+                <input type="date" name="duetime2" id="duetime2" />
             </div>
             <div data-role="fieldcontain">
-                <p>
-                    fasdf</p>
-                <p>
-                    备注内容
-                </p>
+                <input type="hidden" id="taskId2" value="" />
+                <p id="subject2"></p>
+                <p id="body2"></p>
             </div>
             <br />
             <ul data-role="listview" data-icon="star" data-inset="true">
@@ -188,7 +192,7 @@
     <div id="taskEditPanel" data-role="page">
         <div data-role="header" data-position="fixed">
             <div class="ui-btn-left" style="line-height: 50px">
-                <img src="images/back.png" />
+                <img id="gotoTaskDetailPanel" src="images/back.png" />
             </div>
             <h1>
                 cooper:task</h1>
@@ -197,9 +201,9 @@
         <div data-role="content" style="background-color: #fff">
             <input type="hidden" id="taskId" value="" />
             <div data-role="fieldcontain">
-                <label for="priority">
+                <label for="isCompleted">
                     是否完成</label>
-                <select name="priority" id="isCompleted" data-role="slider">
+                <select name="isCompleted" id="isCompleted" data-role="slider">
                     <option value="false">未完成</option>
                     <option value="true">完成</option>
                 </select>
@@ -207,13 +211,13 @@
             <div data-role="fieldcontain">
                 <fieldset data-role="controlgroup" data-type="horizontal">
                     <legend>优先级</legend>
-                    <input type="radio" name="priority" id="radio1" value="0" />
+                    <input type="radio" name="priority" id="radio-choice-1" value="0" />
                     <label for="radio-choice-1">
                         今天</label>
-                    <input type="radio" name="priority" id="radio2" value="1" />
+                    <input type="radio" name="priority" id="radio-choice-2" value="1" />
                     <label for="radio-choice-2">
                         稍后</label>
-                    <input type="radio" name="priority" id="radio3" value="2" />
+                    <input type="radio" name="priority" id="radio-choice-3" value="2" />
                     <label for="radio-choice-3">
                         迟些</label>
                 </fieldset>
@@ -235,12 +239,40 @@
             </div>
         </div>
     </div>
+    <!-- 新增任务列表 -->
+    <div id="addTaskListPanel" data-role="page" data-theme="a">
+        <div data-role="content">
+            <form>
+            <ul data-role="listview" data-inset="true">
+                <li data-role="fieldcontain">
+                    <input type="text" placeholder="名称" id="tasklistName" name="tasklistName" style="width: 100%" />
+                </li>
+            </ul>
+            <div class="ui-block-b">
+                <button id="saveNewTaskList" type="button" data-inline="true" data-theme="a">
+                    保存</button>
+                <button id="cancelAddTaskList" type="button" data-inline="true" data-theme="a">
+                    取消</button>
+            </div>
+            </form>
+        </div>
+    </div>
 
     <script src="jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
     <script src="jquery/jquery.mobile-1.1.0.min.js" type="text/javascript"></script>
 
     <script type="text/javascript">
         $(function () {
+
+            //            var pageData = {};
+            //            $(document).bind("mobileinit", function () {
+            //                $.mobile.page.prototype.options.domCache = true;
+            //            });
+            //            $(document).bind("pagebeforechange", function (e, data) {
+            //                //console.log(data);
+            //                //jqm.page.params填充此数据
+            //                pageData = data.options.pageData;
+            //            });
 
             //登录
             $('#loginButton').click(function () {
@@ -251,8 +283,32 @@
 
             //返回任务列表面板
             $('#gotoTasklistImg').click(function () {
-                showPanel("taskListPanel");
+                showTaskListPanel();
             });
+
+            //新增任务列表
+            $('#addTaskListImg').click(function () {
+                showAddTaskListPanel();
+            });
+            //刷新任务列表面板
+            $('#refreshTaskListsImg').click(function () {
+                refreshTaskListPanel();
+            });
+
+            //返回任务面板
+            $('#gotoTaskPanel').click(function () {
+                showTaskPanel(getCurrentTaskListId());
+            });
+            //重定向到任务编辑面板
+            $('#gotoTaskEditPanel').click(function () {
+                showTaskEditPanelAuto();
+            });
+
+            //重定向到任务详情面板
+            $('#gotoTaskDetailPanel').click(function () {
+                showTaskDetailPanelAuto();
+            });
+
             //显示新增编辑任务面板
             $('#addTaskImg').click(function () {
                 showTaskEditPanel("");
@@ -262,6 +318,15 @@
                 refreshTaskPanel();
             });
 
+            //新增任务列表确定按钮响应函数
+            $('#saveNewTaskList').click(function () {
+                var taskListName = $("#tasklistName").val();
+                addTaskList(taskListName);
+            });
+            //新增任务列表取消按钮响应函数
+            $('#cancelAddTaskList').click(function () {
+                showPanel("taskListPanel");
+            });
             //新增编辑任务确定按钮响应函数
             $('#addOrUpdateTaskButton').click(function () {
                 var id = $("#taskId").val();
@@ -280,6 +345,9 @@
             //$(document).delegate("#taskPanel", "pageinit", function () {
             //    alert('task panel page inited.');
             //});
+
+            //$(document).delegate("#taskPanel", "pageinit", initializeTaskPanel);
+            //$(document).delegate("#taskPanel", "pageshow", initializeTaskPanel);
         });
     </script>
 
