@@ -182,7 +182,7 @@ ul#tasklists span {
 	font-size: 15px;
 }
 .detail input.detail-title[readonly] {
-	background-color: transparent;
+	background-color:  #fff;
 }
 .detail textarea.detail-note {
 	width: 90%;
@@ -192,7 +192,7 @@ ul#tasklists span {
 	min-height: 70px;
 }
 .detail textarea.detail-note[readonly] {
-	background-color: transparent;
+	background-color: #fff;
 }
 .detail .detail-item {
 	width: 60px;

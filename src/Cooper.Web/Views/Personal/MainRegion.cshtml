@@ -31,8 +31,8 @@
                 }
             </ul>
         </li>
-        <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">@this.Lang().more <span class="label label-warning">New!</span>
-            <b class="caret"></b></a>
+        <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">@this.Lang().more
+            <span class="label label-warning">New!</span> <b class="caret"></b></a>
             <ul class="dropdown-menu">
                 <li id="tasklist_delete"><a onclick="doRemoveTasklist()"><i class="icon-trash"></i>@this.Lang().delete_tasklist</a></li>
                 @*<li><a onclick="syncAccount()"><i class="icon-refresh"></i>@this.Lang().sync_to</a></li>*@
@@ -40,7 +40,8 @@
                 </li>
                 <li><a onclick="window.print()"><i class="icon-print"></i>@this.Lang().print</a></li>
                 <li><a href="@Request.Url" target="_blank"><i class="icon-share-alt"></i>@this.Lang().open_in_new_window</a></li>
-                <li><a onclick="$('#mobi_app').modal('show')"><i class="icon-download"></i> @this.Lang().download_mobi <span class="label label-important">HOT!</span></a></li>
+                <li><a onclick="$('#mobi_app').modal('show')"><i class="icon-download"></i>@this.Lang().download_mobi
+                    <span class="label label-important">HOT!</span></a></li>
             </ul>
         </li>
     </ul>
@@ -89,8 +90,11 @@
     <span class="label label-info">↵ @this.Lang().addNew</span> <span class="label label-success">
         Ctrl+↵
         @this.Lang().complete</span> <span class="label ">Ctrl+↓ @this.Lang().sort</span>
-    <span class="label label-inverse">Ctrl/Shift+@this.Lang().mouse @this.Lang().select_inverse</span>
-    <span class="label label-warning">Backspace @this.Lang().delete</span>
+    @if (!mini)
+    {
+        <span class="label label-inverse">Ctrl/Shift+@this.Lang().mouse @this.Lang().select_inverse</span>
+        <span class="label label-warning">Backspace @this.Lang().delete</span>
+    }
 </div>
 <!--异常显示-->
 <div id="error_lose_connect" class="alert alert-error hide">

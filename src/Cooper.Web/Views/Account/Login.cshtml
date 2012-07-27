@@ -7,6 +7,7 @@
     <title>@this.Lang().login @this.Suffix()</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/bootstrap/css/bootstrap.min.css")" />
+    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/css/base.css")" />
     <style type="text/css">
         .container {
             max-width: 450px;
@@ -20,12 +21,11 @@
         }
     </style>
 </head>
-<body style="background-color: rgb(175, 188, 200)">
-    <div class="container" style="text-align: center; color: #596573; font-size: 20px;
-        font-weight: 800">
-        <img src="@Url.Content("~/content/images/cooper.png")" width="230px" />
+<body>
+    <div class="container" style="text-align: center;">
+        <img src="@Url.Content("~/content/images/cooper.png")" width="280px" />
     </div>
-    <div class="container well" style="background-color: #fff;">
+    <div class="container well" style="background-color: #fff; border:1px #ccc solid">
         <h2>
             @this.Lang().login
         </h2>

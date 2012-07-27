@@ -4,31 +4,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>@this.Lang().borrower_not_support Cooper Task Management</title>
+    <title>@this.Lang().borrower_not_support @this.Suffix()</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/bootstrap/css/bootstrap.css")" />
     <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/jquery/css/smoothness/jquery-ui-1.8.21.custom.css")" />
+    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/css/base.css")" />
+    <style type="text/css">
+        .container {
+            max-width: 500px;
+            margin-top: 10px;
+        }
+        .btn {
+            width: 75%;
+        }
+        form {
+            color: #808080;
+        }
+    </style>
 </head>
-<body style="background-color: rgb(175, 188, 200)">
-    <div class="container" style="width: 500px; margin-top: 50px; text-align: center;
-        color: #596573; font-size: 23px; font-weight: 800">
-        Cooper Task Management
+<body>
+    <div class="container" style="text-align: center;">
+        <img src="@Url.Content("~/content/images/cooper.png")" width="280px" />
     </div>
-    <div class="container" style="border: 1px #ccc solid; width: 500px; margin-top: 40px;
-        background-color: #fff">
-        <div style="line-height: 40px; font-size:14px; padding-top:20px; text-align:center;">
+    <div class="container well" style="border: 1px #ccc solid; background-color: #fff">
+        <div style="line-height: 40px; font-size: 14px; padding-top: 20px; text-align: center;">
             @this.Lang().sorry_borrower_not_support
         </div>
         <div style="border-top: 1px #c0ccd7 solid; margin: 10px; position: relative">
         </div>
-        <div style="color: #808080; margin-bottom: 40px; text-align:center">
-            <a href="http://www.google.com/chrome" target="_blank" style="padding:10px">
-                <img src="@Url.Content("~/Content/images/chrome.gif")" /> Chrome 11+
-            </a><a href="http://www.apple.com/safari/" target="_blank" style="padding:10px">
-                <img src="@Url.Content("~/Content/images/safari.gif")" /> Safari</a> 
-                <a href="http://www.mozilla.com/firefox/"  style="padding:10px"
-                    target="_blank">
-                    <img src="@Url.Content("~/Content/images/firefox.gif")" /> FireFox 6+</a>
+        <div style="color: #808080; margin-bottom: 40px; text-align: center">
+            <a href="http://www.google.com/chrome" target="_blank" style="padding: 10px">
+                <img src="@Url.Content("~/Content/images/chrome.gif")" />
+                Chrome 11+ </a><a href="http://www.apple.com/safari/" target="_blank" style="padding: 10px">
+                    <img src="@Url.Content("~/Content/images/safari.gif")" />
+                    Safari</a> <a href="http://www.mozilla.com/firefox/" style="padding: 10px" target="_blank">
+                        <img src="@Url.Content("~/Content/images/firefox.gif")" />
+                        FireFox 6+</a>
         </div>
     </div>
     @{Html.RenderSettings();}
