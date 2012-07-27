@@ -204,7 +204,7 @@
             ui_list_helper_due = create_UI_List_Due();
 
             refreshTasklists();
-            list('');
+            list(0);
 
             $('.btn_sync').click(function () {
                 var $e = $(this);
@@ -261,9 +261,9 @@
             });
         }
         function list(id) {
-            $('#tasklist_title').html($('#tasklists a.changelist[id=' + id + ']').find('span').html());
+            $('#tasklist_title').html($('#tasklists a.changelist[id="' + id + '"]').find('span').html());
             currentMode(function () {
-                currentList = id;
+                currentList = id == 0 ? '' : id;
                 var temp = parseInt(id);
                 $('#tasklist_delete')[isNaN(temp) ? 'hide' : 'show']();
             }, function () {
@@ -279,7 +279,7 @@
             refreshTasklists();
         }
         function removeTasklist(i) {
-            $('#tasklists a[id=' + i + ']').parent().remove();
+            $('#tasklists a[id="' + i + '"]').parent().remove();
         }
         function openTasklists() {
             $('#tasklistModal').modal('show');
@@ -304,7 +304,7 @@
             $.post(url_tasklist_delete, { id: currentList }, function () {
                 debuger.info('remove tasklist#' + currentList);
                 removeTasklist(currentList);
-                list('');
+                list(0);
             });
         }
         ////////////////////////////////////////////////////////////////////////////////////////

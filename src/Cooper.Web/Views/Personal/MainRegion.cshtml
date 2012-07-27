@@ -16,8 +16,8 @@
             <ul id="tasklists" class="dropdown-menu">
                 <li><a onclick="openTasklists()"><i class="icon-edit"></i><span>@this.Lang().new_tasklist</span>
                     <span class="label label-important">New</span></a></li>
-                <!--default-->
-                <li><a class="changelist" id=""><i class="icon-inbox"></i><span>@this.Lang().personal_task_management</span></a></li>
+                <!--default id=0-->
+                <li><a class="changelist" id="0"><i class="icon-inbox"></i><span>@this.Lang().personal_task_management</span></a></li>
                 <!--fetch tasklists-->
                 @foreach (var f in fetchs)
                 {

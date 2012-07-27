@@ -26,6 +26,10 @@
                 location.href = url_task_mini;
                 return;
             }
+            //为IE7做自适应
+            if ($.browser.msie && $.browser.version.indexOf('7.') >= 0) {
+                $('div.row-fluid div.span4').removeClass('span4').addClass('span3');
+            }
             //TODO:仅在变更时处理
             if (sys_versionFlag != 'debug')
                 window.onbeforeunload = function () { return 'Cooper Task'; };
