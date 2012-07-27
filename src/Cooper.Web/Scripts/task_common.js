@@ -599,7 +599,7 @@ UI_List_Common.prototype = {
         }
         //给予一定时间的撤销机会 
         //注意：由于定时原因，会导致重新加载操作时删除记录未被提交
-        var i = 15;
+        var i = 10;
         this.$cancel_delete.show().find('span').eq(0).html(l);
         this.deletes_timer = setTimeout(function () { base.continueDelete(); }, i * 1000);
         //优化体验 给出倒计时

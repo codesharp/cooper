@@ -29,6 +29,17 @@ namespace Cooper.Web.Controllers
             else
                 return RedirectToAction("Index", "Per");
         }
+
+        public ActionResult Issues()
+        {
+            using (var wc = new System.Net.WebClient() { Encoding = System.Text.Encoding.UTF8 })
+                ViewBag.Open = wc.DownloadString("https://api.github.com/repos/codesharp/cooper/issues");
+            using (var wc = new System.Net.WebClient() { Encoding = System.Text.Encoding.UTF8 })
+                ViewBag.Close = wc.DownloadString("https://api.github.com/repos/codesharp/cooper/issues?state=close");
+            using (var wc = new System.Net.WebClient() { Encoding = System.Text.Encoding.UTF8 })
+                ViewBag.Events = wc.DownloadString("https://api.github.com/repos/codesharp/cooper/issues/events");
+            return View();
+        }
         //模拟iframe内使用
         public ActionResult IFrame()
         {
