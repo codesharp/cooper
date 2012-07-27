@@ -282,11 +282,12 @@ UI_List_Common.prototype = {
                 } else if ($actives.length == 1 && txt != '') {//带内容的焦点行删除
                     var $p = base._findNextAndPrev($focus)[0];
                     if ($p == null) return;
-                    if ($focus.find('input')[0].selectionStart > 0) return;
+                    var input = $focus.find('input')[0];
+                    if (input.selectionStart > 0 || input.selectionEnd > 0) return;
                     var prev = base.getTask($p);
                     //合并到上一行
                     prev.setSubject(prev.subject() + txt, true);
-                    b = true;//合并操作不需要出现撤销删除
+                    b = true; //合并操作不需要出现撤销删除
                 }
                 base.deleteTask(b);
                 if ($p != null)
@@ -599,11 +600,11 @@ UI_List_Common.prototype = {
         //给予一定时间的撤销机会 
         //注意：由于定时原因，会导致重新加载操作时删除记录未被提交
         var i = 15;
-        this.$cancel_delete.show().find('code').html(l);
+        this.$cancel_delete.show().find('span').eq(0).html(l);
         this.deletes_timer = setTimeout(function () { base.continueDelete(); }, i * 1000);
         //优化体验 给出倒计时
         clearInterval(this.deletes_timer2);
-        var $temp = this.$cancel_delete.show().find('span').html(i);
+        var $temp = this.$cancel_delete.show().find('span').eq(1).html(i);
         this.deletes_timer2 = setInterval(function () { if (i-- > 0) $temp.html(i) }, 1000);
 
         this._flushIdxs();

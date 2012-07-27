@@ -5,9 +5,10 @@
 }
 <!--撤销删除区域-->
 <div id="cancel_delete" class="alert alert-danger">
-    @this.Lang().confirm_delete_task<code>1</code>@this.Lang().confirm_delete_task_end
-    <a id="cancel_delete_true" onclick="cancelDelete()">@this.Lang().yes</a> <a id="cancel_delete_false"
-        onclick="continueDelete()">@this.Lang().no</a> <span></span>...
+    <span>1</span>@this.Lang().task_deleted
+    <a onclick="cancelDelete()">@this.Lang().revoke</a>
+    <span></span>...
+    <a onclick="continueDelete()"><i class="icon-remove"></i></a>
 </div>
 <div style="padding: 10px 5px 0;">
     <ul class="nav nav-tabs">
