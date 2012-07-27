@@ -10,11 +10,6 @@ var UI_List_Due = function () { }
 UI_List_Due.prototype = new UI_List_Common();
 UI_List_Due.prototype.mode = 'ByDueTime';
 ////////////////////////////////////////////////////////////////////////////////////////
-//UI模式定制参数
-UI_List_Due.prototype.modeArgs = {
-    shortcuts_move: true,
-    CanSetCompleted_RowOfInValidRegion: true
-}
 //按dueTime排序区域
 UI_List_Due.prototype.byDueTime = null;
 UI_List_Due.prototype._isDueTimeRow = function ($r) { return this.getRegionOfRow($r).hasClass('todolist_dueTime'); }
@@ -101,6 +96,10 @@ UI_List_Due.prototype.onDueTimeBatchChange = function (tasks, t) {
 UI_List_Due.prototype._isValidRegion = function ($r) { return !this._isDueTimeRegion($r); }
 UI_List_Due.prototype._isRowOfValidRegion = function ($r) { return !this._isDueTimeRow($r); }
 UI_List_Due.prototype.render = function () {
+    //modeargs
+    debuger.debug(this.modeArgs);
+    //this.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion = true;
+
     this.$wrapper.empty();
     //dueTime排序区域
     this.byDueTime = cached_idxs['dueTime'];
@@ -133,8 +132,9 @@ UI_List_Due.prototype.appendTask = function (p) {
     else if (($actives = this.getActives()).length == 1)
         $row = $actives;
     if ($row != null) {
-        t.el().insertAfter($row);
         var active = cached_tasks[this.getTaskId($row)];
+        this._appendTaskToRow($row, t, active);
+
         var dueTime = active.dueTime();
         if (dueTime != null) {
             t.setDueTime(dueTime);
@@ -165,6 +165,9 @@ function addDay(t, d) {
 function create_UI_List_Due() {
     var ui = new UI_List_Due();
     ui.child = ui;
+
+    //定制部分参数
+    ui.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion = true;
 
     ui.$wrapper = $el_wrapper_region;
     ui.$wrapper_detail = $el_wrapper_detail;
