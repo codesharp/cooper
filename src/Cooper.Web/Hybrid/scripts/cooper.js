@@ -105,7 +105,30 @@
         showTaskPanel(currentTaskListId);
         showTasks();
     }
-
+    //详情页面自动更新任务优先级
+    function autoUpdateTaskPriority(priority) {
+        var taskId = getTaskId();
+        var task = loadTask(taskId);
+        if (task != null) {
+            task.priority = priority;
+        }
+    }
+    //详情页面自动更新任务截止时间
+    function autoUpdateTaskDueTime(dueTime) {
+        var taskId = getTaskId();
+        var task = loadTask(taskId);
+        if (task != null) {
+            task.dueTime = dueTime;
+        }
+    }
+    //详情页面自动更新任务完成状态
+    function autoUpdateTaskStatus(isCompleted) {
+        var taskId = getTaskId();
+        var task = loadTask(taskId);
+        if (task != null) {
+            task.isCompleted = isCompleted;
+        }
+    }
     //获取所有任务列表
     function loadAllTaskList() {
         taskListArray = [];
@@ -503,6 +526,9 @@
     window.showTaskDetailPanelAuto = showTaskDetailPanelAuto;
     window.showTaskEditPanelAuto = showTaskEditPanelAuto;
     window.showTaskPanel = showTaskPanel;
+    window.autoUpdateTaskPriority = autoUpdateTaskPriority;
+    window.autoUpdateTaskDueTime = autoUpdateTaskDueTime;
+    window.autoUpdateTaskStatus = autoUpdateTaskStatus;
 })();
 
 

@@ -274,6 +274,22 @@
             //                pageData = data.options.pageData;
             //            });
 
+            $("[name=level]").change(function () {
+                var priority = $('input[name=level]:checked').val();
+                //console.log(priority);
+                autoUpdateTaskPriority(priority);
+            });
+            $("#complete").change(function () {
+                var isCompleted = $(this).val();
+                //console.log(isCompleted);
+                autoUpdateTaskStatus(isCompleted);
+            });
+            $("#taskDetailPanel #duetime2").blur(function () {
+                var dueTime = $(this).attr("value");
+                //console.log(dueTime);
+                autoUpdateTaskDueTime(dueTime);
+            });
+
             //登录
             $('#loginButton').click(function () {
                 var userName = $("#username").val();
