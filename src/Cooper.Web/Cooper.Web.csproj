@@ -138,6 +138,7 @@
     <Content Include="Content\bootstrap\img\glyphicons-halflings.png" />
     <Content Include="Content\bootstrap\js\bootstrap.js" />
     <Content Include="Content\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Content\css\base.css" />
     <Content Include="Content\css\task.css" />
     <Content Include="Content\images\appstore.jpg" />
     <Content Include="Content\images\chrome.gif" />
@@ -286,12 +287,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\_Layout_Mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Shared\_Layout_Fetch.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Fetch\GitHub.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\LeftBar.cshtml" />
