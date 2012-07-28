@@ -49,5 +49,11 @@ namespace Cooper.Web.Controllers
         {
             return View();
         }
+
+        public ActionResult Feedback(string level, string content)
+        {
+            this._log.InfoFormat("来自用户{0}的反馈：{1} | {2}", User.Identity.Name, level, content);
+            return Content(string.Empty);
+        }
     }
 }

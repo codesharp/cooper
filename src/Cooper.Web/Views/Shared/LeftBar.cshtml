@@ -18,5 +18,10 @@
         @Html.Raw(this.Lang().recent_changes)
     </ul>
     <br />
+    <div class="alert alert-success">
+        <strong>Like it ?</strong>
+        <a onclick="feedback()">feedback</a>!
+    </div>
+    <br />
     <div id="error" class="alert alert-danger hide">@this.Lang().error_and_retry_later</div>
 </div>

@@ -20,6 +20,20 @@
     var url_task_mini = '@Url.Action("Mini", "Personal", null)';
     var url_tasklist_create = '@Url.Action("CreateTasklist", "Personal", null)';
     var url_tasklist_delete = '@Url.Action("DeleteTasklist", "Personal", null)';
+
+
+    var url_feedback = '@Url.Action("Feedback", "Home", null)';
+    //简易feedback
+    function feedback() {
+        $('#feedback').modal('show');
+    }
+    function doFeedback() {
+        $('#feedback').modal('hide');
+        $.get(url_feedback, {
+            level: $('#feedback .btn-group button.active').val(),
+            content: $('#feedback textarea').val()
+        }, function () { });
+    }
 </script>
 <div class="modal hide" id="mobi_app">
     <div class="modal-header">
@@ -42,6 +56,32 @@
         
     </div>
     <div class="modal-footer">
+    </div>
+</div>
+<div class="modal hide" id="feedback">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+            ×</button>
+        <h3>
+            意见反馈</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+        <div class="btn-group" data-toggle="buttons-radio">
+            <button type="button" class="btn btn-inverse" value="一般">
+                一般，加把劲</button>
+            <button type="button" class="btn btn-info active" value="不错，继续努力">
+                不错，继续努力</button>
+            <button type="button" class="btn btn-success" value="很棒，加油">
+                很棒，加油</button>
+        </div>
+        <br />
+        <textarea name="content" style="width: 80%" placeholder="意见、问题"></textarea>
+        <form>
+    </div>
+    <div class="modal-footer">
+        <a class="btn" data-dismiss="modal">取消</a> <a class="btn btn-primary" onclick="doFeedback()">
+            提交</a>
     </div>
 </div>
 @if (!CodeSharp.Framework.SystemConfig.Settings.VersionFlag.Equals("Release"))
