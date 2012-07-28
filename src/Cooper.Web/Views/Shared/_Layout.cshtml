@@ -264,8 +264,7 @@
             $('#tasklist_title').html($('#tasklists a.changelist[id="' + id + '"]').find('span').html());
             currentMode(function () {
                 currentList = id == 0 ? '' : id;
-                var temp = parseInt(id);
-                $('#tasklist_delete')[isNaN(temp) ? 'hide' : 'show']();
+                $('#tasklist_delete')[isNaN(parseInt(currentList)) ? 'hide' : 'show']();
             }, function () {
                 var temp = parseInt(id);
                 if (isNaN(temp))
