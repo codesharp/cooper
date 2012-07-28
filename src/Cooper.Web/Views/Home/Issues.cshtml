@@ -11,22 +11,32 @@
 <body style="padding: 10px">
     <div class="tabbable tabs-left">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#open" data-toggle="tab">Open</a></li>
-            <li><a href="#close" data-toggle="tab">Closed</a></li>
-            <li><a href="#event" data-toggle="tab">Event</a></li>
+            <li class="active"><a href="#web_open" data-toggle="tab">Web Issues Open</a></li>
+            <li><a href="#web_closed" data-toggle="tab">Web Issues Closed</a></li>
+            <li><a href="#mobi_open" data-toggle="tab">Mobi Issues Closed</a></li>
+            <li><a href="#mobi_closed" data-toggle="tab">Mobi Issues Closed</a></li>
+            <li><a href="#ci" data-toggle="tab">Build Status</a></li>
         </ul>
         <div class="tab-content">
-            <div class="tab-pane active" id="open">
-                <ul id="open" class="nav nav-tabs nav-stacked">
+            <div class="tab-pane active" id="web_open">
+                <ul id="web_open" class="nav nav-tabs nav-stacked">
                 </ul>
             </div>
-            <div class="tab-pane" id="close">
-                <ul id="closed" class="nav nav-tabs nav-stacked">
+            <div class="tab-pane" id="web_closed">
+                <ul id="web_closed" class="nav nav-tabs nav-stacked">
                 </ul>
             </div>
-            <div class="tab-pane" id="event">
-                <ul id="event" class="nav nav-tabs nav-stacked">
+            <div class="tab-pane" id="mobi_open">
+                <ul id="mobi_open" class="nav nav-tabs nav-stacked">
                 </ul>
+            </div>
+            <div class="tab-pane" id="mobi_closed">
+                <ul id="mobi_closed" class="nav nav-tabs nav-stacked">
+                </ul>
+            </div>
+            <div class="tab-pane" id="ci">
+                <iframe src="http://teamcity.codebetter.com/viewType.html?tab=buildTypeStatusDiv&buildTypeId=bt744"
+                    width="100%" height="400px" style="border: 0; overflow: hidden;"></iframe>
             </div>
         </div>
     </div>
@@ -34,14 +44,19 @@
     <script type="text/javascript" src="@Url.Content("~/content/jquery/jquery-1.7.2.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/content/bootstrap/js/bootstrap.min.js")"></script>
     <script type="text/javascript">
-    var issues_closed=@Html.Raw(ViewBag.Close);
-    var issues_open=@Html.Raw(ViewBag.Open);
-    var events=@Html.Raw(ViewBag.Events);
+    var issues_web_closed=@Html.Raw(ViewBag.web_closed);
+    var issues_web_open=@Html.Raw(ViewBag.web_open);
+    var issues_mobi_closed=@Html.Raw(ViewBag.mobi_closed);
+    var issues_mobi_open=@Html.Raw(ViewBag.mobi_open);
+    //var events=@Html.Raw(ViewBag.Events);
     </script>
     <script type="text/javascript">
         $(function () {
-            render(issues_open, $('ul#open'));
-            render(issues_closed, $('ul#closed'));
+            render(issues_web_open, $('ul#web_open'));
+            render(issues_web_closed, $('ul#web_closed'));
+            render(issues_mobi_open, $('ul#mobi_open'));
+            render(issues_mobi_closed, $('ul#mobi_closed'));
+
             function render(issues, $l) {
                 $.each(issues, function (i, n) {
                     var labels = '';
@@ -53,7 +68,7 @@
                         + (n['assignee'] ? '<img src="' + n['assignee']['avatar_url'] + '" width="20px" style="border:1px #ccc solid"/> ' : '')
                         + '<b>' + n['title'] + '</b>'
                         + labels
-                        + ' <span class="badge badge-inverse">' + n['comments'] + '</span> '
+                        + (n['comments'] > 0 ? ' <span class="badge badge-inverse">comments=' + n['comments'] + '</span> ' : '')
                         + '<span class="label label-info">by ' + n['user']['login'] + '</span> '
                         + '<code>' + n['created_at'] + '</code>'
                         + (n['body'] ? '<br/><br/><div class="alert alert-info">' + n['body'] + '</div>' : '')
@@ -61,16 +76,17 @@
                 });
             }
 
-            $.each(events, function (i, n) {
-                var labels = '';
-                $('ul#event').append('<li><a>'
-                        + '<code>' + n['event'] + '</code> '
-                        + (n['actor'] ? '<img src="' + n['actor']['avatar_url'] + '" width="20px" style="border:1px #ccc solid"/> ' : '')
-                        + '<b>' + n['issue']['title'] + '</b>'
-                        + '<code>' + n['created_at'] + '</code>'
-                        + '</a></li>');
-            });
+            //            $.each(events, function (i, n) {
+            //                var labels = '';
+            //                $('ul#event').append('<li><a>'
+            //                        + '<code>' + n['event'] + '</code> '
+            //                        + (n['actor'] ? '<img src="' + n['actor']['avatar_url'] + '" width="20px" style="border:1px #ccc solid"/> ' : '')
+            //                        + '<b>' + n['issue']['title'] + '</b>'
+            //                        + '<code>' + n['created_at'] + '</code>'
+            //                        + '</a></li>');
+            //            });
         });
     </script>
+    @Html.Raw(this.Lang().web_analysis)
 </body>
 </html>

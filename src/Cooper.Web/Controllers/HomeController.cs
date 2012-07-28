@@ -33,11 +33,15 @@ namespace Cooper.Web.Controllers
         public ActionResult Issues()
         {
             using (var wc = new System.Net.WebClient() { Encoding = System.Text.Encoding.UTF8 })
-                ViewBag.Open = wc.DownloadString("https://api.github.com/repos/codesharp/cooper/issues");
+                ViewBag.web_open = wc.DownloadString("https://api.github.com/repos/codesharp/cooper/issues");
             using (var wc = new System.Net.WebClient() { Encoding = System.Text.Encoding.UTF8 })
-                ViewBag.Close = wc.DownloadString("https://api.github.com/repos/codesharp/cooper/issues?state=close");
+                ViewBag.web_closed = wc.DownloadString("https://api.github.com/repos/codesharp/cooper/issues?state=close");
             using (var wc = new System.Net.WebClient() { Encoding = System.Text.Encoding.UTF8 })
-                ViewBag.Events = wc.DownloadString("https://api.github.com/repos/codesharp/cooper/issues/events");
+                ViewBag.mobi_open = wc.DownloadString("https://api.github.com/repos/codesharp/cooper-mobi/issues");
+            using (var wc = new System.Net.WebClient() { Encoding = System.Text.Encoding.UTF8 })
+                ViewBag.mobi_closed = wc.DownloadString("https://api.github.com/repos/codesharp/cooper-mobi/issues?state=close");
+            //using (var wc = new System.Net.WebClient() { Encoding = System.Text.Encoding.UTF8 })
+            //    ViewBag.Events = wc.DownloadString("https://api.github.com/repos/codesharp/cooper/issues/events");
             return View();
         }
         //模拟iframe内使用
