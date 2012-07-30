@@ -79,6 +79,7 @@
             task.dueTime = dueTime;
             task.isCompleted = isCompleted;
             task.tags = [];
+            task.isEditable = true;
             taskArray[taskArray.length] = task;
         }
         else {
