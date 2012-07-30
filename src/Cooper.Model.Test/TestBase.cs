@@ -51,7 +51,7 @@ namespace Cooper.Model.Test
                 DependencyResolver.Resolve<ILockHelper>().Init<GoogleConnection>();
                 DependencyResolver.Resolve<ILockHelper>().Init<GitHubConnection>();
             }
-            catch (InvalidOperationException e)
+            catch (Exception e)
             {
                 if (!e.Message.Contains("不可重复初始化配置"))
                     Console.WriteLine(e.Message);
