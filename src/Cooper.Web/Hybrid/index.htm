@@ -126,9 +126,9 @@
         </div>
         <div data-role="content" style="background-color: #fff">
             <div data-role="fieldcontain">
-                <label for="complete">
+                <label for="isTaskCompleted">
                     是否完成</label>
-                <select name="complete" id="complete" data-role="slider">
+                <select name="isTaskCompleted" id="isTaskCompleted" data-role="slider">
                     <option value="false">未完成</option>
                     <option value="true">完成</option>
                 </select>
@@ -136,14 +136,14 @@
             <div data-role="fieldcontain">
                 <fieldset data-role="controlgroup" data-type="horizontal">
                     <legend>优先级</legend>
-                    <input type="radio" name="level" id="radio-level-1" value="0" />
-                    <label for="radio-level-1">
+                    <input type="radio" name="taskPriority" id="radio-taskPriority-0" value="0" />
+                    <label for="radio-taskPriority-0">
                         今天</label>
-                    <input type="radio" name="level" id="radio-level-2" value="1" />
-                    <label for="radio-level-2">
+                    <input type="radio" name="taskPriority" id="radio-taskPriority-1" value="1" />
+                    <label for="radio-taskPriority-1">
                         稍后</label>
-                    <input type="radio" name="level" id="radio-level-3" value="2" />
-                    <label for="radio-level-3">
+                    <input type="radio" name="taskPriority" id="radio-taskPriority-2" value="2" />
+                    <label for="radio-taskPriority-2">
                         迟些</label>
                 </fieldset>
             </div>
@@ -216,14 +216,14 @@
             <div data-role="fieldcontain">
                 <fieldset data-role="controlgroup" data-type="horizontal">
                     <legend>优先级</legend>
-                    <input type="radio" name="priority" id="radio-choice-1" value="0" />
-                    <label for="radio-choice-1">
+                    <input type="radio" name="priority" id="radio-priority-0" value="0" />
+                    <label for="radio-priority-0">
                         今天</label>
-                    <input type="radio" name="priority" id="radio-choice-2" value="1" />
-                    <label for="radio-choice-2">
+                    <input type="radio" name="priority" id="radio-priority-1" value="1" />
+                    <label for="radio-priority-1">
                         稍后</label>
-                    <input type="radio" name="priority" id="radio-choice-3" value="2" />
-                    <label for="radio-choice-3">
+                    <input type="radio" name="priority" id="radio-priority-2" value="2" />
+                    <label for="radio-priority-2">
                         迟些</label>
                 </fieldset>
             </div>
@@ -351,15 +351,15 @@
             });
 
             //以下三个事件响应函数用户在任务详情页面自动更新用户修改
-            $("[name=level]").change(function () {
-                var priority = $('input[name=level]:checked').val();
+            $("[name=taskPriority]").change(function () {
+                var priority = $('input[name=taskPriority]:checked').val();
                 autoUpdateTaskPriority(pageData.taskId, priority, function (result) {
                     if (!result.success) {
                         alert(result.message);
                     }
                 });
             });
-            $("#complete").change(function () {
+            $("#isTaskCompleted").change(function () {
                 var isCompleted = $(this).val();
                 autoUpdateTaskStatus(pageData.taskId, isCompleted, function (result) {
                     if (!result.success) {

@@ -191,18 +191,12 @@
         //填充任务列表
         for (var index = 0; index < taskListArray.length; index++) {
             var taskList = taskListArray[index];
-            var li = '<li id="' + taskList.id + '"><a>' + taskList.name + '<span class="ui-li-count">' + taskList.tasks.length + '</span></a></li>';
+            var li = '<li id="' + taskList.id + '"><a href=#taskPage?listId=' + taskList.id + ' data-transition="slide">' + taskList.name + '<span class="ui-li-count">' + taskList.tasks.length + '</span></a></li>';
             ul.append(li);
         }
 
         //刷新列表
         ul.listview('refresh');
-
-        //设置列表每行的Click响应函数
-        $('#taskListUl li').click(function () {
-            var listId = $(this).attr("id");
-            showPage("taskPage", "listId=" + listId);
-        });
     }
     //显示指定任务列表中的所有任务
     function showTasks(listId) {
@@ -236,7 +230,7 @@
             else {
                 img = "incomplete-small.png";
             }
-            var li = '<li id="' + task.id + '"><a><h3><img src="images/' + img + '"><span>' + task.subject + '</span></h3><p>' + task.body + '</p><p><strong>' + task.dueTime + '</strong></p></a></li>';
+            var li = '<li id="' + task.id + '"><a href=#taskDetailPage?taskId=' + task.id + ' data-transition="slide"><h3><img src="images/' + img + '"><span>' + task.subject + '</span></h3><p>' + task.body + '</p><p><strong>' + task.dueTime + '</strong></p></a></li>';
 
             if (task.priority == "0") {
                 items1[items1.length] = li;
@@ -270,16 +264,6 @@
 
         //刷新ul
         ul.listview('refresh');
-
-        //设置li的click响应函数
-        $("#taskUl li").each(function () {
-            if ($(this).attr("id") != undefined) {
-                $(this).click(function () {
-                    var taskId = $(this).attr("id");
-                    showPage("taskDetailPage", "taskId=" + taskId);
-                });
-            }
-        });
     }
     //根据指定的任务ID将任务数据显示到任务详情页面
     function showTaskOnDetailPage(taskId) {
@@ -294,20 +278,20 @@
                 $("#taskBody").html(task.body);
 
                 if (task.priority == "0") {
-                    $("#radio-level-1").attr('checked', true);
+                    $("#radio-taskPriority-0").attr('checked', true);
                 }
                 else if (task.priority == "1") {
-                    $("#radio-level-2").attr('checked', true);
+                    $("#radio-taskPriority-1").attr('checked', true);
                 }
                 else if (task.priority == "2") {
-                    $("#radio-level-3").attr('checked', true);
+                    $("#radio-taskPriority-2").attr('checked', true);
                 }
-                $("input[type='radio']").checkboxradio("refresh");
+                $("input[name='taskPriority']").checkboxradio("refresh");
 
                 $("#taskDueTime").val(task.dueTime);
 
-                $("#complete").val(task.isCompleted);
-                $("#complete").slider('refresh');
+                $("#isTaskCompleted").val(task.isCompleted);
+                $("#isTaskCompleted").slider('refresh');
             }
         }
     }
@@ -324,15 +308,15 @@
                 $("#body").val(task.body);
 
                 if (task.priority == "0") {
-                    $("#radio-choice-1").attr('checked', true);
+                    $("#radio-priority-0").attr('checked', true);
                 }
                 else if (task.priority == "1") {
-                    $("#radio-choice-2").attr('checked', true);
+                    $("#radio-priority-1").attr('checked', true);
                 }
                 else if (task.priority == "2") {
-                    $("#radio-choice-3").attr('checked', true);
+                    $("#radio-priority-2").attr('checked', true);
                 }
-                $("input[type='radio']").checkboxradio("refresh");
+                $("input[name='priority']").checkboxradio("refresh");
 
                 $("#duetime").val(task.dueTime);
 
@@ -345,21 +329,21 @@
     function clearTaskDetailPage() {
         $("#taskSubject").html("");
         $("#taskBody").html("");
-        $("#radio-level-1").attr('checked', true);
-        $("#radio-level-2").attr('checked', false);
-        $("#radio-level-3").attr('checked', false);
-        $("input[name='level']").checkboxradio("refresh");
+        $("#radio-taskPriority-0").attr('checked', true);
+        $("#radio-taskPriority-1").attr('checked', false);
+        $("#radio-taskPriority-2").attr('checked', false);
+        $("input[name='taskPriority']").checkboxradio("refresh");
         $("#taskDueTime").val("");
-        $("#complete").val("false");
-        $("#complete").slider('refresh');
+        $("#isTaskCompleted").val("false");
+        $("#isTaskCompleted").slider('refresh');
     }
     //清空任务编辑页面
     function clearTaskEditPage() {
         $("#subject").val("");
         $("#body").val("");
-        $("#radio-choice-1").attr('checked', true);
-        $("#radio-choice-2").attr('checked', false);
-        $("#radio-choice-3").attr('checked', false);
+        $("#radio-priority-0").attr('checked', true);
+        $("#radio-priority-1").attr('checked', false);
+        $("#radio-priority-2").attr('checked', false);
         $("input[name='priority']").checkboxradio("refresh");
         $("#duetime").val("");
         $("#isCompleted").val("false");
