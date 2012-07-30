@@ -49,6 +49,7 @@ namespace Cooper.Model.Test
                 //初始化同步锁
                 DependencyResolver.Resolve<ILockHelper>().Init<Account>();
                 DependencyResolver.Resolve<ILockHelper>().Init<GoogleConnection>();
+                DependencyResolver.Resolve<ILockHelper>().Init<GitHubConnection>();
             }
             catch (InvalidOperationException e)
             {

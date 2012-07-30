@@ -43,6 +43,7 @@ namespace Cooper.Model.Test
             Assert.AreEqual(c2.Name, c.Name);
         }
         [Test]
+        [Category("concurrent")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateDuplicate()
         {

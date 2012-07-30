@@ -41,7 +41,7 @@ namespace Cooper.Model.Accounts
         /// <summary>设置账号名称
         /// </summary>
         /// <param name="name"></param>
-        public virtual void SetName(string name)
+        protected internal void SetName(string name)
         {
             Assert.IsNotNullOrWhiteSpace(name);
             Assert.LessOrEqual(name.Length, 255);

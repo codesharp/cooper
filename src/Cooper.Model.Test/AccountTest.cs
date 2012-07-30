@@ -25,11 +25,11 @@ namespace Cooper.Model.Test
         public void Account()
         {
             var a = new Account(this.RandomString());
-            a.SetName("houkun");
-            Assert.AreEqual("houkun", a.Name);
-            Assert.Catch(() => a.SetName(null));
-            Assert.Catch(() => a.SetName(string.Empty));
-            Assert.Catch(() => a.SetName("  "));
+            //a.SetName("houkun");
+            //Assert.AreEqual("houkun", a.Name);
+            //Assert.Catch(() => a.SetName(null));
+            //Assert.Catch(() => a.SetName(string.Empty));
+            //Assert.Catch(() => a.SetName("  "));
 
             a.SetPassword("houkun");
             Assert.Catch(() => a.SetPassword(null));
@@ -71,6 +71,14 @@ namespace Cooper.Model.Test
 
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void Create()
+        {
+            var name = this.RandomString();
+            this._accountService.Create(new Account(name));
+        }
+        [Test]
+        [Category("concurrent")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateDuplicate()
         {
             var name = this.RandomString();
@@ -80,19 +88,28 @@ namespace Cooper.Model.Test
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void UpdateDuplicate()
+        public void UpdateName()
         {
             var a = new Account(this.RandomString());
             this._accountService.Create(a);
+            this._accountService.Update(a, this.RandomString());
             //不可重复
-            a.SetName(this.RandomString());
-            this.AssertParallel(() => this._accountService.Update(a), 4, 1);
-
+            Assert.Catch(typeof(AssertionException), () => this._accountService.Update(a, a.Name));
             //不可与其他重复
             var a2 = new Account(this.RandomString());
             this._accountService.Create(a2);
-            a.SetName(a2.Name);
-            Assert.Catch(typeof(AssertionException), () => this._accountService.Update(a));
+            Assert.Catch(typeof(AssertionException), () => this._accountService.Update(a, a2.Name));
+        }
+        [Test]
+        [Category("concurrent")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void UpdateNameDuplicate()
+        {
+            var a = new Account(this.RandomString());
+            this._accountService.Create(a);
+            var n = this.RandomString();
+            //不可重复
+            this.AssertParallel(() => this._accountService.Update(a, n), 4, 1);
         }
 
         [Test(Description = "根据连接创建账号")]
@@ -106,6 +123,7 @@ namespace Cooper.Model.Test
             Assert.AreEqual(1, this._accountConnectionService.GetConnections(a).Count());
         }
         [Test(Description = "根据连接创建账号，并发")]
+        [Category("concurrent")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateByDuplicate()
         {
