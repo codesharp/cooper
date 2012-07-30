@@ -12,6 +12,8 @@
     var currentTaskListId = "";
     //存放任务列表的数组
     var taskListArray = [];
+    //用于过滤显示任务状态
+    var taskStatusFilter = "";
 
     //设置当前选中的任务列表
     function setCurrentTaskList(taskListId) {
@@ -192,12 +194,19 @@
         //填充任务列表
         for (var index = 0; index < taskListArray.length; index++) {
             var taskList = taskListArray[index];
-            var li = '<li id="' + taskList.id + '"><a href=#taskPage?listId=' + taskList.id + ' data-transition="slide">' + taskList.name + '<span class="ui-li-count">' + taskList.tasks.length + '</span></a></li>';
+            var li = '<li id="' + taskList.id + '"><a>' + taskList.name + '<span class="ui-li-count">' + taskList.tasks.length + '</span></a></li>';
             ul.append(li);
         }
 
         //刷新列表
         ul.listview('refresh');
+
+        //设置列表每行的Click响应函数
+        $('#taskListUl li').click(function () {
+            var listId = $(this).attr("id");
+            taskStatusFilter = "all";
+            showPage("taskPage", "listId=" + listId);
+        });
     }
     //显示指定任务列表中的所有任务
     function showTasks(listId) {
@@ -224,6 +233,14 @@
         //填充任务
         for (var index = 0; index < taskArray.length; index++) {
             var task = taskArray[index];
+
+            //如果设置了是否完成的状态过滤条件，则需要进行判断
+            if (taskStatusFilter != undefined && taskStatusFilter != null && taskStatusFilter != "all") {
+                if (taskStatusFilter != task.isCompleted) {
+                    continue;
+                }
+            }
+
             var img = null;
             if (task.isCompleted == "true") {
                 img = "complete-small.png";
@@ -353,7 +370,7 @@
             targetPage = '#' + pageId;
         }
 
-        if (direction != undefined || direction != null || direction != "") {
+        if (direction != undefined && direction != null && direction != "") {
             $.mobile.changePage(targetPage, { transition: transition, direction: direction });
         }
         else {
@@ -405,11 +422,31 @@
     });
     //转到到任务编辑页面
     $(document).delegate("#gotoTaskEditPage", "click", function () {
-        showPage("taskEditPage", "taskId=" + pageData.taskId);
+        showPage("taskEditPage", "taskId=" + pageData.taskId, "slideup");
     });
     //刷新任务页面
     $(document).delegate("#refreshTasksImg", "click", function () {
         showTasks(getCurrentTaskList());
+    });
+
+    //显示个人任务，包含已完成和未完成的所有任务
+    $(document).delegate("#showAllTasksImg", "click", function () {
+        taskStatusFilter = "all";
+        showTasks(pageData.listId);
+    });
+    //显示已完成任务
+    $(document).delegate("#showCompletedTasksImg", "click", function () {
+        taskStatusFilter = "true";
+        showTasks(pageData.listId);
+    });
+    //显示未完成任务
+    $(document).delegate("#showUnCompletedTasksImg", "click", function () {
+        taskStatusFilter = "false";
+        showTasks(pageData.listId);
+    });
+    //显示Setting页面
+    $(document).delegate("#showSettingImg", "click", function () {
+        //showTasks(getCurrentTaskList());
     });
 
     //新增任务列表确定按钮
@@ -418,15 +455,15 @@
             if (!result.success) {
                 alert(result.message);
             }
-            else {
-                showPage("taskListPage", null, "slide", "reverse");
-            }
+//            else {
+//                showPage("taskListPage", null, "slide", "reverse");
+//            }
         });
     });
-    //新增任务列表取消按钮
-    $(document).delegate("#cancelAddTaskList", "click", function () {
-        showPage("taskListPage", null, "slide", "reverse");
-    });
+//    //新增任务列表取消按钮
+//    $(document).delegate("#cancelAddTaskList", "click", function () {
+//        showPage("taskListPage", null, "slide", "reverse");
+//    });
 
     //以下三个事件响应函数用户在任务详情页面自动更新用户修改
     //优先级

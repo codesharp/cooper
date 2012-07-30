@@ -62,7 +62,7 @@
     <div id="taskListPage" data-role="page" data-theme="a">
         <div data-role="header">
             <div class="ui-btn-left" style="line-height: 50px">
-                <a href="#addTaskListPage" data-transition="pop"><img src="images/edit.png" /></a>
+                <a href="#addTaskListPage" data-rel="dialog" data-transition="slidedown"><img src="images/edit.png" /></a>
                 &nbsp;
                 <img id="refreshTaskListsImg" src="images/refresh.png" />
             </div>
@@ -85,7 +85,7 @@
             <h1>
                 cooper:task</h1>
             <div class="ui-btn-right" style="line-height: 50px">
-                <a href="#taskEditPage" data-transition="slide"><img src="images/edit.png" /></a>
+                <a href="#taskEditPage" data-transition="slideup"><img src="images/edit.png" /></a>
             </div>
         </div>
         <div data-role="content">
@@ -94,19 +94,19 @@
         <div data-role="footer" data-position="fixed" data-theme="a">
             <div data-role="navbar">
                 <ul>
-                    <li><a>
+                    <li><a id="showAllTasksImg">
                         <img src="images/task.png" />
                         <br />
                         个人任务</a></li>
-                    <li><a>
+                    <li><a id="showCompletedTasksImg">
                         <img src="images/complete.png" />
                         <br />
                         已完成</a></li>
-                    <li><a>
+                    <li><a id="showUnCompletedTasksImg">
                         <img src="images/incomplete.png" />
                         <br />
                         未完成</a></li>
-                    <li><a>
+                    <li><a id="showSettingImg">
                         <img src="images/setting-small.png" />
                         <br />
                         设置</a></li>
@@ -246,21 +246,11 @@
         </div>
     </div>
     <!-- 新增任务列表 -->
-    <div id="addTaskListPage" data-role="page" data-theme="a">
+    <div id="addTaskListPage" data-role="page">
         <div data-role="content">
-            <form>
-            <ul data-role="listview" data-inset="true">
-                <li data-role="fieldcontain">
-                    <input type="text" placeholder="列表名称" id="tasklistName" name="tasklistName" style="width: 100%" />
-                </li>
-            </ul>
-            <div class="ui-block-b">
-                <button id="saveNewTaskList" type="button" data-inline="true" data-theme="a">
-                    保存</button>
-                <button id="cancelAddTaskList" type="button" data-inline="true" data-theme="a">
-                    取消</button>
-            </div>
-            </form>
+            <input id="tasklistName" name="tasklistName" placeholder="任务表名称" />
+            <a id="saveNewTaskList" href="#taskListPage" data-role="button" data-inline="true" data-rel="back" data-theme="a">确定</a>
+            <a id="cancelAddTaskList" href="#taskListPage" data-role="button" data-inline="true" data-rel="back">取消</a>
         </div>
     </div>
 
