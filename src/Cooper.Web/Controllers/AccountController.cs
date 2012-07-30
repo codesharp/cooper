@@ -150,7 +150,7 @@ namespace Cooper.Web.Controllers
         [HttpPost]
         public ActionResult Login(string userName, string password)
         {
-            if (string.IsNullOrWhiteSpace(userName) 
+            if (string.IsNullOrWhiteSpace(userName)
                 || string.IsNullOrWhiteSpace(password))
                 throw new CooperknownException(this.Lang().username_or_password_cannot_empty);
 
@@ -165,7 +165,10 @@ namespace Cooper.Web.Controllers
             //TODO:目前正式环境不提供注册，之后将改为MD5
             if (a.CheckPassword(password) || !release)
                 this.SetLogin(a.ID);
-            return this.Home();
+            else
+                throw new CooperknownException(this.Lang().username_or_password_was_wrong);
+
+            return this.IsXmlHttp() ? Json(true) : this.Home();
         }
         public ActionResult Logout()
         {
@@ -215,6 +218,11 @@ namespace Cooper.Web.Controllers
             return this.StateResult(state);
         }
 
+        protected bool IsXmlHttp()
+        {
+            var header = Request.Headers["X-Requested-With"];
+            return !string.IsNullOrEmpty(header) && header.ToLower().IndexOf("xmlhttp") >= 0;
+        }
         protected ActionResult Home()
         {
             return RedirectToAction("Index", "Home");
