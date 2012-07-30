@@ -34,6 +34,9 @@
             content: $('#feedback textarea').val()
         }, function () { });
     }
+    function joinus() {
+        $('#joinus').modal('show');
+    }
 </script>
 <div class="modal hide" id="mobi_app">
     <div class="modal-header">
@@ -82,6 +85,24 @@
     <div class="modal-footer">
         <a class="btn" data-dismiss="modal">取消</a> <a class="btn btn-primary" onclick="doFeedback()">
             提交</a>
+    </div>
+</div>
+<div class="modal hide" id="joinus">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+            ×</button>
+        <h3>
+            Join us</h3>
+    </div>
+    <div class="modal-body">
+        <p style="line-height:25px">
+            我们致力于构建开源技术产品/业务系统，<br />
+            目前主要关注于“流畅、便捷”的工作支持系统，
+            <br />
+            如果您在<code>html/css/javascript</code>、<code>obj-c</code>、<code>c#</code>功力深厚<br />
+            并对改善工作方式和工具有自己的理解，<br />
+            我们诚邀您的加入。
+        </p>
     </div>
 </div>
 @if (!CodeSharp.Framework.SystemConfig.Settings.VersionFlag.Equals("Release"))
