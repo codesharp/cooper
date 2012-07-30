@@ -62,7 +62,7 @@
     <div id="taskListPage" data-role="page" data-theme="a">
         <div data-role="header">
             <div class="ui-btn-left" style="line-height: 50px">
-                <img id="addTaskListImg" src="images/edit.png" />
+                <a href="#addTaskListPage" data-transition="pop"><img src="images/edit.png" /></a>
                 &nbsp;
                 <img id="refreshTaskListsImg" src="images/refresh.png" />
             </div>
@@ -78,14 +78,15 @@
     <div id="taskPage" data-role="page" data-theme="a">
         <div data-role="header" data-position="fixed">
             <div class="ui-btn-left" style="line-height: 50px">
-                <img id="gotoTasklistImg" src="images/tasklist.png" />
-                &nbsp;
+                <a href="#taskListPage" data-transition="slide" data-direction="reverse"><img src="images/tasklist.png" /></a>
+                    &nbsp;
                 <img id="refreshTasksImg" src="images/refresh.png" />
             </div>
             <h1>
                 cooper:task</h1>
             <div class="ui-btn-right" style="line-height: 50px">
-                <img id="addTaskImg" src="images/edit.png" /></div>
+                <a href="#taskEditPage" data-transition="slide"><img src="images/edit.png" /></a>
+            </div>
         </div>
         <div data-role="content">
             <ul id="taskUl" data-role="listview" data-theme="c"></ul>
@@ -113,11 +114,11 @@
             </div>
         </div>
     </div>
-    <!-- 任务详情页面 -->
+ <!-- 任务详情页面 -->
     <div id="taskDetailPage" data-role="page">
         <div data-role="header" data-position="fixed">
             <div class="ui-btn-left" style="line-height: 50px">
-                <img id="gotoTaskPage" src="images/back.png" />
+                <a data-rel="back" data-transition="slide" data-direction="reverse"><img src="images/back.png" /></a>
             </div>
             <h1>
                 cooper:task</h1>
@@ -198,7 +199,7 @@
     <div id="taskEditPage" data-role="page">
         <div data-role="header" data-position="fixed">
             <div class="ui-btn-left" style="line-height: 50px">
-                <img id="gotoTaskPageFromDetailPage" src="images/back.png" />
+                <a data-rel="back" data-transition="slide" data-direction="reverse"><img src="images/back.png" /></a>
             </div>
             <h1>
                 cooper:task</h1>
@@ -278,33 +279,13 @@
                 });
             });
 
-            //返回任务列表页面
-            $('#gotoTasklistImg').click(function () {
-                showPage("taskListPage", null, "slide", "reverse");
-            });
-            //新增任务列表
-            $('#addTaskListImg').click(function () {
-                $.mobile.changePage("#addTaskListPage", { transition: "pop" });
-            });
             //刷新任务列表页面
             $('#refreshTaskListsImg').click(function () {
                 showAllTasklist();
             });
-            //返回任务页面
-            $('#gotoTaskPage').click(function () {
-                showPage("taskPage", "listId=" + getCurrentTaskList(), "slide", "reverse");
-            });
             //重定向到任务编辑页面
             $('#gotoTaskEditPage').click(function () {
                 showPage("taskEditPage", "taskId=" + pageData.taskId);
-            });
-            //返回任务页面
-            $('#gotoTaskPageFromDetailPage').click(function () {
-                showPage("taskPage", "listId=" + getCurrentTaskList(), "slide", "reverse");
-            });
-            //显示新增任务页面
-            $('#addTaskImg').click(function () {
-                showPage("taskEditPage");
             });
             //刷新任务页面
             $('#refreshTasksImg').click(function () {
