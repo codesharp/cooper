@@ -277,16 +277,10 @@
                 $("#taskSubject").html(task.subject);
                 $("#taskBody").html(task.body);
 
-                if (task.priority == "0") {
-                    $("#radio-taskPriority-0").attr('checked', true);
+                if (task.priority == "0" || task.priority == "1" || task.priority == "2") {
+                    $("#radio-taskPriority-" + task.priority).attr('checked', true);
+                    $("input[name='taskPriority']").checkboxradio("refresh");
                 }
-                else if (task.priority == "1") {
-                    $("#radio-taskPriority-1").attr('checked', true);
-                }
-                else if (task.priority == "2") {
-                    $("#radio-taskPriority-2").attr('checked', true);
-                }
-                $("input[name='taskPriority']").checkboxradio("refresh");
 
                 $("#taskDueTime").val(task.dueTime);
 
@@ -307,16 +301,10 @@
                 $("#subject").val(task.subject);
                 $("#body").val(task.body);
 
-                if (task.priority == "0") {
-                    $("#radio-priority-0").attr('checked', true);
+                if (task.priority == "0" || task.priority == "1" || task.priority == "2") {
+                    $("#radio-priority-" + task.priority).attr('checked', true);
+                    $("input[name='priority']").checkboxradio("refresh");
                 }
-                else if (task.priority == "1") {
-                    $("#radio-priority-1").attr('checked', true);
-                }
-                else if (task.priority == "2") {
-                    $("#radio-priority-2").attr('checked', true);
-                }
-                $("input[name='priority']").checkboxradio("refresh");
 
                 $("#duetime").val(task.dueTime);
 
