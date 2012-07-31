@@ -444,10 +444,6 @@
         taskStatusFilter = "false";
         showTasks(pageData.listId);
     });
-    //显示Setting页面
-    $(document).delegate("#showSettingImg", "click", function () {
-        //showTasks(getCurrentTaskList());
-    });
 
     //新增任务列表确定按钮
     $(document).delegate("#saveNewTaskList", "click", function () {
