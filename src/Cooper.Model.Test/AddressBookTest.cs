@@ -14,18 +14,6 @@ namespace Cooper.Model.Test
     {
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void TotalTest()
-        {
-            CreatePersonalAddressBook();
-            CreateSystemAddressBook();
-            UpdatePersonalAddressBook();
-            DeletePersonalAddressBook();
-            GetPersonalAddressBooks();
-            GetSystemAddressBooks();
-        }
-
-        [Test]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreatePersonalAddressBook()
         {
             var account = this.CreateAccount();
