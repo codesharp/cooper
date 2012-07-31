@@ -388,7 +388,9 @@
 
     //刷新任务列表
     $(document).delegate("#refreshTaskListsImg", "click", function () {
+        $.mobile.showPageLoadingMsg();
         showAllTasklist();
+        setTimeout(function () { $.mobile.hidePageLoadingMsg(); }, 1000);
     });
     //新增编辑任务确定按钮
     $(document).delegate("#addOrUpdateTaskButton", "click", function () {
@@ -430,8 +432,9 @@
     });
     //刷新任务页面
     $(document).delegate("#refreshTasksImg", "click", function () {
-        $.mobile.pageLoading();
+        $.mobile.showPageLoadingMsg();
         showTasks(getCurrentTaskList());
+        setTimeout(function () { $.mobile.hidePageLoadingMsg(); }, 1000);
     });
 
     //显示个人任务，包含已完成和未完成的所有任务
