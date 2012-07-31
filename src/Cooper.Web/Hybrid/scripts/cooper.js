@@ -222,6 +222,10 @@
         //获取当前任务列表的所有任务
         var taskArray = loadTasksFromCurrentTaskList();
 
+        if (taskArray == null) {
+            return;
+        }
+
         var li1 = '<li style="background-color: #ebebeb">马上完成 <span class="ui-li-count">{0}</span></li>';
         var li2 = '<li style="background-color: #ebebeb">稍后完成 <span class="ui-li-count">{0}</span></li>';
         var li3 = '<li style="background-color: #ebebeb">迟些再说 <span class="ui-li-count">{0}</span></li>';
@@ -426,6 +430,7 @@
     });
     //刷新任务页面
     $(document).delegate("#refreshTasksImg", "click", function () {
+        $.mobile.pageLoading();
         showTasks(getCurrentTaskList());
     });
 
@@ -502,7 +507,9 @@
     //task page event handlers
     $(document).delegate("#taskPage", "pagebeforeshow", function () {
         setCurrentTaskList(pageData.listId);
-        showTasks(pageData.listId);
+    });
+    $(document).delegate("#taskPage", "pageshow", function () {
+        $('#showAllTasksImg').click();
     });
     //task detail page event handlers
     $(document).delegate("#taskDetailPage", "pagebeforeshow", function () {
