@@ -68,7 +68,9 @@
             </div>
             <h1>
                 cooper:task</h1>
-            <div class="ui-btn-right"><img src="images/setting.png" /></div>
+            <div class="ui-btn-right">
+            <a href="#settingPage" data-transition="slide"><img src="images/setting.png" /></a>
+            </div>
         </div>
         <div data-role="content">
             <ul id="taskListUl" data-role="listview" data-inset="true" data-icon="star" data-theme="c"></ul>
@@ -106,10 +108,9 @@
                         <img src="images/incomplete.png" />
                         <br />
                         未完成</a></li>
-                    <li><a id="showSettingImg">
+                    <li><a href="#settingPage" data-transition="slide">
                         <img src="images/setting-small.png" />
-                        <br />
-                        设置</a></li>
+                        <br />设置</a></li>
                 </ul>
             </div>
         </div>
@@ -253,6 +254,22 @@
             <a id="cancelAddTaskList" href="#taskListPage" data-role="button" data-inline="true" data-rel="back">取消</a>
         </div>
     </div>
-
+    <!-- Setting页面 -->
+    <div id="settingPage" data-role="page" data-theme="a">
+        <div data-role="header">
+            <div class="ui-btn-left" style="line-height: 50px">
+                <a data-rel="back" data-transition="slide" data-direction="reverse"><img src="images/back.png" /></a>
+            </div>
+            <h1>
+                cooper:task</h1>
+        </div>
+        <div data-role="content">
+            <ul data-role="listview" data-inset="true" data-icon="star" data-theme="c">
+                <li><a>账号设置</a></li>
+                <li><a>同步设置</a></li>
+                <li><a>版本说明</a></li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
