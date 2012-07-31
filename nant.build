@@ -89,6 +89,7 @@ debuger.isErrorEnable = debuger.enable && true;
     <exec program="${msbuild}"
           commandline="${msbuild.params} ${msbuild.params.output}\cooper_model_test"
           workingdir="${dir}\src\Cooper.Model.Test" />
-    <exec program="${nunit}" commandline="Cooper.Model.Test.dll /exclude=concurrent" workingdir="${build.absolutepath}\cooper_model_test"/>
+    <exec program="${nunit}" commandline="Cooper.Model.Test.dll" workingdir="${build.absolutepath}\cooper_model_test"/>
+    <!--/exclude=concurrent-->
   </target>
 </project>
