@@ -510,6 +510,13 @@
     //task page event handlers
     $(document).delegate("#taskPage", "pagebeforeshow", function () {
         setCurrentTaskList(pageData.listId);
+        var taskArray = loadTasksFromCurrentTaskList();
+        if (taskArray == null || taskArray.length == 0) {
+            $("#addFirstTaskButton").show();
+        }
+        else {
+            $("#addFirstTaskButton").hide();
+        }
     });
     $(document).delegate("#taskPage", "pageshow", function () {
         $('#showAllTasksImg').click();
