@@ -454,16 +454,10 @@
         addTaskList($("#tasklistName").val(), function (result) {
             if (!result.success) {
                 alert(result.message);
+                return false;
             }
-//            else {
-//                showPage("taskListPage", null, "slide", "reverse");
-//            }
         });
     });
-//    //新增任务列表取消按钮
-//    $(document).delegate("#cancelAddTaskList", "click", function () {
-//        showPage("taskListPage", null, "slide", "reverse");
-//    });
 
     //以下三个事件响应函数用户在任务详情页面自动更新用户修改
     //优先级
