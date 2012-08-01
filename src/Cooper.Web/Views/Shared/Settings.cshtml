@@ -115,7 +115,7 @@
     <div id="devbar" class="alert alert-danger hide" style="margin: 10px">
         <button class="close" data-dismiss="alert">
             ×</button>
-        DevToolBar -
+        DevToolBar[@CodeSharp.Framework.SystemConfig.Settings.VersionFlag] -
         @if (HttpContext.Current.User != null && HttpContext.Current.User.Identity != null && HttpContext.Current.User.Identity.IsAuthenticated)
         {
             <code>Hi! AccountId=@HttpContext.Current.User.Identity.Name</code>

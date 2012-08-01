@@ -11,6 +11,7 @@ using CodeSharp.Core;
 namespace Cooper.Web.Controllers
 {
     //用于提供除Home、Account之外的控制器基类
+    [RequireHttps]
     public class BaseController : Controller
     {
         private ILog _log;

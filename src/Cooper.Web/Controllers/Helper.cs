@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using CodeSharp.Core;
+using System.Web.Mvc;
 
 namespace Cooper.Web.Controllers
 {
@@ -31,6 +32,25 @@ namespace Cooper.Web.Controllers
                 return false;
             }
             return true;
+        }
+    }
+    /// <summary>强制要求https，能够处理ssl直连和反向代理层面的ssl（如stunnel）
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
+    public class RequireHttpsAttribute : System.Web.Mvc.RequireHttpsAttribute
+    {
+        public override void OnAuthorization(AuthorizationContext filterContext)
+        {
+            if (filterContext.HttpContext.Request.IsSecureConnection)
+                return;
+            if (string.Equals(filterContext.HttpContext.Request.Headers["X-Forwarded-Proto"]
+                , "https"
+                , StringComparison.InvariantCultureIgnoreCase))
+                return;
+            if (filterContext.HttpContext.Request.IsLocal)
+                return;
+
+            this.HandleNonHttpsRequest(filterContext);
         }
     }
 }

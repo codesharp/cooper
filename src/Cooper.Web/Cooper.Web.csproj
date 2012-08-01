@@ -176,6 +176,14 @@
     <Content Include="Global.asax" />
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="Hybrid\jquery\css\mobile\images\ajax-loader.gif" />
+    <Content Include="Hybrid\jquery\css\mobile\images\ajax-loader.png" />
+    <Content Include="Hybrid\jquery\css\mobile\images\icons-18-black.png" />
+    <Content Include="Hybrid\jquery\css\mobile\images\icons-18-white.png" />
+    <Content Include="Hybrid\jquery\css\mobile\images\icons-36-black.png" />
+    <Content Include="Hybrid\jquery\css\mobile\images\icons-36-white.png" />
+    <Content Include="Hybrid\jquery\css\mobile\jquery.mobile-1.1.0.min.css" />
+    <Content Include="Hybrid\jquery\css\mobile\jquery.mobile.structure-1.1.1.min.css" />
     <Content Include="Hybrid\jquery\jqm.page.params.js" />
     <Content Include="Hybrid\sample.htm" />
     <Content Include="Hybrid\setting.htm" />

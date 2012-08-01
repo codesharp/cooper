@@ -182,6 +182,51 @@ public static class WebExtensions
         return input.Length <= l ? input : input.Substring(0, l) + end;
     }
 
+    /// <summary>返回公开的Url
+    /// </summary>
+    /// <param name="urlHelper"></param>
+    /// <param name="relativeUri"></param>
+    /// <returns></returns>
+    public static string ToPublicUrl(this UrlHelper urlHelper, Uri relativeUri)
+    {
+        return urlHelper.ToPublicUrl(relativeUri.AbsoluteUri);
+    }
+    /// <summary>返回公开的Url
+    /// <remarks>
+    /// 解决反向代理的问题
+    /// http://support.appharbor.com/kb/getting-started/workaround-for-generating-absolute-urls-without-port-number
+    /// https://gist.github.com/915869
+    /// </remarks>
+    /// </summary>
+    /// <param name="urlHelper"></param>
+    /// <param name="relativeUri"></param>
+    /// <returns></returns>
+    public static string ToPublicUrl(this UrlHelper urlHelper, string relativeUri)
+    {
+        var httpContext = urlHelper.RequestContext.HttpContext;
+
+        var scheme = string.Equals(httpContext.Request.Headers["X-Forwarded-Proto"]
+            , "https"
+            , StringComparison.InvariantCultureIgnoreCase)
+            ? "https"
+            : "http";
+
+        var uriBuilder = new UriBuilder
+        {
+            Host = httpContext.Request.Url.Host,
+            Path = "/",
+            Port = scheme == "https" ? 443 : 80,
+            Scheme = scheme
+        };
+
+        if (httpContext.Request.IsLocal)
+        {
+            uriBuilder.Port = httpContext.Request.Url.Port;
+        }
+
+        return new Uri(uriBuilder.Uri, relativeUri).AbsoluteUri;
+    }
+
     public static dynamic _lang;
     /// <summary>获取文案/语言
     /// </summary>
