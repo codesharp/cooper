@@ -273,21 +273,23 @@
 
         var totalItems = [];
 
-        totalItems[totalItems.length] = li1.replace("{0}", items1.length);
-        for (var index = 0; index < items1.length; index++) {
-            totalItems[totalItems.length] = items1[index];
-        }
-        totalItems[totalItems.length] = li2.replace("{0}", items2.length);
-        for (var index = 0; index < items2.length; index++) {
-            totalItems[totalItems.length] = items2[index];
-        }
-        totalItems[totalItems.length] = li3.replace("{0}", items3.length);
-        for (var index = 0; index < items3.length; index++) {
-            totalItems[totalItems.length] = items3[index];
-        }
+        if (items1.length > 0 || items2.length > 0 || items3.length > 0) {
+            totalItems[totalItems.length] = li1.replace("{0}", items1.length);
+            for (var index = 0; index < items1.length; index++) {
+                totalItems[totalItems.length] = items1[index];
+            }
+            totalItems[totalItems.length] = li2.replace("{0}", items2.length);
+            for (var index = 0; index < items2.length; index++) {
+                totalItems[totalItems.length] = items2[index];
+            }
+            totalItems[totalItems.length] = li3.replace("{0}", items3.length);
+            for (var index = 0; index < items3.length; index++) {
+                totalItems[totalItems.length] = items3[index];
+            }
 
-        for (var index = 0; index < totalItems.length; index++) {
-            ul.append(totalItems[index]);
+            for (var index = 0; index < totalItems.length; index++) {
+                ul.append(totalItems[index]);
+            }
         }
 
         //刷新ul
@@ -417,7 +419,7 @@
                 alert(result.message);
             }
             else {
-                showPage("taskPage", "listId=" + getCurrentTaskList(), "slide", "reverse");
+                showPage("taskPage", "listId=" + getCurrentTaskList(), "slidedown", "reverse");
             }
         });
     });
@@ -523,8 +525,6 @@
         else {
             $("#addFirstTaskButton").hide();
         }
-    });
-    $(document).delegate("#taskPage", "pageshow", function () {
         $('#showAllTasksImg').click();
     });
     //task detail page event handlers
