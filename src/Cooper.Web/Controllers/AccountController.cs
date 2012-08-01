@@ -169,7 +169,7 @@ namespace Cooper.Web.Controllers
             else
                 throw new CooperknownException(this.Lang().username_or_password_was_wrong);
 
-            return this.IsXmlHttp() ? Json(true) : this.Home();
+            return Request.IsAjaxRequest() ? Json(true) : this.Home();
         }
         public ActionResult Logout()
         {
@@ -219,11 +219,6 @@ namespace Cooper.Web.Controllers
             return this.StateResult(state);
         }
 
-        protected bool IsXmlHttp()
-        {
-            var header = Request.Headers["X-Requested-With"];
-            return !string.IsNullOrEmpty(header) && header.ToLower().IndexOf("xmlhttp") >= 0;
-        }
         protected ActionResult Home()
         {
             return RedirectToAction("Index", "Home");

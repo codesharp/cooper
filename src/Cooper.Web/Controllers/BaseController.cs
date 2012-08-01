@@ -22,26 +22,30 @@ namespace Cooper.Web.Controllers
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+            var r = filterContext.HttpContext.Request;
+
             //简易身份验证
             if (!Helper.IsLogin(this.Context, this.User, this._log))
             {
+                if (r.IsAjaxRequest())
+                    throw new CooperknownException(this.Lang().do_not_login_or_timeout);
                 filterContext.Result = RedirectToAction("Login", "Account", new { deny = true });
                 return;
             }
-
-            var r = filterContext.HttpContext.Request;
 
             //Safari|Chrome|IE
             if (this._log.IsDebugEnabled)
                 this._log.DebugFormat("{0}|{1}", r.Browser.Browser, r.Browser.MajorVersion);
             //浏览器支持判断
             if (r.HttpMethod.Equals("get", StringComparison.InvariantCultureIgnoreCase))
+            {
                 if (r.Browser.MajorVersion == 6
                     && r.Browser.Browser.Equals("ie", StringComparison.InvariantCultureIgnoreCase))
                 {
                     filterContext.Result = this.NotSupport();
                     return;
                 }
+            }
 
             base.OnActionExecuting(filterContext);
         }
