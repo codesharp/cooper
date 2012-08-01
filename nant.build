@@ -10,6 +10,8 @@
   <property name="build.absolutepath" value="${path::get-full-path(build.base)}" />
   <property name="xpath.flag" value="/configuration/appSettings/add[@key='EnvironmentVersionFlag']/@value"/>
   <property name="xpath.flag_refresh" value="/configuration/appSettings/add[@key='AutoRefreshSettingsFlag']/@value"/>
+  <property name="xpath.compilation" value="/configuration/system.web/compilation/@debug"/>
+  <property name="xpath.customErrors" value="/configuration/system.web/customErrors/@mode"/>
   <!--nuget-->
   <property name="nuget" value="${path::get-full-path(dir.tools)}" />
   <property name="nuget.packages" value="${dir}\packages" />
@@ -56,6 +58,14 @@
     <xmlpoke file="${build.absolutepath}\cooper_web\web.config"
              xpath="${xpath.flag_refresh}"
              value="true" />
+    <if test="${msbuild.config=='Release'}">
+      <xmlpoke file="${build.absolutepath}\cooper_web\web.config" 
+               xpath="${xpath.compilation}"
+               value="false" />
+      <xmlpoke file="${build.absolutepath}\cooper_web\web.config"
+               xpath="${xpath.customErrors}"
+               value="RemoteOnly" />
+    </if>
     <!--change scripts-->
     <echo file="${build.absolutepath}\cooper_web\scripts\common.js" append="true" if="${msbuild.config=='Release'}">
       <![CDATA[
@@ -83,6 +93,7 @@ debuger.isErrorEnable = debuger.enable && true;
         <include name="task.css" />
       </fileset>
     </yuicompressor>
+    <!--hybrid-->
   </target>
   
   <target name="test_model">
