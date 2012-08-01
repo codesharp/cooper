@@ -17,6 +17,7 @@ namespace Cooper.Web.Controllers
 {
     /// <summary>处理账号相关
     /// </summary>
+    [RequireHttps]
     public class AccountController : Controller
     {
         protected Serializer _serializer = new Serializer();
@@ -168,7 +169,7 @@ namespace Cooper.Web.Controllers
             else
                 throw new CooperknownException(this.Lang().username_or_password_was_wrong);
 
-            return this.IsXmlHttp() ? Json(true) : this.Home();
+            return Request.IsAjaxRequest() ? Json(true) : this.Home();
         }
         public ActionResult Logout()
         {
@@ -218,11 +219,6 @@ namespace Cooper.Web.Controllers
             return this.StateResult(state);
         }
 
-        protected bool IsXmlHttp()
-        {
-            var header = Request.Headers["X-Requested-With"];
-            return !string.IsNullOrEmpty(header) && header.ToLower().IndexOf("xmlhttp") >= 0;
-        }
         protected ActionResult Home()
         {
             return RedirectToAction("Index", "Home");
@@ -286,8 +282,7 @@ namespace Cooper.Web.Controllers
         }
         private string GetGoogleRedirectUrl()
         {
-            //UNDONE:生产环境需要切换为依据反向代理决定https或http
-            return Request.Url.Scheme + "://" + Request.Url.Authority + Url.Action("GoogleLogin");
+            return Url.ToPublicUrl(Url.Action("GoogleLogin"));
         }
         //格式如{ "access_token" : "", "token_type" : "Bearer", "expires_in" : 3600, "id_token" : "", "refresh_token" : "" }
         private string GetGoogleGrantByCode(string code)
@@ -341,9 +336,9 @@ namespace Cooper.Web.Controllers
         }
         private string GetGitRedirectUrl()
         {
-            return Request.Url.Scheme + "://" + Request.Url.Authority + Url.Action("GitLogin");
+            return Url.ToPublicUrl(Url.Action("GitLogin"));
         }
-        private string GetGitGrantByCode(string code,string state)
+        private string GetGitGrantByCode(string code, string state)
         {
             using (var wc = new WebClient())
             {
