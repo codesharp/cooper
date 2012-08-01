@@ -10,6 +10,14 @@
 var UI_List_Priority = function () { }
 UI_List_Priority.prototype = new UI_List_Common();
 UI_List_Priority.prototype.mode = 'ByPriority';
+UI_List_Priority.prototype.modeArgs = {
+    //快捷键开关
+    shortcuts_move: true,
+    //是否允许对invalid区域的任务变更完成状态非
+    shortcuts_canSetCompleted_RowOfInValidRegion: false,
+    //是否可编辑
+    editable: true
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 //归档
 UI_List_Priority.prototype.archive = new Idx('', 'archived', lang.archive, []);

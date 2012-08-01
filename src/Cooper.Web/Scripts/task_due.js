@@ -9,6 +9,14 @@
 var UI_List_Due = function () { }
 UI_List_Due.prototype = new UI_List_Common();
 UI_List_Due.prototype.mode = 'ByDueTime';
+UI_List_Due.prototype.modeArgs = {
+    //快捷键开关
+    shortcuts_move: true,
+    //是否允许对invalid区域的任务变更完成状态非
+    shortcuts_canSetCompleted_RowOfInValidRegion: true,
+    //是否可编辑
+    editable: true
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 //按dueTime排序区域
 UI_List_Due.prototype.byDueTime = null;
@@ -165,9 +173,6 @@ function addDay(t, d) {
 function create_UI_List_Due() {
     var ui = new UI_List_Due();
     ui.child = ui;
-
-    //定制部分参数
-    ui.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion = true;
 
     ui.$wrapper = $el_wrapper_region;
     ui.$wrapper_detail = $el_wrapper_detail;

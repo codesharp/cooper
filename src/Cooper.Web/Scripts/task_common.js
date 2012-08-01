@@ -8,14 +8,14 @@ UI_List_Common.prototype = {
     //标识列表模式
     mode: 'common',
     //UI模式定制参数
-    modeArgs: {
-        //快捷键开关
-        shortcuts_move: true,
-        //是否允许对invalid区域的任务变更完成状态非
-        shortcuts_canSetCompleted_RowOfInValidRegion: false,
-        //是否可编辑
-        editable: true
-    },
+//    modeArgs: {
+//        //快捷键开关
+//        shortcuts_move: true,
+//        //是否允许对invalid区域的任务变更完成状态非
+//        shortcuts_canSetCompleted_RowOfInValidRegion: false,
+//        //是否可编辑
+//        editable: true
+//    },
     $wrapper: null, //列表容器
     $wrapper_detail: null, //详情容器
     $focusRow: null, //记录焦点行元素
@@ -634,8 +634,8 @@ UI_List_Common.prototype = {
     setEditable: function (b) {
         debuger.debug('setEditable=' + b);
         this.modeArgs.editable = b;
-        this.modeArgs.shortcuts_move = this.modeArgs.editable && this.modeArgs.shortcuts_move;
-        this.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion = this.modeArgs.editable && this.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion;
+//        this.modeArgs.shortcuts_move = this.modeArgs.editable && this.modeArgs.shortcuts_move;
+//        this.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion = this.modeArgs.editable && this.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion;
         this._prepareBinds();
         this._setEditable(this.$wrapper);
     }
