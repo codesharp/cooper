@@ -205,7 +205,7 @@ public static class WebExtensions
     {
         var httpContext = urlHelper.RequestContext.HttpContext;
 
-        var scheme = string.Equals(httpContext.Request.Headers["X-Forwarded-Proto"]
+        var scheme = string.Equals(CodeSharp.Framework.Web.HttpUtil.GetClientUrlScheme()
             , "https"
             , StringComparison.InvariantCultureIgnoreCase)
             ? "https"
