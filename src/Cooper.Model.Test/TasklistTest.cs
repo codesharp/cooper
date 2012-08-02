@@ -48,6 +48,20 @@ namespace Cooper.Model.Test
             list = this._tasklistService.GetTasklist(list.ID) as PersonalTasklist;
             Assert.AreEqual("abc", list.Name);
         }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void Extension()
+        {
+            var a = this.CreateAccount();
+            var list = new PersonalTasklist("default", a);
+            list["key"] = "abc";
+            this._tasklistService.Create(list);
+
+            this.Evict(list);
+
+            list = this._tasklistService.GetTasklist(list.ID) as PersonalTasklist;
+            Assert.AreEqual("abc", list["key"]);
+        }
 
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]

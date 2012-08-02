@@ -368,8 +368,10 @@
             ui_list_helper.continueDelete();
         }
         function fixAfterSyncOrReload(e) {
-            //全局变量
-            preSorts = null;
+            //刷新全局变量
+            //重设排序记录
+            preSorts = $.toJSON(getSorts());
+            debuger.debug('set preSorts', preSorts);
             //设置是否编辑状态
             setEditable(e);
             //自动选中首行
@@ -381,6 +383,16 @@
         }
         function firstClick() {
             $el_wrapper_region.find('tr.row_task input').first().click();
+        }
+        function getSorts() {
+            var idxs = [];
+            for (var i in cached_idxs)
+                idxs = $.merge(idxs, [{
+                    'By': cached_idxs[i]['by'],
+                    'Key': cached_idxs[i]['key'],
+                    'Indexs': cached_idxs[i].getIndexs()
+                }]);
+            return idxs;
         }
         ////////////////////////////////////////////////////////////////////////////////////////
         //TODO:增加网络异常修正逻辑
@@ -410,18 +422,8 @@
             arr = $.merge(arr, changes_delete);
             changes_delete = [];
             //排序索引
-            var idxs = [];
-            for (var i in cached_idxs)
-                idxs = $.merge(idxs, [{
-                    'By': cached_idxs[i]['by'],
-                    'Key': cached_idxs[i]['key'],
-                    'Indexs': cached_idxs[i].getIndexs()
-                }]);
-            var sorts = $.toJSON(idxs);
-            if (preSorts == null) {
-                preSorts = sorts;
-                debuger.debug('preSorts=sorts');
-            }
+            var idxs = getSorts();
+            var sorts = $.toJSON(getSorts());
             if (sorts != preSorts)
                 debuger.info('将排序索引同步至Server', idxs);
             if (arr.length > 0)

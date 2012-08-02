@@ -4,8 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FluentNHibernate.Mapping;
 using Cooper.Model.Tasks;
+using FluentNHibernate;
+using FluentNHibernate.Mapping;
 
 namespace Cooper.Model.Mappings
 {
@@ -17,6 +18,7 @@ namespace Cooper.Model.Mappings
             Id(m => m.ID);
             Map(m => m.CreateTime);
             Map(m => m.Name).Length(50);
+            Map(Reveal.Member<Tasklist>("_extensions")).Column("Extensions");
             DiscriminateSubClassesOnColumn("ListType");
         }
     }
