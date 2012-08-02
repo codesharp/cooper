@@ -18,7 +18,12 @@ namespace Cooper.Web
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
+            //use appfail for error reporting
+            //http://support.appfail.net/kb/installation/install-aspnet-reporting-module
+            filters.Add(new AppfailReporting.Mvc.AppfailReportAttribute());
             filters.Add(new HandleErrorAttribute());
+            //always https
+            filters.Add(new Cooper.Web.Controllers.RequireHttpsAttribute());
         }
         public static void RegisterRoutes(RouteCollection routes)
         {
@@ -255,6 +260,15 @@ public static class WebExtensions
             result = CodeSharp.Framework.SystemConfig.Settings["zhcn_" + binder.Name] ?? binder.Name;
             return true;
         }
+    }
+
+    /// <summary>引用appfail overlay脚本
+    /// </summary>
+    /// <param name="html"></param>
+    /// <returns></returns>
+    public static MvcHtmlString IncludeAppfailOverlay(this HtmlHelper html)
+    {
+        return AppfailReporting.Mvc.AppfailHtmlHelpers.IncludeAppfailOverlay(html);
     }
 }
 //扩展断言

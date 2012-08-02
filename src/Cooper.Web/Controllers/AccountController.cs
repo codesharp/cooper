@@ -17,7 +17,6 @@ namespace Cooper.Web.Controllers
 {
     /// <summary>处理账号相关
     /// </summary>
-    [RequireHttps]
     public class AccountController : Controller
     {
         protected Serializer _serializer = new Serializer();

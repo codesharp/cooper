@@ -10,7 +10,6 @@ using CodeSharp.Core;
 
 namespace Cooper.Web.Controllers
 {
-    [RequireHttps]
     public class HomeController : Controller
     {
         private ILog _log;
