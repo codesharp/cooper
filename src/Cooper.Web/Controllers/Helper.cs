@@ -6,7 +6,7 @@ using System.Linq;
 using System.Web;
 using CodeSharp.Core;
 using System.Web.Mvc;
-
+using AppfailReporting;
 namespace Cooper.Web.Controllers
 {
     /// <summary>提供基本UI辅助
@@ -51,6 +51,20 @@ namespace Cooper.Web.Controllers
                 return;
 
             this.HandleNonHttpsRequest(filterContext);
+        }
+    }
+    /// <summary>Appfail filter
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class AppfailReportAttribute : FilterAttribute, IExceptionFilter
+    {
+        public void OnException(ExceptionContext filterContext)
+        {
+            // Only log handled exceptions. Appfail will catch all unhandled exceptions anyway.
+            if (filterContext.ExceptionHandled)
+            {
+                filterContext.Exception.SendToAppfail();
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Cooper.Web
         {
             //use appfail for error reporting
             //http://support.appfail.net/kb/installation/install-aspnet-reporting-module
-            filters.Add(new AppfailReporting.Mvc.AppfailReportAttribute());
+            filters.Add(new Cooper.Web.Controllers.AppfailReportAttribute());
             filters.Add(new HandleErrorAttribute());
             //always https
             filters.Add(new Cooper.Web.Controllers.RequireHttpsAttribute());
@@ -268,7 +268,7 @@ public static class WebExtensions
     /// <returns></returns>
     public static MvcHtmlString IncludeAppfailOverlay(this HtmlHelper html)
     {
-        return AppfailReporting.Mvc.AppfailHtmlHelpers.IncludeAppfailOverlay(html);
+        return MvcHtmlString.Create(AppfailReporting.Appfail.RenderIncludes());
     }
 }
 //扩展断言

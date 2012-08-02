@@ -37,9 +37,6 @@
     <Reference Include="AppfailReporting">
       <HintPath>..\..\packages\Appfail.WebForms.1.1.0\lib\35\AppfailReporting.dll</HintPath>
     </Reference>
-    <Reference Include="AppfailReporting.Mvc">
-      <HintPath>..\..\packages\Appfail.Mvc.1.1.0\lib\35\AppfailReporting.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="Castle.Core">
       <HintPath>..\..\packages\Castle.Core.3.0.0.4001\lib\net40-client\Castle.Core.dll</HintPath>
     </Reference>

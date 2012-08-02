@@ -250,7 +250,7 @@ namespace Cooper.Web.Controllers
             if (this._context.Current == null
                 || (c != null && c.AccountId == a.ID)) return;
             if (c != null && c.AccountId != a.ID)
-                throw new Exception(string.Format(this.Lang().sorry_already_connect_another, name));
+                throw new CooperknownException(string.Format(this.Lang().sorry_already_connect_another, name));
 
             if (typeof(T) == typeof(GoogleConnection))
                 this._accountConnectionService.Create(new GoogleConnection(name, token, a));
