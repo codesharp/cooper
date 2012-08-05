@@ -10,10 +10,6 @@
 
 (function () {
 
-    //表示当前是否正在初始化任务详情页面
-    var isInitializingTaskDetailPage = false;
-    //表示是否是第一次显示TaskPage
-    var isFirstTimeShowTaskPage = true;
     //浏览器缓存当前任务表内的所有任务，使用这个变量是因为在新增或修改任务时，
     //调用服务器的Sync接口时，需要传入当前任务表内的所有任务的排序信息。
     var tasksInCurrentList = null;
@@ -49,30 +45,28 @@
     }
     //清空taskPage
     function clearTaskPage() {
+        $("#taskPage #taskPageTitle").html("");
         $("#taskPage #taskUl > li").remove();
-        $("#taskPage #addNewTaskButton").attr("href", "#");
-        $("#taskPage #showAllTasksButton").attr("href", "#");
-        $("#taskPage #showCompletedTasksButton").attr("href", "#");
-        $("#taskPage #showUnCompletedTasksButton").attr("href", "#");
     }
     //清空任务详情页面
     function clearTaskDetailPage() {
-        isInitializingTaskDetailPage = true;
         $("#taskDetailPage #taskSubject").html("");
         $("#taskDetailPage #taskBody").html("");
-        $("#taskDetailPage #radio-taskPriority-0").click();
+        $("#taskDetailPage #radio-taskPriority-0").attr('checked', true);
+        $("#taskDetailPage #radio-taskPriority-1").attr('checked', false);
+        $("#taskDetailPage #radio-taskPriority-2").attr('checked', false);
         $("input[name='taskPriority']").checkboxradio("refresh");
         $("#taskDetailPage #taskDueTime").val("");
         $("#taskDetailPage #isTaskCompleted").val("false");
         $("#taskDetailPage #isTaskCompleted").slider('refresh');
-        $("#taskDetailPage #gotoTaskEditPage").attr("href", "#");
-        isInitializingTaskDetailPage = false;
     }
     //清空任务编辑页面
     function clearTaskEditPage() {
         $("#taskEditPage #subject").val("");
         $("#taskEditPage #body").val("");
-        $("#taskEditPage #radio-priority-0").click();
+        $("#taskEditPage #radio-priority-0").attr('checked', true);
+        $("#taskEditPage #radio-priority-1").attr('checked', false);
+        $("#taskEditPage #radio-priority-2").attr('checked', false);
         $("input[name='priority']").checkboxradio("refresh");
         $("#taskEditPage #duetime").val("");
         $("#taskEditPage #isCompleted").val("false");
@@ -88,26 +82,27 @@
         var liArray = [];
         for (var index = 0; index < taskLists.length; index++) {
             var taskList = taskLists[index];
-            var li = '<li id="' + taskList.id + '"><a data-transition="slide" href="#taskPage?listId=' + listId + '&isCompleted=all">' + taskList.name + '<span class="ui-li-count">' + taskList.tasks.length + '</span></a></li>';
+            var li = '<li id="' + taskList.id + '"><a data-transition="slide" href="#taskPage?listId=' + taskList.id + '&isCompleted=all">' + taskList.name + '<span class="ui-li-count">' + taskList.taskCount + '</span></a></li>';
             liArray[liArray.length] = li;
         }
         ul.append(liArray.join(''));
 
         //刷新任务列表
         ul.listview('refresh');
-
-        //设置列表每行的Click响应函数
-        $('#taskListPage #taskListUl li').click(function () {
-            var listId = $(this).attr("id");
-            isFirstTimeShowTaskPage = true;
-            clearTaskPage();
-        });
     }
     //加载并显示任务列表
     function loadAndShowTaskLists() {
         showLoading();
         loadAllTaskList(function (result) {
             if (result.success) {
+                //获取每个TaskList下的任务个数
+                for (var index = 0; index < result.taskLists.length; index++) {
+                    loadTasks(result.taskLists[index].id, "all", function (data) {
+                        if (data.success) {
+                            result.taskLists[index].taskCount = data.tasks.length;
+                        }
+                    });
+                }
                 showTaskLists(result.taskLists);
                 hideLoading();
             }
@@ -117,10 +112,36 @@
             }
         });
     }
+    //获取指定的某个任务列表
+    function loadTaskList(listId) {
+        var taskList = null;
+        loadAllTaskList(function (result) {
+            if (result.success) {
+                //获取每个TaskList下的任务个数
+                for (var index = 0; index < result.taskLists.length; index++) {
+                    if (result.taskLists[index].id == listId) {
+                        loadTasks(result.taskLists[index].id, "all", function (data) {
+                            if (data.success) {
+                                result.taskLists[index].taskCount = data.tasks.length;
+                            }
+                        });
+                        taskList = result.taskLists[index];
+                    }
+                }
+            }
+        });
+        return taskList;
+    }
     //显示指定任务列表中的任务
     function showTasks(listId, tasks) {
         //清空任务
         clearTaskPage();
+
+        //显示任务列表的标题
+        var taskList = loadTaskList(listId);
+        if (taskList != null) {
+            $("#taskPage #taskPageTitle").html(taskList.name);
+        }
 
         var li1 = '<li style="background-color: #ebebeb">尽快完成<span class="ui-li-count">{0}</span></li>';
         var li2 = '<li style="background-color: #ebebeb">稍后完成<span class="ui-li-count">{0}</span></li>';
@@ -134,7 +155,7 @@
         for (var index = 0; tasks != null && index < tasks.length; index++) {
             var task = tasks[index];
             var img = null;
-            if (task.isCompleted == "true") {
+            if (task.isCompleted.toString() == "true") {
                 img = "complete-small.png";
             }
             else {
@@ -176,24 +197,34 @@
         //刷新ul
         ul.listview('refresh');
 
-        //设置每个任务的Click响应函数
-        $('#taskPage #taskUl li').click(function () {
-            var taskId = $(this).attr("id");
-            if (taskId != undefined && taskId != null && taskId != "") {
-                clearTaskDetailPage();
+        //根据任务是否存在现实友好信息
+        $("#addFirstTaskButton").hide();
+        $("#displayInfoWhenNoTaskExist").html("");
+        if (pageData.isCompleted == "all") {
+            if (items1.length == 0 && items2.length == 0 && items3.length == 0) {
+                $("#addFirstTaskButton").show();
             }
-        });
-
-        //设置新增任务按钮的隐藏于显示，如果至少有一个符合条件的任务就隐藏，否则就显示
-        if (items1.length > 0 || items2.length > 0 || items3.length > 0) {
-            $("#addFirstTaskButton").hide();
         }
-        else {
-            $("#addFirstTaskButton").show();
+        else if (pageData.isCompleted == "true") {
+            if (items1.length == 0 && items2.length == 0 && items3.length == 0) {
+                $("#displayInfoWhenNoTaskExist").html(lang.noCompletedTaskPromptInfo);
+            }
+        }
+        else if (pageData.isCompleted == "false") {
+            if (items1.length == 0 && items2.length == 0 && items3.length == 0) {
+                $("#displayInfoWhenNoTaskExist").html(lang.noUnCompletedTaskPromptInfo);
+            }
         }
     }
     //加载并显示指定任务列表中的符合条件的所有任务
     function loadAndShowTasks(listId, isCompleted) {
+
+        $("#taskPage #addNewTaskButton").attr("href", "#taskEditPage?listId=" + listId + "&isCompleted=" + isCompleted);
+        $("#taskPage #addFirstTaskButton").attr("href", "#taskEditPage?listId=" + listId + "&isCompleted=" + isCompleted);
+        $("#taskPage #showAllTasksButton").attr("href", "#taskPage?listId=" + listId + "&isCompleted=all");
+        $("#taskPage #showCompletedTasksButton").attr("href", "#taskPage?listId=" + listId + "&isCompleted=true");
+        $("#taskPage #showUnCompletedTasksButton").attr("href", "#taskPage?listId=" + listId + "&isCompleted=false");
+
         showLoading();
         loadTasks(pageData.listId, isCompleted, function (result) {
             if (result.success) {
@@ -221,12 +252,12 @@
                 $("#taskDetailPage #taskBody").html(task.body);
 
                 if (task.priority == "0" || task.priority == "1" || task.priority == "2") {
-                    $("#taskDetailPage #radio-taskPriority-" + task.priority).click();
+                    $("#taskDetailPage #radio-taskPriority-" + task.priority).attr('checked', true);
                     $("input[name='taskPriority']").checkboxradio("refresh");
                 }
 
                 $("#taskDetailPage #taskDueTime").val(task.dueTime);
-                $("#taskDetailPage #isTaskCompleted").val(task.isCompleted);
+                $("#taskDetailPage #isTaskCompleted").val(task.isCompleted.toString());
                 $("#taskDetailPage #isTaskCompleted").slider('refresh');
 
                 $("#taskDetailPage #gotoTaskEditPage").attr("href", "#taskEditPage?listId=" + pageData.listId + "&taskId=" + task.id);
@@ -246,12 +277,12 @@
                 $("#taskEditPage #body").val(task.body);
 
                 if (task.priority == "0" || task.priority == "1" || task.priority == "2") {
-                    $("#taskEditPage #radio-priority-" + task.priority).click();
+                    $("#taskEditPage #radio-priority-" + task.priority).attr('checked', true);
                     $("input[name='priority']").checkboxradio("refresh");
                 }
 
                 $("#taskEditPage #duetime").val(task.dueTime);
-                $("#taskEditPage #isCompleted").val(task.isCompleted);
+                $("#taskEditPage #isCompleted").val(task.isCompleted.toString());
                 $("#taskEditPage #isCompleted").slider('refresh');
             }
         }
@@ -305,6 +336,7 @@
     }
     //更新一个Task的单个属性，任务详情页面会用到此函数
     function updateTaskProperty(taskId, propertyName, propertyValue, callback) {
+        debugger
         //首先从本地缓存获取要更新的Task
         var task = loadTask(taskId);
 
@@ -325,7 +357,7 @@
         }
 
         //同步到服务器
-        syncTasks(listId, tasksInCurrentList, function (result) {
+        syncTasks(pageData.listId, tasksInCurrentList, function (result) {
             if (callback != null) {
                 callback({ 'success': true, 'message': null });
             }
@@ -426,9 +458,6 @@
                 if (!result.success) {
                     showErrorMessage(result.message);
                 }
-                else {
-                    showPage("taskPage", "listId=" + pageData.listId, "slidedown", "reverse");
-                }
             });
         }
         else {
@@ -436,23 +465,8 @@
                 if (!result.success) {
                     showErrorMessage(result.message);
                 }
-                else {
-                    showPage("taskPage", "listId=" + pageData.listId, "slidedown", "reverse");
-                }
             });
         }
-    });
-    //任务页面：“个人任务”Tab点击事件响应
-    $(document).delegate("#taskPage #showAllTasksButton", "click", function () {
-        loadAndShowTasks(pageData.listId, "all");
-    });
-    //任务页面：“已完成”Tab点击事件响应
-    $(document).delegate("#taskPage #showCompletedTasksButton", "click", function () {
-        loadAndShowTasks(pageData.listId, "true");
-    });
-    //任务页面：“未完成”Tab点击事件响应
-    $(document).delegate("#taskPage #showUnCompletedTasksButton", "click", function () {
-        loadAndShowTasks(pageData.listId, "false");
     });
     //任务页面:“刷新”按钮事件响应
     $(document).delegate("#taskPage #refreshTasksButton", "click", function () {
@@ -462,14 +476,12 @@
     //以下三个事件响应函数用户在任务详情页面自动更新用户修改
     //优先级
     $(document).delegate("[name=taskPriority]", "change", function () {
-        if (!isInitializingTaskDetailPage) {
-            var priority = $('input[name=taskPriority]:checked').val();
-            updateTaskProperty(pageData.taskId, "priority", priority, function (result) {
-                if (!result.success) {
-                    showErrorMessage(result.message);
-                }
-            });
-        }
+        var priority = $('input[name=taskPriority]:checked').val();
+        updateTaskProperty(pageData.taskId, "priority", priority, function (result) {
+            if (!result.success) {
+                showErrorMessage(result.message);
+            }
+        });
     });
     //是否完成
     $(document).delegate("#taskDetailPage #isTaskCompleted", "change", function () {
@@ -510,22 +522,7 @@
         if (isShowFromClosingErrorDialog(data)) {
             return;
         }
-        $("#addNewTaskButton").attr("href", "#taskEditPage?listId=" + pageData.listId);
-        $("#showAllTasksButton").attr("href", "#taskPage?listId=" + pageData.listId + "&isCompleted=all");
-        $("#showCompletedTasksButton").attr("href", "#taskPage?listId=" + pageData.listId + "&isCompleted=true");
-        $("#showUnCompletedTasksButton").attr("href", "#taskPage?listId=" + pageData.listId + "&isCompleted=false");
-        if (isFirstTimeShowTaskPage) {
-            isFirstTimeShowTaskPage = false;
-            if (pageData.isCompleted == "all") {
-                $("#showAllTasksButton").click();
-            }
-            else if (pageData.isCompleted == "true") {
-                $("#showCompletedTasksButton").click();
-            }
-            else if (pageData.isCompleted == "false") {
-                $("#showUnCompletedTasksButton").click();
-            }
-        }
+        loadAndShowTasks(pageData.listId, pageData.isCompleted);
     });
     $(document).delegate("#taskDetailPage", "pageshow", function (e, data) {
         if (isShowFromClosingErrorDialog(data)) {

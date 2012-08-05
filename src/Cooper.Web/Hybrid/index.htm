@@ -100,8 +100,7 @@
                     &nbsp;
                 <img id="refreshTasksButton" src="images/refresh.png" />
             </div>
-            <h1>
-                cooper:task</h1>
+            <h1 id="taskPageTitle"></h1>
             <div class="ui-btn-right" style="line-height: 50px">
                 <a id="addNewTaskButton" data-transition="slideup"><img src="images/edit.png" /></a>
             </div>
@@ -109,7 +108,8 @@
         <div data-role="content">
             <ul id="taskUl" data-role="listview" data-theme="c"></ul>
             <br />
-            <a id="addFirstTaskButton" style="display:none" href="#taskEditPage" data-role="button" data-transition="slideup" data-theme="a">当前还没有任务，点击新增任务</a>
+            <a id="addFirstTaskButton" style="display:none" data-role="button" data-transition="slideup" data-theme="a">当前还没有任务，点击新增任务</a>
+            <div id="displayInfoWhenNoTaskExist"></div>
         </div>
         <div data-role="footer" data-position="fixed" data-theme="a">
             <div data-role="navbar">
@@ -137,7 +137,7 @@
     <div id="taskDetailPage" data-role="page">
         <div data-role="header" data-position="fixed">
             <div class="ui-btn-left" style="line-height: 50px">
-                <a data-rel="back" data-transition="slide" data-direction="reverse"><img src="images/back.png" /></a>
+                <a data-rel="back"><img src="images/back.png" /></a>
             </div>
             <h1>
                 cooper:task</h1>
@@ -183,11 +183,11 @@
     <div id="taskEditPage" data-role="page">
         <div data-role="header" data-position="fixed">
             <div class="ui-btn-left" style="line-height: 50px">
-                <a data-rel="back" data-transition="slide" data-direction="reverse"><img src="images/back.png" /></a>
+                <a data-rel="back"><img src="images/back.png" /></a>
             </div>
             <h1>
                 cooper:task</h1>
-            <a id="saveTaskButton" class="ui-btn-right" data-icon="check">确定</a>
+            <a id="saveTaskButton" data-rel="back" class="ui-btn-right" data-icon="check">确定</a>
         </div>
         <div data-role="content" style="background-color: #fff">
             <div data-role="fieldcontain">
@@ -241,7 +241,7 @@
     <div id="settingPage" data-role="page" data-theme="a">
         <div data-role="header">
             <div class="ui-btn-left" style="line-height: 50px">
-                <a data-rel="back" data-transition="slide" data-direction="reverse"><img src="images/back.png" /></a>
+                <a data-rel="back"><img src="images/back.png" /></a>
             </div>
             <h1>
                 cooper:task</h1>

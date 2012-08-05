@@ -23,7 +23,7 @@
 
 //变量定义
 var newTaskTempIdPrefix = "temp_";
-var apiUrlBase = "http://localhost:9007";
+var apiUrlBase = "http://localhost:2533";
 var loginUrl = apiUrlBase + "/Account/Login";
 var getTasklistsUrl = apiUrlBase + "/Personal/GetTasklists";
 var createTaskListUrl = apiUrlBase + "/Personal/CreateTasklist";
@@ -202,7 +202,7 @@ function loadAllTaskList(callback) {
                 var taskList = {};
                 taskList.id = key;
                 taskList.name = result[key];
-                taskList.tasks = [];
+                taskList.taskCount = 0;
                 taskLists.push(taskList);
             }
             if (callback != null) {
