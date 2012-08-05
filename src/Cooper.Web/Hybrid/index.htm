@@ -6,25 +6,41 @@
     <link href="themes/cooper.css" rel="stylesheet" type="text/css" />
     <link href="jquery/css/mobile/jquery.mobile.structure-1.1.1.min.css" rel="stylesheet" type="text/css" />
     <link href="css/base.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
     <script src="jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
     <script src="jquery/jquery.mobile-1.1.0.min.js" type="text/javascript"></script>
+    <script src="jquery/jquery.json-2.3.min.js" type="text/javascript"></script>
     <script src="jquery/jqm.page.params.js" type="text/javascript"></script>
+    <script src="scripts/hybrid.js" type="text/javascript"></script>
     <script src="scripts/cooper.js" type="text/javascript"></script>
     <script src="scripts/lang.js" type="text/javascript"></script>
 
     <!--全局-->
     <script type="text/javascript">
         var pageData = {}; //存放当前页面的参数信息
+        var currentPageUrl = null; //当前显示的页面地址
         $(document).bind("mobileinit", function () {
             $.mobile.page.prototype.options.domCache = true;
         });
         $(document).bind("pagebeforechange", function (e, data) {
-            pageData = data.options.pageData;
+            if (typeof data.toPage === "string") {
+                pageData = data.options.pageData;
+                data.options.allowSamePageTransition = true;
+                if (data.options.dataUrl != null) {
+                    currentPageUrl = data.options.dataUrl;
+                }
+                else {
+                    currentPageUrl = data.toPage;
+                }
+            }
         });
     </script>
 
+    <!--用于隐藏Dialog的关闭按钮-->
+    <style type="text/css">
+        .ui-dialog  .ui-header .ui-btn-icon-notext  { display: none;} 
+    </style>
+</head>
+<body>
     <!-- 登录页面 -->
     <div id="loginPage" data-role="page" data-theme="a">
         <div data-role="content">
@@ -34,10 +50,10 @@
             <form>
             <ul data-role="listview" data-inset="true">
                 <li data-role="fieldcontain">
-                    <input type="text" placeholder="账号" name="username" style="width: 100%" />
+                    <input type="text" placeholder="账号" id="username" name="username" style="width: 100%" />
                 </li>
                 <li data-role="fieldcontain">
-                    <input type="password" placeholder="密码" name="password" style="width: 100%" />
+                    <input type="password" placeholder="密码" id="password" name="password" style="width: 100%" />
                 </li>
             </ul>
             <div class="ui-grid-a">
@@ -64,7 +80,7 @@
             <div class="ui-btn-left" style="line-height: 50px">
                 <a href="#addTaskListPage" data-rel="dialog" data-transition="slidedown"><img src="images/edit.png" /></a>
                 &nbsp;
-                <img id="refreshTaskListsImg" src="images/refresh.png" />
+                <img id="refreshTaskListsButton" src="images/refresh.png" />
             </div>
             <h1>
                 cooper:task</h1>
@@ -82,12 +98,12 @@
             <div class="ui-btn-left" style="line-height: 50px">
                 <a href="#taskListPage" data-transition="slide" data-direction="reverse"><img src="images/tasklist.png" /></a>
                     &nbsp;
-                <img id="refreshTasksImg" src="images/refresh.png" />
+                <img id="refreshTasksButton" src="images/refresh.png" />
             </div>
             <h1>
                 cooper:task</h1>
             <div class="ui-btn-right" style="line-height: 50px">
-                <a href="#taskEditPage" data-transition="slideup"><img src="images/edit.png" /></a>
+                <a id="addNewTaskButton" data-transition="slideup"><img src="images/edit.png" /></a>
             </div>
         </div>
         <div data-role="content">
@@ -98,15 +114,15 @@
         <div data-role="footer" data-position="fixed" data-theme="a">
             <div data-role="navbar">
                 <ul>
-                    <li><a id="showAllTasksImg">
+                    <li><a id="showAllTasksButton" data-transition="none">
                         <img src="images/task.png" />
                         <br />
                         个人任务</a></li>
-                    <li><a id="showCompletedTasksImg">
+                    <li><a id="showCompletedTasksButton" data-transition="none">
                         <img src="images/complete.png" />
                         <br />
                         已完成</a></li>
-                    <li><a id="showUnCompletedTasksImg">
+                    <li><a id="showUnCompletedTasksButton" data-transition="none">
                         <img src="images/incomplete.png" />
                         <br />
                         未完成</a></li>
@@ -126,7 +142,8 @@
             <h1>
                 cooper:task</h1>
             <div class="ui-btn-right" style="line-height: 50px">
-                <img id="gotoTaskEditPage" src="images/edit.png" /></div>
+                <a id="gotoTaskEditPage" data-transition="slideup"><img src="images/edit.png" /></a>
+            </div>
         </div>
         <div data-role="content" style="background-color: #fff">
             <div data-role="fieldcontain">
@@ -170,7 +187,7 @@
             </div>
             <h1>
                 cooper:task</h1>
-            <a id="addOrUpdateTaskButton" class="ui-btn-right" data-icon="check">确定</a>
+            <a id="saveTaskButton" class="ui-btn-right" data-icon="check">确定</a>
         </div>
         <div data-role="content" style="background-color: #fff">
             <div data-role="fieldcontain">
@@ -216,8 +233,8 @@
     <div id="addTaskListPage" data-role="page">
         <div data-role="content">
             <input id="tasklistName" name="tasklistName" placeholder="任务表名称" />
-            <a id="saveNewTaskList" href="#taskListPage" data-role="button" data-inline="true" data-rel="back" data-theme="a">确定</a>
-            <a id="cancelAddTaskList" href="#taskListPage" data-role="button" data-inline="true" data-rel="back">取消</a>
+            <a id="saveNewTaskListButton" data-role="button" data-inline="true" data-theme="a">确定</a>
+            <a id="cancelAddTaskList" href="#taskListPage" data-role="button" data-inline="true" data-theme="a">取消</a>
         </div>
     </div>
     <!-- Setting页面 -->
@@ -235,6 +252,17 @@
                 <li><a>同步设置</a></li>
                 <li><a>版本说明</a></li>
             </ul>
+        </div>
+    </div>
+    <!-- Error Dialog -->
+    <div id="errorDialog" data-role="dialog">
+        <div data-role="header" data-theme="b">
+            <h1>错误信息</h1>
+        </div>
+        <div id="content" data-role="content" data-theme="b">
+        </div>
+        <div style="text-align: right">
+            <a id="closeButton" data-role="button" data-inline="true" data-transition="none">关闭</a>
         </div>
     </div>
 </body>

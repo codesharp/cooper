@@ -12,3 +12,4 @@ lang.confirm_delete_tasklist = '确定要删除当前任务表？任务表中的
 lang.share_description = '\n\n - 我的任务 - Work IN Cooper';
 
 lang.loginFailed = '登录失败，用户名或密码错误';
+lang.addTaskListFailed = '添加任务列表失败';
