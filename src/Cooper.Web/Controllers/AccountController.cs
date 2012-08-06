@@ -30,9 +30,11 @@ namespace Cooper.Web.Controllers
         private string _googleOAuth2Url;
         private string _googleOAuth2TokenUrl;
         private string _googleOAuth2UserUrl;
+        private string _googleScope;
         private string _googleClientId;
         private string _googleClientSecret;
-        private string _googleScope;
+        private string _googleClientId_mobi;
+        private string _googleClientSecret_mobi;
 
         private string _gitOAuthUrl;
         private string _gitOAuthTokenUrl;
@@ -51,9 +53,11 @@ namespace Cooper.Web.Controllers
             , string googleOAuth2Url
             , string googleOAuth2TokenUrl
             , string googleOAuth2UserUrl
+            , string googleScope
             , string googleClientId
             , string googleClientSecret
-            , string googleScope
+            , string googleClientId_mobi
+            , string googleClientSecret_mobi
 
             , string gitOAuthUrl
             , string gitOAuthTokenUrl
@@ -73,9 +77,12 @@ namespace Cooper.Web.Controllers
             this._googleOAuth2Url = googleOAuth2Url;
             this._googleOAuth2TokenUrl = googleOAuth2TokenUrl;
             this._googleOAuth2UserUrl = googleOAuth2UserUrl;
+            this._googleScope = googleScope;
             this._googleClientId = googleClientId;
             this._googleClientSecret = googleClientSecret;
-            this._googleScope = googleScope;
+            this._googleClientId_mobi = googleClientId_mobi;
+            this._googleClientSecret_mobi = googleClientSecret_mobi;
+
 
             this._gitOAuthUrl = gitOAuthUrl;
             this._gitOAuthTokenUrl = gitOAuthTokenUrl;
@@ -178,15 +185,22 @@ namespace Cooper.Web.Controllers
         #endregion
 
         //TODO:重构以下各类型连接登录和连接
-        //Google
-        public ActionResult GoogleLogin(string error, string code, string state)
+        /// <summary>处理Google登录回调
+        /// </summary>
+        /// <param name="error">异常信息</param>
+        /// <param name="code"></param>
+        /// <param name="state">指定回调动作，login、connect</param>
+        /// <param name="mobi">是否是来自mobi的回调请求</param>
+        /// <returns></returns>
+        public ActionResult GoogleLogin(string error, string code, string state, string mobi)
         {
             if (!string.IsNullOrWhiteSpace(error))
                 throw new CooperknownException(error);
 
+            var mobile = Convert.ToBoolean(mobi);
             //根据google回调获取对应google账号
-            var grant = this.GetGoogleGrantByCode(code);
-            this._log.Debug(grant);
+            var grant = this.GetGoogleGrantByCode(code, mobile);
+            if (this._log.IsDebugEnabled) this._log.Debug(grant);
             var dict = _serializer.JsonDeserialize<IDictionary<string, string>>(grant);
             var email = this.GetGoogleAccount(dict["access_token"]);
 
@@ -195,7 +209,9 @@ namespace Cooper.Web.Controllers
             else if (state == "connect")
                 this.Connect<GoogleConnection>(email, grant);
 
-            return this.StateResult(state);
+            return mobile
+                ? Json(true, JsonRequestBehavior.AllowGet)
+                : this.StateResult(state);
         }
         //Git
         public ActionResult GitLogin(string error, string code, string state)
@@ -284,18 +300,20 @@ namespace Cooper.Web.Controllers
             return Url.ToPublicUrl(Url.Action("GoogleLogin"));
         }
         //格式如{ "access_token" : "", "token_type" : "Bearer", "expires_in" : 3600, "id_token" : "", "refresh_token" : "" }
-        private string GetGoogleGrantByCode(string code)
+        private string GetGoogleGrantByCode(string code, bool mobi)
         {
+            //解决部分服务器证书问题
             ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(delegate { return true; });
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
             ServicePointManager.Expect100Continue = true;
+
             using (var wc = new WebClient())
             {
                 wc.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
                 //登录后根据code获取token
                 var data = string.Format("client_id={0}&client_secret={1}&redirect_uri={2}&code={3}&grant_type=authorization_code"
-                    , this._googleClientId
-                    , this._googleClientSecret
+                    , mobi ? this._googleClientId_mobi : this._googleClientId
+                    , mobi ? this._googleClientSecret_mobi : this._googleClientSecret
                     , HttpUtility.UrlEncode(this.GetGoogleRedirectUrl())
                     , code);
                 if (this._log.IsDebugEnabled)
