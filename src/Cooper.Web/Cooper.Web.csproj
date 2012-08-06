@@ -189,6 +189,7 @@
     <Content Include="Hybrid\jquery\css\mobile\jquery.mobile.structure-1.1.1.min.css" />
     <Content Include="Hybrid\jquery\jqm.page.params.js" />
     <Content Include="Hybrid\sample.htm" />
+    <Content Include="Hybrid\scripts\hybrid.js" />
     <Content Include="Hybrid\setting.htm" />
     <Content Include="Hybrid\css\base.css" />
     <Content Include="Hybrid\images\complete-small.png" />
