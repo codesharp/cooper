@@ -161,7 +161,7 @@
             else {
                 img = "incomplete-small.png";
             }
-            var li = '<li id="' + task.id + '"><a href="#taskDetailPage?listId=' + listId + '&taskId=' + task.id + '" data-transition="slide"><h3><img src="images/' + img + '"><span>' + task.subject + '</span></h3><p>' + task.body + '</p><p><strong>' + task.dueTime + '</strong></p></a></li>';
+            var li = '<li id="' + listId + '|' + task.id + '"><a><h3><img id="' + task.id + '" src="images/' + img + '"><span>' + task.subject + '</span></h3><p>' + task.body + '</p><p><strong>' + task.dueTime + '</strong></p></a></li>';
 
             if (task.priority == "0") {
                 items1[items1.length] = li;
@@ -196,6 +196,43 @@
 
         //刷新ul
         ul.listview('refresh');
+
+        //设置列表每行的表示任务是否完成状态的Click响应函数，为了实现在用户点击是否完成的图标时，能够自动切换任务的状态
+        $('#taskUl img').click(function (event) {
+            var taskId = $(this).attr("id");
+            if (!isNaN(taskId)) {
+                var imgUrl = $(this).attr("src");
+                if (imgUrl.indexOf('images/complete-small.png') != -1) {
+                    updateTaskProperty(taskId, 'isCompleted', 'false', function (result) {
+                        if (result.success) {
+                            $('#taskUl #' + taskId).attr("src", 'images/incomplete-small.png');
+                        }
+                        else {
+                            showErrorMessage(result.message);
+                        }
+                    });
+                }
+                else if (imgUrl.indexOf('images/incomplete-small.png') != -1) {
+                    updateTaskProperty(taskId, 'isCompleted', 'true', function (result) {
+                        if (result.success) {
+                            $('#taskUl #' + taskId).attr("src", 'images/complete-small.png');
+                        }
+                        else {
+                            showErrorMessage(result.message);
+                        }
+                    });
+                }
+                //停止冒泡，确保不会跳转到任务详情页
+                event.stopPropagation();
+            }
+        });
+        //设置列表每行的Click响应函数
+        $('#taskUl li').click(function (event) {
+            var entry = $(this).attr("id").split('|');
+            var listId = entry[0];
+            var taskId = entry[1];
+            showPage("taskDetailPage", 'listId=' + listId + '&taskId=' + taskId);
+        });
 
         //根据任务是否存在现实友好信息
         $("#addFirstTaskButton").hide();
