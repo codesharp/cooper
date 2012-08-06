@@ -24,7 +24,6 @@
         $(document).bind("pagebeforechange", function (e, data) {
             if (typeof data.toPage === "string") {
                 pageData = data.options.pageData;
-                data.options.allowSamePageTransition = true;
                 if (data.options.dataUrl != null) {
                     currentPageUrl = data.options.dataUrl;
                 }
@@ -114,15 +113,15 @@
         <div data-role="footer" data-position="fixed" data-theme="a">
             <div data-role="navbar">
                 <ul>
-                    <li><a id="showAllTasksButton" data-transition="none">
+                    <li><a id="showAllTasksButton">
                         <img src="images/task.png" />
                         <br />
                         个人任务</a></li>
-                    <li><a id="showCompletedTasksButton" data-transition="none">
+                    <li><a id="showCompletedTasksButton">
                         <img src="images/complete.png" />
                         <br />
                         已完成</a></li>
-                    <li><a id="showUnCompletedTasksButton" data-transition="none">
+                    <li><a id="showUnCompletedTasksButton">
                         <img src="images/incomplete.png" />
                         <br />
                         未完成</a></li>

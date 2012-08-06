@@ -133,7 +133,7 @@
         return taskList;
     }
     //显示指定任务列表中的任务
-    function showTasks(listId, tasks) {
+    function showTasks(listId, tasks, isCompleted) {
         //清空任务
         clearTaskPage();
 
@@ -200,17 +200,17 @@
         //根据任务是否存在现实友好信息
         $("#addFirstTaskButton").hide();
         $("#displayInfoWhenNoTaskExist").html("");
-        if (pageData.isCompleted == "all") {
+        if (isCompleted == "all") {
             if (items1.length == 0 && items2.length == 0 && items3.length == 0) {
                 $("#addFirstTaskButton").show();
             }
         }
-        else if (pageData.isCompleted == "true") {
+        else if (isCompleted == "true") {
             if (items1.length == 0 && items2.length == 0 && items3.length == 0) {
                 $("#displayInfoWhenNoTaskExist").html(lang.noCompletedTaskPromptInfo);
             }
         }
-        else if (pageData.isCompleted == "false") {
+        else if (isCompleted == "false") {
             if (items1.length == 0 && items2.length == 0 && items3.length == 0) {
                 $("#displayInfoWhenNoTaskExist").html(lang.noUnCompletedTaskPromptInfo);
             }
@@ -228,7 +228,7 @@
         showLoading();
         loadTasks(pageData.listId, isCompleted, function (result) {
             if (result.success) {
-                showTasks(listId, result.tasks);
+                showTasks(listId, result.tasks, isCompleted);
                 //将任务缓存在本地
                 tasksInCurrentList = result.tasks;
                 hideLoading();
@@ -336,7 +336,6 @@
     }
     //更新一个Task的单个属性，任务详情页面会用到此函数
     function updateTaskProperty(taskId, propertyName, propertyValue, callback) {
-        debugger
         //首先从本地缓存获取要更新的Task
         var task = loadTask(taskId);
 
@@ -472,6 +471,21 @@
     $(document).delegate("#taskPage #refreshTasksButton", "click", function () {
         loadAndShowTasks(pageData.listId, pageData.isCompleted);
     });
+    //任务页面:“个人任务”Tab事件响应
+    $(document).delegate("#taskPage #showAllTasksButton", "click", function () {
+        window.location = this.href;
+        loadAndShowTasks(pageData.listId, "all");
+    });
+    //任务页面:“已完成”Tab事件响应
+    $(document).delegate("#taskPage #showCompletedTasksButton", "click", function () {
+        window.location = this.href;
+        loadAndShowTasks(pageData.listId, "true");
+    });
+    //任务页面:“未完成”Tab事件响应
+    $(document).delegate("#taskPage #showUnCompletedTasksButton", "click", function () {
+        window.location = this.href;
+        loadAndShowTasks(pageData.listId, "false");
+    });
 
     //以下三个事件响应函数用户在任务详情页面自动更新用户修改
     //优先级
@@ -506,7 +520,7 @@
     //Jquery Mobile Event Binding
     //----------------------------------------------------------------
 
-    $(document).delegate("#taskListPage", "pageshow", function (e, data) {
+    $(document).delegate("#taskListPage", "pagebeforeshow", function (e, data) {
         if (isShowFromClosingErrorDialog(data)) {
             return;
         }
@@ -518,19 +532,30 @@
         }
         $("#tasklistName").val("");
     });
-    $(document).delegate("#taskPage", "pageshow", function (e, data) {
+    $(document).delegate("#taskPage", "pagebeforeshow", function (e, data) {
         if (isShowFromClosingErrorDialog(data)) {
             return;
         }
+
         loadAndShowTasks(pageData.listId, pageData.isCompleted);
+
+        if (pageData.isCompleted == null || pageData.isCompleted == "all") {
+            $("#taskPage #showAllTasksButton").addClass("ui-btn-active");
+        }
+        else if (pageData.isCompleted == "true") {
+            $("#taskPage #showCompletedTasksButton").addClass("ui-btn-active");
+        }
+        else if (pageData.isCompleted == "false") {
+            $("#taskPage #showUnCompletedTasksButton").addClass("ui-btn-active");
+        }
     });
-    $(document).delegate("#taskDetailPage", "pageshow", function (e, data) {
+    $(document).delegate("#taskDetailPage", "pagebeforeshow", function (e, data) {
         if (isShowFromClosingErrorDialog(data)) {
             return;
         }
         showTaskOnDetailPage(pageData.taskId);
     });
-    $(document).delegate("#taskEditPage", "pageshow", function (e, data) {
+    $(document).delegate("#taskEditPage", "pagebeforeshow", function (e, data) {
         if (isShowFromClosingErrorDialog(data)) {
             return;
         }
