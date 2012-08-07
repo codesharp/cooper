@@ -27,8 +27,8 @@ UI_List_Due.prototype.renderByDueTime = function (b) {
     var idx = this.byDueTime.indexs();
     for (var i = 0; i < idx.length; i++) {
         for (var j = idx.length - 1; j > 0; j--) {
-            var r = cached_tasks[idx[j]].dueTime().getTime();
-            var l = cached_tasks[idx[j - 1]].dueTime().getTime();
+            var r = this.getTaskById(idx[j]).dueTime().getTime();
+            var l = this.getTaskById(idx[j - 1]).dueTime().getTime();
             if (r < l) {
                 var temp = idx[j - 1];
                 idx[j - 1] = idx[j];
@@ -68,7 +68,7 @@ UI_List_Due.prototype.onPrepareBinds = function () {
                 || $focus == null
                 || !base._isDueTimeRow($focus)) return;
 
-            var task = cached_tasks[base.getTaskId($focus)];
+            var task = base.getTask($focus);
             var dueTime = task.dueTime();
             var day = 86400000;
             if (up)
@@ -110,7 +110,7 @@ UI_List_Due.prototype.render = function () {
 
     this.$wrapper.empty();
     //dueTime排序区域
-    this.byDueTime = cached_idxs['dueTime'];
+    this.byDueTime = cached_sorts['dueTime'];
     this.renderByDueTime(true);
     this.$wrapper.append(this.byDueTime.el().addClass('todolist_dueTime'));
     //优先级区域
@@ -127,7 +127,7 @@ UI_List_Due.prototype.render = function () {
 }
 UI_List_Due.prototype.appendTask = function (p) {
     var t = new Task();
-    cached_tasks[t.id()] = t;
+    this.setTask(t.id(), t);
     //基本渲染
     t.renderRow();
 
@@ -140,7 +140,7 @@ UI_List_Due.prototype.appendTask = function (p) {
     else if (($actives = this.getActives()).length == 1)
         $row = $actives;
     if ($row != null) {
-        var active = cached_tasks[this.getTaskId($row)];
+        var active = this.getTask($row);
         this._appendTaskToRow($row, t, active);
 
         var dueTime = active.dueTime();
@@ -149,13 +149,13 @@ UI_List_Due.prototype.appendTask = function (p) {
             this.byDueTime.flush();
         } else {
             t.setPriority(active.priority());
-            cached_idxs[t.priority()].flush();
+            cached_sorts[t.priority()].flush();
         }
     }
     //默认追加到later
     else {
         t.setPriority(p == undefined ? 2 : p);
-        cached_idxs[t.priority()].append(t);
+        cached_sorts[t.priority()].append(t);
     }
 
     //由于新增需要重新hover

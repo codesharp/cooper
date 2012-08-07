@@ -21,7 +21,7 @@ function runTests() {
     //初始化
     test('init', function () {
         ok(cached_tasks, 'cached_tasks init');
-        ok(cached_idxs, 'cached_idxs init');
+        ok(cached_sorts, 'cached_sorts init');
     });
     ///////////////////////////////////////////////////////////////////////////////
     //按钮区域

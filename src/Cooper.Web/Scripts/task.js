@@ -2,15 +2,14 @@
 
 ///<reference path="lang.js" />
 ///<reference path="common.js" />
-/////////////////////////////////////////////////////////////////////////////////////////
-//global specials of tasks
+
 var cached_tasks = null;
-var cached_idxs = null;
+var cached_sorts = null;
 var identity = 0;
-var changes_delete = [];//用于记录删除
+var changes_delete = []; //用于记录删除
 //template
-var tmp_region = $('#tmp_region').html();
 var tmp_item = $('#tmp_region tbody').html();
+var tmp_region = $('#tmp_region').html();
 var tmp_item_region_name = "tbody";
 var tmp_detail = $('#tmp_detail').html();
 var tmp_detail_batch = $('#tmp_detail_batch').html();
@@ -18,7 +17,7 @@ var tmp_detail_batch = $('#tmp_detail_batch').html();
 var $el_wrapper_region = $('#todolist_wrapper');
 var $el_wrapper_detail = $('#detail_wrapper');
 var $el_cancel_delete = $('#cancel_delete');
-/////////////////////////////////////////////////////////////////////////////////////////
+
 //描述任务缓存项
 var Task = function () { this._init.apply(this, arguments); }
 Task.prototype = {
@@ -219,15 +218,17 @@ Task.prototype = {
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////
-//描述任务排序索引缓存
-var Idx = function () { this._init.apply(this, arguments); }
-Idx.prototype = {
+//描述任务排序数据缓存
+var Sort = function () { this._init.apply(this, arguments); }
+Sort.prototype = {
     $el_region: null,
+    _getTask: function () { return null; },
     _init: function () {
         this['by'] = arguments[0];
         this['key'] = arguments[1]; //0,1,2,prj1,team1
         this['name'] = arguments[2]; //今天、稍后、迟些、项目1、团队1
         this['idx'] = arguments[3]; //[0,1,2,4]
+        this._getTask = arguments[4];
         this.$el_region = this._generateRegion();
     },
     _generateRegion: function () {
@@ -248,7 +249,7 @@ Idx.prototype = {
         var idx = this.indexs();
         for (var i = 0; i < idx.length; i++) {
             var id = idx[i].toString();
-            var task = cached_tasks[id];
+            var task = this._getTask(id);
             if (!task) {
                 debuger.error('wrong id ' + id, idx);
                 continue;
@@ -268,10 +269,10 @@ Idx.prototype = {
         $els.each(function (i, n) {
             var id = $(n).attr('id');
             ary[i] = id;
-            cached_tasks[id].setIndex(i + 1); //设置索引显示
+            base._getTask(id).setIndex(i + 1); //设置索引显示
             //依据idx数据额外修正task数据
             if (k != undefined)
-                cached_tasks[id].set(k, base['key']);
+                base._getTask(id).set(k, base['key']);
         });
         this['idx'] = ary;
         this.$el_region.find('.badge').html(ary.length);
@@ -289,30 +290,4 @@ Idx.prototype = {
     },
     append: function (t) { this.el().find(tmp_item_region_name).append(t.el()); this.flush(); },
     prepend: function (t) { this.el().find(tmp_item_region_name).prepend(t.el()); this.flush(); }
-}
-////////////////////////////////////////////////////////////////////////////////////////
-//all=来自server的所有任务数组
-//idx=优先级排序
-function init(all, idxs) {
-    //清理
-    if (cached_tasks)
-        for (var i in cached_tasks)
-            if (cached_tasks[i])
-                cached_tasks[i].dispose();
-    if (cached_idxs)
-        for (var i in cached_idxs)
-            if (cached_idxs[i])
-                cached_idxs[i].dispose();
-    //构建本地缓存 cached_tasks
-    cached_tasks = {};
-    for (var i = 0; i < all.length; i++)
-        cached_tasks[all[i]['ID'].toString()] = new Task(all[i]);
-    debuger.info('original tasks', all);
-    debuger.info('cached tasks', cached_tasks);
-    //构建分组排序缓存 cached_idx {'0':List}
-    cached_idxs = {};
-    for (var i = 0; i < idxs.length; i++)
-        cached_idxs[idxs[i]['Key']] = new Idx(idxs[i]['By'], idxs[i]['Key'], idxs[i]['Name'], idxs[i]['Indexs']);
-    debuger.info('original sorts', idxs);
-    debuger.info('cached sorts', cached_idxs);
 }
