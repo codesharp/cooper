@@ -14,7 +14,7 @@ namespace Cooper.Repositories
     {
         #region ITasklistRepository Members
 
-        public new IEnumerable<PersonalTasklist> FindBy(Account account)
+        public IEnumerable<PersonalTasklist> FindBy(Account account)
         {
             return this.GetSession()
                 .CreateCriteria<PersonalTasklist>()
