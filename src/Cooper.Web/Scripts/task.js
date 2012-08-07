@@ -67,7 +67,7 @@ Task.prototype = {
         var $urls = this.$el_detail.find('#urls');
         $urls.find('ul').empty();
         var i = 0;
-        this.get('body').replace(/[https|http]+:\/\/[0-9a-zA-Z.:\/_#-]*/g, function (m) {
+        this.get('body').replace(/[http|https|ftp]+:\/\/\S*/ig, function (m) {
             if (i++ == 0)
                 $urls.find('button:first a').attr('href', m).html(m);
             else
