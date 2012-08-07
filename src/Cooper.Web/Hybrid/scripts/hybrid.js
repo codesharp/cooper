@@ -76,6 +76,7 @@ function isNetworkAvailable() {
 }
 //同步发送ajax post请求
 function ajaxPost(url, data, callback) {
+    
     var items = url.split("/");
     var serviceName = items[0];
     var actionName = items[1].toLowerCase();
@@ -83,7 +84,7 @@ function ajaxPost(url, data, callback) {
     //因为参数必须是数组，所以把参数放在一个数组中
     var params = [];
     params.push(data);
-
+    //alert('v' + ',' + serviceName + ',' + actionName);
     //调用Native接口
     Cordova.exec(
         function (result) {
@@ -190,7 +191,7 @@ function validateUser(userName, password, callback) {
         { userName: userName, password: password },
         function (result) {
             if (callback != null) {
-                if (result == true) {
+                if (result.toString() == "true") {
                     callback({ 'success': true, 'message': null });
                 }
                 else {
@@ -226,6 +227,8 @@ function loadTasks(listId, isCompleted, callback) {
         getTasksUrl,
         { tasklistId: listId },
         function (result) {
+//            var str = JSON.stringify(data);
+//             alert(str);
             var tasks = [];
             var tasksFromServer = result != null && result.List != null ? result.List : [];
             for (var index = 0; index < tasksFromServer.length; index++) {
@@ -240,9 +243,9 @@ function loadTasks(listId, isCompleted, callback) {
 
                 var task = new Task();
                 task.id = taskFromServer["ID"];
-                task.subject = taskFromServer["Subject"];
-                task.body = taskFromServer["Body"];
-                task.dueTime = taskFromServer["DueTime"];
+             task.subject = taskFromServer["Subject"] == null ? "" : taskFromServer["Subject"];
+                task.body = taskFromServer["Body"] == null ? "" : taskFromServer["Body"];
+             task.dueTime = taskFromServer["DueTime"] == null ? "" : taskFromServer["DueTime"];
                 task.priority = taskFromServer["Priority"];
                 task.isCompleted = taskFromServer["IsCompleted"];
                 task.isEditable = taskFromServer["Editable"];

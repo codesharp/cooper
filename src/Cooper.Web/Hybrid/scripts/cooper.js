@@ -95,7 +95,7 @@
         showLoading();
         loadAllTaskList(function (result) {
             if (result.success) {
-                //获取每个TaskList下的任务个数
+                //TODO:获取每个TaskList下的任务个数
                 for (var index = 0; index < result.taskLists.length; index++) {
                     loadTasks(result.taskLists[index].id, "all", function (data) {
                         if (data.success) {
@@ -126,22 +126,20 @@
                             }
                         });
                         taskList = result.taskLists[index];
+                        $("#taskPage #taskPageTitle").html(taskList.name);
                     }
                 }
             }
         });
-        return taskList;
     }
     //显示指定任务列表中的任务
     function showTasks(listId, tasks, isCompleted) {
+
         //清空任务
         clearTaskPage();
 
         //显示任务列表的标题
-        var taskList = loadTaskList(listId);
-        if (taskList != null) {
-            $("#taskPage #taskPageTitle").html(taskList.name);
-        }
+        loadTaskList(listId);
 
         var li1 = '<li style="background-color: #ebebeb">尽快完成<span class="ui-li-count">{0}</span></li>';
         var li2 = '<li style="background-color: #ebebeb">稍后完成<span class="ui-li-count">{0}</span></li>';
@@ -226,6 +224,7 @@
                 event.stopPropagation();
             }
         });
+
         //设置列表每行的Click响应函数
         $('#taskUl li').click(function (event) {
             var entry = $(this).attr("id").split('|');
@@ -444,6 +443,10 @@
         }
         return false;
     }
+    //判断当前访问页面是否在移动设备
+     function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+     }
 
     //----------------------------------------------------------------
     //按钮事件响应绑定
@@ -510,17 +513,23 @@
     });
     //任务页面:“个人任务”Tab事件响应
     $(document).delegate("#taskPage #showAllTasksButton", "click", function () {
-        window.location = this.href;
+        if(!isMobileDevice()) {
+            window.location = this.href;
+        }
         loadAndShowTasks(pageData.listId, "all");
     });
     //任务页面:“已完成”Tab事件响应
     $(document).delegate("#taskPage #showCompletedTasksButton", "click", function () {
-        window.location = this.href;
+        if(!isMobileDevice()) {
+            window.location = this.href;
+        }
         loadAndShowTasks(pageData.listId, "true");
     });
     //任务页面:“未完成”Tab事件响应
     $(document).delegate("#taskPage #showUnCompletedTasksButton", "click", function () {
-        window.location = this.href;
+        if(!isMobileDevice()) {
+            window.location = this.href;
+        }
         loadAndShowTasks(pageData.listId, "false");
     });
 
@@ -544,7 +553,7 @@
         });
     });
     //截止时间
-    $(document).delegate("#taskDetailPage #taskDueTime", "change", function () {
+    $(document).delegate("#taskDetailPage #taskDueTime", "blur", function () {
         var dueTime = $(this).attr("value");
         updateTaskProperty(pageData.taskId, "dueTime", dueTime, function (result) {
             if (!result.success) {
