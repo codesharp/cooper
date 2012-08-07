@@ -65,19 +65,18 @@ Task.prototype = {
         this.setDetail_Body(this.get('body'));
         //设置url快捷链接区域 临时方案
         var $urls = this.$el_detail.find('#urls');
+        $urls.find('ul').empty();
         var i = 0;
         this.get('body').replace(/[https|http]+:\/\/[0-9a-zA-Z.:\/_#-]*/g, function (m) {
             if (i++ == 0)
                 $urls.find('button:first a').attr('href', m).html(m);
             else
-                $urls.find('ul').append('<li><a target="_blank" href="' + m + '" title="' + m + '">' + m.substring(0,30) + '...</a></li>');
+                $urls.find('ul').append('<li><a target="_blank" href="' + m + '" title="' + m + '">' + m.substring(0, 30) + '...</a></li>');
         });
-        if (i == 0)
-            $urls.parents('tr').hide();
-        if (i == 1) {
-            $urls.find('button:eq(1)').hide();
-            $urls.find('url').hide();
-        }
+        $urls.parents('tr')[i == 0 ? 'hide' : 'show']();
+        $urls.find('button:eq(1)')[i == 1 ? 'hide' : 'show']();
+        $urls.find('url')[i == 1 ? 'hide' : 'show']();
+
         return this.$el_detail;
     },
     //额外修正一些显示问题 由于未呈现导致的
