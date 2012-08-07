@@ -3,14 +3,10 @@
 ///<reference path="../jquery/jquery-1.7.2.min.js" />
 ///<reference path="../jquery/jquery.mobile-1.1.0.min.js" />
 ///<reference path="../jquery/jquery.json-2.3.min.js" />
-///<reference path="cordova-1.9.0.js" />
 ///<reference path="lang.js" />
 ///<reference path="common.js" />
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
-//NOTES:
-//This file contains functions which is used to communication with ios native app api.
 
 //Task的ChangeLog以及Sort信息的格式示例
 //        var changeLogs =
@@ -25,13 +21,16 @@
 //                      {"By":"priority","Key":"2","Name":"迟些再说","Indexs":["temp_5","temp_6"]}
 //                  ];
 
+//NOTES:
+//This file contains functions which is used to communication with cooper web server api.
+
 //变量定义
 var newTaskTempIdPrefix = "temp_";
-var loginUrl = "Account/Login";
-var getTasklistsUrl = "Personal/GetTasklists";
-var createTaskListUrl = "Personal/CreateTasklist";
-var syncTaskUrl = "Personal/Sync";
-var getTasksUrl = "Personal/GetByPriority";
+var loginUrl = "../Account/Login";
+var getTasklistsUrl = "../Personal/GetTasklists";
+var createTaskListUrl = "../Personal/CreateTasklist";
+var syncTaskUrl = "../Personal/Sync";
+var getTasksUrl = "../Personal/GetByPriority";
 
 //创建一个唯一标识
 function generateUUID() {
@@ -76,26 +75,20 @@ function isNetworkAvailable() {
 }
 //同步发送ajax post请求
 function ajaxPost(url, data, callback) {
-    var items = url.split("/");
-    var serviceName = items[0];
-    var actionName = items[1].toLowerCase();
-
-    //因为参数必须是数组，所以把参数放在一个数组中
-    var params = [];
-    params.push(data);
-
-    //调用Native接口
-    Cordova.exec(
-        function (result) {
-            if (callback != null) {
-                callback(result);
+    $.ajax({
+        url: url,
+        data: data,
+        type: 'POST',
+        dataType: 'json',
+        cache: false,
+        async: false,
+        beforeSend: function () { },
+        success: function (data) {
+            if (callback) {
+                callback(data);
             }
-        },
-        function () { },
-        serviceName,
-        actionName,
-        params
-    );
+        }
+    });
 }
 
 //返回给定的单个Task的ChangeLog信息
