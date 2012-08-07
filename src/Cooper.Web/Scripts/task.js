@@ -69,7 +69,7 @@ Task.prototype = {
         var i = 0;
         this.get('body').replace(/[http|https|ftp]+:\/\/\S*/ig, function (m) {
             if (i++ == 0)
-                $urls.find('button:first a').attr('href', m).html(m);
+                $urls.find('button:first a').attr('href', m).attr('title', m).html(m);
             else
                 $urls.find('ul').append('<li><a target="_blank" href="' + m + '" title="' + m + '">' + m.substring(0, 30) + '...</a></li>');
         });
