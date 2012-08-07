@@ -84,7 +84,7 @@ function ajaxPost(url, data, callback) {
     //因为参数必须是数组，所以把参数放在一个数组中
     var params = [];
     params.push(data);
-    //alert('v' + ',' + serviceName + ',' + actionName);
+
     //调用Native接口
     Cordova.exec(
         function (result) {
@@ -227,8 +227,6 @@ function loadTasks(listId, isCompleted, callback) {
         getTasksUrl,
         { tasklistId: listId },
         function (result) {
-//            var str = JSON.stringify(data);
-//             alert(str);
             var tasks = [];
             var tasksFromServer = result != null && result.List != null ? result.List : [];
             for (var index = 0; index < tasksFromServer.length; index++) {
