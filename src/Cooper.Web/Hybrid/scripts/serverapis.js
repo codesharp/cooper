@@ -233,12 +233,12 @@ function loadTasks(listId, isCompleted, callback) {
 
                 var task = new Task();
                 task.id = taskFromServer["ID"];
-                task.subject = taskFromServer["Subject"];
-                task.body = taskFromServer["Body"];
-                task.dueTime = taskFromServer["DueTime"];
-                task.priority = taskFromServer["Priority"];
-                task.isCompleted = taskFromServer["IsCompleted"];
-                task.isEditable = taskFromServer["Editable"];
+                task.subject = taskFromServer["Subject"] == null ? "" : taskFromServer["Subject"];
+                task.body = taskFromServer["Body"] == null ? "" : taskFromServer["Body"];
+                task.dueTime = taskFromServer["DueTime"] == null ? "" : taskFromServer["DueTime"];
+                task.priority = taskFromServer["Priority"] == null ? "" : taskFromServer["Priority"];
+                task.isCompleted = taskFromServer["IsCompleted"] == null ? "" : taskFromServer["IsCompleted"];
+                task.isEditable = taskFromServer["Editable"] == null ? "" : taskFromServer["Editable"];
                 tasks.push(task);
             }
             if (callback != null) {
