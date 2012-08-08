@@ -12,7 +12,7 @@
 
     var cached_tasks = null;
     var cached_sorts = null;
-    var changes_delete = []; //用于记录删除
+    var changes = []; //用于记录未提交至server的变更
 
     var ui_list_helper, ui_list_helper_priority, ui_list_helper_due;
     var isShowArchive = false; //是否显示归档区域
@@ -206,30 +206,26 @@
             resetTimer();
             return;
         }
-        //变更记录
-        var arr = [];
+        //合并最新的变更记录
         for (var i in cached_tasks)
             if (cached_tasks[i])
-                arr = $.merge(arr, cached_tasks[i].popChanges());
+                changes = $.merge(changes, cached_tasks[i].popChanges());
         //id修正 避免同步间隙间对新增记录的变更导致此次同步时被重复新增
-        for (var i = 0; i < arr.length; i++) {
-            if (idChanges[arr[i]['ID']] != undefined) {
-                var old = arr[i]['ID'];
-                arr[i]['ID'] = idChanges[old];
-                debuger.info('id fix at client，' + old + '->' + arr[i]['ID']);
+        for (var i = 0; i < changes.length; i++) {
+            if (idChanges[changes[i]['ID']] != undefined) {
+                var old = changes[i]['ID'];
+                changes[i]['ID'] = idChanges[old];
+                debuger.info('id fix at client，' + old + '->' + changes[i]['ID']);
             }
         }
-        //删除记录
-        arr = $.merge(arr, changes_delete);
-        changes_delete = [];
         //排序索引
         var sorts = $.toJSON(getSorts());
         if (sorts != preSorts)
             debuger.info('sync sorts to server', sorts);
-        if (arr.length > 0)
-            debuger.info('sync changes to server', arr);
+        if (changes.length > 0)
+            debuger.info('sync changes to server', changes);
         //没有任何变更
-        if (sorts == preSorts && arr.length == 0) {
+        if (sorts == preSorts && changes.length == 0) {
             if (fn) fn();
             resetTimer();
             return;
@@ -239,12 +235,13 @@
         $.post(url_task_sync, {
             tasklistId: currentList,
             //变更列表
-            changes: $.toJSON(arr),
+            changes: $.toJSON(changes),
             //排序/显示模式
             by: ui_list_helper.mode,
             //排序记录
             sorts: sorts
         }, function (data) {
+            changes = [];//成功提交变更后清空变更记录
             $('#error_lose_connect').fadeOut(500);
             //修正
             var corrects = data; //$.evalJSON(data);
@@ -280,7 +277,7 @@
         UI_List_Common.prototype.$wrapper_detail = $el_wrapper_detail;
         UI_List_Common.prototype.$cancel_delete = $el_cancel_delete;
         //为ui设置全局函数
-        UI_List_Common.prototype.commitDeletes = function (d) { changes_delete = $.merge(changes_delete, d); };
+        UI_List_Common.prototype.commitDeletes = function (d) { changes = $.merge(changes, d); };
         UI_List_Common.prototype.eachTask = function (fn) { for (var id in cached_tasks) if (cached_tasks[id]) fn(cached_tasks[id]); };
         UI_List_Common.prototype.getTaskById = function (i) { return cached_tasks[i]; };
         UI_List_Common.prototype.getSortByKey = function (k) { return cached_sorts[k]; };
@@ -304,6 +301,13 @@
         $('.flag_addTasklist').click(function () { doAddTasklist(this); });
         $('.flag_removeTasklist').click(doRemoveTasklist);
 
+        $.ajaxSetup({
+            cache: false,
+            error: function (x, e) {
+                $('#error_lose_connect').fadeIn(500);
+                resetTimer();
+            }
+        });
         list(0);
     });
 

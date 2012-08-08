@@ -241,7 +241,7 @@ Sort.prototype = {
         this.$el_region = $(render($('#tmp_region').html(), this));
         this._clearRegion();
     },
-    _getTask: function () { debuger.assert(false); },
+    _getTask: null,
     _getRows: function () { return this.el().find('tbody').find('tr') },
     _append: function (e) { this.el().find('tbody').append(e); },
     _prepend: function (e) { this.el().find('tbody').prepend(e); },

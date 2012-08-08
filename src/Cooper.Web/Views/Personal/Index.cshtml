@@ -31,7 +31,7 @@
                 $('div.row-fluid div.span4').removeClass('span4').addClass('span3');
             }
             //TODO:仅在变更时处理
-            if (sys_versionFlag != 'debug')
+            if (sys_versionFlag == 'release')
                 window.onbeforeunload = function () { return 'Cooper Task'; };
         });
     </script>
