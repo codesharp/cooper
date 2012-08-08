@@ -238,7 +238,6 @@ Sort.prototype = {
         this['key'] = arguments[1]; //0,1,2,prj1,team1
         this['name'] = arguments[2]; //今天、稍后、迟些、项目1、团队1
         this['idx'] = arguments[3]; //[0,1,2,4]
-        this._getTask = arguments[4];
         this.$el_region = $(render($('#tmp_region').html(), this));
         this._clearRegion();
     },

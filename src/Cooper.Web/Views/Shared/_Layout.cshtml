@@ -128,7 +128,7 @@
             <form class="well form-search well">
             <div class="control-group">
                 <input type="text" class="input-medium search-query" maxlength="50" placeholder="@this.Lang().tasklist" />
-                <button type="button" class="btn btn-primary" onclick="doAddTasklist(this)">@this.Lang().add</button>
+                <button type="button" class="btn btn-primary flag_addTasklist">@this.Lang().add</button>
             </div>
             <hr />
             <div class="control-group" style="line-height: 30px">
@@ -199,6 +199,13 @@
             $('.todolist_wrapper').height($(window).height() - 170);
             $('.span4').height($(window).height() - 30);
         }
+        function share(e) {
+            $('#shareModal').modal('show');
+            $('#share_title').val($(e).parents('div.region_detail').eq(0).find('input').val() + lang.share_description);
+        }
+
+        function openTasklists() { $('#tasklistModal').modal('show'); }
+        
     </script>
     @RenderSection("Bottom", false)
 </body>

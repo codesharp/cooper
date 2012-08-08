@@ -21,7 +21,7 @@ UI_List_Priority.prototype.modeArgs = {
 ////////////////////////////////////////////////////////////////////////////////////////
 //归档
 UI_List_Priority.prototype.todolist_archived = 'todolist_archived';
-UI_List_Priority.prototype.archive = new Sort('', 'archived', lang.archive, [], function (i) { return cached_tasks[i]; });
+UI_List_Priority.prototype.archive = new Sort('', 'archived', lang.archive, []);
 UI_List_Priority.prototype._isArchivedRow = function ($r) { return this.getRegionOfRow($r).hasClass(this.todolist_archived); }
 UI_List_Priority.prototype._isArchivedRegion = function ($r) { return $r.hasClass(this.todolist_archived); }
 UI_List_Priority.prototype.showArchive = function () { this.archive.el().show(); }
@@ -31,7 +31,7 @@ UI_List_Priority.prototype._hidePriority = function () { this.setHidenInMode(thi
 ////////////////////////////////////////////////////////////////////////////////////////
 //额外实现父级定义的扩展
 //刷新索引时
-UI_List_Priority.prototype.onFlushIdxs = function () {
+UI_List_Priority.prototype.onFlushSorts = function () {
     this.archive.flush();
     this._hidePriority();
 }
@@ -63,9 +63,9 @@ UI_List_Priority.prototype._isRowOfValidRegion = function ($r) { return !this._i
 UI_List_Priority.prototype.render = function (b) {//b=是否显示归档区域
     this.$wrapper.empty();
     //优先级区域
-    this._renderByIdx(this.today);
-    this._renderByIdx(this.upcoming);
-    this._renderByIdx(this.later);
+    this._renderBySort(this.today);
+    this._renderBySort(this.upcoming);
+    this._renderBySort(this.later);
     //默认追加一条
     if (this.getTasks().length == 0)
         this.appendTask(0);
@@ -91,8 +91,8 @@ UI_List_Priority.prototype.archiveTasks = function () {
         if (t.isCompleted())
             base.archive.el().append(t.el());
     });
-    //刷新索引
-    this._flushIdxs();
+    //刷新排序
+    this._flushSorts();
     //单独刷新archive
     this.archive.flush();
 }

@@ -108,9 +108,9 @@ UI_List_Due.prototype.render = function () {
     this.renderByDueTime(true);
     this.$wrapper.append(this.byDueTime.el().addClass('todolist_dueTime'));
     //优先级区域
-    this._renderByIdx(this.today);
-    this._renderByIdx(this.upcoming);
-    this._renderByIdx(this.later);
+    this._renderBySort(this.today);
+    this._renderBySort(this.upcoming);
+    this._renderBySort(this.later);
     //默认追加一条
     if (this.getTasks().length == 0)
         this.appendTask(0);

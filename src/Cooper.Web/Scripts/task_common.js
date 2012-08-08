@@ -5,10 +5,6 @@
 ///<reference path="task_bind_shortcuts.js" />
 ///<reference path="task_row.js" />
 
-var cached_tasks = null;
-var cached_sorts = null;
-var changes_delete = []; //用于记录删除
-
 //任务列表UI模式 通用
 var UI_List_Common = function () { }
 UI_List_Common.prototype = {
@@ -43,13 +39,14 @@ UI_List_Common.prototype = {
     //ui模式显示切换
     setHidenInMode: function ($e) { return $e.addClass('disabled_in_this_mode').hide(); },
     removeHidenInMode: function () { return this.$wrapper.find('.disabled_in_this_mode').removeClass('disabled_in_this_mode').show(); },
-    //缓存引用部分
-    eachTask: function (fn) { for (var id in cached_tasks) if (cached_tasks[id]) fn(cached_tasks[id]); },
-    getTask: function ($r) { return cached_tasks[this.getTaskId($r)]; },
-    setTask: function (i, t) { cached_tasks[i] = t; },
-    getTaskById: function (i) { return cached_tasks[i]; },
+    //全局缓存/数据操作部分
+    commitDeletes: null,
+    eachTask: null,
+    getTaskById: null,
+    getSortByKey: null,
+    setTask: null,
+    getTask: function ($r) { return this.getTaskById(this.getTaskId($r)); },
     getSort: function ($region) { return this.getSortByKey($region.attr('key')); },
-    getSortByKey: function (k) { return cached_sorts[k]; },
     //修正批量详情中的临时id
     repairBatchDetailId: function (old, id) {
         if (!this.$batchDetail) return;
@@ -61,7 +58,7 @@ UI_List_Common.prototype = {
     },
     ////////////////////////////////////////////////////////////////////////////////////////
     //主体渲染
-    _renderByIdx: function (k) {
+    _renderBySort: function (k) {
         this.getSortByKey(k).render();
         this.$wrapper.append(this.getSortByKey(k).el());
     },
@@ -117,7 +114,7 @@ UI_List_Common.prototype = {
     _isBatchDetailValid: function () { return this.$batchDetail && this.$batchDetail.css('display') == 'block'; },
     ////////////////////////////////////////////////////////////////////////////////////////
     //批量对wrapper中的当前region执行flush操作
-    _flushIdxs: function () {
+    _flushSorts: function () {
         var base = this;
         this.$wrapper.find('.todolist:visible').each(function () {
             var sort = base.getSort($(this));
@@ -127,8 +124,8 @@ UI_List_Common.prototype = {
             }
         });
         //允许额外的实现
-        if (this.onFlushIdxs)
-            this.onFlushIdxs();
+        if (this.onFlushSorts)
+            this.onFlushSorts();
     },
     ////////////////////////////////////////////////////////////////////////////////////////
     //wrapper主体事件绑定，处理全局事件
@@ -216,7 +213,7 @@ UI_List_Common.prototype = {
         var $temp = this.$cancel_delete.show().find('span').eq(1).html(i);
         this.deletes_timer2 = setInterval(function () { if (i-- > 0) $temp.html(i) }, 1000);
 
-        this._flushIdxs();
+        this._flushSorts();
         this.$wrapper_detail.empty();
     },
     cancelDelete: function () {
@@ -231,7 +228,7 @@ UI_List_Common.prototype = {
         clearTimeout(this.deletes_timer);
         //填充进全局删除记录
         if (this.deletes)
-            changes_delete = $.merge(changes_delete, this.deletes);
+            this.commitDeletes(this.deletes);
         this.deletes_timer = null;
         this.deletes = null;
         this.$cancel_delete.hide();
