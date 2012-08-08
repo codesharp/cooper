@@ -59,7 +59,7 @@ namespace Cooper.Web.Controllers
         {
             return View("NotSupport");
         }
-        protected ActionResult Error(string error)
+        public ActionResult Error(string error)
         {
             ViewBag.Error = error;
             return View("Error");

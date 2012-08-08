@@ -1,43 +1,4 @@
-﻿<script type="text/javascript" src="@Url.Content("~/content/jquery/jquery-1.7.2.min.js")"></script>
-<script type="text/javascript" src="@Url.Content("~/content/jquery/jquery-ui-1.8.21.custom.min.js")"></script>
-<script type="text/javascript" src="@Url.Content("~/content/jquery/jquery.json-2.3.min.js")"></script>
-<script type="text/javascript" src="@Url.Content("~/content/bootstrap/js/bootstrap.min.js")"></script>
-<script type="text/javascript" src="@Url.Content("~/scripts/common.js")"></script>
-<script type="text/javascript" src="@Url.Content("~/scripts/lang.js")"></script>
-<script type="text/javascript">
-    //输出运行时动态设置用于脚本使用
-    var sys_versionFlag = '@this.VersionFlag()';
-    var url_home = '@Url.Content("~/")';
-    var url_account = '@Url.Action("", "Account", null)';
-    var url_sync_start = '@Url.Action("StartSync", "Account", null)';
-    var url_sync_query = '@Url.Action("QuerySync", "Account", null)';
-    var url_m_detail = '@Url.Action("MobileDetail", "Per", null)';
-
-    var url_task_byPriority = '@Url.Action("GetByPriority", "Personal", null)';
-    var url_task_byPriority_incompleted = '@Url.Action("GetIncompletedByPriority", "Personal", null)';
-    var url_task_byDueTime = '@Url.Action("GetByDueTime", "Personal", null)';
-    var url_task_sync = '@Url.Action("Sync", "Personal", null)';
-    var url_task_mini = '@Url.Action("Mini", "Personal", null)';
-    var url_tasklist_create = '@Url.Action("CreateTasklist", "Personal", null)';
-    var url_tasklist_delete = '@Url.Action("DeleteTasklist", "Personal", null)';
-
-    var url_feedback = '@Url.Action("Feedback", "Home", null)';
-    //简易feedback
-    function feedback() {
-        $('#feedback').modal('show');
-    }
-    function doFeedback() {
-        $('#feedback').modal('hide');
-        $.get(url_feedback, {
-            level: $('#feedback .btn-group button.active').val(),
-            content: $('#feedback textarea').val()
-        }, function () { });
-    }
-    function joinus() {
-        $('#joinus').modal('show');
-    }
-</script>
-<div class="modal hide" id="mobi_app">
+﻿<div class="modal hide" id="mobi_app">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">
             ×</button>
@@ -104,6 +65,43 @@
         </p>
     </div>
 </div>
+
+@{ Html.RenderPartial("Scripts"); }
+
+<script type="text/javascript">
+    //输出运行时动态设置用于脚本使用
+    var sys_versionFlag = '@this.VersionFlag()';
+    var url_home = '@Url.Content("~/")';
+    var url_account = '@Url.Action("", "Account", null)';
+    var url_sync_start = '@Url.Action("StartSync", "Account", null)';
+    var url_sync_query = '@Url.Action("QuerySync", "Account", null)';
+    var url_m_detail = '@Url.Action("MobileDetail", "Per", null)';
+
+    var url_task_byPriority = '@Url.Action("GetByPriority", "Personal", null)';
+    var url_task_byPriority_incompleted = '@Url.Action("GetIncompletedByPriority", "Personal", null)';
+    var url_task_byDueTime = '@Url.Action("GetByDueTime", "Personal", null)';
+    var url_task_sync = '@Url.Action("Sync", "Personal", null)';
+    var url_task_mini = '@Url.Action("Mini", "Personal", null)';
+    var url_tasklist_create = '@Url.Action("CreateTasklist", "Personal", null)';
+    var url_tasklist_delete = '@Url.Action("DeleteTasklist", "Personal", null)';
+
+    var url_feedback = '@Url.Action("Feedback", "Home", null)';
+    //简易feedback
+    function feedback() {
+        $('#feedback').modal('show');
+    }
+    function doFeedback() {
+        $('#feedback').modal('hide');
+        $.get(url_feedback, {
+            level: $('#feedback .btn-group button.active').val(),
+            content: $('#feedback textarea').val()
+        }, function () { });
+    }
+    function joinus() {
+        $('#joinus').modal('show');
+    }
+</script>
+
 @if (!CodeSharp.Framework.SystemConfig.Settings.VersionFlag.Equals("Release"))
 {
     <script type="text/javascript">

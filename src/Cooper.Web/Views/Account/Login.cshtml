@@ -6,8 +6,7 @@
 <head>
     <title>@this.Lang().login @this.Suffix()</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/bootstrap/css/bootstrap.min.css")" />
-    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/css/base.css")" />
+    @{ Html.RenderPartial("Style"); }
     <style type="text/css">
         .container {
             max-width: 450px;
@@ -103,7 +102,6 @@
         </div>
     </div>
     @{ Html.RenderSettings(); }
-    <script type="text/javascript" src="@Url.Content("~/scripts/account.js")"></script>
     <script type="text/javascript">
         //用于提供外部登录成功后回调
         function loginSuccess(i) {
