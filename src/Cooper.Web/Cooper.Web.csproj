@@ -332,6 +332,7 @@
     <None Include="README.md" />
     <Content Include="Views\Shared\ShareToRegion.cshtml" />
     <Content Include="Views\Home\Issues.cshtml" />
+    <Content Include="Views\Personal\Scripts.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

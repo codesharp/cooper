@@ -5,6 +5,11 @@
 
 //(function () {
 
+//page内全局元素
+var $el_wrapper_region = null;
+var $el_wrapper_detail = null;
+var $el_cancel_delete = null;
+
 var ui_list_helper, ui_list_helper_priority, ui_list_helper_due;
 var isShowArchive = false; //是否显示归档区域
 var currentMode = byPriority; //当前列表模式，默认使用优先级列表模式
@@ -15,6 +20,14 @@ var idChanges = {};
 var preSorts = null;
 
 $(function () {
+    $el_wrapper_region = $('#todolist_wrapper');
+    $el_wrapper_detail = $('#detail_wrapper');
+    $el_cancel_delete = $('#cancel_delete');
+
+    UI_List_Common.prototype.$wrapper = $el_wrapper_region;
+    UI_List_Common.prototype.$wrapper_detail = $el_wrapper_detail;
+    UI_List_Common.prototype.$cancel_delete = $el_cancel_delete;
+
     ui_list_helper_priority = create_UI_List_Priority();
     ui_list_helper_due = create_UI_List_Due();
     refreshTasklists();
@@ -289,7 +302,7 @@ function init(all, idxs) {
             idxs[i]['By'],
             idxs[i]['Key'],
             idxs[i]['Name'],
-            idxs[i]['Indexs'], 
+            idxs[i]['Indexs'],
             function (i) { return cached_tasks[i]; });
     debuger.info('original sorts', idxs);
     debuger.info('cached sorts', cached_sorts);

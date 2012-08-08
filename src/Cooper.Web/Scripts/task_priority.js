@@ -20,9 +20,10 @@ UI_List_Priority.prototype.modeArgs = {
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //归档
+UI_List_Priority.prototype.todolist_archived = 'todolist_archived';
 UI_List_Priority.prototype.archive = new Sort('', 'archived', lang.archive, [], function (i) { return cached_tasks[i]; });
-UI_List_Priority.prototype._isArchivedRow = function ($r) { return this.getRegionOfRow($r).hasClass('todolist_archived'); }
-UI_List_Priority.prototype._isArchivedRegion = function ($r) { return $r.hasClass('todolist_archived'); }
+UI_List_Priority.prototype._isArchivedRow = function ($r) { return this.getRegionOfRow($r).hasClass(this.todolist_archived); }
+UI_List_Priority.prototype._isArchivedRegion = function ($r) { return $r.hasClass(this.todolist_archived); }
 UI_List_Priority.prototype.showArchive = function () { this.archive.el().show(); }
 UI_List_Priority.prototype.hideArchive = function () { this.archive.el().hide(); }
 //隐藏优先级相关图标
@@ -51,8 +52,7 @@ UI_List_Priority.prototype.onCompletedChange = function (task, old, b) {
     //仅针对已归档行
     if (!this._isArchivedRow(task.el())) return;
     if (old == b) return;
-    cached_sorts[task.priority()].el().append(task.el());
-    cached_sorts[task.priority()].flush();
+    this.getSortByKey(task.priority()).append(task);
     if (!b) this.archive.flush();
     this._hidePriority();
 }
@@ -74,7 +74,7 @@ UI_List_Priority.prototype.render = function (b) {//b=是否显示归档区域
     //归档区域
     if (this.getTasks(this.archive.el()).length > 0 || b) {
         this.archive.render();
-        this.archive.el().addClass('todolist_archived');
+        this.archive.el().addClass(this.todolist_archived);
         this.$wrapper.prepend(this.archive.el());
     }
     //绑定
@@ -116,12 +116,12 @@ UI_List_Priority.prototype.appendTask = function (p) {
         var active = this.getTask($row);
         this._appendTaskToRow($row, t, active);
         t.setPriority(active.priority());
-        cached_sorts[t.priority()].flush();
+        this.getSortByKey(t.priority()).flush();
     }
     //默认追加到later
     else {
         t.setPriority(p == undefined ? 2 : p);
-        cached_sorts[t.priority()].append(t);
+        this.getSortByKey(t.priority()).append(t);
     }
 
     //子类逻辑修正
@@ -138,21 +138,12 @@ UI_List_Priority.prototype.appendTask = function (p) {
 ////////////////////////////////////////////////////////////////////////////////////////
 //可复用行为
 UI_List_Priority.onPriorityChange = function (base, $r, task, old, p) {
-    //移动
-    cached_sorts[p].el().append(task.el());
-    //刷新排序索引
-    cached_sorts[p].flush('priority');
-    cached_sorts[old].flush();
+    base.getSortByKey(p).append(task, true);
+    base.getSortByKey(old).flush();
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //对象创建
 function create_UI_List_Priority() {
     var ui = new UI_List_Priority();
-    ui.child = ui;
-
-    ui.$wrapper = $el_wrapper_region;
-    ui.$wrapper_detail = $el_wrapper_detail;
-    ui.$cancel_delete = $el_cancel_delete;
-
     return ui;
 }

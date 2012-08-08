@@ -53,7 +53,37 @@ UI_List_Common.prototype._bindShortcuts = function () {
         if (!base.modeArgs.editable) return;
         //仅当有焦点行时才有效的行为
         if ($focus == null) return;
-
+        ////////////////////////////////////////////////////////////////////////////////////////
+        //删除backspace PS:若使用keyup会与正常删除冲突导致只剩一个字符时触发删除
+        if (backspace) {
+            var txt = base.getTaskVal($focus);
+            var $p, $n;
+            var ary;
+            var b = false;
+            if ($actives.length > 1) { //多行删除
+                $p = base._findActivePrev();
+                $n = base._findActiveNext();
+            } else if (txt == '') {//焦点行删除
+                var ary = base._findNextAndPrev($focus);
+                $p = ary[0];
+                $n = ary[1];
+            } else if ($actives.length == 1 && txt != '') {//带内容的焦点行删除
+                var $p = base._findNextAndPrev($focus)[0];
+                if ($p == null) return;
+                var input = $focus.find('input')[0];
+                if (input.selectionStart > 0 || input.selectionEnd > 0) return;
+                var prev = base.getTask($p);
+                //合并到上一行
+                prev.setSubject(prev.subject() + txt, true);
+                b = true; //合并操作不需要出现撤销删除
+            }
+            base.deleteTask(b);
+            if ($p != null)
+                base._fireRowClick($p);
+            else if ($n != null)
+                base._fireRowClick($n);
+            return false;
+        }
         ////////////////////////////////////////////////////////////////////////////////////////
         //上下移动Ctrl+↓ 需处理跨空region的移动
         if (ctrl) {
@@ -119,37 +149,6 @@ UI_List_Common.prototype._bindShortcuts = function () {
         if (!ctrl && enter) {
             base.appendTask();
             return;
-        }
-        ////////////////////////////////////////////////////////////////////////////////////////
-        //删除backspace 
-        if (backspace) {
-            var txt = base.getTaskVal($focus);
-            var $p, $n;
-            var ary;
-            var b = false;
-            if ($actives.length > 1) { //多行删除
-                $p = base._findActivePrev();
-                $n = base._findActiveNext();
-            } else if (txt == '') {//焦点行删除
-                var ary = base._findNextAndPrev($focus);
-                $p = ary[0];
-                $n = ary[1];
-            } else if ($actives.length == 1 && txt != '') {//带内容的焦点行删除
-                var $p = base._findNextAndPrev($focus)[0];
-                if ($p == null) return;
-                var input = $focus.find('input')[0];
-                if (input.selectionStart > 0 || input.selectionEnd > 0) return;
-                var prev = base.getTask($p);
-                //合并到上一行
-                prev.setSubject(prev.subject() + txt, true);
-                b = true; //合并操作不需要出现撤销删除
-            }
-            base.deleteTask(b);
-            if ($p != null)
-                base._fireRowClick($p);
-            else if ($n != null)
-                base._fireRowClick($n);
-            return false;
         }
         ////////////////////////////////////////////////////////////////////////////////////////
         //完成Ctrl+Enter

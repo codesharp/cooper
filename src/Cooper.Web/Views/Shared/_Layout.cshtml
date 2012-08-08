@@ -165,15 +165,8 @@
         </div>
     </div>
     @{ Html.RenderSettings(); }
-    <script type="text/javascript" src="@Url.Content("~/scripts/task.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_common.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_row.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_bind.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_bind_shortcuts.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_priority.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_due.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/scripts/account.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/taskpage.js")"></script>
+    @{ Html.RenderPartial("scripts"); }
     <script type="text/javascript">
         $(function () {
             $.ajaxSetup({

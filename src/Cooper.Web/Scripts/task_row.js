@@ -40,13 +40,13 @@ UI_List_Common.prototype._fireRowSingleClick = function ($r) {
     this._fireRowClick($r);
 }
 //以焦点行为依据
-UI_List_Common.prototype._findFocusPrev = function () { return this._findNextAndPrev(this.$focusRow)[0]; },
-    UI_List_Common.prototype._findFocusNext = function () { return this._findNextAndPrev(this.$focusRow)[1]; },
+UI_List_Common.prototype._findFocusPrev = function () { return this._findNextAndPrev(this.$focusRow)[0]; }
+UI_List_Common.prototype._findFocusNext = function () { return this._findNextAndPrev(this.$focusRow)[1]; }
 //与选中行为依据
-    UI_List_Common.prototype._findActivePrev = function () {
-        var $actives = this.getActives();
-        return this._findNextAndPrev($actives.length == 1 ? this.$focusRow : $actives.first())[0];
-    }
+UI_List_Common.prototype._findActivePrev = function () {
+    var $actives = this.getActives();
+    return this._findNextAndPrev($actives.length == 1 ? this.$focusRow : $actives.first())[0];
+}
 UI_List_Common.prototype._findActiveNext = function () {
     var $actives = this.getActives();
     return this._findNextAndPrev($actives.length == 1 ? this.$focusRow : $actives.last())[1];
@@ -71,13 +71,15 @@ UI_List_Common.prototype._findNextAndPrev = function ($r) {
             flag = true;
         }
     });
-    debuger.debug([
+    if (debuger.isDebugEnable)
+        debuger.debug([
             $prev == null ? null : this.getTaskId($prev),
             this.getTaskId(this.$focusRow),
             $next == null ? null : this.getTaskId($next)
         ]);
     return [$prev, $next];
 }
+
 //返回row_task的有效前后row或前后region
 UI_List_Common.prototype._findAnyPrev = function ($r) {
     var $prev = null;

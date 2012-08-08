@@ -5,6 +5,10 @@
 ///<reference path="task_bind_shortcuts.js" />
 ///<reference path="task_row.js" />
 
+var cached_tasks = null;
+var cached_sorts = null;
+var changes_delete = []; //用于记录删除
+
 //任务列表UI模式 通用
 var UI_List_Common = function () { }
 UI_List_Common.prototype = {
@@ -36,18 +40,16 @@ UI_List_Common.prototype = {
     setActive: function ($r) { return $r.addClass('row_active'); },
     removeActive: function ($r) { return $r.removeClass('row_active'); },
     focusRow: function ($r) { this._expandRowRegion($r); return $r.find('input').focus(); },
+    //ui模式显示切换
     setHidenInMode: function ($e) { return $e.addClass('disabled_in_this_mode').hide(); },
     removeHidenInMode: function () { return this.$wrapper.find('.disabled_in_this_mode').removeClass('disabled_in_this_mode').show(); },
     //缓存引用部分
-    eachTask: function (fn) {
-        for (var id in cached_tasks)
-            if (cached_tasks[id])
-                fn(cached_tasks[id]);
-    },
+    eachTask: function (fn) { for (var id in cached_tasks) if (cached_tasks[id]) fn(cached_tasks[id]); },
     getTask: function ($r) { return cached_tasks[this.getTaskId($r)]; },
     setTask: function (i, t) { cached_tasks[i] = t; },
     getTaskById: function (i) { return cached_tasks[i]; },
-    getSort: function (k) { return cached_sorts[k]; },
+    getSort: function ($region) { return this.getSortByKey($region.attr('key')); },
+    getSortByKey: function (k) { return cached_sorts[k]; },
     //修正批量详情中的临时id
     repairBatchDetailId: function (old, id) {
         if (!this.$batchDetail) return;
@@ -60,8 +62,8 @@ UI_List_Common.prototype = {
     ////////////////////////////////////////////////////////////////////////////////////////
     //主体渲染
     _renderByIdx: function (k) {
-        this.getSort(k).render();
-        this.$wrapper.append(this.getSort(k).el());
+        this.getSortByKey(k).render();
+        this.$wrapper.append(this.getSortByKey(k).el());
     },
     //详情区域渲染
     _renderDetail: function ($r) {
@@ -72,7 +74,7 @@ UI_List_Common.prototype = {
     },
     _renderBatchDetail: function ($rows) {
         if (!this.$batchDetail)
-            this.$batchDetail = $(tmp_detail_batch);
+            this.$batchDetail = $($('#tmp_detail_batch').html());
         var base = this;
         var ids = [$rows.length];
         var isCompleted, priority;
@@ -116,16 +118,17 @@ UI_List_Common.prototype = {
     ////////////////////////////////////////////////////////////////////////////////////////
     //批量对wrapper中的当前region执行flush操作
     _flushIdxs: function () {
-        debuger.profile('ui_flushIdxs');
         var base = this;
         this.$wrapper.find('.todolist:visible').each(function () {
-            if (cached_sorts[$(this).attr('key')] != undefined)
-                cached_sorts[$(this).attr('key')].flush($(this).attr('by'));
+            var sort = base.getSort($(this));
+            if (sort != undefined) {
+                debuger.debug('flush sort of region', sort);
+                sort.flush(true);
+            }
         });
         //允许额外的实现
         if (this.onFlushIdxs)
             this.onFlushIdxs();
-        debuger.profileEnd('ui_flushIdxs');
     },
     ////////////////////////////////////////////////////////////////////////////////////////
     //wrapper主体事件绑定，处理全局事件
