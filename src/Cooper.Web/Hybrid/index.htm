@@ -22,6 +22,9 @@
         $(document).bind("mobileinit", function () {
             $.mobile.page.prototype.options.domCache = true;
         });
+        $(document).bind("pageinit", function (e, data) {
+            initAPI("webapi");
+        });
         $(document).bind("pagebeforechange", function (e, data) {
             if (typeof data.toPage === "string") {
                 pageData = data.options.pageData;
@@ -107,9 +110,8 @@
         </div>
         <div data-role="content">
             <ul id="taskUl" data-role="listview" data-theme="c"></ul>
-            <br />
-            <a id="addFirstTaskButton" style="display:none" data-role="button" data-transition="slideup" data-theme="a">当前还没有任务，点击新增任务</a>
-            <div id="displayInfoWhenNoTaskExist"></div>
+            <a id="addFirstTaskButton" style="display:none;margin-top:70px" data-role="button" data-transition="slideup" data-theme="c">点击这里新增第一个任务</a>
+            <div id="displayInfoWhenNoTaskExist" style="text-align: center; margin-top:70px"></div>
         </div>
         <div data-role="footer" data-position="fixed" data-theme="a">
             <div data-role="navbar">
@@ -177,6 +179,9 @@
                 <p id="taskSubject"></p>
                 <p id="taskBody"></p>
             </div>
+            <div data-role="fieldcontain">
+                <a id="deleteTaskButton" style="margin-top:20px" data-role="button" data-theme="c">删除任务</a>
+            </div>
         </div>
     </div>
     <!-- 任务新增编辑页面 -->
@@ -225,7 +230,7 @@
             <div data-role="fieldcontain">
                 <label for="body">
                     备注</label>
-                <textarea placeholder="备注" name="body" id="body" style="height: 200px"></textarea>
+                <textarea placeholder="备注" name="body" id="body" style="height: 100%; min-height: 100px;"></textarea>
             </div>
         </div>
     </div>
