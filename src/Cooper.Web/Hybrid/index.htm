@@ -42,7 +42,7 @@
 </head>
 <body>
     <!-- 登录页面 -->
-    <div id="loginPage" data-role="page" data-theme="a">
+    <div id="loginPage" data-role="page">
         <div data-role="content">
             <div style="text-align: center;">
                 <img src="images/cooper.png" width="250px" />
@@ -58,14 +58,14 @@
             </ul>
             <div class="ui-grid-a">
                 <div class="ui-block-a">
-                    <div data-role="controlgroup">
+                    <div data-role="controlgroup" style="display:none">
                         <input type="checkbox" name="record" id="record" checked="checked" />
                         <label for="record">
                             记住登录</label>
                     </div>
                 </div>
                 <div class="ui-block-b" style="text-align: right">
-                    <button id="loginButton" type="button" data-inline="true" data-theme="a">
+                    <button type="button" id="loginButton" data-inline="true" data-theme="a">
                         登录</button>
                     <button type="button" data-inline="true">
                         跳过</button>
@@ -234,7 +234,7 @@
         <div data-role="content">
             <input id="tasklistName" name="tasklistName" placeholder="任务表名称" />
             <a id="saveNewTaskListButton" data-role="button" data-inline="true" data-theme="a">确定</a>
-            <a id="cancelAddTaskList" href="#taskListPage" data-role="button" data-inline="true" data-theme="a">取消</a>
+            <a id="cancelAddTaskList" href="#taskListPage" data-role="button" data-inline="true">取消</a>
         </div>
     </div>
     <!-- Setting页面 -->
