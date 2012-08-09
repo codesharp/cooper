@@ -167,8 +167,8 @@
         return sorts;
     }
 
-    //验证用户有效性
-    function validateUser(userName, password, callback) {
+    //处理用户登录
+    function login(userName, password, callback) {
         postRequest(
             loginUrl,
             { userName: userName, password: password },
@@ -727,9 +727,9 @@
     }
     //显示错误提示弹出框
     function showErrorMessage(message) {
-        $("#errorDialog #closeButton").attr("href", currentPageUrl);
         $("#errorDialog #content").html(message);
-        $.mobile.changePage("#errorDialog", { transition: "pop" });
+        $.mobile.changePage("#errorDialog", { transition: "pop", role: "dialog" });
+        
     }
     //判断当页面显示时，是否是因为关闭了Error Dialog而显示页面的
     function isShowFromClosingErrorDialog(data) {
@@ -747,9 +747,33 @@
     //按钮事件响应绑定
     //----------------------------------------------------------------
 
+    //验证用户名的有效性，目前只验证用户名不能为空
+    function validateUserName(userName) {
+        if (userName == null || $.trim(userName) == "") {
+            return false;
+        }
+        return true;
+    }
+    //验证密码的有效性，目前只验证密码不能为空
+    function validatePassword(password) {
+        if (password == null || $.trim(password) == "") {
+            return false;
+        }
+        return true;
+    }
     //登录页面:“确定”按钮事件响应
     $(document).delegate("#loginPage #loginButton", "click", function () {
-        validateUser($("#username").val(), $("#password").val(), function (result) {
+        var userName = $("#username").val();
+        var password = $("#password").val();
+        if (!validateUserName(userName)) {
+            showErrorMessage(lang.usernameCannotEmpty);
+            return;
+        }
+        if (!validatePassword(password)) {
+            showErrorMessage(lang.passwordCannotEmpty);
+            return;
+        }
+        login(userName, password, function (result) {
             if (!result.success) {
                 showErrorMessage(result.message);
             }
@@ -758,14 +782,41 @@
             }
         });
     });
-    //新增任务列表页面:“确定”按钮事件响应
-    $(document).delegate("#addTaskListPage #saveNewTaskListButton", "click", function () {
-        addTaskList($("#tasklistName").val(), function (result) {
+    //Setting中的更换账号页面:“确定”按钮事件响应
+    $(document).delegate("#setCurrentAccountPage #changeCurrentUserNameButton", "click", function () {
+        var userName = $("#newUserName").val();
+        var password = $("#passwordOfNewUserName").val();
+        if (!validateUserName(userName)) {
+            showErrorMessage(lang.usernameCannotEmpty);
+            return;
+        }
+        if (!validatePassword(password)) {
+            showErrorMessage(lang.passwordCannotEmpty);
+            return;
+        }
+        login(userName, password, function (result) {
             if (!result.success) {
                 showErrorMessage(result.message);
             }
             else {
                 history.back();
+            }
+        });
+    });
+    //新增任务列表页面:“确定”按钮事件响应
+    $(document).delegate("#addTaskListPage #saveNewTaskListButton", "click", function () {
+        var taskListName = $("#tasklistName").val();
+        if (taskListName == null || $.trim(taskListName) == "") {
+            showErrorMessage(lang.taskListNameCannotEmpty);
+            return;
+        }
+
+        addTaskList(taskListName, function (result) {
+            if (!result.success) {
+                showErrorMessage(result.message);
+            }
+            else {
+                showPage("taskListPage");
             }
         });
     });
@@ -874,6 +925,10 @@
             }
         });
     });
+    //错误对话框关闭时退回到之前的页面
+    $(document).delegate("#errorDialog #closeButton", "click", function () {
+        history.back();
+    });
 
     //----------------------------------------------------------------
     //Jquery Mobile Event Binding
@@ -929,6 +984,10 @@
         fixPageContentHeight();
     });
     function fixPageContentHeight() {
+        //只对Page进行Page内Content的高度自适应的处理，不对对话框进行处理
+        if ($("div[data-role='dialog']:visible").length > 0) {
+            return;
+        }
         /* Some orientation changes leave the scroll position at something
         * that isn't 0,0. This is annoying for user experience. */
         scroll(0, 0);

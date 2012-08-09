@@ -18,22 +18,24 @@
     <!--全局-->
     <script type="text/javascript">
         var pageData = {}; //存放当前页面的参数信息
-        var currentPageUrl = null; //当前显示的页面地址
         $(document).bind("mobileinit", function () {
             $.mobile.page.prototype.options.domCache = true;
         });
+        //判断当前访问页面是否在移动设备
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+        }
         $(document).bind("pageinit", function (e, data) {
-            initAPI("webapi");
+            if (isMobileDevice()) {
+                initAPI("phonegap");
+            }
+            else {
+                initAPI("webapi");
+            }
         });
         $(document).bind("pagebeforechange", function (e, data) {
             if (typeof data.toPage === "string") {
                 pageData = data.options.pageData;
-                if (data.options.dataUrl != null) {
-                    currentPageUrl = data.options.dataUrl;
-                }
-                else {
-                    currentPageUrl = data.toPage;
-                }
             }
         });
     </script>
@@ -70,8 +72,7 @@
                 <div class="ui-block-b" style="text-align: right">
                     <button type="button" id="loginButton" data-inline="true" data-theme="a">
                         登录</button>
-                    <button type="button" data-inline="true">
-                        跳过</button>
+                    <a href="#taskListPage" data-transition="slide" data-role="button" data-inline="true">跳过</a>
                 </div>
             </div>
             </form>
@@ -253,10 +254,17 @@
         </div>
         <div data-role="content">
             <ul data-role="listview" data-inset="true" data-icon="star" data-theme="c">
-                <li><a>账号设置</a></li>
-                <li><a>同步设置</a></li>
-                <li><a>版本说明</a></li>
+                <li><a href="#setCurrentAccountPage" data-rel="dialog" data-transition="slidedown">账号设置</a></li>
             </ul>
+        </div>
+    </div>
+    <!-- 更换账号 -->
+    <div id="setCurrentAccountPage" data-role="page">
+        <div data-role="content">
+            <input id="newUserName" name="newUserName" placeholder="账号" />
+            <input id="passwordOfNewUserName" name="passwordOfNewUserName" placeholder="密码" />
+            <a id="changeCurrentUserNameButton" data-role="button" data-inline="true" data-theme="a">确定</a>
+            <a id="cancelChangeCurrentUserNameButton" data-rel="back" data-role="button" data-inline="true">取消</a>
         </div>
     </div>
     <!-- Error Dialog -->
