@@ -64,6 +64,8 @@
         this.isCompleted = "false";
         this.tags = [];
         this.isEditable = true;
+        this.isNew = false;
+        this.isDirty = false;
         this.isDeleted = false;
     };
 
@@ -83,35 +85,36 @@
             changeLogs.push(changeLog);
             return changeLogs;
         }
+        else if (task.isNew || task.isDirty) {
+            changeLog.ID = task.id;
+            changeLog.Name = "subject";
+            changeLog.Value = task.subject;
+            changeLogs.push(changeLog);
 
-        changeLog.ID = task.id;
-        changeLog.Name = "subject";
-        changeLog.Value = task.subject;
-        changeLogs.push(changeLog);
+            changeLog = new ChangeLog();
+            changeLog.ID = task.id;
+            changeLog.Name = "body";
+            changeLog.Value = task.body;
+            changeLogs.push(changeLog);
 
-        changeLog = new ChangeLog();
-        changeLog.ID = task.id;
-        changeLog.Name = "body";
-        changeLog.Value = task.body;
-        changeLogs.push(changeLog);
+            changeLog = new ChangeLog();
+            changeLog.ID = task.id;
+            changeLog.Name = "priority";
+            changeLog.Value = task.priority;
+            changeLogs.push(changeLog);
 
-        changeLog = new ChangeLog();
-        changeLog.ID = task.id;
-        changeLog.Name = "priority";
-        changeLog.Value = task.priority;
-        changeLogs.push(changeLog);
+            changeLog = new ChangeLog();
+            changeLog.ID = task.id;
+            changeLog.Name = "dueTime";
+            changeLog.Value = task.dueTime;
+            changeLogs.push(changeLog);
 
-        changeLog = new ChangeLog();
-        changeLog.ID = task.id;
-        changeLog.Name = "dueTime";
-        changeLog.Value = task.dueTime;
-        changeLogs.push(changeLog);
-
-        changeLog = new ChangeLog();
-        changeLog.ID = task.id;
-        changeLog.Name = "isCompleted";
-        changeLog.Value = task.isCompleted;
-        changeLogs.push(changeLog);
+            changeLog = new ChangeLog();
+            changeLog.ID = task.id;
+            changeLog.Name = "isCompleted";
+            changeLog.Value = task.isCompleted;
+            changeLogs.push(changeLog);
+        }
 
         return changeLogs;
     };
@@ -596,6 +599,7 @@
         task.priority = priority;
         task.dueTime = dueTime;
         task.isCompleted = isCompleted;
+        task.isNew = true;
 
         //同步任务
         if (tasksInCurrentList == null) {
@@ -631,6 +635,7 @@
             task.priority = priority;
             task.dueTime = dueTime;
             task.isCompleted = isCompleted;
+            task.isDirty = true;
 
             //同步到服务器
             syncTasks(listId, tasksInCurrentList, function (result) {
@@ -669,12 +674,15 @@
             //根据判断更新相应属性
             if (propertyName == "priority") {
                 task.priority = propertyValue;
+                task.isDirty = true;
             }
             else if (propertyName == "dueTime") {
                 task.dueTime = propertyValue;
+                task.isDirty = true;
             }
             else if (propertyName == "isCompleted") {
                 task.isCompleted = propertyValue;
+                task.isDirty = true;
             }
 
             //同步到服务器
