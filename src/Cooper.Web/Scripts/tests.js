@@ -225,11 +225,18 @@ function runTests() {
     test('add_tasklist', function () {
         $('.flag_openTasklists').click();
         equal($('#tasklistModal').css('display'), 'block', 'tasklist modal show');
-        $('#tasklistModal input').val('test tasklist');
+        var tasklist = 'test tasklist';
+        $('#tasklistModal input').val(tasklist);
         $('.flag_addTasklist').click();
 
+        //TODO:引入一个async框架
         setTimeout(function () {
-            //test('remove_tasklist', function () { $('.flag_removeTasklist').click(); });
+            test('remove_tasklist', function () {
+                equal($('#tasklist_title').html(), tasklist, 'tasklist created');
+                equal(taskCount(), 1, 'switch to new tasklist');
+                $('.flag_removeTasklist').click();
+                ok(true);
+            });
         }, 1000);
     });
 
