@@ -26,7 +26,7 @@
 (function () {
 
     //新增的本地任务的id的前缀
-    var newTaskTempIdPrefix = "temptask_";
+    var newTaskTempIdPrefix = "temp_";
     //标识网络是否可用的状态标记变量
     var isNetworkAvailable = true;
 
@@ -242,12 +242,7 @@
             { name: taskListName, type: "personal" },
             function (result) {
                 if (callback != null) {
-                    if (!isNaN(result)) {
-                        callback({ 'success': true, 'message': null });
-                    }
-                    else {
-                        callback({ 'success': false, 'message': lang.addTaskListFailed });
-                    }
+                    callback({ 'success': true, 'message': null });
                 }
             }
         );
@@ -467,31 +462,29 @@
         //设置列表每行的表示任务是否完成状态的Click响应函数，为了实现在用户点击是否完成的图标时，能够自动切换任务的状态
         $('#taskUl img').click(function (event) {
             var taskId = $(this).attr("id");
-            if (!isNaN(taskId)) {
-                var imgUrl = $(this).attr("src");
-                if (imgUrl.indexOf('images/complete-small.png') != -1) {
-                    updateTaskProperty(taskId, 'isCompleted', 'false', function (result) {
-                        if (result.success) {
-                            $('#taskUl #' + taskId).attr("src", 'images/incomplete-small.png');
-                        }
-                        else {
-                            showErrorMessage(result.message);
-                        }
-                    });
-                }
-                else if (imgUrl.indexOf('images/incomplete-small.png') != -1) {
-                    updateTaskProperty(taskId, 'isCompleted', 'true', function (result) {
-                        if (result.success) {
-                            $('#taskUl #' + taskId).attr("src", 'images/complete-small.png');
-                        }
-                        else {
-                            showErrorMessage(result.message);
-                        }
-                    });
-                }
-                //停止冒泡，确保不会跳转到任务详情页
-                event.stopPropagation();
+            var imgUrl = $(this).attr("src");
+            if (imgUrl.indexOf('images/complete-small.png') != -1) {
+                updateTaskProperty(taskId, 'isCompleted', 'false', function (result) {
+                    if (result.success) {
+                        $('#taskUl #' + taskId).attr("src", 'images/incomplete-small.png');
+                    }
+                    else {
+                        showErrorMessage(result.message);
+                    }
+                });
             }
+            else if (imgUrl.indexOf('images/incomplete-small.png') != -1) {
+                updateTaskProperty(taskId, 'isCompleted', 'true', function (result) {
+                    if (result.success) {
+                        $('#taskUl #' + taskId).attr("src", 'images/complete-small.png');
+                    }
+                    else {
+                        showErrorMessage(result.message);
+                    }
+                });
+            }
+            //停止冒泡，确保不会跳转到任务详情页
+            event.stopPropagation();
         });
 
         //设置列表每行的Click响应函数
@@ -655,17 +648,14 @@
                 return;
             }
 
-            //只需要删除已保存过的任务
-            if (!isNaN(task.id)) {
-                //设置删除标记
-                task.isDeleted = true;
-                //同步到服务器
-                syncTasks(listId, tasksInCurrentList, function (result) {
-                    if (callback != null) {
-                        callback({ 'success': true, 'message': null });
-                    }
-                });
-            }
+            //设置删除标记
+            task.isDeleted = true;
+            //同步到服务器
+            syncTasks(listId, tasksInCurrentList, function (result) {
+                if (callback != null) {
+                    callback({ 'success': true, 'message': null });
+                }
+            });
         });
     }
     //更新一个Task的单个属性，任务详情页面会用到此函数
