@@ -28,6 +28,7 @@ UI_List_Common.prototype._fireRowClick = function ($r, c, s) {
     this.setActive($r);
     this.focusRow($r);
     this.$focusRow = $r;
+
     //详情呈现
     var $actives = this.getActives();
     if ($actives.length == 1)
