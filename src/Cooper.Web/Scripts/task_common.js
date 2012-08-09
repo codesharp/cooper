@@ -19,6 +19,7 @@ UI_List_Common.prototype = {
     deletes_timer: null, //删除恢复期间的定时器
     deletes_timer2: null, //删除恢复期间的定时器
     detail_timer: null, //详情区域渲染延时timer
+    detail_timer_enable: true, //为unittest而设计的属性
     //常用任务属性
     today: '0',
     upcoming: '1',
@@ -68,13 +69,16 @@ UI_List_Common.prototype = {
         if (this.detail_timer)
             clearTimeout(this.detail_timer);
         var base = this;
-        //增加timer延迟优化性能
-        this.detail_timer = setTimeout(function () {
+        var fn = function () {
             var t = base.getTask($r);
             base.$wrapper_detail.empty().append(t.renderDetail());
             //额外修正一些由于未append导致的显示问题
             t.fixDetail();
-        }, 100);
+        }
+        if (this.detail_timer_enable)
+            this.detail_timer = setTimeout(fn, 100); //增加timer延迟优化性能
+        else
+            fn();
     },
     _renderBatchDetail: function ($rows) {
         if (!this.$batchDetail)

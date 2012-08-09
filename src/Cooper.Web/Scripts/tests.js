@@ -23,6 +23,9 @@ function runTests() {
     var up = 38;
     var down = 40;
 
+    //预置一些参数适合同步测试
+    UI_List_Common.prototype.detail_timer_enable = false;
+
     ///////////////////////////////////////////////////////////////////////////////
     test('init', function () {
         ok(taskCount() > 0, 'cached_tasks init');
@@ -250,27 +253,32 @@ function runTests() {
         equal($el_cancel_delete.css('display'), 'block', 'cancel delete region show');
     }
     function assertIsCompleted($r, b) {
+        var task = getTask($r);
         equal($r.hasClass(row_completed), b, 'mark taskrow iscompleted change');
-        equal(getTask($r).isCompleted(), b, 'task iscompleted change');
+        equal(task.isCompleted(), b, 'task iscompleted change');
         //detail
-        var $btn = $el_wrapper_detail.find('#isCompleted');
-        equal($btn.hasClass('active'), b);
+        equal(task.$el_detail.find('#isCompleted').hasClass('active'), b);
     }
     function assertSubjectChange($r, v) {
-        equal(getTask($r).subject(), v, 'subject change');
+        var task = getTask($r);
+        equal(task.subject(), v, 'subject change');
         equal($r.find('#subject').val(), v, 'subject change in row');
-        equal($el_wrapper_detail.find('#subject').val(), v, 'subject change in detail');
+        //detail
+        equal(task.$el_detail.find('#subject').val(), v, 'subject change in detail');
     }
     function assertPriorityChange($r, p) {
-        equal(getTask($r).priority(), p);
-        equal($el_wrapper_detail.find('#priority button.active').attr('priority'), p, 'priority change in detail');
+        var task = getTask($r);
+        equal(task.priority(), p);
+        //detail
+        equal(task.$el_detail.find('#priority button.active').attr('priority'), p, 'priority change in detail');
         //TODO:断言位置切换
     }
     function assertDueTimeChange($r, t) {
+        var task = getTask($r);
         //date assert需要改进
         this[!t ? 'equal' : 'notEqual']($.trim($r.find('#dueTimeLabel').html()), '', 'dueTime change in row');
-        this[!t ? 'equal' : 'notEqual'](getTask($r).due(), null);
-        equal($el_wrapper_detail.find('#dueTime').val(), t, 'dueTime change in detail');
+        this[!t ? 'equal' : 'notEqual'](task.due(), null);
+        equal(task.$el_detail.find('#dueTime').val(), t, 'dueTime change in detail');
     }
     function appendTask() { $('.flag_appendTask:first').click(); }
     function deleteTask() { $('.flag_deleteTask:first').click(); }
@@ -285,4 +293,7 @@ function runTests() {
         $r.find('input').trigger(e);
         return $r;
     }
+
+    //恢复
+    UI_List_Common.prototype.detail_timer_enable = true;
 }
