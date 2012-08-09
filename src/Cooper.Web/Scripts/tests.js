@@ -9,29 +9,35 @@
 
 //cooper web ui auto tests
 //amazing?
-function runTests() {
-    var row_task = 'row_task';
-    var class_row_task = '.row_task';
-    var row_active = 'row_active';
-    var class_row_active = '.row_active';
-    var row_completed = 'row_completed';
 
-    var $el_wrapper_region = $('#todolist_wrapper');
-    var $el_wrapper_detail = $('#detail_wrapper');
-    var $el_cancel_delete = $('#cancel_delete');
+var row_task = 'row_task';
+var class_row_task = '.row_task';
+var row_active = 'row_active';
+var class_row_active = '.row_active';
+var row_completed = 'row_completed';
 
-    var up = 38;
-    var down = 40;
+var $el_wrapper_region = $('#todolist_wrapper');
+var $el_wrapper_detail = $('#detail_wrapper');
+var $el_cancel_delete = $('#cancel_delete');
 
-    //预置一些参数适合同步测试
-    UI_List_Common.prototype.detail_timer_enable = false;
+var up = 38;
+var down = 40;
 
-    ///////////////////////////////////////////////////////////////////////////////
+function runAll() {
     test('init', function () {
         ok(taskCount() > 0, 'cached_tasks init');
     });
-    ///////////////////////////////////////////////////////////////////////////////
-    //按钮区域
+
+    runMouseTests();
+    runShortcutsTests();
+    runDetailTests();
+    runTasklistTests();
+}
+
+function runMouseTests() {
+    //预置一些参数适合同步测试
+    UI_List_Common.prototype.detail_timer_enable = false;
+
     test('append', function () {
         var c = taskCount();
         appendTask();
@@ -115,7 +121,15 @@ function runTests() {
         $r.find('#subject').trigger(e2);
         ok($r.hasClass(row_active) && getActives().length == 3, 'row shift+click and 3 actives');
     });
-    //快捷键操作
+        
+    UI_List_Common.prototype.detail_timer_enable = true;
+}
+
+//快捷键操作
+function runShortcutsTests() {
+    //预置一些参数适合同步测试
+    UI_List_Common.prototype.detail_timer_enable = false;
+
     test('up/down', function () {
         focusRow(0);
         var e = jQuery.Event('keydown'); e.keyCode = down;
@@ -179,6 +193,12 @@ function runTests() {
         $el_wrapper_region.trigger(e);
         assertIsCompleted($r, false);
     });
+
+    UI_List_Common.prototype.detail_timer_enable = true;
+}
+
+function runDetailTests() {
+    UI_List_Common.prototype.detail_timer_enable = false;
     ///////////////////////////////////////////////////////////////////////////////
     //详情区域
     //complete
@@ -223,6 +243,10 @@ function runTests() {
         var $e = $el_wrapper_detail.find('#dueTime').val('8/7/12').change();
         assertDueTimeChange($r, '2012-8-7');
     });
+    UI_List_Common.prototype.detail_timer_enable = true;
+}
+
+function runTasklistTests() {
     ///////////////////////////////////////////////////////////////////////////////
     //任务表操作
     test('add_tasklist', function () {
@@ -242,58 +266,58 @@ function runTests() {
             });
         }, 1000);
     });
+}
 
-    function assertAppend(c) {
-        equal(taskCount(), c + 1, 'add 1 task');
-        equal(getActives().length, 1, 'only the new task is focus');
-        equal(getTask(getActives().first()).id().indexOf('temp'), 0, 'new task id is "temp_*"');
-    }
-    function assertDelete(c) {
-        equal(taskCount(), c - 1, 'delete 1 task when backspace');
-        equal($el_cancel_delete.css('display'), 'block', 'cancel delete region show');
-    }
-    function assertIsCompleted($r, b) {
-        var task = getTask($r);
-        equal($r.hasClass(row_completed), b, 'mark taskrow iscompleted change');
-        equal(task.isCompleted(), b, 'task iscompleted change');
-        //detail
-        equal(task.$el_detail.find('#isCompleted').hasClass('active'), b);
-    }
-    function assertSubjectChange($r, v) {
-        var task = getTask($r);
-        equal(task.subject(), v, 'subject change');
-        equal($r.find('#subject').val(), v, 'subject change in row');
-        //detail
-        equal(task.$el_detail.find('#subject').val(), v, 'subject change in detail');
-    }
-    function assertPriorityChange($r, p) {
-        var task = getTask($r);
-        equal(task.priority(), p);
-        //detail
-        equal(task.$el_detail.find('#priority button.active').attr('priority'), p, 'priority change in detail');
-        //TODO:断言位置切换
-    }
-    function assertDueTimeChange($r, t) {
-        var task = getTask($r);
-        //date assert需要改进
-        this[!t ? 'equal' : 'notEqual']($.trim($r.find('#dueTimeLabel').html()), '', 'dueTime change in row');
-        this[!t ? 'equal' : 'notEqual'](task.due(), null);
-        equal(task.$el_detail.find('#dueTime').val(), t, 'dueTime change in detail');
-    }
-    function appendTask() { $('.flag_appendTask:first').click(); }
-    function deleteTask() { $('.flag_deleteTask:first').click(); }
-    function getTask($r) { return UI_List_Common.prototype.getTask($r); }
-    function taskCount() { var i = 0; UI_List_Common.prototype.eachTask(function (t) { i++; }); return i; }
-    function getActives() { return $el_wrapper_region.find(class_row_active); }
-    function getTasks() { return $el_wrapper_region.find(class_row_task); }
-    function getRow(i) { return $el_wrapper_region.find(class_row_task).eq(i); }
-    function focusRow(i) {
-        var e = jQuery.Event('click');
-        var $r = $el_wrapper_region.find(class_row_task).eq(i);
-        $r.find('input').trigger(e);
-        return $r;
-    }
 
-    //恢复
-    UI_List_Common.prototype.detail_timer_enable = true;
+
+
+function assertAppend(c) {
+    equal(taskCount(), c + 1, 'add 1 task');
+    equal(getActives().length, 1, 'only the new task is focus');
+    equal(getTask(getActives().first()).id().indexOf('temp'), 0, 'new task id is "temp_*"');
+}
+function assertDelete(c) {
+    equal(taskCount(), c - 1, 'delete 1 task when backspace');
+    equal($el_cancel_delete.css('display'), 'block', 'cancel delete region show');
+}
+function assertIsCompleted($r, b) {
+    var task = getTask($r);
+    equal($r.hasClass(row_completed), b, 'mark taskrow iscompleted change');
+    equal(task.isCompleted(), b, 'task iscompleted change');
+    //detail
+    equal(task.$el_detail.find('#isCompleted').hasClass('active'), b);
+}
+function assertSubjectChange($r, v) {
+    var task = getTask($r);
+    equal(task.subject(), v, 'subject change');
+    equal($r.find('#subject').val(), v, 'subject change in row');
+    //detail
+    equal(task.$el_detail.find('#subject').val(), v, 'subject change in detail');
+}
+function assertPriorityChange($r, p) {
+    var task = getTask($r);
+    equal(task.priority(), p);
+    //detail
+    equal(task.$el_detail.find('#priority button.active').attr('priority'), p, 'priority change in detail');
+    //TODO:断言位置切换
+}
+function assertDueTimeChange($r, t) {
+    var task = getTask($r);
+    //date assert需要改进
+    this[!t ? 'equal' : 'notEqual']($.trim($r.find('#dueTimeLabel').html()), '', 'dueTime change in row');
+    this[!t ? 'equal' : 'notEqual'](task.due(), null);
+    equal(task.$el_detail.find('#dueTime').val(), t, 'dueTime change in detail');
+}
+function appendTask() { $('.flag_appendTask:first').click(); }
+function deleteTask() { $('.flag_deleteTask:first').click(); }
+function getTask($r) { return UI_List_Common.prototype.getTask($r); }
+function taskCount() { var i = 0; UI_List_Common.prototype.eachTask(function (t) { i++; }); return i; }
+function getActives() { return $el_wrapper_region.find(class_row_active); }
+function getTasks() { return $el_wrapper_region.find(class_row_task); }
+function getRow(i) { return $el_wrapper_region.find(class_row_task).eq(i); }
+function focusRow(i) {
+    var e = jQuery.Event('click');
+    var $r = $el_wrapper_region.find(class_row_task).eq(i);
+    $r.find('input').trigger(e);
+    return $r;
 }

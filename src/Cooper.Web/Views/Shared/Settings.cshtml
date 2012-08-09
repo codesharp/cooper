@@ -16,7 +16,6 @@
         <img src="@Url.Content("~/Content/images/laptop-small.png")" width="300px" />
         <br />
         @this.Lang().download_address：<input type="text" value="http://xyj.im" />
-        
     </div>
     <div class="modal-footer">
     </div>
@@ -55,7 +54,7 @@
             Join us</h3>
     </div>
     <div class="modal-body">
-        <p style="line-height:25px">
+        <p style="line-height: 25px">
             我们致力于构建开源技术产品/业务系统，<br />
             目前主要关注于“流畅、便捷”的工作支持系统，
             <br />
@@ -65,9 +64,7 @@
         </p>
     </div>
 </div>
-
 @{ Html.RenderPartial("Scripts"); }
-
 <script type="text/javascript">
     //输出运行时动态设置用于脚本使用
     var sys_versionFlag = '@this.VersionFlag()';
@@ -101,7 +98,6 @@
         $('#joinus').modal('show');
     }
 </script>
-
 @if (!CodeSharp.Framework.SystemConfig.Settings.VersionFlag.Equals("Release"))
 {
     <script type="text/javascript">
@@ -115,17 +111,17 @@
         DevToolBar[@CodeSharp.Framework.SystemConfig.Settings.VersionFlag] -
         @if (HttpContext.Current.User != null && HttpContext.Current.User.Identity != null && HttpContext.Current.User.Identity.IsAuthenticated)
         {
-            <code>Hi! AccountId=@HttpContext.Current.User.Identity.Name</code>
+            <code>Hi! #@HttpContext.Current.User.Identity.Name</code>
         }
-        <code><a href="@Url.Action("Issues", "Home", null)" target="_blank" title="缺陷跟踪">
-            BugTrace</a> | <a href="https://github.com/codesharp/Cooper" target="_blank">OpenSource</a></code>
+        <code><a href="@Url.Action("Issues", "Home", null)" target="_blank" title="缺陷跟踪">BugTrace</a></code>
         | <a href="@Url.Action("Index", "Per", null)">TaskPage</a> | <a href="@Url.Action("Mobile", "Per", null)">
-            Mobile Web</a> | <a href="@Url.Action("", "Account", null)">Account</a> | <a href="@Url.Action("Login", "Account", null)">
-                Login</a> | <a href="@Url.Action("Logout", "Account", null)">Logout</a>
-        | UI Auto Tests：
-        <button type="button" class="btn btn-success" onclick="$('#qunit').show();runTests()"
-            style="width: 110px">
-            Run Tests Full</button>
+            Mobile</a> | <a href="@Url.Action("", "Account", null)">Account</a> | <a href="@Url.Action("Logout", "Account", null)">
+                Logout</a> | UI Auto Tests：
+        <button type="button" class="btn" onclick="$('#qunit').show();runAll()">Full</button>
+        <button type="button" class="btn btn-primary" onclick="$('#qunit').show();runMouseTests()">mouse</button>
+        <button type="button" class="btn btn-info" onclick="$('#qunit').show();runShortcutsTests()">shortcuts</button>
+        <button type="button" class="btn btn-success" onclick="$('#qunit').show();runDetailTests()">detail</button>
+        <button type="button" class="btn btn-warning" onclick="$('#qunit').show();runTasklistTests()">tasklist</button>
         <div id="qunit" style="display: none; margin-top: 20px">
         </div>
     </div>
@@ -133,7 +129,6 @@
     <script src="../Content/jquery/qunit-1.9.0.js" type="text/javascript"></script>
     <script src="@Url.Content("~/scripts/tests.js")" type="text/javascript"></script>
     
-    @*@Html.IncludeAppfailOverlay()*@
+@*@Html.IncludeAppfailOverlay()*@
 }
-
 @Html.Raw(this.Lang().web_analysis)
