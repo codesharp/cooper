@@ -26,7 +26,7 @@
 (function () {
 
     //新增的本地任务的id的前缀
-    var newTaskTempIdPrefix = "temp_";
+    var newTaskTempIdPrefix = "temptask_";
     //标识网络是否可用的状态标记变量
     var isNetworkAvailable = true;
 
