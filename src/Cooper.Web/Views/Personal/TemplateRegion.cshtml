@@ -45,7 +45,7 @@
                     <td class="cell_string">
                         <input id="subject" value="{subject}" maxlength="500" />
                         <div>
-                            <span id="duetime" class="cell_duetime"></span>
+                            <span id="dueTimeLabel" class="cell_duetime"></span>
                             @if (mini)
                             {
                                 <span class="icon-chevron-right" style="cursor: pointer"
@@ -134,7 +134,7 @@
                     </tr>
                     <tr>
                         <td class="detail-item">
-                            @this.Lang().duetime
+                            @this.Lang().dueTime
                         </td>
                         <td class="detail-content">
                             <input id="dueTime" type="text" class="input-small" value="" />

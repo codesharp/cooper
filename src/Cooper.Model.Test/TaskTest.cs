@@ -62,7 +62,7 @@ namespace Cooper.Model.Test
             Assert.AreEqual(task.LastUpdateTime, old);
             task.SetBody(string.Empty);
             Assert.Greater(task.LastUpdateTime, old);
-            //duetime
+            //dueTime
             old = task.LastUpdateTime;
             this.Idle();
             task.SetDueTime(null);

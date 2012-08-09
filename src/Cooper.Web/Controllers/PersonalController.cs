@@ -89,7 +89,7 @@ namespace Cooper.Web.Controllers
         public ActionResult MobileDetail(string id
             , string subject
             , string body
-            , string duetime
+            , string dueTime 
             , string priority
             , string isCompleted)
         {
@@ -103,7 +103,7 @@ namespace Cooper.Web.Controllers
             task.SetSubject(subject);
             task.SetBody(body);
             DateTime time;
-            task.SetDueTime(DateTime.TryParse(duetime, out time) ? time : new DateTime?());
+            task.SetDueTime(DateTime.TryParse(dueTime, out time) ? time : new DateTime?());
             int p;
             task.SetPriority((Priority)(int.TryParse(priority, out p) ? p : 0));
             bool c;
@@ -396,7 +396,7 @@ namespace Cooper.Web.Controllers
         {
             Sort due, today, upcoming, later;
             due = sorts.FirstOrDefault(o => o.Key == "dueTime") ?? new Sort() { By = "", Key = "dueTime" };
-            due.Name = this.Lang().sort_by_duetime;
+            due.Name = this.Lang().sort_by_dueTime;
             today = sorts.FirstOrDefault(o => o.Key == "0") ?? new Sort() { By = "priority", Key = "0" };
             today.Name = this.Lang().priority_today;
             upcoming = sorts.FirstOrDefault(o => o.Key == "1") ?? new Sort() { By = "priority", Key = "1" };

@@ -5,7 +5,7 @@
 ///<reference path="task.js" />
 ///<reference path="task_common.js" />
 
-//根据duetime排序任务列表UI模式
+//根据dueTime排序任务列表UI模式
 var UI_List_Due = function () { }
 UI_List_Due.prototype = new UI_List_Common();
 UI_List_Due.prototype.mode = 'ByDueTime';
@@ -27,8 +27,8 @@ UI_List_Due.prototype.renderByDueTime = function (b) {
     var idx = this.byDueTime.indexs();
     for (var i = 0; i < idx.length; i++) {
         for (var j = idx.length - 1; j > 0; j--) {
-            var r = this.getTaskById(idx[j]).dueTime().getTime();
-            var l = this.getTaskById(idx[j - 1]).dueTime().getTime();
+            var r = this.getTaskById(idx[j]).due().getTime();
+            var l = this.getTaskById(idx[j - 1]).due().getTime();
             if (r < l) {
                 var temp = idx[j - 1];
                 idx[j - 1] = idx[j];
@@ -60,7 +60,7 @@ UI_List_Due.prototype.onPrepareBinds = function () {
         var $actives = base.getActives();
 
         if (ctrl) {
-            //针对duetime排序区域将上下移动行为调整为dueTime变更
+            //针对dueTime排序区域将上下移动行为调整为dueTime变更
             //仅支持单个
             if ((!up && !down)
                 || $actives.length != 1
@@ -68,7 +68,7 @@ UI_List_Due.prototype.onPrepareBinds = function () {
                 || !base._isDueTimeRow($focus)) return;
 
             var task = base.getTask($focus);
-            var dueTime = task.dueTime();
+            var dueTime = task.due();
             var day = 86400000;
             if (up)
                 dueTime = addDay(dueTime, -1);
@@ -77,8 +77,8 @@ UI_List_Due.prototype.onPrepareBinds = function () {
             task.setDueTime(dueTime);
             //优化 避免重新排序
             var arr = base._findNextAndPrev($focus);
-            var prev = arr[0] == null ? null : base.getTask(arr[0]).dueTime();
-            var next = arr[1] == null ? null : base.getTask(arr[1]).dueTime();
+            var prev = arr[0] == null ? null : base.getTask(arr[0]).due();
+            var next = arr[1] == null ? null : base.getTask(arr[1]).due();
             if ((prev == null || prev.getTime() <= dueTime) && (next == null || next.getTime() >= dueTime))
                 return false;
             //重排序
@@ -89,7 +89,7 @@ UI_List_Due.prototype.onPrepareBinds = function () {
         }
     });
 }
-//批量变更duetime时
+//批量变更dueTime时
 UI_List_Due.prototype.onDueTimeBatchChange = function (tasks, t) {
     for (var i = 0; i < tasks.length; i++)
         if (this._isDueTimeRow(tasks[i].el())) {
@@ -137,7 +137,7 @@ UI_List_Due.prototype.appendTask = function (p) {
         var active = this.getTask($row);
         this._appendTaskToRow($row, t, active);
 
-        var dueTime = active.dueTime();
+        var dueTime = active.due();
         if (dueTime != null) {
             t.setDueTime(dueTime);
             this.byDueTime.flush();
