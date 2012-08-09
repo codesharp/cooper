@@ -289,18 +289,22 @@
         //global event bind
         $('.flag_continueDelete').click(continueDelete);
         $('.flag_cancelDelete').click(cancelDelete);
+        
         $('.flag_byPriority').click(byPriority);
         $('.flag_byDueTime').click(byDueTime);
+        
         $('.flag_openTasklists').click(openTasklists);
-        $('.flag_archiveTasks').click(archiveTasks);
-        $('.flag_hideArchive').click(hideArchive);
-        $('.flag_showArchive').click(showArchive);
-        $('.flag_toggleTasks').click(toggleTasks);
-        $('.flag_appendTask').click(appendTask);
-        $('.flag_deleteTask').click(deleteTask);
         $('.flag_addTasklist').click(function () { doAddTasklist(this); });
         $('.flag_removeTasklist').click(doRemoveTasklist);
 
+        $('.flag_archiveTasks').click(archiveTasks);
+        $('.flag_hideArchive').click(hideArchive);
+        $('.flag_showArchive').click(showArchive);
+        
+        $('.flag_toggleTasks').click(toggleTasks);
+        $('.flag_appendTask').click(appendTask);
+        $('.flag_deleteTask').click(deleteTask);
+        
         $.ajaxSetup({
             cache: false,
             error: function (x, e) {

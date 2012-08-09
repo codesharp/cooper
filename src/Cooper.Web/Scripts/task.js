@@ -51,7 +51,7 @@ Task.prototype = {
     renderRow: function () {
         this.setCompleted(this.isCompleted());
         this.setPriority(this.priority());
-        this.setDueTime(this.dueTime());
+        this.setDueTime(this.due());
     },
     renderDetail: function () {
         if (!this.$el_detail)
@@ -64,7 +64,7 @@ Task.prototype = {
         this.setDetail_Completed(this.isCompleted());
         this.setDetail_Subject(this.subject());
         this.setDetail_Priority(this.priority());
-        this.setDetail_DueTime(this.dueTime());
+        this.setDetail_DueTime(this.due());
         this.setDetail_Body(this.get('body'));
         //设置url快捷链接区域 临时方案
         var $urls = this.$el_detail.find('#urls');
@@ -129,8 +129,9 @@ Task.prototype = {
     id: function () { return this.get('id'); },
     isCompleted: function () { return this.get('isCompleted') },
     priority: function () { return this.get('priority') },
-    dueTime: function () { return this.get('dueTime'); },
+    due: function () { return this.get('dueTime'); },
     subject: function () { return this.get('subject'); },
+    body: function () { return this.get('body'); },
     ///////////////////////////////////////////////////////////////////////////////
     //属性以及ui设置
     setId: function (i) {
@@ -169,8 +170,10 @@ Task.prototype = {
         this.setDetail_Priority(p);
     },
     setDueTime: function (t) {
-        var k = 'duetime';
-        var $e = this._getRowEl(k);
+        var k = 'dueTime';
+        //为避免与detail区域的input#deuTime重复id，而导致jqdatepicker异常
+        //https://github.com/codesharp/cooper/issues/41
+        var $e = this._getRowEl(k + 'Label');
         if (t == undefined || t == null) {
             this.update(k, null);
             $e.html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
