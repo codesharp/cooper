@@ -4,17 +4,19 @@
 
 //接口URL定义，cooper.js会调用这些定义的接口实现与Cooper服务器的数据交互
 var loginUrl = null;
+var skiploginUrl = null;
 var getTasklistsUrl = null;
 var createTaskListUrl = null;
 var syncTaskUrl = null;
 var getTasksUrl = null;
+var userNameExist = false;
 
 //私有变量，记录当前的外部api的类型
 var apiType = null;
 
 (function () {
     //初始化API配置
-    function initAPI(type) {
+ function initAPI(type) {
         if (type == "webapi") {
             loginUrl = "../Account/Login";
             getTasklistsUrl = "../Personal/GetTasklists";
@@ -25,6 +27,7 @@ var apiType = null;
         }
         else if (type == "phonegap") {
             loginUrl = "Account/Login";
+			skiploginUrl = "Account/SkipLogin";
             getTasklistsUrl = "Personal/GetTasklists";
             createTaskListUrl = "Personal/CreateTasklist";
             syncTaskUrl = "Personal/Sync";

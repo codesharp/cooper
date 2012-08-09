@@ -21,6 +21,25 @@
 //                      {"By":"priority","Key":"2","Name":"迟些再说","Indexs":["temp_5","temp_6"]}
 //                  ];
 
+//Plugin - JS 与 Native 交互接口格式约定
+//function Result {status:true, data: {}|true, message:''}
+
+//refresh("Login", [{ username: 'xuehua', password: '123456', type:'anonymous|normal' }], function (result) { return new Result(); });
+//refresh("Logout", [{ username: 'xuehua' }], function (result) { return new Result(); });
+//refresh("SyncTaskList", [{ username: 'xuehua', tasklistid: '123456' }], function (result) { return new Result(); });
+//refresh("SyncTasks", [{ username: 'xuehua', tasklistid: '123456' }], function (result) { return new Result(); });
+
+//getData("GetNetworkStatus", [], function (result) { return { true }; });
+//getData("GetCurrentUser", [], function (result) { return new Result(); });
+//getData("GetTasklists", [{ username: 'xuehua' }], function (result) { return json; });
+//getData("GetTasksByPriority", [{ username: 'xuehua', tasklistId = 'id' }], function (result) { { Editable:true,tasks:[],sorts:[] });
+
+//saveData("CreateTasklist", [{ username: 'xuehua', id: 'id', name: 'list 1', type: 'personal' }], function (result) { return new Result();  });
+//saveData("CreateTask", [{ username: 'xuehua', tasklistId: 'id', task: {}, changes: $.toJSON(changes) }], function (result) { return new Result(); });
+//saveData("UpdateTask", [{ username: 'xuehua', tasklistId: 'id', task: {}, changes: $.toJSON(changes) }], function (result) { return new Result(); });
+//saveData("DeleteTask", [{ username: 'xuehua', tasklistId: 'id', taskId: ''], function (result) { return new Result(); }); 
+
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 (function () {
@@ -179,6 +198,23 @@
                     }
                     else {
                         callback({ 'success': false, 'message': lang.loginFailed });
+                    }
+                }
+            }
+        );
+    }
+	//处理用户跳过登录
+    function skipLogin(callback) {
+        postRequest(
+            skiploginUrl,
+            { },
+            function (result) {
+                if (callback != null) {
+                    if (result == true) {
+                        callback({ 'success': true, 'message': null });
+                    }
+                    else {
+                        callback({ 'success': false, 'message': lang.skiploginFailed });
                     }
                 }
             }
@@ -373,7 +409,7 @@
         ul.listview('refresh');
     }
     //加载并显示任务列表
-    function loadAndShowTaskLists() {
+ function loadAndShowTaskLists() {
         showLoading();
         loadAllTaskList(function (result) {
             if (result.success) {
@@ -782,6 +818,17 @@
             }
         });
     });
+    //登录页面:“跳过”按钮事件响应
+    $(document).delegate("#loginPage #skipLoginButton", "click", function () {
+        skipLogin(function (result) {
+            if (!result.success) {
+                showErrorMessage(result.message);
+            }
+            else {
+                showPage("taskListPage");
+            }
+        });
+    });
     //Setting中的更换账号页面:“确定”按钮事件响应
     $(document).delegate("#setCurrentAccountPage #changeCurrentUserNameButton", "click", function () {
         var userName = $("#newUserName").val();
@@ -978,39 +1025,4 @@
             showTaskOnEditPage(pageData.taskId);
         }
     });
-
-    //在pageshow时修正page的content的高度不能自适应的问题
-    $(document).bind("pageshow", function (e, data) {
-        fixPageContentHeight();
-    });
-    function fixPageContentHeight() {
-        //只对Page进行Page内Content的高度自适应的处理，不对对话框进行处理
-        if ($("div[data-role='dialog']:visible").length > 0) {
-            return;
-        }
-        /* Some orientation changes leave the scroll position at something
-        * that isn't 0,0. This is annoying for user experience. */
-        scroll(0, 0);
-
-        /* Calculate the geometry that our content area should take */
-        var header = $("div[data-role='header']:visible");
-        var footer = $("div[data-role='footer']:visible");
-        var content = $("div[data-role='content']:visible:visible");
-        var viewport_height = $(window).height();
-
-        var content_height = null;
-        if (header.length > 0 && footer.length > 0) {
-            content_height = viewport_height - header.outerHeight() - footer.outerHeight();
-        }
-        else if (header.length > 0) {
-            content_height = viewport_height - header.outerHeight();
-        }
-
-        /* Fix by thomtomdup: when the block content is higher than the mobile screen, the footer hid it */
-        if ((content.outerHeight() - header.outerHeight()) <= viewport_height) {
-            /* Trim margin/border/padding height */
-            content_height -= (content.outerHeight() - content.height());
-            content.height(content_height);
-        }
-    }
 })();

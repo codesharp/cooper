@@ -18,6 +18,11 @@
     <!--全局-->
     <script type="text/javascript">
         var pageData = {}; //存放当前页面的参数信息
+
+    
+        function showStartPage(flag) {
+            userNameExist = flag;
+        }
         $(document).bind("mobileinit", function () {
             $.mobile.page.prototype.options.domCache = true;
         });
@@ -37,6 +42,14 @@
             if (typeof data.toPage === "string") {
                 pageData = data.options.pageData;
             }
+        });
+        
+        $(function() {
+            $(document).bind("deviceready", function() {
+                if(userNameExist) {
+                    $.mobile.changePage('#taskListPage');
+                }
+            });
         });
     </script>
 
@@ -72,7 +85,7 @@
                 <div class="ui-block-b" style="text-align: right">
                     <button type="button" id="loginButton" data-inline="true" data-theme="a">
                         登录</button>
-                    <a href="#taskListPage" data-transition="slide" data-role="button" data-inline="true">跳过</a>
+                    <button type="button" id="skipLoginButton" data-inline="true">跳过</button>
                 </div>
             </div>
             </form>
