@@ -42,7 +42,6 @@ UI_List_Due.prototype.renderByDueTime = function (b) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //额外实现父级定义的扩展
-//UI_List_Due.prototype.onFlushIdxs = function () { this.byDueTime.flush(); }
 //优先级调整时
 UI_List_Due.prototype.onPriorityChange = function ($r, task, old, p) {
     //排除时间排序区域
@@ -89,7 +88,6 @@ UI_List_Due.prototype.onPrepareBinds = function () {
             return false; //避免滚动条移动
         }
     });
-    //dueTime区域crtl移动=修改duetime时间
 }
 //批量变更duetime时
 UI_List_Due.prototype.onDueTimeBatchChange = function (tasks, t) {
@@ -104,19 +102,15 @@ UI_List_Due.prototype.onDueTimeBatchChange = function (tasks, t) {
 UI_List_Due.prototype._isValidRegion = function ($r) { return !this._isDueTimeRegion($r); }
 UI_List_Due.prototype._isRowOfValidRegion = function ($r) { return !this._isDueTimeRow($r); }
 UI_List_Due.prototype.render = function () {
-    //modeargs
-    debuger.debug(this.modeArgs);
-    //this.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion = true;
-
     this.$wrapper.empty();
     //dueTime排序区域
-    this.byDueTime = cached_sorts['dueTime'];
+    this.byDueTime = this.getSortByKey('dueTime');
     this.renderByDueTime(true);
     this.$wrapper.append(this.byDueTime.el().addClass('todolist_dueTime'));
     //优先级区域
-    this._renderByIdx(this.today);
-    this._renderByIdx(this.upcoming);
-    this._renderByIdx(this.later);
+    this._renderBySort(this.today);
+    this._renderBySort(this.upcoming);
+    this._renderBySort(this.later);
     //默认追加一条
     if (this.getTasks().length == 0)
         this.appendTask(0);
@@ -149,13 +143,13 @@ UI_List_Due.prototype.appendTask = function (p) {
             this.byDueTime.flush();
         } else {
             t.setPriority(active.priority());
-            cached_sorts[t.priority()].flush();
+            this.getSortByKey(t.priority()).flush();
         }
     }
     //默认追加到later
     else {
         t.setPriority(p == undefined ? 2 : p);
-        cached_sorts[t.priority()].append(t);
+        this.getSortByKey(t.priority()).append(t);
     }
 
     //由于新增需要重新hover
@@ -172,11 +166,5 @@ function addDay(t, d) {
 //对象创建
 function create_UI_List_Due() {
     var ui = new UI_List_Due();
-    ui.child = ui;
-
-    ui.$wrapper = $el_wrapper_region;
-    ui.$wrapper_detail = $el_wrapper_detail;
-    ui.$cancel_delete = $el_cancel_delete;
-
     return ui;
 }

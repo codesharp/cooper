@@ -10,24 +10,24 @@
                     </td>
                     <td colspan="2" style="padding-left: 10px">
                         <span class="pull-left">{name}</span> 
-                        <span class="badge pull-right" style="margin-top: 5px;cursor: pointer" onclick="$(this).parents('thead').next().toggle()">0</span>
+                        <span id="region_total" class="badge pull-right" style="margin-top: 5px;cursor: pointer" onclick="$(this).parents('thead').next().toggle()">0</span>
                     </td>
                 </tr>
             </thead>
             <tbody>
                 <tr class="row_task" id="{id}">
                     <td class="cell_num">
-                        <span></span><i class="icon-th"></i>
+                        <span id="index"></span><i class="icon-th"></i>
                     </td>
                     <td class="cell_bool">
                         <!--状态显示-->
                         <ul class="nav nav-pills">
                             <li>
                                 <div style="display: inline-block; min-width: 15px;">
-                                    <i class="icon-ok" style="display: block"></i>
+                                    <i id="isCompleted" class="icon-ok" style="display: block"></i>
                                 </div>
                             </li>
-                            <li class="priority"><i class="icon-time" style="display: block"></i></li>
+                            <li class="priority"><i id="priority" class="icon-time" style="display: block"></i></li>
                         </ul>
                         <!--操作按钮-->
                         <ul class="nav nav-pills">
@@ -43,9 +43,9 @@
                         </ul>
                     </td>
                     <td class="cell_string">
-                        <input value="{subject}" maxlength="500" />
+                        <input id="subject" value="{subject}" maxlength="500" />
                         <div>
-                            <span class="cell_duetime"></span>
+                            <span id="duetime" class="cell_duetime"></span>
                             @if (mini)
                             {
                                 <span class="icon-chevron-right" style="cursor: pointer"

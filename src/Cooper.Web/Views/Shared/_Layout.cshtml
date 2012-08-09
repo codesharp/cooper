@@ -7,9 +7,7 @@
 <head>
     <title>@ViewBag.Title @this.Suffix()</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/bootstrap/css/bootstrap.min.css")" />
-    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/jquery/css/smoothness/jquery-ui-1.8.21.custom.css")" />
-    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/css/base.css")" />
+    @{ Html.RenderPartial("Style"); }
     <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/css/task.css")" />
 </head>
 <body>
@@ -128,7 +126,7 @@
             <form class="well form-search well">
             <div class="control-group">
                 <input type="text" class="input-medium search-query" maxlength="50" placeholder="@this.Lang().tasklist" />
-                <button type="button" class="btn btn-primary" onclick="doAddTasklist(this)">@this.Lang().add</button>
+                <button type="button" class="btn btn-primary flag_addTasklist">@this.Lang().add</button>
             </div>
             <hr />
             <div class="control-group" style="line-height: 30px">
@@ -165,25 +163,9 @@
         </div>
     </div>
     @{ Html.RenderSettings(); }
-    <script type="text/javascript" src="@Url.Content("~/scripts/task.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_common.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_row.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_bind.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_bind_shortcuts.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_priority.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_due.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/account.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/taskpage.js")"></script>
+    @{ Html.RenderPartial("Scripts_Task"); }
     <script type="text/javascript">
         $(function () {
-            $.ajaxSetup({
-                cache: false,
-                error: function (x, e) {
-                    $('#error_lose_connect').fadeIn(500);
-                    resetTimer();
-                }
-            });
-
             //避免意外切换页面
             $(document).keydown(function (e) {
                 if (e.keyCode != 8) return;
@@ -206,6 +188,13 @@
             $('.todolist_wrapper').height($(window).height() - 170);
             $('.span4').height($(window).height() - 30);
         }
+        function share(e) {
+            $('#shareModal').modal('show');
+            $('#share_title').val($(e).parents('div.region_detail').eq(0).find('input').val() + lang.share_description);
+        }
+
+        function openTasklists() { $('#tasklistModal').modal('show'); }
+        
     </script>
     @RenderSection("Bottom", false)
 </body>

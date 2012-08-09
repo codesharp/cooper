@@ -173,6 +173,7 @@
     <Content Include="Content\jquery\css\smoothness\images\ui-icons_888888_256x240.png" />
     <Content Include="Content\jquery\css\smoothness\images\ui-icons_cd0a0a_256x240.png" />
     <Content Include="Content\jquery\css\smoothness\jquery-ui-1.8.21.custom.css" />
+    <Content Include="Content\jquery\jquery-ui-1.8.22.custom.min.js" />
     <Content Include="Content\jquery\jquery.json-2.3.min.js" />
     <Content Include="Content\jquery\jquery.mobile-1.1.0.min.js" />
     <Content Include="Content\jquery\qunit-1.9.0.js" />
@@ -190,7 +191,6 @@
     <Content Include="Hybrid\jquery\css\mobile\jquery.mobile.structure-1.1.1.min.css" />
     <Content Include="Hybrid\jquery\jqm.page.params.js" />
     <Content Include="Hybrid\sample.htm" />
-    <Content Include="Hybrid\scripts\serverapis.js" />
     <Content Include="Hybrid\scripts\cordova-1.9.0.js" />
     <Content Include="Hybrid\scripts\hybrid.js" />
     <Content Include="Hybrid\setting.htm" />
@@ -249,7 +249,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Shared\NotSupport.cshtml" />
-    <Content Include="Views\Personal\Mobile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\_Layout_Account.cshtml" />
@@ -302,12 +301,6 @@
     <Content Include="Views\Shared\Settings.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Personal\MobileDetail.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Shared\_Layout_Mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Shared\LeftBar.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -332,6 +325,9 @@
     <None Include="README.md" />
     <Content Include="Views\Shared\ShareToRegion.cshtml" />
     <Content Include="Views\Home\Issues.cshtml" />
+    <Content Include="Views\Shared\Scripts_Task.cshtml" />
+    <Content Include="Views\Shared\Scripts.cshtml" />
+    <Content Include="Views\Shared\Style.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

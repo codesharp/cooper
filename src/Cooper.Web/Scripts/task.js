@@ -3,21 +3,7 @@
 ///<reference path="lang.js" />
 ///<reference path="common.js" />
 
-var cached_tasks = null;
-var cached_sorts = null;
 var identity = 0;
-var changes_delete = []; //用于记录删除
-//template
-var tmp_item = $('#tmp_region tbody').html();
-var tmp_region = $('#tmp_region').html();
-var tmp_item_region_name = "tbody";
-var tmp_detail = $('#tmp_detail').html();
-var tmp_detail_batch = $('#tmp_detail_batch').html();
-//$element
-var $el_wrapper_region = $('#todolist_wrapper');
-var $el_wrapper_detail = $('#detail_wrapper');
-var $el_cancel_delete = $('#cancel_delete');
-
 //描述任务缓存项
 var Task = function () { this._init.apply(this, arguments); }
 Task.prototype = {
@@ -27,6 +13,7 @@ Task.prototype = {
     _init: function () {
         var t = arguments.length > 0 ? arguments[0] : {};
         this.editable = t['Editable'] == undefined ? true : t['Editable'];
+        //数据格式适配
         this['data'] = {
             'id': t['ID'] != undefined ? t['ID'].toString() : 'temp_' + (++identity) + '_' + new Date().getTime(), //可自动构建临时id 总是以string使用
             'subject': t['Subject'] != undefined ? t['Subject'] : '',
@@ -38,12 +25,29 @@ Task.prototype = {
         }
         this.$el_row = this._generateItem(this['data']);
         this.$el_detail = null;
+
+        if (debuger.isDebugEnable)
+            this._getRowEl('subject').attr('placeholder', '#' + this.id());
     },
-    _generateItem: function (d) { return $(render(tmp_item, d)); },
-    _generateDetail: function (d) { return $(render(tmp_detail, d)); },
+    _generateItem: function (d) { return $(render($('#tmp_region tbody').html(), d)); },
+    _generateDetail: function (d) { return $(render($('#tmp_detail').html(), d)); },
     _parseDate: function (t) { return typeof (t) == 'string' ? $.datepicker.parseDate('yy-mm-dd', t) : t; },
     _parseDateString: function (t) { return (t.getMonth() + 1) + '-' + t.getDate(); },
     _parseFullDateString: function (t) { return t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate(); },
+    _getRowEl: function (p) {
+        var k = '$' + p;
+        if (!this.$el_row[k])
+            this.$el_row[k] = this.$el_row.find('#' + p);
+        return this.$el_row[k];
+    },
+    _getDetailEl: function (p) {
+        var k = '$' + p;
+        if (!this.$el_detail[k])
+            this.$el_detail[k] = this.$el_detail.find('#' + p);
+        return this.$el_detail[k];
+    },
+    _setClass: function ($e, b, c) { $e[b ? 'addClass' : 'removeClass'](c); },
+    ///////////////////////////////////////////////////////////////////////////////
     renderRow: function () {
         this.setCompleted(this.isCompleted());
         this.setPriority(this.priority());
@@ -75,10 +79,10 @@ Task.prototype = {
         $urls.parents('tr')[i == 0 ? 'hide' : 'show']();
         $urls.find('button:eq(1)')[i == 1 ? 'hide' : 'show']();
         $urls.find('url')[i == 1 ? 'hide' : 'show']();
-
+        //TODO:详情插件扩展在此追加
         return this.$el_detail;
     },
-    //额外修正一些显示问题 由于未呈现导致的
+    //额外修正一些显示问题 由于未呈现(append)导致的UI问题
     fixDetail: function () {
         this.setDetail_Body(this.get('body'));
     },
@@ -119,6 +123,7 @@ Task.prototype = {
         this.changes = null;
         return arr;
     },
+    ///////////////////////////////////////////////////////////////////////////////
     //常用属性
     el: function () { return this.$el_row; },
     id: function () { return this.get('id'); },
@@ -132,47 +137,52 @@ Task.prototype = {
         this['data']['id'] = i;
         this.$el_row.attr('id', i);
         this.setDetail_Id(i);
+        if (debuger.isDebugEnable)
+            this._getRowEl('subject').attr('placeholder', '#' + this.id());
     },
-    setIndex: function (i) {
-        this.$el_row.find('.cell_num span').html(i);
-    },
+    setIndex: function (i) { this._getRowEl('index').html(i); },
     setSubject: function (s, f) {
-        this.update('subject', s);
+        var k = 'subject';
+        this.update(k, s);
         //为双向同步而设置的f标识
         if (f == undefined || !f)
             this.setDetail_Subject(s);
         else if (f)
-            this.$el_row.find('input').val(s);
+            this._getRowEl(k).val(s);
     },
     setBody: function (b) {
         this.update('body', b);
         this.setDetail_Body(b);
     },
     setCompleted: function (b) {
-        this.update('isCompleted', b);
-        this.$el_row.find('.cell_bool .nav').eq(0).find('.icon-ok').css('display', b ? 'block' : 'none');
-        this.$el_row[b ? 'addClass' : 'removeClass']('row_completed');
+        var k = 'isCompleted';
+        this.update(k, b);
+        this._getRowEl(k).css('display', b ? 'block' : 'none');
+        this._setClass(this.$el_row, b, 'row_completed');
         this.setDetail_Completed(b);
     },
     setPriority: function (p) {
-        this.update('priority', p.toString());
+        var k = 'priority';
+        this.update(k, p.toString());
         //设置priority图标显示与否 避免出现inline
-        this.$el_row.find('.cell_bool .nav').eq(0).find('.icon-time').css('display', p == 0 ? 'block' : 'none');
+        this._getRowEl('priority').css('display', p == 0 ? 'block' : 'none');
         this.setDetail_Priority(p);
     },
     setDueTime: function (t) {
+        var k = 'duetime';
+        var $e = this._getRowEl(k);
         if (t == undefined || t == null) {
-            this.update('dueTime', null);
-            this.$el_row.find('.cell_duetime').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            this.update(k, null);
+            $e.html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
             return;
         }
-        this.update('dueTime', t);
+        this.update(k, t);
         var today = $.datepicker.parseDate('yy-mm-dd', this._parseFullDateString(new Date())).getTime();
         var date = $.datepicker.parseDate('yy-mm-dd', this._parseFullDateString(t)).getTime();
         //优化用户化文本显示
-        this.$el_row.find('.cell_duetime').html(today == date ? lang.today : this._parseDateString(t));
+        $e.html(today == date ? lang.today : this._parseDateString(t));
         //过期标记
-        this.$el_row.find('.cell_duetime')[today >= date ? 'addClass' : 'removeClass']('cell_duetime_expired');
+        this._setClass($e, today >= date, 'cell_duetime_expired');
         this.setDetail_DueTime(t);
     },
     ///////////////////////////////////////////////////////////////////////////////
@@ -183,11 +193,11 @@ Task.prototype = {
     },
     setDetail_Subject: function (s) {
         if (!this.$el_detail) return;
-        this.$el_detail.find('#subject').val(s);
+        this._getDetailEl('subject').val(s);
     },
     setDetail_Body: function (b, f) {
         if (!this.$el_detail) return;
-        var $el = this.$el_detail.find('#body');
+        var $el = this._getDetailEl('body');
         //修正高度 自适应
         var base = $el[0];
         //$el.height('');//auto
@@ -201,20 +211,21 @@ Task.prototype = {
     },
     setDetail_Priority: function (p) {
         if (!this.$el_detail) return;
-        this.$el_detail.find('#priority button')
+        this._getDetailEl('priority')
+            .find('button')
             .removeClass('active')
-            .eq(parseInt(p)).addClass('active');
+            .eq(parseInt(p))
+            .addClass('active');
     },
     setDetail_Completed: function (b) {
         if (!this.$el_detail) return;
-        this.$el_detail.find('#isCompleted')
-            [b ? 'addClass' : 'removeClass']('active')
-            [b ? 'addClass' : 'removeClass']('btn-success');
+        this._setClass(this._getDetailEl('isCompleted'), b, 'active');
+        this._setClass(this._getDetailEl('isCompleted'), b, 'btn-success');
     },
     setDetail_DueTime: function (t) {
         if (!this.$el_detail) return;
         if (t != null)
-            this.$el_detail.find('#dueTime').val(this._parseFullDateString(t));
+            this._getDetailEl('dueTime').val(this._parseFullDateString(t));
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -222,20 +233,19 @@ Task.prototype = {
 var Sort = function () { this._init.apply(this, arguments); }
 Sort.prototype = {
     $el_region: null,
-    _getTask: function () { return null; },
     _init: function () {
         this['by'] = arguments[0];
         this['key'] = arguments[1]; //0,1,2,prj1,team1
         this['name'] = arguments[2]; //今天、稍后、迟些、项目1、团队1
         this['idx'] = arguments[3]; //[0,1,2,4]
-        this._getTask = arguments[4];
-        this.$el_region = this._generateRegion();
+        this.$el_region = $(render($('#tmp_region').html(), this));
+        this._clearRegion();
     },
-    _generateRegion: function () {
-        var $el = $(render(tmp_region, this));
-        $el.find(tmp_item_region_name).empty();
-        return $el;
-    },
+    _getTask: null,
+    _getRows: function () { return this.el().find('tbody').find('tr') },
+    _append: function (e) { this.el().find('tbody').append(e); },
+    _prepend: function (e) { this.el().find('tbody').prepend(e); },
+    _clearRegion: function () { this.el().find('tbody').empty() },
     dispose: function () {
         if (!this.$el_region) return;
         this.$el_region.remove();
@@ -243,9 +253,8 @@ Sort.prototype = {
     },
     el: function () { return this.$el_region; },
     indexs: function (idx) { if (idx) this['idx'] = idx; return this['idx']; },
-    //渲染至region内
     render: function () {
-        this.$el_region.find(tmp_item_region_name).empty();
+        this._clearRegion();
         var idx = this.indexs();
         for (var i = 0; i < idx.length; i++) {
             var id = idx[i].toString();
@@ -256,30 +265,30 @@ Sort.prototype = {
             }
             task.renderRow();
             task.setIndex(i + 1); //设置索引显示
-            this.$el_region.find(tmp_item_region_name).append(task.el());
+            this._append(task.el());
         }
         //总数
-        this.$el_region.find('.badge').html(idx.length);
+        this.el().find('#region_total').html(idx.length);
     },
     //根据el刷新索引数据以及对应索引显示
-    flush: function (k) {
+    flush: function (b) {
         var base = this;
-        var $els = this.$el_region.find(tmp_item_region_name).find('tr');
+        var $els = this._getRows();
         var ary = new Array($els.length);
         $els.each(function (i, n) {
             var id = $(n).attr('id');
             ary[i] = id;
             base._getTask(id).setIndex(i + 1); //设置索引显示
             //依据idx数据额外修正task数据
-            if (k != undefined)
-                base._getTask(id).set(k, base['key']);
+            if (b)
+                base._getTask(id).set(base['by'], base['key']);
         });
         this['idx'] = ary;
-        this.$el_region.find('.badge').html(ary.length);
+        this.el().find('#region_total').html(ary.length);
     },
     //实时刷新并获取索引
     getIndexs: function () {
-        var $els = this.$el_region.find(tmp_item_region_name).find('tr');
+        var $els = this._getRows();
         var ary = new Array($els.length);
         $els.each(function (i, n) {
             var id = $(n).attr('id');
@@ -288,6 +297,6 @@ Sort.prototype = {
         this['idx'] = ary;
         return this['idx'];
     },
-    append: function (t) { this.el().find(tmp_item_region_name).append(t.el()); this.flush(); },
-    prepend: function (t) { this.el().find(tmp_item_region_name).prepend(t.el()); this.flush(); }
+    append: function (t, b) { this._append(t.el()); this.flush(b); }, //不可this.flush(true)
+    prepend: function (t, b) { this._prepend(t.el()); this.flush(b); }
 }
