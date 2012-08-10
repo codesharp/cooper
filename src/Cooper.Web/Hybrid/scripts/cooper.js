@@ -505,10 +505,16 @@
     });
     //任务列表页面:“刷新”按钮事件响应
     $(document).delegate("#taskListPage #refreshTaskListsButton", "click", function () {
-        //依次同步每个任务列表
-        for (var index = 0; taskLists != null && index < taskLists.length; index++) {
-            syncTaskList(taskLists[index].id, function (result) { });
-        }
+        syncTaskLists(function (result) {
+            getTasklists(function (result) {
+                if (result.status) {
+                    showTaskLists(result.data.taskLists);
+                }
+                else {
+                    alert(lang.getTaskListFailed);
+                }
+            });
+        });
     });
     //任务编辑页面:“确定”按钮事件响应
     $(document).delegate("#taskEditPage #saveTaskButton", "click", function () {
@@ -581,9 +587,16 @@
         if (isMobileDevice()) {
             syncTaskList(pageData.listId, function (result) {
                 if (result.status) {
-                    showTasks(pageData.listId, result.tasks, pageData.isCompleted);
-                    tasksInCurrentList = result.tasks;
-                    hideLoading();
+                    getTasksByPriority(pageData.listId, pageData.isCompleted, function (result) {
+                        if (result.status) {
+                            showTasks(pageData.listId, result.data.tasks, pageData.isCompleted);
+                            tasksInCurrentList = result.data.tasks;
+                            hideLoading();
+                        }
+                        else {
+                            alert(result.message);
+                        }
+                    });
                 }
                 else {
                     hideLoading();

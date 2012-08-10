@@ -32,8 +32,7 @@ var web_syncTaskUrl = "../Personal/Sync";
 //Native接口地址声明
 var native_loginUrl = "refresh/Login";
 var native_logoutUrl = "refresh/Logout";
-var native_syncTaskListUrl = "refresh/SyncTaskList";
-var native_syncTasksUrl = "refresh/SyncTasks";
+var native_syncTasklistsUrl = "refresh/SyncTasklists";
 var native_getNetworkStatusUrl = "get/GetNetworkStatus";
 var native_getCurrentUserUrl = "get/GetCurrentUser";
 var native_getTasklistsUrl = "get/GetTasklists";
@@ -543,36 +542,14 @@ function deleteTask(tasklistId, taskId, callback) {
     }
 }
 //同步指定的任务列表
-function syncTaskList(tasklistId, callback) {
+function syncTaskLists(tasklistId, callback) {
     if (callback == null) {
         return;
     }
     if (isMobileDevice()) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
-                native_syncTaskListUrl,
-                { username: currentUser, tasklistid: tasklistId },
-                function (result) {
-                    if (result.status) {
-                        syncTasks(tasklistId, callback);
-                    }
-                    else {
-                        callback(result);
-                    }
-                }
-            );
-        });
-    }
-}
-//同步指定任务列表中的所有任务
-function syncTasks(tasklistId, callback) {
-    if (callback == null) {
-        return;
-    }
-    if (isMobileDevice()) {
-        callAfterGetCurrentUser(function (currentUser) {
-            callNativeAPI(
-                native_syncTasksUrl,
+                native_syncTasklistsUrl,
                 { username: currentUser, tasklistid: tasklistId },
                 function (result) {
                     callback(result);

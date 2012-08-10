@@ -21,5 +21,6 @@ lang.logoutFailed = '注销用户时遇到问题';
 lang.getCurrentUserFailed = '获取当前用户失败';
 lang.taskListNameCannotEmpty = '任务列表名称不能为空';
 lang.addTaskListFailed = '添加任务列表失败';
+lang.getTaskListFailed = '获取任务列表失败';
 lang.noCompletedTaskPromptInfo = '当前您没有已完成的任务';
 lang.noUnCompletedTaskPromptInfo = '当前您没有未完成的任务';
