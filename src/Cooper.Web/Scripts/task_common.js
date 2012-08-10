@@ -81,46 +81,56 @@ UI_List_Common.prototype = {
             fn();
     },
     _renderBatchDetail: function ($rows) {
+        if (this.detail_timer)
+            clearTimeout(this.detail_timer);
         if (!this.$batchDetail)
             this.$batchDetail = $($('#tmp_detail_batch').html());
         var base = this;
-        var ids = [$rows.length];
-        var isCompleted, priority;
-        $rows.each(function (i, n) {
-            var id = base.getTaskId($(n));
-            ids[i] = id;
-            var task = base.getTaskById(id);
-            if (i == 0) {
-                isCompleted = task.isCompleted();
-                priority = task.priority();
-                return;
-            }
-            if (isCompleted != task.isCompleted()) { isCompleted = null }
-            if (priority != task.priority()) { priority = null }
-        });
-        //批量id设置
-        this.$batchDetail.attr('id', ids.join(','));
-        //批量标题
-        this.$batchDetail.find('#subject').html($rows.length + lang.batch_task);
-        //批量是否完成
-        if (isCompleted != null)
-            this.$batchDetail.find('#isCompleted')
-            [isCompleted ? 'addClass' : 'removeClass']('active')
-            [isCompleted ? 'addClass' : 'removeClass']('btn-success');
+        var fn = function () {
+            var ids = [$rows.length];
+            var isCompleted, priority;
+            $rows.each(function (i, n) {
+                var id = base.getTaskId($(n));
+                ids[i] = id;
+                var task = base.getTaskById(id);
+                if (i == 0) {
+                    isCompleted = task.isCompleted();
+                    priority = task.priority();
+                    return;
+                }
+                if (isCompleted != task.isCompleted()) { isCompleted = null }
+                if (priority != task.priority()) { priority = null }
+            });
+            //批量id设置
+            base.$batchDetail.attr('id', ids.join(','));
+            //批量标题
+            base.$batchDetail.find('#subject').html($rows.length + lang.batch_task);
+            //批量是否完成
+            if (isCompleted != null)
+                base.$batchDetail.find('#isCompleted')
+                [isCompleted ? 'addClass' : 'removeClass']('active')
+                [isCompleted ? 'addClass' : 'removeClass']('btn-success');
+            else
+                base.$batchDetail.find('#isCompleted').removeClass('active').removeClass('btn-success');
+            //批量优先级
+            if (priority != null)
+                base.$batchDetail.find('#priority button')
+                    .removeClass('active')
+                    .eq(parseInt(priority))
+                    .addClass('active');
+            else
+                base.$batchDetail.find('#priority button').removeClass('active');
+
+            base.$wrapper_detail.empty().append(base.$batchDetail);
+
+            //datepicker重复初始化问题 应先append再初始化
+            if (base.modeArgs.editable)
+                base.$batchDetail.find('#dueTime').removeClass('hasDatepicker').datepicker();
+        }
+        if (this.detail_timer_enable)
+            this.detail_timer = setTimeout(fn, 100); //增加timer延迟优化性能
         else
-            this.$batchDetail.find('#isCompleted').removeClass('active').removeClass('btn-success');
-        //批量优先级
-        if (priority != null)
-            this.$batchDetail.find('#priority button')
-                .removeClass('active')
-                .eq(parseInt(priority))
-                .addClass('active');
-        else
-            this.$batchDetail.find('#priority button').removeClass('active');
-        this.$wrapper_detail.empty().append(this.$batchDetail);
-        //datepicker重复初始化问题 应先append再初始化
-        if (this.modeArgs.editable)
-            this.$batchDetail.find('#dueTime').removeClass('hasDatepicker').datepicker();
+            fn();
     },
     _isBatchDetailValid: function () { return this.$batchDetail && this.$batchDetail.css('display') == 'block'; },
     ////////////////////////////////////////////////////////////////////////////////////////

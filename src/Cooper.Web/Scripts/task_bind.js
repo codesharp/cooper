@@ -46,6 +46,7 @@ UI_List_Common.prototype._bind = function () {
         ////////////////////////////////////////////////////////////////////////////////////////
         //row_task选中处理
         if (!$el.is('i') && !$el.is('a') && base.isTask($row)) {
+            debuger.profile('row_task_click');
             var $avtives = base.getActives();
             //多选支持
             if (!ctrl && !shift)
@@ -65,6 +66,7 @@ UI_List_Common.prototype._bind = function () {
                 base._renderBatchDetail($avtives);
             //设置是否可编辑
             base._setEditable(base.$wrapper_detail);
+            debuger.profileEnd('row_task_click');
             return;
         }
         var task = base.getTask($row);
