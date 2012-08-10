@@ -49,7 +49,8 @@ namespace Cooper.Web.Controllers
             //判断是否移动
             if (string.IsNullOrWhiteSpace(desk)
                 && Request.Browser.IsMobileDevice)
-                return RedirectToAction("Mobile");
+                //return RedirectToAction("Mobile");
+                return Redirect("~/hybrid/index.htm#taskListPage");
 
             this.Prepare();
             return View();
@@ -68,6 +69,7 @@ namespace Cooper.Web.Controllers
         #region Mobile处理
         public ActionResult Mobile()
         {
+            return Redirect("~/hybrid/index.htm#taskListPage");
             ViewBag.Tasks = this._taskService.GetTasks(this.Context.Current);
             ViewBag.Groups = this._taskService.GetTasks(this.Context.Current).GroupBy(o => o.Priority).OrderBy(o => o.Key);
             return View();
@@ -286,45 +288,46 @@ namespace Cooper.Web.Controllers
             }
             #endregion
 
-            #region 保存排序信息
-            var temp = _serializer.JsonDeserialize<Sort[]>(sorts ?? "[]");
-            foreach (var s in temp)
+            //没有变更则无需提交排序数据
+            if (!string.IsNullOrWhiteSpace(sorts) && sorts != "null")
             {
-                s.Indexs = s.Indexs.Where(o =>
-                    !string.IsNullOrWhiteSpace(o)).Distinct().ToArray();
-                for (var i = 0; i < s.Indexs.Length; i++)
-                    //修正索引中含有的临时标识
-                    if (s.Indexs[i].StartsWith(TEMP) && idChanges.ContainsKey(s.Indexs[i]))
-                        s.Indexs[i] = idChanges[s.Indexs[i]];
-            }
-            try
-            {
-
-                var d = _serializer.JsonSerialize(temp);
-
-                if (tasklist == null)
+                #region 保存排序信息
+                var temp = _serializer.JsonDeserialize<Sort[]>(sorts);
+                foreach (var s in temp)
                 {
-                    //更新排序信息至用户设置
-                    account.SetProfile(by, d);
-                    this._accountService.Update(account);
+                    s.Indexs = s.Indexs.Where(o =>
+                        !string.IsNullOrWhiteSpace(o)).Distinct().ToArray();
+                    for (var i = 0; i < s.Indexs.Length; i++)
+                        //修正索引中含有的临时标识
+                        if (s.Indexs[i].StartsWith(TEMP) && idChanges.ContainsKey(s.Indexs[i]))
+                            s.Indexs[i] = idChanges[s.Indexs[i]];
                 }
-                else
+                try
                 {
-                    //更新排序信息至对应的任务表
-                    tasklist[by] = d;
-                    this._tasklistService.Update(tasklist);
+                    var d = _serializer.JsonSerialize(temp);
+
+                    if (tasklist == null)
+                    {
+                        //更新排序信息至用户设置
+                        account.SetProfile(by, d);
+                        this._accountService.Update(account);
+                    }
+                    else
+                    {
+                        //更新排序信息至对应的任务表
+                        tasklist[by] = d;
+                        this._tasklistService.Update(tasklist);
+                    }
+
+                    if (this._log.IsDebugEnabled)
+                        this._log.DebugFormat("修正后的排序数据为：{0}|{1}", by, d);
                 }
-
-
-                if (this._log.IsDebugEnabled)
-                    this._log.DebugFormat("修正后的排序数据为：{0}|{1}", by, d);
+                catch (Exception e)
+                {
+                    this._log.Error(string.Format("保存排序信息至用户设置时异常"), e);
+                }
+                #endregion
             }
-            catch (Exception e)
-            {
-                this._log.Error(string.Format("保存排序信息至用户设置时异常"), e);
-            }
-            #endregion
-
             //返回修正列表
             return Json(idChanges.Select(o => new Correction() { OldId = o.Key, NewId = o.Value }));
         }

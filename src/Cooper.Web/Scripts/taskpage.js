@@ -220,12 +220,13 @@
         }
         //排序索引
         var sorts = $.toJSON(getSorts());
-        if (sorts != preSorts)
+        var isSortsChange = sorts != preSorts;
+        if (isSortsChange)
             debuger.info('sync sorts to server', sorts);
         if (changes.length > 0)
             debuger.info('sync changes to server', changes);
         //没有任何变更
-        if (sorts == preSorts && changes.length == 0) {
+        if (!isSortsChange && changes.length == 0) {
             if (fn) fn();
             resetTimer();
             return;
@@ -239,9 +240,9 @@
             //排序/显示模式
             by: ui_list_helper.mode,
             //排序记录
-            sorts: sorts
+            sorts: isSortsChange ? sorts : null
         }, function (data) {
-            changes = [];//成功提交变更后清空变更记录
+            changes = []; //成功提交变更后清空变更记录
             $('#error_lose_connect').fadeOut(500);
             //修正
             var corrects = data; //$.evalJSON(data);
@@ -289,10 +290,10 @@
         //global event bind
         $('.flag_continueDelete').click(continueDelete);
         $('.flag_cancelDelete').click(cancelDelete);
-        
+
         $('.flag_byPriority').click(byPriority);
         $('.flag_byDueTime').click(byDueTime);
-        
+
         $('.flag_openTasklists').click(openTasklists);
         $('.flag_addTasklist').click(function () { doAddTasklist(this); });
         $('.flag_removeTasklist').click(doRemoveTasklist);
@@ -300,11 +301,11 @@
         $('.flag_archiveTasks').click(archiveTasks);
         $('.flag_hideArchive').click(hideArchive);
         $('.flag_showArchive').click(showArchive);
-        
+
         $('.flag_toggleTasks').click(toggleTasks);
         $('.flag_appendTask').click(appendTask);
         $('.flag_deleteTask').click(deleteTask);
-        
+
         $.ajaxSetup({
             cache: false,
             error: function (x, e) {
