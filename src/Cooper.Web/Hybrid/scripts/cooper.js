@@ -459,7 +459,14 @@
                 alert(result.message);
             }
             else {
-                showPage("taskListPage");
+                syncTaskLists(null, function (result) {
+                    if (result.status) {
+                        showPage("taskListPage");
+                    }
+                    else {
+                        alert(result.message);
+                    }
+                });
             }
         });
     });
