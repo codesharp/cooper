@@ -293,11 +293,8 @@ Sort.prototype = {
     getIndexs: function () {
         var $els = this._getRows();
         var ary = new Array($els.length);
-        $els.each(function (i, n) {
-            var id = $(n).attr('id');
-            ary[i] = id;
-        });
-        this['idx'] = ary;
+        $els.each(function (i, n) { ary[i] = $(n).attr('id'); });
+        this['idx'] = ary; //$.grep(ary, function (n) { return n != '' && n != null });
         return this['idx'];
     },
     append: function (t, b) { this._append(t.el()); this.flush(b); }, //不可this.flush(true)

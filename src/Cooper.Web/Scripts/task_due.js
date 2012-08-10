@@ -139,16 +139,20 @@ UI_List_Due.prototype.appendTask = function (p) {
 
         var dueTime = active.due();
         if (dueTime != null) {
+            t['data']['dueTime'] = dueTime;
             t.setDueTime(dueTime);
             this.byDueTime.flush();
         } else {
+            t['data']['priority'] = active.priority();
             t.setPriority(active.priority());
             this.getSortByKey(t.priority()).flush();
         }
     }
     //默认追加到later
     else {
-        t.setPriority(p == undefined ? 2 : p);
+        p = p == undefined ? 2 : p;
+        t['data']['priority'] = p;
+        t.setPriority(p);
         this.getSortByKey(t.priority()).append(t);
     }
 

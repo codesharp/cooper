@@ -261,15 +261,19 @@ namespace Cooper.Web.Controllers
             #endregion
 
             #region 保存排序信息
-            var temp = _serializer.JsonDeserialize<Sort[]>(sorts);
+            var temp = _serializer.JsonDeserialize<Sort[]>(sorts ?? "[]");
             foreach (var s in temp)
+            {
+                s.Indexs = s.Indexs.Where(o => 
+                    !string.IsNullOrWhiteSpace(o)).Distinct().ToArray();
                 for (var i = 0; i < s.Indexs.Length; i++)
                     //修正索引中含有的临时标识
                     if (s.Indexs[i].StartsWith(TEMP) && idChanges.ContainsKey(s.Indexs[i]))
                         s.Indexs[i] = idChanges[s.Indexs[i]];
+            }
             try
             {
-                
+
                 var d = _serializer.JsonSerialize(temp);
 
                 if (tasklist == null)
@@ -417,7 +421,7 @@ namespace Cooper.Web.Controllers
             if (this._log.IsDebugEnabled)
                 this._log.DebugFormat("原始排序为{0}|{1}|{2}|{3}", sort.By, sort.Key, sort.Name, string.Join(",", temp));
             //移除索引中不存在的项
-            temp.RemoveAll(o => !tasks.ContainsKey(o));
+            temp.RemoveAll(o => string.IsNullOrWhiteSpace(o) || !tasks.ContainsKey(o));
             if (this._log.IsDebugEnabled)
                 this._log.DebugFormat("过滤后排序为{0}", string.Join(",", temp));
             //合并未在索引中出现的项
