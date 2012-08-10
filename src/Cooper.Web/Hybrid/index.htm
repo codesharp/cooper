@@ -18,37 +18,23 @@
     <!--全局-->
     <script type="text/javascript">
         var pageData = {}; //存放当前页面的参数信息
-
-    
-        function showStartPage(flag) {
-            userNameExist = flag;
-        }
         $(document).bind("mobileinit", function () {
             $.mobile.page.prototype.options.domCache = true;
-        });
-        //判断当前访问页面是否在移动设备
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-        }
-        $(document).bind("pageinit", function (e, data) {
-            if (isMobileDevice()) {
-                initAPI("phonegap");
-            }
-            else {
-                initAPI("webapi");
-            }
         });
         $(document).bind("pagebeforechange", function (e, data) {
             if (typeof data.toPage === "string") {
                 pageData = data.options.pageData;
             }
         });
-        
-        $(function() {
-            $(document).bind("deviceready", function() {
-                if(userNameExist) {
-                    $.mobile.changePage('#taskListPage');
-                }
+        $(function () {
+            $(document).bind("deviceready", function () {
+                getCurrentUser(function (result) {
+                    if (result.status) {
+                        if (result.data.username != null && result.data.username != "") {
+                            $.mobile.changePage('#taskListPage');
+                        }
+                    }
+                });
             });
         });
     </script>
@@ -124,8 +110,8 @@
         </div>
         <div data-role="content">
             <ul id="taskUl" data-role="listview" data-theme="c"></ul>
-            <a id="addFirstTaskButton" style="display:none;margin-top:70px" data-role="button" data-transition="slideup" data-theme="c">点击这里新增第一个任务</a>
-            <div id="displayInfoWhenNoTaskExist" style="text-align: center; margin-top:70px"></div>
+            <a id="addFirstTaskButton" style="display:none;margin-top:5px" data-role="button" data-transition="slideup" data-theme="a">点击这里新增第一个任务</a>
+            <div id="displayInfoWhenNoTaskExist" style="text-align: center; margin-top:5px"></div>
         </div>
         <div data-role="footer" data-position="fixed" data-theme="a">
             <div data-role="navbar">
@@ -194,7 +180,7 @@
                 <p id="taskBody"></p>
             </div>
             <div data-role="fieldcontain">
-                <a id="deleteTaskButton" style="margin-top:20px" data-role="button" data-theme="c">删除任务</a>
+                <a id="deleteTaskButton" style="margin-top:5px" data-role="button" data-theme="a">删除任务</a>
             </div>
         </div>
     </div>
@@ -274,21 +260,10 @@
     <!-- 更换账号 -->
     <div id="setCurrentAccountPage" data-role="page">
         <div data-role="content">
-            <input id="newUserName" name="newUserName" placeholder="账号" />
-            <input id="passwordOfNewUserName" name="passwordOfNewUserName" placeholder="密码" />
-            <a id="changeCurrentUserNameButton" data-role="button" data-inline="true" data-theme="a">确定</a>
-            <a id="cancelChangeCurrentUserNameButton" data-rel="back" data-role="button" data-inline="true">取消</a>
-        </div>
-    </div>
-    <!-- Error Dialog -->
-    <div id="errorDialog" data-role="dialog">
-        <div data-role="header" data-theme="b">
-            <h1>错误信息</h1>
-        </div>
-        <div id="content" data-role="content" data-theme="b">
-        </div>
-        <div style="text-align: right">
-            <a id="closeButton" data-role="button" data-inline="true" data-transition="none">关闭</a>
+            <label>当前用户：</label>
+            <span id="currentUserName"></span>
+            <br /><br />
+            <a id="logoutButton" data-role="button" data-inline="true" data-theme="a">注销</a>
         </div>
     </div>
 </body>
