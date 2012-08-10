@@ -21,7 +21,10 @@ namespace Cooper.Repositories
 
         public IEnumerable<Task> FindBy(Account account, Tasklist tasklist)
         {
-            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Eq("TasklistId", tasklist.ID));
+            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID)
+                , tasklist == null
+                ? Expression.IsNull("TasklistId")
+                : Expression.Eq("TasklistId", tasklist.ID));
         }
 
         public IEnumerable<Task> FindBy(Account account, bool isCompleted)
@@ -31,7 +34,11 @@ namespace Cooper.Repositories
 
         public IEnumerable<Task> FindBy(Account account, bool isCompleted, Tasklist tasklist)
         {
-            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Eq("IsCompleted", isCompleted), Expression.Eq("TasklistId", tasklist.ID));
+            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID)
+                , Expression.Eq("IsCompleted", isCompleted)
+                , tasklist == null
+                ? Expression.IsNull("TasklistId")
+                : Expression.Eq("TasklistId", tasklist.ID));
         }
 
         #endregion

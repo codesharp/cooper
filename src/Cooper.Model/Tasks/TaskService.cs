@@ -38,24 +38,33 @@ namespace Cooper.Model.Tasks
         /// <param name="account"></param>
         /// <returns></returns>
         IEnumerable<Task> GetTasks(Account account);
+        /// <summary>获取指定账号的所有不属于任何任务表的任务
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetTasksNotBelongAnyTasklist(Account account);
         /// <summary>获取指定账号指定任务表的所有任务
         /// </summary>
         /// <param name="account"></param>
         /// <param name="tasklist"></param>
         /// <returns></returns>
-        IEnumerable<Task> GetTasks(Account account,Tasklist tasklist);
+        IEnumerable<Task> GetTasks(Account account, Tasklist tasklist);
         /// <summary>获取指定账号的所有未完成任务
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
         IEnumerable<Task> GetIncompletedTasks(Account account);
+        /// <summary>获取指定账号的所有未完成且不属于任何任务表的任务
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetIncompletedTasksAndNotBelongAnyTasklist(Account account);
         /// <summary>获取指定账号指定任务表的所有未完成任务
         /// </summary>
         /// <param name="account"></param>
         /// <param name="tasklist"></param>
         /// <returns></returns>
         IEnumerable<Task> GetIncompletedTasks(Account account, Tasklist tasklist);
-
     }
     /// <summary>任务DomainService
     /// </summary>
@@ -101,6 +110,10 @@ namespace Cooper.Model.Tasks
         {
             return _repository.FindBy(account);
         }
+        IEnumerable<Task> ITaskService.GetTasksNotBelongAnyTasklist(Account account)
+        {
+            return _repository.FindBy(account, null);
+        }
         IEnumerable<Task> ITaskService.GetTasks(Account account, Tasklist tasklist)
         {
             return _repository.FindBy(account, tasklist);
@@ -108,6 +121,10 @@ namespace Cooper.Model.Tasks
         IEnumerable<Task> ITaskService.GetIncompletedTasks(Account account)
         {
             return _repository.FindBy(account, false);
+        }
+        IEnumerable<Task> ITaskService.GetIncompletedTasksAndNotBelongAnyTasklist(Account account)
+        {
+            return _repository.FindBy(account, false, null);
         }
         IEnumerable<Task> ITaskService.GetIncompletedTasks(Account account, Tasklist tasklist)
         {

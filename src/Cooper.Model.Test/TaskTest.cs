@@ -90,7 +90,7 @@ namespace Cooper.Model.Test
         {
             var a = this.CreateAccount();
             var list = this.CreatePersonalTasklist(a);
-            
+
             var task = new Task(a);
             this._taskService.Create(task);
 
@@ -104,6 +104,7 @@ namespace Cooper.Model.Test
 
             Assert.AreEqual(3, this._taskService.GetTasks(a).Count());
             Assert.AreEqual(2, this._taskService.GetTasks(a, list).Count());
+            Assert.AreEqual(1, this._taskService.GetTasksNotBelongAnyTasklist(a).Count());
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
@@ -126,6 +127,7 @@ namespace Cooper.Model.Test
 
             Assert.AreEqual(2, this._taskService.GetIncompletedTasks(a).Count());
             Assert.AreEqual(1, this._taskService.GetIncompletedTasks(a, list).Count());
+            Assert.AreEqual(1, this._taskService.GetIncompletedTasksAndNotBelongAnyTasklist(a).Count());
         }
 
         private void Dump(params Task[] tasks)

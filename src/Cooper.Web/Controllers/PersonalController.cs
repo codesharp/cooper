@@ -89,7 +89,7 @@ namespace Cooper.Web.Controllers
         public ActionResult MobileDetail(string id
             , string subject
             , string body
-            , string dueTime 
+            , string dueTime
             , string priority
             , string isCompleted)
         {
@@ -126,7 +126,7 @@ namespace Cooper.Web.Controllers
         public ActionResult GetByPriority(string tasklistId)
         {
             return this.GetBy(tasklistId
-                , this._taskService.GetTasks
+                , this._taskService.GetTasksNotBelongAnyTasklist
                 , this._taskService.GetTasks
                 , this.ParseSortsByPriority
                 , this.ParseSortsByPriority);
@@ -136,7 +136,7 @@ namespace Cooper.Web.Controllers
         public ActionResult GetIncompletedByPriority(string tasklistId)
         {
             return this.GetBy(tasklistId
-                , this._taskService.GetIncompletedTasks
+                , this._taskService.GetIncompletedTasksAndNotBelongAnyTasklist
                 , this._taskService.GetIncompletedTasks
                 , this.ParseSortsByPriority
                 , this.ParseSortsByPriority);
@@ -146,7 +146,7 @@ namespace Cooper.Web.Controllers
         public ActionResult GetByDueTime(string tasklistId)
         {
             return this.GetBy(tasklistId
-                , this._taskService.GetTasks
+                , this._taskService.GetTasksNotBelongAnyTasklist
                 , this._taskService.GetTasks
                 , this.ParseSortsByDueTime
                 , this.ParseSortsByDueTime);
@@ -175,6 +175,32 @@ namespace Cooper.Web.Controllers
             var list = new PersonalTasklist(name, this.Context.Current);
             this._tasklistService.Create(list);
             return Json(list.ID);
+        }
+        /// <summary>批量创建任务表
+        /// </summary>
+        /// <param name="data">[{ID:"",Name:"",Type:""}]</param>
+        /// <returns>返回id变更修正</returns>
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult CreateTasklists(string data)
+        {
+            Assert.IsNotNullOrWhiteSpace(data);
+            var collects = new List<Correction>();
+            var all = _serializer.JsonDeserialize<TasklistInfo[]>(data);
+            foreach (var l in all)
+            {
+                try
+                {
+                    var list = new PersonalTasklist(l.Name, this.Context.Current);
+                    this._tasklistService.Create(list);
+                    collects.Add(new Correction() { NewId = list.ID.ToString(), OldId = l.ID.ToString() });
+                }
+                catch (Exception e)
+                {
+                    this._log.Error(string.Format("创建任务表时异常：{0}|{1}|{2}", l.ID, l.Name, l.Type), e);
+                }
+            }
+            return Json(collects);
         }
         /// <summary>删除任务表
         /// </summary>
@@ -264,7 +290,7 @@ namespace Cooper.Web.Controllers
             var temp = _serializer.JsonDeserialize<Sort[]>(sorts ?? "[]");
             foreach (var s in temp)
             {
-                s.Indexs = s.Indexs.Where(o => 
+                s.Indexs = s.Indexs.Where(o =>
                     !string.IsNullOrWhiteSpace(o)).Distinct().ToArray();
                 for (var i = 0; i < s.Indexs.Length; i++)
                     //修正索引中含有的临时标识
@@ -304,7 +330,7 @@ namespace Cooper.Web.Controllers
         }
 
         private ActionResult GetBy(string tasklistId
-            , Func<Account, IEnumerable<Task>> func1
+            , Func<Account, IEnumerable<Task>> func1//没有任务表时的获取
             , Func<Account, Tasklist, IEnumerable<Task>> func2
             , Func<Account, TaskInfo[], Sort[]> func3
             , Func<Account, Tasklist, TaskInfo[], Sort[]> func4)
@@ -560,6 +586,14 @@ namespace Cooper.Web.Controllers
         /// <summary>排序数据
         /// </summary>
         public string[] Indexs { get; set; }
+    }
+    /// <summary>描述在客户端中使用的任务表
+    /// </summary>
+    public class TasklistInfo
+    {
+        public string ID { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
     }
     #endregion
 }
