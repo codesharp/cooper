@@ -62,6 +62,7 @@ UI_List_Common.prototype._findNextAndPrev = function ($r) {
     var $next = null;
     var $all = this.getTasks();
     var flag = false;
+    //TODO:改进计算方式
     $all.each(function (i, n) {
         if (flag) return;
         if (base.getTaskId($(n)) != id)
