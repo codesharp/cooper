@@ -23,6 +23,8 @@
     var idChanges = {};
     var preSorts = null;
 
+    var tryfail = false; //异常流模拟标识
+
     ////////////////////////////////////////////////////////////////////////////////////////
     //all=来自server的所有任务数组
     //sorts=分组排序
@@ -91,7 +93,8 @@
         $btn.parent()[val == '' ? 'addClass' : 'removeClass']('error');
         if (val == '') return;
 
-        $.post(url_tasklist_create, { name: val, type: 'personal' }, function (d) {
+        $.post(url_tasklist_create, { tryfail: tryfail, name: val, type: 'personal' }, function (d) {
+            endRequest();
             debuger.info('new tasklist#' + d);
             $btn.prev().val('');
             $('#tasklistModal').modal('hide');
@@ -102,7 +105,8 @@
     function doRemoveTasklist() {
         if (!confirm(lang.confirm_delete_tasklist)) return;
 
-        $.post(url_tasklist_delete, { id: currentList }, function () {
+        $.post(url_tasklist_delete, { tryfail: tryfail, id: currentList }, function () {
+            endRequest();
             debuger.info('remove tasklist#' + currentList);
             $('#tasklists a[id="' + currentList + '"]').parent().remove();
             list(0);
@@ -123,11 +127,12 @@
             $.ajax({
                 url: b ? url_task_byPriority : url_task_byPriority_incompleted,
                 //任务表标识
-                data: { tasklistId: currentList },
+                data: { tryfail: tryfail, tasklistId: currentList },
                 type: 'POST',
                 dataType: 'json',
                 beforeSend: function () { $el_wrapper_region.empty().append($('#loading').html()); },
                 success: function (data) {
+                    endRequest();
                     init(data.List, data.Sorts);
                     (ui_list_helper = ui_list_helper_priority).render(b);
                     fixAfterSyncOrReload(data.Editable);
@@ -148,11 +153,12 @@
             $.ajax({
                 url: url_task_byDueTime,
                 //任务表标识
-                data: { tasklistId: currentList },
+                data: { tryfail: tryfail, tasklistId: currentList },
                 type: 'POST',
                 dataType: 'json',
                 beforeSend: function () { $el_wrapper_region.empty().append($('#loading').html()); },
                 success: function (data) {
+                    endRequest();
                     init(data.List, data.Sorts);
                     (ui_list_helper = ui_list_helper_due).render();
                     fixAfterSyncOrReload(data.Editable);
@@ -234,6 +240,7 @@
         preSorts = sorts;
         //提交变更记录
         $.post(url_task_sync, {
+            tryfail: tryfail,
             tasklistId: currentList,
             //变更列表
             changes: $.toJSON(changes),
@@ -243,7 +250,7 @@
             sorts: isSortsChange ? sorts : null
         }, function (data) {
             changes = []; //成功提交变更后清空变更记录
-            $('#error_lose_connect').fadeOut(500);
+            endRequest();
             //修正
             var corrects = data; //$.evalJSON(data);
             $.each(corrects, function (i, n) {
@@ -306,14 +313,27 @@
         $('.flag_appendTask').click(appendTask);
         $('.flag_deleteTask').click(deleteTask);
 
+        $('.flag_tryfail').click(function () { tryfail = !tryfail; $(this).html('tryfail=' + tryfail); });
+
         $.ajaxSetup({
             cache: false,
             error: function (x, e) {
                 $('#error_lose_connect').fadeIn(500);
+                //临时处理modal内异常
+                if ($('div.modal:visible').length > 0) {
+                    if (!window.$error)
+                        window.$error = $('<div id="region_error" class="alert alert-error">' + lang.sorry_error_occur_retry_later + '</div>');
+                    //处理弹窗内的error显示
+                    $('div.modal:visible .modal-body').prepend(window.$error);
+                    window.$error.fadeIn(500);
+                }
                 resetTimer();
             }
         });
         list(0);
     });
-
+    function endRequest() {
+        $('#error_lose_connect').fadeOut(500);
+        $('#region_error').hide();
+    }
 })();

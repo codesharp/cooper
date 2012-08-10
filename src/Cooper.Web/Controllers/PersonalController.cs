@@ -44,6 +44,15 @@ namespace Cooper.Web.Controllers
             this._fetchTasklistHelper = fetchTasklistHelper;
         }
 
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            var r = filterContext.RequestContext.HttpContext.Request;
+            if (r.HttpMethod.Equals("post", StringComparison.InvariantCultureIgnoreCase)
+                && Convert.ToBoolean(r["tryfail"]))
+                this.TryFail();
+            base.OnActionExecuting(filterContext);
+        }
+
         public ActionResult Index(string desk)
         {
             //判断是否移动
@@ -232,8 +241,6 @@ namespace Cooper.Web.Controllers
         {
             //模拟同步间隙
             //System.Threading.Thread.Sleep(2000);
-            //模拟连接失败
-            //this.TryFail();
 
             //HACK:Fetch模式不支持同步变更
             Assert.IsFalse(this._fetchTasklistHelper.IsFetchTasklist(tasklistId));
