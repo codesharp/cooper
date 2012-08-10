@@ -30,17 +30,17 @@ var web_getTasksUrl = "../Personal/GetByPriority";
 var web_syncTaskUrl = "../Personal/Sync";
 
 //Native接口地址声明
-var native_loginUrl = "refresh/Login";
-var native_logoutUrl = "refresh/Logout";
-var native_syncTasklistsUrl = "refresh/SyncTasklists";
-var native_getNetworkStatusUrl = "get/GetNetworkStatus";
-var native_getCurrentUserUrl = "get/GetCurrentUser";
-var native_getTasklistsUrl = "get/GetTasklists";
-var native_getTasksByPriorityUrl = "get/GetTasksByPriority";
-var native_createTasklistUrl = "save/CreateTasklist";
-var native_createTaskUrl = "save/CreateTask";
-var native_updateTaskUrl = "save/UpdateTask";
-var native_deleteTaskUrl = "save/DeleteTask";
+var native_loginUrl = "CooperPlugin/refresh";
+var native_logoutUrl = "CooperPlugin/refresh";
+var native_syncTasklistsUrl = "CooperPlugin/refresh";
+var native_getNetworkStatusUrl = "CooperPlugin/get";
+var native_getCurrentUserUrl = "CooperPlugin/get";
+var native_getTasklistsUrl = "CooperPlugin/get";
+var native_getTasksByPriorityUrl = "CooperPlugin/get";
+var native_createTasklistUrl = "CooperPlugin/save";
+var native_createTaskUrl = "CooperPlugin/save";
+var native_updateTaskUrl = "CooperPlugin/save";
+var native_deleteTaskUrl = "CooperPlugin/save";
 
 //新增的本地任务列表的id的前缀
 var newTaskListTempIdPrefix = "temp_";
@@ -235,7 +235,7 @@ function login(userName, password, type, callback) {
         callIfNetworkAvailable(function() {
             callNativeAPI(
                 native_loginUrl,
-                { username: userName, password: password, type: type },
+                { key: 'Login', username: userName, password: password, type: type },
                 function (result) {
                     callback(result);
                 }
@@ -261,7 +261,7 @@ function logout(callback) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
                 native_logoutUrl,
-                { username: currentUser },
+                { key: 'Logout', username: currentUser },
                 function (result) {
                     callback(result);
                 }
@@ -285,7 +285,7 @@ function getNetworkStatus(callback) {
     }
     callNativeAPI(
         native_getNetworkStatusUrl,
-        { },
+        { key: 'GetNetworkStatus' },
         function (result) {
             callback(result);
         }
@@ -299,7 +299,7 @@ function getCurrentUser(callback) {
     if (isMobileDevice()) {
         callNativeAPI(
             native_getCurrentUserUrl,
-            { },
+            { key: 'GetCurrentUser' },
             function (result) {
                 callback(result);
             }
@@ -315,7 +315,7 @@ function getTasklists(callback) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
                 native_getTasklistsUrl,
-                { username: currentUser },
+                { key: 'GetTasklists', username: currentUser },
                 function (result) {
                     var taskLists = [];
                     for (key in result) {
@@ -357,7 +357,7 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
                 native_getTasksByPriorityUrl,
-                { username: currentUser, tasklistId: tasklistId },
+                { key: 'GetTasksByPriority', username: currentUser, tasklistId: tasklistId },
                 function (result) {
                     var tasks = [];
                     var tasksFromNative = result.data.tasks;
@@ -421,21 +421,6 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
             }
         );
     }
-
-    postRequest(
-        loginUrl,
-        { userName: userName, password: password },
-        function (result) {
-            if (callback != null) {
-                if (result == true) {
-                    callback({ 'success': true, 'message': null });
-                }
-                else {
-                    callback({ 'success': false, 'message': lang.loginFailed });
-                }
-            }
-        }
-    );
 }
 //创建一个任务列表
 function createTasklist(id, name, callback) {
@@ -446,7 +431,7 @@ function createTasklist(id, name, callback) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
                 native_createTasklistUrl,
-                { username: currentUser, id: id, name: name, type: 'personal' },
+                { key: 'CreateTasklist', username: currentUser, id: id, name: name, type: 'personal' },
                 function (result) {
                     callback(result);
                 }
@@ -472,7 +457,7 @@ function createTask(tasklistId, task, changes, callback) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
                 native_createTaskUrl,
-                { username: currentUser, tasklistId: tasklistId, task: $.toJSON(task), changes: $.toJSON(changes) },
+                { key: 'CreateTask', username: currentUser, tasklistId: tasklistId, task: $.toJSON(task), changes: $.toJSON(changes) },
                 function (result) {
                     callback(result);
                 }
@@ -498,7 +483,7 @@ function updateTask(tasklistId, task, changes, callback) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
                 native_updateTaskUrl,
-                { username: currentUser, tasklistId: tasklistId, task: $.toJSON(task), changes: $.toJSON(changes) },
+                { key: 'UpdateTask', username: currentUser, tasklistId: tasklistId, task: $.toJSON(task), changes: $.toJSON(changes) },
                 function (result) {
                     callback(result);
                 }
@@ -524,7 +509,7 @@ function deleteTask(tasklistId, taskId, callback) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
                 native_deleteTaskUrl,
-                { username: currentUser, tasklistId: tasklistId, taskId: taskId },
+                { key: 'DeleteTask', username: currentUser, tasklistId: tasklistId, taskId: taskId },
                 function (result) {
                     callback(result);
                 }
@@ -550,7 +535,7 @@ function syncTaskLists(tasklistId, callback) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
                 native_syncTasklistsUrl,
-                { username: currentUser, tasklistid: tasklistId },
+                { key: 'SyncTasklists', username: currentUser, tasklistid: tasklistId },
                 function (result) {
                     callback(result);
                 }

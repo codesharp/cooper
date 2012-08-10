@@ -12,6 +12,7 @@ using Cooper.Model.Accounts;
 using CodeSharp.Core;
 using CodeSharp.Core.Services;
 using CodeSharp.Core.Utils;
+using System.Text.RegularExpressions;
 
 namespace Cooper.Web.Controllers
 {
@@ -175,7 +176,12 @@ namespace Cooper.Web.Controllers
             else
                 throw new CooperknownException(this.Lang().username_or_password_was_wrong);
 
-            return Request.IsAjaxRequest() ? Json(true) : this.Home();
+            Regex isMobileRegex = new Regex(
+                @"(iemobile|iphone|ipod|android|nokia|sonyericsson|blackberry|samsung|sec\-|windows ce|motorola|mot\-|up.b|midp\-)",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+            bool isMobileDevice = !string.IsNullOrEmpty(Request.UserAgent) && isMobileRegex.IsMatch(Request.UserAgent);
+            return Request.IsAjaxRequest() || Request.Browser.IsMobileDevice || isMobileDevice ? Json(true) : this.Home();
         }
         public ActionResult Logout()
         {
