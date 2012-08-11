@@ -285,7 +285,7 @@ function logout(callback) {
             function (result) {
                 callback({ status: true, data: {}, message:'' });
             }
-        );
+        );dele
     }
 }
 //获取当前网络状态
@@ -531,7 +531,7 @@ function deleteTask(tasklistId, taskId, callback) {
     if (isMobileDevice()) {
         callNativeAPI(
             native_saveUrl,
-            { key: 'DeleteTask', username: currentUser, tasklistId: tasklistId, taskId: taskId },
+            { key: 'DeleteTask', tasklistId: tasklistId, taskId: taskId },
             function (result) {
                 callback(result);
             }
