@@ -7,7 +7,6 @@
 //refresh("Login", [{ username: 'xuehua', password: '123456', type:'anonymous|normal' }], function (result) { return new Result(); });
 //refresh("Logout", [{ username: 'xuehua' }], function (result) { return new Result(); });
 //refresh("SyncTaskList", [{ username: 'xuehua', tasklistid: '123456' }], function (result) { return new Result(); });
-//refresh("SyncTasks", [{ username: 'xuehua', tasklistid: '123456' }], function (result) { return new Result(); });
 
 //getData("GetNetworkStatus", [], function (result) { return { true }; });
 //getData("GetCurrentUser", [], function (result) { return new Result(); });
@@ -43,17 +42,9 @@ var web_getTasksUrl = "../Personal/GetByPriority";
 var web_syncTaskUrl = "../Personal/Sync";
 
 //Native接口地址声明
-var native_loginUrl = "CooperPlugin/refresh";
-var native_logoutUrl = "CooperPlugin/refresh";
-var native_syncTasklistsUrl = "CooperPlugin/refresh";
-var native_getNetworkStatusUrl = "CooperPlugin/get";
-var native_getCurrentUserUrl = "CooperPlugin/get";
-var native_getTasklistsUrl = "CooperPlugin/get";
-var native_getTasksByPriorityUrl = "CooperPlugin/get";
-var native_createTasklistUrl = "CooperPlugin/save";
-var native_createTaskUrl = "CooperPlugin/save";
-var native_updateTaskUrl = "CooperPlugin/save";
-var native_deleteTaskUrl = "CooperPlugin/save";
+var native_refreshUrl = "CooperPlugin/refresh";
+var native_getUrl = "CooperPlugin/get";
+var native_saveUrl = "CooperPlugin/save";
 
 //新增的本地任务列表的id的前缀
 var newTaskListTempIdPrefix = "temp_";
@@ -210,9 +201,7 @@ function callIfNetworkAvailable(fn) {
     getNetworkStatus(function (result) {
         if (result.status) {
             if (result.data) {
-                if (fn != null) {
-                    fn();
-                }
+                fn();
             }
             else {
                 alert(lang.networkUnAvailable);
@@ -223,22 +212,6 @@ function callIfNetworkAvailable(fn) {
         }
     });
 }
-//获取当前登录用户后调用指定函数
-function callAfterGetCurrentUser(fn) {
-    if (fn == null) {
-        return;
-    }
-    callIfNetworkAvailable(function() {
-        getCurrentUser(function (result) {
-            if (result.status) {
-                fn(result.data.username);
-            }
-            else {
-                alert(lang.getCurrentUserFailed);
-            }
-        });
-    });
-}
 //用户登录
 function login(userName, password, type, callback) {
     if (callback == null) {
@@ -247,7 +220,7 @@ function login(userName, password, type, callback) {
     if (isMobileDevice()) {
         callIfNetworkAvailable(function() {
             callNativeAPI(
-                native_loginUrl,
+                native_refreshUrl,
                 { key: 'Login', username: userName, password: password, type: type },
                 function (result) {
                     callback(result);
@@ -271,9 +244,9 @@ function logout(callback) {
         return;
     }
     if (isMobileDevice()) {
-        callAfterGetCurrentUser(function (currentUser) {
+        callIfNetworkAvailable(function () {
             callNativeAPI(
-                native_logoutUrl,
+                native_refreshUrl,
                 { key: 'Logout', username: currentUser },
                 function (result) {
                     callback(result);
@@ -297,7 +270,7 @@ function getNetworkStatus(callback) {
         return;
     }
     callNativeAPI(
-        native_getNetworkStatusUrl,
+        native_getUrl,
         { key: 'GetNetworkStatus' },
         function (result) {
             callback(result);
@@ -311,7 +284,7 @@ function getCurrentUser(callback) {
     }
     if (isMobileDevice()) {
         callNativeAPI(
-            native_getCurrentUserUrl,
+            native_getUrl,
             { key: 'GetCurrentUser' },
             function (result) {
                 callback(result);
@@ -325,25 +298,22 @@ function getTasklists(callback) {
         return;
     }
     if (isMobileDevice()) {
-        callAfterGetCurrentUser(function (currentUser) {
-            callNativeAPI(
-                native_getTasklistsUrl,
-                { key: 'GetTasklists', username: currentUser },
-                function (result) {
-                    if(result.status) {
-                        var taskLists = [];
-                        for (key in result.data) {
-                            var taskList = new TaskList();
-                            taskList.id = key;
-                            taskList.name = result.data[key];
-                            taskList.isEditable = true;
-                            taskLists.push(taskList);
-                        }
-                        callback({ status: true, data: { taskLists: taskLists }, message: '' });
+        callNativeAPI(
+            native_getUrl,
+            { key: 'GetTasklists' },
+            function (result) {
+                if(result.status) {
+                    var taskLists = [];
+                    for (key in result.data) {
+                        var taskList = new TaskList();
+                        taskList.id = key;
+                        taskList.name = result.data[key];
+                        taskLists.push(taskList);
                     }
+                    callback({ status: true, data: { taskLists: taskLists }, message: '' });
                 }
-            );
-        });
+            }
+        );
     }
     else {
         callWebAPI(
@@ -369,39 +339,37 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
         return;
     }
     if (isMobileDevice()) {
-        callAfterGetCurrentUser(function (currentUser) {
-            callNativeAPI(
-                native_getTasksByPriorityUrl,
-                { key: 'GetTasksByPriority', username: currentUser, tasklistId: tasklistId },
-                function (result) {
-                    var tasks = [];
-                    var tasksFromNative = result.data.tasks;
-                    for (var index = 0; index < tasksFromNative.length; index++) {
-                        var taskFromNative = tasksFromNative[index];
+        callNativeAPI(
+            native_getUrl,
+            { key: 'GetTasksByPriority', tasklistId: tasklistId },
+            function (result) {
+                var tasks = [];
+                var tasksFromNative = result.data.tasks;
+                for (var index = 0; index < tasksFromNative.length; index++) {
+                    var taskFromNative = tasksFromNative[index];
 
-                        //过滤出不符合是否完成条件的任务
-                        if (isCompleted == "true" || isCompleted == "false") {
-                            if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != isCompleted) {
-                                continue;
-                            }
+                    //过滤出不符合是否完成条件的任务
+                    if (isCompleted == "true" || isCompleted == "false") {
+                        if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != isCompleted) {
+                            continue;
                         }
+                    }
 
-                        var task = new Task();
-                        task.id = taskFromNative["id"];
-                        task.subject = taskFromNative["subject"] == null ? "" : taskFromNative["subject"];
-                        task.body = taskFromNative["body"] == null ? "" : taskFromNative["body"];
-                        task.dueTime = taskFromNative["dueTime"] == null ? "" : taskFromNative["dueTime"];
-                        task.priority = taskFromNative["priority"] == null ? "" : taskFromNative["priority"];
-                        task.isCompleted = taskFromNative["isCompleted"] == null ? "" : taskFromNative["isCompleted"];
-                        task.isEditable = result.data.editable;
-                        tasks.push(task);
-                    }
-                    if (callback != null) {
-                        callback({ status: true, data: { tasks: tasks }, message: '' });
-                    }
+                    var task = new Task();
+                    task.id = taskFromNative["id"];
+                    task.subject = taskFromNative["subject"] == null ? "" : taskFromNative["subject"];
+                    task.body = taskFromNative["body"] == null ? "" : taskFromNative["body"];
+                    task.dueTime = taskFromNative["dueTime"] == null ? "" : taskFromNative["dueTime"];
+                    task.priority = taskFromNative["priority"] == null ? "" : taskFromNative["priority"];
+                    task.isCompleted = taskFromNative["isCompleted"] == null ? "" : taskFromNative["isCompleted"];
+                    task.isEditable = result.data.editable;
+                    tasks.push(task);
                 }
-            );
-        });
+                if (callback != null) {
+                    callback({ status: true, data: { tasks: tasks }, message: '' });
+                }
+            }
+        );
     }
     else {
         callWebAPI(
@@ -443,15 +411,13 @@ function createTasklist(id, name, callback) {
         return;
     }
     if (isMobileDevice()) {
-        callAfterGetCurrentUser(function (currentUser) {
-            callNativeAPI(
-                native_createTasklistUrl,
-                { key: 'CreateTasklist', username: currentUser, id: id, name: name, type: 'personal' },
-                function (result) {
-                    callback(result);
-                }
-            );
-        });
+        callNativeAPI(
+            native_saveUrl,
+            { key: 'CreateTasklist', id: id, name: name, type: 'personal' },
+            function (result) {
+                callback(result);
+            }
+        );
     }
     else {
         callWebAPI(
@@ -469,15 +435,13 @@ function createTask(tasklistId, task, changes, callback) {
         return;
     }
     if (isMobileDevice()) {
-        callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
-                native_createTaskUrl,
-                { key: 'CreateTask', username: currentUser, tasklistId: tasklistId, task: task, changes: changes },
+                native_saveUrl,
+                { key: 'CreateTask', tasklistId: tasklistId, task: task, changes: changes },
                 function (result) {
                     callback(result);
                 }
             );
-        });
     }
     else {
         callWebAPI(
@@ -495,15 +459,13 @@ function updateTask(tasklistId, task, changes, callback) {
         return;
     }
     if (isMobileDevice()) {
-        callAfterGetCurrentUser(function (currentUser) {
-            callNativeAPI(
-                native_updateTaskUrl,
-                { key: 'UpdateTask', username: currentUser, tasklistId: tasklistId, task: task, changes: changes },
-                function (result) {
-                    callback(result);
-                }
-            );
-        });
+        callNativeAPI(
+            native_saveUrl,
+            { key: 'UpdateTask', tasklistId: tasklistId, task: task, changes: changes },
+            function (result) {
+                callback(result);
+            }
+        );
     }
     else {
         callWebAPI(
@@ -521,15 +483,13 @@ function deleteTask(tasklistId, taskId, callback) {
         return;
     }
     if (isMobileDevice()) {
-        callAfterGetCurrentUser(function (currentUser) {
-            callNativeAPI(
-                native_deleteTaskUrl,
-                { key: 'DeleteTask', username: currentUser, tasklistId: tasklistId, taskId: taskId },
-                function (result) {
-                    callback(result);
-                }
-            );
-        });
+        callNativeAPI(
+            native_saveUrl,
+            { key: 'DeleteTask', username: currentUser, tasklistId: tasklistId, taskId: taskId },
+            function (result) {
+                callback(result);
+            }
+        );
     }
     else {
         callWebAPI(
@@ -547,10 +507,10 @@ function syncTaskLists(tasklistId, callback) {
         return;
     }
     if (isMobileDevice()) {
-        callAfterGetCurrentUser(function (currentUser) {
+        callIfNetworkAvailable(function () {
             callNativeAPI(
-                native_syncTasklistsUrl,
-                { key: 'SyncTasklists', username: currentUser, tasklistid: tasklistId },
+                native_refreshUrl,
+                { key: 'SyncTasklists', tasklistid: tasklistId },
                 function (result) {
                     callback(result);
                 }
