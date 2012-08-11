@@ -142,7 +142,16 @@ function getTaskChanges(task) {
         changeLog = new ChangeLog();
         changeLog.ID = task.id;
         changeLog.Name = "isCompleted";
-        changeLog.Value = task.isCompleted;
+		var isCompleted = task.isCompleted;
+		if (isMobileDevice()) {
+			if (isCompleted == "true") {
+				isCompleted = "1";
+			}
+			else if (isCompleted == "false") {
+				isCompleted = "0";	
+			}
+		}
+        changeLog.Value = isCompleted;
         changeLogs.push(changeLog);
     }
 
@@ -169,6 +178,18 @@ function callWebAPI(url, data, callback) {
         }
     });
 }
+function log(data) {
+	var params = [];
+    params.push(data);
+	
+	 Cordova.exec(
+		null,
+		null,
+		'CooperPlugin',
+		'debug',
+		params
+	);
+}
 //与PhoneGap Native API进行交互
 function callNativeAPI(url, data, callback) {
     var items = url.split("/");
@@ -179,9 +200,12 @@ function callNativeAPI(url, data, callback) {
     var params = [];
     params.push(data);
 
+	log({ inputValue: data, returnValue: {}});
+
     //调用Native接口
     Cordova.exec(
             function (result) {
+				log({ inputValue: data, returnValue: result});
                 if (callback != null) {
                     callback(result);
                 }
@@ -247,7 +271,7 @@ function logout(callback) {
         callIfNetworkAvailable(function () {
             callNativeAPI(
                 native_refreshUrl,
-                { key: 'Logout', username: currentUser },
+                { key: 'Logout' },
                 function (result) {
                     callback(result);
                 }
@@ -365,7 +389,14 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
 
                     //过滤出不符合是否完成条件的任务
                     if (isCompleted == "true" || isCompleted == "false") {
-                        if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != isCompleted) {
+						var completed = null;
+						if (isCompleted == "true") {
+							completed = "1";
+						}
+						else if (isCompleted == "false") {
+							completed = "0";
+						}
+                        if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != completed) {
                             continue;
                         }
                     }
@@ -525,7 +556,7 @@ function syncTaskLists(tasklistId, callback) {
         callIfNetworkAvailable(function () {
             callNativeAPI(
                 native_refreshUrl,
-                { key: 'SyncTasklists', tasklistid: tasklistId },
+                { key: 'SyncTasklists', tasklistId: tasklistId },
                 function (result) {
                     callback(result);
                 }

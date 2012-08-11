@@ -27,6 +27,7 @@
     }
     //从当前的本地js内存中缓存的当前任务表的所有任务中查找指定的任务
     function loadTaskFromLocal(taskId) {
+		log({ tasksInCurrentList: tasksInCurrentList });
         for (var index = 0; index < tasksInCurrentList.length; index++) {
             if (tasksInCurrentList[index].id == taskId) {
                 return tasksInCurrentList[index];
@@ -161,7 +162,7 @@
         for (var index = 0; tasks != null && index < tasks.length; index++) {
             var task = tasks[index];
             var img = null;
-            if (task.isCompleted.toString() == "true") {
+            if (task.isCompleted.toString() == "true" || task.isCompleted.toString() == "1") {
                 img = "complete-small.png";
             }
             else {
@@ -247,12 +248,12 @@
                 $("#addFirstTaskButton").show();
             }
         }
-        else if (isCompleted == "true") {
+        else if (isCompleted == "true" || isCompleted == "1") {
             if (items1.length == 0 && items2.length == 0 && items3.length == 0) {
                 $("#displayInfoWhenNoTaskExist").html(lang.noCompletedTaskPromptInfo);
             }
         }
-        else if (isCompleted == "false") {
+        else if (isCompleted == "false" || isCompleted == "0") {
             if (items1.length == 0 && items2.length == 0 && items3.length == 0) {
                 $("#displayInfoWhenNoTaskExist").html(lang.noUnCompletedTaskPromptInfo);
             }
@@ -298,7 +299,8 @@
                     }
 
                     $("#taskDetailPage #taskDueTime").val(task.dueTime);
-                    $("#taskDetailPage #isTaskCompleted").val(task.isCompleted.toString());
+                    $("#taskDetailPage #isTaskCompleted").val((task.isCompleted.toString() == "1" 
+						|| task.isCompleted.toString() == "true").toString());
                     $("#taskDetailPage #isTaskCompleted").slider('refresh');
 
                     $("#taskDetailPage #gotoTaskEditPage").attr("href", "#taskEditPage?listId=" + pageData.listId + "&taskId=" + task.id);
@@ -324,7 +326,8 @@
                     }
 
                     $("#taskEditPage #duetime").val(task.dueTime);
-                    $("#taskEditPage #isCompleted").val(task.isCompleted.toString());
+                    $("#taskEditPage #isCompleted").val((task.isCompleted.toString() == "1" 
+						|| task.isCompleted.toString() == "true").toString());
                     $("#taskEditPage #isCompleted").slider('refresh');
                 }
             });
@@ -348,11 +351,19 @@
                 task.isDirty = true;
             }
             else if (propertyName == "isCompleted") {
+				if (isMobileDevice()) {
+					if (propertyValue == "true") {
+						propertyValue = "1";	
+					}
+					else {
+						propertyValue = "0";	
+					}
+				}
                 task.isCompleted = propertyValue;
                 task.isDirty = true;
             }
-
-            updateTask(pageData.listId, $.toJSON(task), getTaskChanges(task), callback);
+			
+            updateTask(pageData.listId, task, getTaskChanges(task), callback);
         });
     }
 
@@ -483,15 +494,20 @@
     });
     //任务列表页面:“刷新”按钮事件响应
     $(document).delegate("#taskListPage #refreshTaskListsButton", "click", function () {
-        syncTaskLists(function (result) {
-            getTasklists(function (result) {
-                if (result.status) {
-                    showTaskLists(result.data.taskLists);
-                }
-                else {
-                    alert(lang.getTaskListFailed);
-                }
-            });
+        syncTaskLists(null, function (result) {
+			if(result.status) {
+				getTasklists(function (result) {
+					if (result.status) {
+						showTaskLists(result.data.taskLists);
+					}
+					else {
+						alert(lang.getTaskListFailed);
+					}
+				});
+			}
+			else {
+				alert(result.message);
+			}
         });
     });
     //任务编辑页面:“确定”按钮事件响应
@@ -504,9 +520,18 @@
         var subject = $("#taskEditPage #subject").val();
         var body = $("#taskEditPage #body").val();
         var selectedPriority = $("input[name='priority']:checked");
-        var priority = selectedPriority != null ? selectedPriority.val() : 0;
+        var priority = selectedPriority != null ? selectedPriority.val() : "0";
         var dueTime = $("#taskEditPage #duetime").val();
         var isCompleted = $("#taskEditPage #isCompleted").val();
+		
+		if (isMobileDevice()) {
+			if (isCompleted == "true") {
+				isCompleted = "1";	
+			}
+			else if (isCompleted == "false")  {
+				isCompleted = "0";	
+			}
+		}
 
         if (taskId == "") {
             //新增任务
@@ -540,6 +565,14 @@
 
             updateTask(pageData.listId, task, getTaskChanges(task), function (result) {
                 if (result.status) {
+					loadTask(taskId, function (taskInMemory) {
+						taskInMemory.subject = task.subject;
+						taskInMemory.body = task.body;
+						taskInMemory.priority = task.priority;
+						taskInMemory.dueTime = task.dueTime;
+						taskInMemory.isCompleted = task.isCompleted;
+						taskInMemory.isDirty = false;
+					});
                     history.back();
                 }
                 else {
@@ -563,7 +596,7 @@
     $(document).delegate("#taskPage #refreshTasksButton", "click", function () {
         showLoading();
         if (isMobileDevice()) {
-            syncTaskList(pageData.listId, function (result) {
+            syncTaskLists(pageData.listId, function (result) {
                 if (result.status) {
                     getTasksByPriority(pageData.listId, pageData.isCompleted, function (result) {
                         if (result.status) {
@@ -621,7 +654,7 @@
     //是否完成
     $(document).delegate("#taskDetailPage #isTaskCompleted", "change", function () {
         var isCompleted = $(this).val();
-        updateTaskProperty(pageData.taskId, "isCompleted", isCompleted, function (result) {
+		updateTaskProperty(pageData.taskId, "isCompleted", isCompleted, function (result) {
             if (!result.status) {
                 alert(result.message);
             }
