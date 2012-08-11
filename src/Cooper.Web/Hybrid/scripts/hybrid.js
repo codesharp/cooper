@@ -330,7 +330,6 @@ function getTasklists(callback) {
                 native_getTasklistsUrl,
                 { key: 'GetTasklists', username: currentUser },
                 function (result) {
-                    //TODO:xiaoxuan
                     if(result.status) {
                         var taskLists = [];
                         for (key in result.data) {
@@ -473,7 +472,6 @@ function createTask(tasklistId, task, changes, callback) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
                 native_createTaskUrl,
-                //TODO:xiaoxuan
                 { key: 'CreateTask', username: currentUser, tasklistId: tasklistId, task: task, changes: changes },
                 function (result) {
                     callback(result);
@@ -500,7 +498,7 @@ function updateTask(tasklistId, task, changes, callback) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
                 native_updateTaskUrl,
-                { key: 'UpdateTask', username: currentUser, tasklistId: tasklistId, task: $.toJSON(task), changes: $.toJSON(changes) },
+                { key: 'UpdateTask', username: currentUser, tasklistId: tasklistId, task: task, changes: changes },
                 function (result) {
                     callback(result);
                 }

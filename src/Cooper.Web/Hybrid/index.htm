@@ -31,10 +31,21 @@
                 getCurrentUser(function (result) {
                     if (result.status) {
                         if (result.data.username != null && result.data.username != "") {
-							//TODO:xiaoxuan
-							syncTaskLists(null, function (result) {
-								if (result.status) {
-									$.mobile.changePage('#taskListPage');
+							getNetworkStatus(function(result) {
+								if(result.status) {
+									if(result.data) {
+										syncTaskLists(null, function (result) {
+											if (result.status) {
+												$.mobile.changePage('#taskListPage');
+											}
+											else {
+												alert(result.message);
+											}
+										});
+									}
+									else {
+										$.mobile.changePage('#taskListPage');
+									}
 								}
 								else {
 									alert(result.message);
