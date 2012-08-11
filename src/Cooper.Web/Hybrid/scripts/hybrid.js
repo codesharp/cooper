@@ -302,7 +302,7 @@ function getTasklists(callback) {
             native_getUrl,
             { key: 'GetTasklists' },
             function (result) {
-                if(result.status) {
+                if (result.status) {
                     var taskLists = [];
                     for (key in result.data) {
                         var taskList = new TaskList();
@@ -310,6 +310,12 @@ function getTasklists(callback) {
                         taskList.name = result.data[key];
                         taskLists.push(taskList);
                     }
+                    taskLists.sort(function (a, b) {
+                        if (a.id == b.id) {
+                            return 0;
+                        }
+                        return a.id > b.id ? 1 : -1;
+                    });
                     callback({ status: true, data: { taskLists: taskLists }, message: '' });
                 }
             }
@@ -318,16 +324,25 @@ function getTasklists(callback) {
     else {
         callWebAPI(
             web_getTasklistsUrl,
-            { },
+            {},
             function (result) {
                 var taskLists = [];
+                var defaultTaskList = new TaskList();
+                defaultTaskList.id = '0';
+                defaultTaskList.name = '默认列表';
+                taskLists.push(defaultTaskList);
                 for (key in result) {
                     var taskList = new TaskList();
                     taskList.id = key;
                     taskList.name = result[key];
-                    taskList.isEditable = true;
                     taskLists.push(taskList);
                 }
+                taskLists.sort(function (a, b) {
+                    if (a.id == b.id) {
+                        return 0;
+                    }
+                    return a.id > b.id ? 1 : -1;
+                });
                 callback({ status: true, data: { taskLists: taskLists }, message: '' });
             }
         );
