@@ -586,6 +586,7 @@
                             hideLoading();
                         }
                         else {
+							hideLoading();
                             alert(result.message);
                         }
                     });

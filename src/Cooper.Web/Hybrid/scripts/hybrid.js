@@ -233,6 +233,8 @@ function login(userName, password, type, callback) {
         return;
     }
     if (isMobileDevice()) {
+		
+		if(type == "normal") {
         callIfNetworkAvailable(function() {
             callNativeAPI(
                 native_refreshUrl,
@@ -242,6 +244,16 @@ function login(userName, password, type, callback) {
                 }
             );
         });
+		}
+		else if(type == "anonymous") {
+			callNativeAPI(
+                native_refreshUrl,
+                { key: 'Login', username: userName, password: password, type: type },
+                function (result) {
+                    callback(result);
+                }
+            );
+		}
     }
     else {
         callWebAPI(
