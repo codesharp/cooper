@@ -317,15 +317,18 @@ function getTasklists(callback) {
                 native_getTasklistsUrl,
                 { key: 'GetTasklists', username: currentUser },
                 function (result) {
-                    var taskLists = [];
-                    for (key in result) {
-                        var taskList = new TaskList();
-                        taskList.id = key;
-                        taskList.name = result[key];
-                        taskList.isEditable = true;
-                        taskLists.push(taskList);
+                    //TODO:xiaoxuan
+                    if(result.status) {
+                        var taskLists = [];
+                        for (key in result.data) {
+                            var taskList = new TaskList();
+                            taskList.id = key;
+                            taskList.name = result.data[key];
+                            taskList.isEditable = true;
+                            taskLists.push(taskList);
+                        }
+                        callback({ status: true, data: { taskLists: taskLists }, message: '' });
                     }
-                    callback({ status: true, data: { taskLists: taskLists }, message: '' });
                 }
             );
         });
@@ -366,18 +369,18 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
 
                         //过滤出不符合是否完成条件的任务
                         if (isCompleted == "true" || isCompleted == "false") {
-                            if (taskFromServer["isCompleted"] == null || taskFromServer["isCompleted"].toString() != isCompleted) {
+                            if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != isCompleted) {
                                 continue;
                             }
                         }
 
                         var task = new Task();
-                        task.id = taskFromServer["id"];
-                        task.subject = taskFromServer["subject"] == null ? "" : taskFromServer["subject"];
-                        task.body = taskFromServer["body"] == null ? "" : taskFromServer["body"];
-                        task.dueTime = taskFromServer["dueTime"] == null ? "" : taskFromServer["dueTime"];
-                        task.priority = taskFromServer["priority"] == null ? "" : taskFromServer["priority"];
-                        task.isCompleted = taskFromServer["isCompleted"] == null ? "" : taskFromServer["isCompleted"];
+                        task.id = taskFromNative["id"];
+                        task.subject = taskFromNative["subject"] == null ? "" : taskFromNative["subject"];
+                        task.body = taskFromNative["body"] == null ? "" : taskFromNative["body"];
+                        task.dueTime = taskFromNative["dueTime"] == null ? "" : taskFromNative["dueTime"];
+                        task.priority = taskFromNative["priority"] == null ? "" : taskFromNative["priority"];
+                        task.isCompleted = taskFromNative["isCompleted"] == null ? "" : taskFromNative["isCompleted"];
                         task.isEditable = result.data.editable;
                         tasks.push(task);
                     }
@@ -457,7 +460,8 @@ function createTask(tasklistId, task, changes, callback) {
         callAfterGetCurrentUser(function (currentUser) {
             callNativeAPI(
                 native_createTaskUrl,
-                { key: 'CreateTask', username: currentUser, tasklistId: tasklistId, task: $.toJSON(task), changes: $.toJSON(changes) },
+                //TODO:xiaoxuan
+                { key: 'CreateTask', username: currentUser, tasklistId: tasklistId, task: task, changes: changes },
                 function (result) {
                     callback(result);
                 }
