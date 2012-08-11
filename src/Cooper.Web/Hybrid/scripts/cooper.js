@@ -8,40 +8,6 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-//Task的ChangeLog以及Sort信息的格式示例
-//        var changeLogs =
-//                    [
-//                        {"ID":"temp_1","Name":"subject","Value":"new task 001","Type":0},
-//                        {"ID":"temp_1","Name":"body","Value":"task description","Type":0}
-//                    ];
-//        var sorts =
-//                  [
-//                      {"By":"priority","Key":"0","Name":"尽快完成","Indexs":["temp_1","temp_2"]},
-//                      {"By":"priority","Key":"1","Name":"稍后完成","Indexs":["temp_3","temp_4"]},
-//                      {"By":"priority","Key":"2","Name":"迟些再说","Indexs":["temp_5","temp_6"]}
-//                  ];
-
-//Plugin - JS 与 Native 交互接口格式约定
-//function Result {status:true, data: {}|true, message:''}
-
-//refresh("Login", [{ username: 'xuehua', password: '123456', type:'anonymous|normal' }], function (result) { return new Result(); });
-//refresh("Logout", [{ username: 'xuehua' }], function (result) { return new Result(); });
-//refresh("SyncTaskList", [{ username: 'xuehua', tasklistid: '123456' }], function (result) { return new Result(); });
-//refresh("SyncTasks", [{ username: 'xuehua', tasklistid: '123456' }], function (result) { return new Result(); });
-
-//getData("GetNetworkStatus", [], function (result) { return { true }; });
-//getData("GetCurrentUser", [], function (result) { return new Result(); });
-//getData("GetTasklists", [{ username: 'xuehua' }], function (result) { return json; });
-//getData("GetTasksByPriority", [{ username: 'xuehua', tasklistId = 'id' }], function (result) { { Editable:true,tasks:[],sorts:[] });
-
-//saveData("CreateTasklist", [{ username: 'xuehua', id: 'id', name: 'list 1', type: 'personal' }], function (result) { return new Result();  });
-//saveData("CreateTask", [{ username: 'xuehua', tasklistId: 'id', task: {}, changes: $.toJSON(changes) }], function (result) { return new Result(); });
-//saveData("UpdateTask", [{ username: 'xuehua', tasklistId: 'id', task: {}, changes: $.toJSON(changes) }], function (result) { return new Result(); });
-//saveData("DeleteTask", [{ username: 'xuehua', tasklistId: 'id', taskId: ''], function (result) { return new Result(); }); 
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 (function () {
     //内存存储当前账号的所有任务表
     var taskLists = null;
@@ -52,7 +18,7 @@
     function loadTasksInCurrentList(listId, callback) {
         getTasksByPriority(listId, "all", function (result) {
             if (result.status) {
-                tasksInCurrentList = result.tasks;
+                tasksInCurrentList = result.data.tasks;
                 if (callback != null) {
                     callback();
                 }
@@ -304,7 +270,7 @@
         showLoading();
         getTasksByPriority(listId, isCompleted, function (result) {
             if (result.status) {
-                showTasks(listId, result.tasks, isCompleted);
+                showTasks(listId, result.data.tasks, isCompleted);
                 tasksInCurrentList = result.tasks;
                 hideLoading();
             }
@@ -459,14 +425,19 @@
                 alert(result.message);
             }
             else {
-                syncTaskLists(null, function (result) {
-                    if (result.status) {
-                        showPage("taskListPage");
-                    }
-                    else {
-                        alert(result.message);
-                    }
-                });
+                if (isMobileDevice()) {
+                    syncTaskLists(null, function (result) {
+                        if (result.status) {
+                            showPage("taskListPage");
+                        }
+                        else {
+                            alert(result.message);
+                        }
+                    });
+                }
+                else {
+                    showPage("taskListPage");
+                }
             }
         });
     });

@@ -19,6 +19,19 @@
 //saveData("UpdateTask", [{ username: 'xuehua', tasklistId: 'id', task: {}, changes: $.toJSON(changes) }], function (result) { return new Result(); });
 //saveData("DeleteTask", [{ username: 'xuehua', tasklistId: 'id', taskId: ''], function (result) { return new Result(); });
 
+//Task的ChangeLog以及Sort信息的格式示例
+//        var changeLogs =
+//                    [
+//                        {"ID":"temp_1","Name":"subject","Value":"new task 001","Type":0},
+//                        {"ID":"temp_1","Name":"body","Value":"task description","Type":0}
+//                    ];
+//        var sorts =
+//                  [
+//                      {"By":"priority","Key":"0","Name":"尽快完成","Indexs":["temp_1","temp_2"]},
+//                      {"By":"priority","Key":"1","Name":"稍后完成","Indexs":["temp_3","temp_4"]},
+//                      {"By":"priority","Key":"2","Name":"迟些再说","Indexs":["temp_5","temp_6"]}
+//                  ];
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 //Web接口地址声明
@@ -441,7 +454,7 @@ function createTasklist(id, name, callback) {
     else {
         callWebAPI(
             web_createTaskListUrl,
-            { name: taskListName, type: "personal" },
+            { name: name, type: "personal" },
             function (result) {
                 callback({ status: true, data: { }, message: '' });
             }
