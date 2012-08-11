@@ -142,16 +142,7 @@ function getTaskChanges(task) {
         changeLog = new ChangeLog();
         changeLog.ID = task.id;
         changeLog.Name = "isCompleted";
-		var isCompleted = task.isCompleted;
-		if (isMobileDevice()) {
-			if (isCompleted == "true") {
-				isCompleted = "1";
-			}
-			else if (isCompleted == "false") {
-				isCompleted = "0";	
-			}
-		}
-        changeLog.Value = isCompleted;
+        changeLog.Value = task.isCompleted;
         changeLogs.push(changeLog);
     }
 
@@ -389,14 +380,7 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
 
                     //过滤出不符合是否完成条件的任务
                     if (isCompleted == "true" || isCompleted == "false") {
-						var completed = null;
-						if (isCompleted == "true") {
-							completed = "1";
-						}
-						else if (isCompleted == "false") {
-							completed = "0";
-						}
-                        if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != completed) {
+                        if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != isCompleted) {
                             continue;
                         }
                     }

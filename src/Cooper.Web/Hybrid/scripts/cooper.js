@@ -162,7 +162,7 @@
         for (var index = 0; tasks != null && index < tasks.length; index++) {
             var task = tasks[index];
             var img = null;
-            if (task.isCompleted.toString() == "true" || task.isCompleted.toString() == "1") {
+            if (task.isCompleted.toString() == "true") {
                 img = "complete-small.png";
             }
             else {
@@ -248,12 +248,12 @@
                 $("#addFirstTaskButton").show();
             }
         }
-        else if (isCompleted == "true" || isCompleted == "1") {
+        else if (isCompleted == "true") {
             if (items1.length == 0 && items2.length == 0 && items3.length == 0) {
                 $("#displayInfoWhenNoTaskExist").html(lang.noCompletedTaskPromptInfo);
             }
         }
-        else if (isCompleted == "false" || isCompleted == "0") {
+        else if (isCompleted == "false") {
             if (items1.length == 0 && items2.length == 0 && items3.length == 0) {
                 $("#displayInfoWhenNoTaskExist").html(lang.noUnCompletedTaskPromptInfo);
             }
@@ -299,8 +299,7 @@
                     }
 
                     $("#taskDetailPage #taskDueTime").val(task.dueTime);
-                    $("#taskDetailPage #isTaskCompleted").val((task.isCompleted.toString() == "1" 
-						|| task.isCompleted.toString() == "true").toString());
+                    $("#taskDetailPage #isTaskCompleted").val(task.isCompleted);
                     $("#taskDetailPage #isTaskCompleted").slider('refresh');
 
                     $("#taskDetailPage #gotoTaskEditPage").attr("href", "#taskEditPage?listId=" + pageData.listId + "&taskId=" + task.id);
@@ -326,8 +325,7 @@
                     }
 
                     $("#taskEditPage #duetime").val(task.dueTime);
-                    $("#taskEditPage #isCompleted").val((task.isCompleted.toString() == "1" 
-						|| task.isCompleted.toString() == "true").toString());
+                    $("#taskEditPage #isCompleted").val(task.isCompleted);
                     $("#taskEditPage #isCompleted").slider('refresh');
                 }
             });
@@ -351,14 +349,6 @@
                 task.isDirty = true;
             }
             else if (propertyName == "isCompleted") {
-				if (isMobileDevice()) {
-					if (propertyValue == "true") {
-						propertyValue = "1";	
-					}
-					else {
-						propertyValue = "0";	
-					}
-				}
                 task.isCompleted = propertyValue;
                 task.isDirty = true;
             }
@@ -523,15 +513,6 @@
         var priority = selectedPriority != null ? selectedPriority.val() : "0";
         var dueTime = $("#taskEditPage #duetime").val();
         var isCompleted = $("#taskEditPage #isCompleted").val();
-		
-		if (isMobileDevice()) {
-			if (isCompleted == "true") {
-				isCompleted = "1";	
-			}
-			else if (isCompleted == "false")  {
-				isCompleted = "0";	
-			}
-		}
 
         if (taskId == "") {
             //新增任务
