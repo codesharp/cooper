@@ -275,12 +275,19 @@
         </div>
         <div data-role="content">
             <ul data-role="listview" data-inset="true" data-icon="star" data-theme="c">
-                <li><a href="#setCurrentAccountPage" data-rel="dialog" data-transition="slidedown">账号设置</a></li>
+                <li><a href="#setCurrentAccountPage" data-transition="slide">账号设置</a></li>
             </ul>
         </div>
     </div>
     <!-- 更换账号 -->
     <div id="setCurrentAccountPage" data-role="page">
+        <div data-role="header">
+            <div class="ui-btn-left" style="line-height: 50px">
+                <a data-rel="back"><img src="images/back.png" /></a>
+            </div>
+            <h1>
+                cooper:task</h1>
+        </div>
         <div data-role="content">
             <label id="currentUserName"></label>
             <br /><br />

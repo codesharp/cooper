@@ -460,7 +460,7 @@
                 alert(result.message);
             }
             else {
-                showPage("loginPage", null, "slide", "reverse");
+                $('#backToLoginPageButton').click();
             }
         });
     });
