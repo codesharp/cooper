@@ -27,7 +27,6 @@
     }
     //从当前的本地js内存中缓存的当前任务表的所有任务中查找指定的任务
     function loadTaskFromLocal(taskId) {
-        log({ tasksInCurrentList: tasksInCurrentList });
         for (var index = 0; index < tasksInCurrentList.length; index++) {
             if (tasksInCurrentList[index].id == taskId) {
                 return tasksInCurrentList[index];
@@ -297,8 +296,10 @@
                     }
 
                     $("#taskDetailPage #taskDueTime").val(task.dueTime);
-                    $("#taskDetailPage #isTaskCompleted").val(task.isCompleted);
-                    $("#taskDetailPage #isTaskCompleted").slider('refresh');
+                    if (task.isCompleted != null) {
+                        $("#taskDetailPage #isTaskCompleted").val(task.isCompleted.toString());
+                        $("#taskDetailPage #isTaskCompleted").slider('refresh');
+                    }
 
                     $("#taskDetailPage #gotoTaskEditPage").attr("href", "#taskEditPage?listId=" + pageData.listId + "&taskId=" + task.id);
                 }
@@ -323,8 +324,10 @@
                     }
 
                     $("#taskEditPage #duetime").val(task.dueTime);
-                    $("#taskEditPage #isCompleted").val(task.isCompleted);
-                    $("#taskEditPage #isCompleted").slider('refresh');
+                    if (task.isCompleted != null) {
+                        $("#taskEditPage #isCompleted").val(task.isCompleted.toString());
+                        $("#taskEditPage #isCompleted").slider('refresh');
+                    }
                 }
             });
         }

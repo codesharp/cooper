@@ -172,9 +172,11 @@ function callWebAPI(url, data, callback) {
 }
 //向Native记录日志
 function log(data) {
-    var params = [];
-    params.push(data);
-    Cordova.exec(null, null, 'CooperPlugin', 'debug', params);
+    if (isMobileDevice()) {
+        var params = [];
+        params.push(data);
+        Cordova.exec(null, null, 'CooperPlugin', 'debug', params);
+    }
 }
 //与PhoneGap Native API进行交互
 function callNativeAPI(url, data, callback) {
@@ -537,6 +539,11 @@ function deleteTask(tasklistId, taskId, callback) {
         );
     }
     else {
+        var changes = [];
+        var change = new ChangeLog();
+        change.Type = 1;
+        change.ID = taskId;
+        changes.push(change);
         callWebAPI(
             web_syncTaskUrl,
             { tasklistId: tasklistId, tasklistChanges: null, changes: $.toJSON(changes), by: "ByPriority", sorts: null },
