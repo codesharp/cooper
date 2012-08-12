@@ -27,7 +27,7 @@
     }
     //从当前的本地js内存中缓存的当前任务表的所有任务中查找指定的任务
     function loadTaskFromLocal(taskId) {
-		log({ tasksInCurrentList: tasksInCurrentList });
+        log({ tasksInCurrentList: tasksInCurrentList });
         for (var index = 0; index < tasksInCurrentList.length; index++) {
             if (tasksInCurrentList[index].id == taskId) {
                 return tasksInCurrentList[index];
@@ -261,13 +261,11 @@
     }
     //加载并显示指定任务列表中的符合条件的所有任务
     function loadAndShowTasks(listId, isCompleted) {
-
         $("#taskPage #addNewTaskButton").attr("href", "#taskEditPage?listId=" + listId + "&isCompleted=" + isCompleted);
         $("#taskPage #addFirstTaskButton").attr("href", "#taskEditPage?listId=" + listId + "&isCompleted=" + isCompleted);
         $("#taskPage #showAllTasksButton").attr("href", "#taskPage?listId=" + listId + "&isCompleted=all");
         $("#taskPage #showCompletedTasksButton").attr("href", "#taskPage?listId=" + listId + "&isCompleted=true");
         $("#taskPage #showUnCompletedTasksButton").attr("href", "#taskPage?listId=" + listId + "&isCompleted=false");
-
         showLoading();
         getTasksByPriority(listId, isCompleted, function (result) {
             if (result.status) {
@@ -352,7 +350,7 @@
                 task.isCompleted = propertyValue;
                 task.isDirty = true;
             }
-			
+
             updateTask(pageData.listId, task, getTaskChanges(task), callback);
         });
     }
@@ -444,14 +442,16 @@
     });
     //登录页面:“跳过”按钮事件响应
     $(document).delegate("#loginPage #skipLoginButton", "click", function () {
-        login("", "", "anonymous", function (result) {
-            if (!result.status) {
-                alert(result.message);
-            }
-            else {
-                showPage("taskListPage");
-            }
-        });
+        if (isMobileDevice()) {
+            login("", "", "anonymous", function (result) {
+                if (!result.status) {
+                    alert(result.message);
+                }
+                else {
+                    showPage("taskListPage");
+                }
+            });
+        }
     });
     //Setting中的更换账号页面:“注销”按钮事件响应
     $(document).delegate("#setCurrentAccountPage #logoutButton", "click", function () {
@@ -460,7 +460,7 @@
                 alert(result.message);
             }
             else {
-                showPage("loginPage");
+                showPage("loginPage", null, "slide", "reverse");
             }
         });
     });
@@ -484,21 +484,31 @@
     });
     //任务列表页面:“刷新”按钮事件响应
     $(document).delegate("#taskListPage #refreshTaskListsButton", "click", function () {
-        syncTaskLists(null, function (result) {
-			if(result.status) {
-				getTasklists(function (result) {
-					if (result.status) {
-						showTaskLists(result.data.taskLists);
-					}
-					else {
-						alert(lang.getTaskListFailed);
-					}
-				});
-			}
-			else {
-				alert(result.message);
-			}
-        });
+        if (isMobileDevice()) {
+            showLoading();
+            syncTaskLists(null, function (result) {
+                if (result.status) {
+                    getTasklists(function (result) {
+                        if (result.status) {
+                            showTaskLists(result.data.taskLists);
+                            taskLists = result.data.taskLists;
+                            hideLoading();
+                        }
+                        else {
+                            hideLoading();
+                            alert(result.message);
+                        }
+                    });
+                }
+                else {
+                    hideLoading();
+                    alert(result.message);
+                }
+            });
+        }
+        else {
+            loadAndShowTaskLists();
+        }
     });
     //任务编辑页面:“确定”按钮事件响应
     $(document).delegate("#taskEditPage #saveTaskButton", "click", function () {
@@ -546,14 +556,14 @@
 
             updateTask(pageData.listId, task, getTaskChanges(task), function (result) {
                 if (result.status) {
-					loadTask(taskId, function (taskInMemory) {
-						taskInMemory.subject = task.subject;
-						taskInMemory.body = task.body;
-						taskInMemory.priority = task.priority;
-						taskInMemory.dueTime = task.dueTime;
-						taskInMemory.isCompleted = task.isCompleted;
-						taskInMemory.isDirty = false;
-					});
+                    loadTask(taskId, function (taskInMemory) {
+                        taskInMemory.subject = task.subject;
+                        taskInMemory.body = task.body;
+                        taskInMemory.priority = task.priority;
+                        taskInMemory.dueTime = task.dueTime;
+                        taskInMemory.isCompleted = task.isCompleted;
+                        taskInMemory.isDirty = false;
+                    });
                     history.back();
                 }
                 else {
@@ -575,8 +585,8 @@
     });
     //任务页面:“刷新”按钮事件响应
     $(document).delegate("#taskPage #refreshTasksButton", "click", function () {
-        showLoading();
         if (isMobileDevice()) {
+            showLoading();
             syncTaskLists(pageData.listId, function (result) {
                 if (result.status) {
                     getTasksByPriority(pageData.listId, pageData.isCompleted, function (result) {
@@ -586,7 +596,7 @@
                             hideLoading();
                         }
                         else {
-							hideLoading();
+                            hideLoading();
                             alert(result.message);
                         }
                     });
@@ -636,7 +646,7 @@
     //是否完成
     $(document).delegate("#taskDetailPage #isTaskCompleted", "change", function () {
         var isCompleted = $(this).val();
-		updateTaskProperty(pageData.taskId, "isCompleted", isCompleted, function (result) {
+        updateTaskProperty(pageData.taskId, "isCompleted", isCompleted, function (result) {
             if (!result.status) {
                 alert(result.message);
             }
@@ -651,15 +661,19 @@
             }
         });
     });
-    //错误对话框关闭时退回到之前的页面
-    $(document).delegate("#errorDialog #closeButton", "click", function () {
-        history.back();
-    });
 
     //----------------------------------------------------------------
     //Jquery Mobile Event Binding
     //----------------------------------------------------------------
 
+    $(document).delegate("#loginPage", "pagebeforeshow", function (e, data) {
+        if (isMobileDevice()) {
+            $('#skipLoginButton').show();
+        }
+        else {
+            $('#skipLoginButton').hide();
+        }
+    });
     $(document).delegate("#taskListPage", "pagebeforeshow", function (e, data) {
         loadAndShowTaskLists();
     });
@@ -692,10 +706,14 @@
         getCurrentUser(function (result) {
             if (result.status) {
                 if (result.data.username != null && result.data.username != "") {
-                    $('#currentUserName').html(result.data.username);
+                    $('#currentUserName').html(lang.currentLoginUsernameLabel + result.data.username);
+                    $('#logoutButton').show();
+                    $('#backToLoginPageButton').hide();
                 }
                 else {
-                    $('#currentUserName').html('');
+                    $('#currentUserName').html(lang.currentAnonymousUsernameLabel);
+                    $('#logoutButton').hide();
+                    $('#backToLoginPageButton').show();
                 }
             }
         });

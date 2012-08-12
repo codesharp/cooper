@@ -188,6 +188,19 @@ namespace Cooper.Web.Controllers
             FormsAuthentication.SignOut();
             return RedirectToAction("Login");
         }
+        public ActionResult LogoutOnly()
+        {
+            FormsAuthentication.SignOut();
+            return Json(true);
+        }
+        public ActionResult GetCurrentAccountName()
+        {
+            if (_context.Current != null)
+            {
+                return Json(_context.Current.Name);
+            }
+            return Json(string.Empty);
+        }
         #endregion
 
         //TODO:重构以下各类型连接登录和连接

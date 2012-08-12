@@ -35,7 +35,8 @@
 
 //Web接口地址声明
 var web_loginUrl = "../Account/Login";
-var web_logoutUrl = "../Account/Logout";
+var web_logoutUrl = "../Account/LogoutOnly";
+var web_getCurrentAccountNameUrl = "../Account/GetCurrentAccountName";
 var web_getTasklistsUrl = "../Personal/GetTasklists";
 var web_createTaskListUrl = "../Personal/CreateTasklist";
 var web_getTasksUrl = "../Personal/GetByPriority";
@@ -169,17 +170,11 @@ function callWebAPI(url, data, callback) {
         }
     });
 }
+//向Native记录日志
 function log(data) {
-	var params = [];
+    var params = [];
     params.push(data);
-	
-	 Cordova.exec(
-		null,
-		null,
-		'CooperPlugin',
-		'debug',
-		params
-	);
+    Cordova.exec(null, null, 'CooperPlugin', 'debug', params);
 }
 //与PhoneGap Native API进行交互
 function callNativeAPI(url, data, callback) {
@@ -191,12 +186,12 @@ function callNativeAPI(url, data, callback) {
     var params = [];
     params.push(data);
 
-	log({ inputValue: data, returnValue: {}});
+    log({ step: '调用Native接口前的参数信息', parameters: data });
 
     //调用Native接口
     Cordova.exec(
             function (result) {
-				log({ inputValue: data, returnValue: result});
+                log({ step: '调用Native接口的返回值信息', returnValue: result });
                 if (callback != null) {
                     callback(result);
                 }
@@ -233,9 +228,18 @@ function login(userName, password, type, callback) {
         return;
     }
     if (isMobileDevice()) {
-		
-		if(type == "normal") {
-        callIfNetworkAvailable(function() {
+        if(type == "normal") {
+            callIfNetworkAvailable(function() {
+                callNativeAPI(
+                    native_refreshUrl,
+                    { key: 'Login', username: userName, password: password, type: type },
+                    function (result) {
+                        callback(result);
+                    }
+                );
+            });
+        }
+        else if(type == "anonymous") {
             callNativeAPI(
                 native_refreshUrl,
                 { key: 'Login', username: userName, password: password, type: type },
@@ -243,17 +247,7 @@ function login(userName, password, type, callback) {
                     callback(result);
                 }
             );
-        });
-		}
-		else if(type == "anonymous") {
-			callNativeAPI(
-                native_refreshUrl,
-                { key: 'Login', username: userName, password: password, type: type },
-                function (result) {
-                    callback(result);
-                }
-            );
-		}
+        }
     }
     else {
         callWebAPI(
@@ -284,11 +278,11 @@ function logout(callback) {
     else {
         callWebAPI(
             web_logoutUrl,
-            { },
+            {},
             function (result) {
-                callback({ status: true, data: {}, message:'' });
+                callback({ status: result, data: {}, message: '' });
             }
-        );dele
+        );
     }
 }
 //获取当前网络状态
@@ -315,6 +309,15 @@ function getCurrentUser(callback) {
             { key: 'GetCurrentUser' },
             function (result) {
                 callback(result);
+            }
+        );
+    }
+    else {
+        callWebAPI(
+            web_getCurrentAccountNameUrl,
+            {},
+            function (result) {
+                callback({ status: true, data: { username: result }, message: '' });
             }
         );
     }

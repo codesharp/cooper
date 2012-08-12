@@ -31,31 +31,31 @@
                 getCurrentUser(function (result) {
                     if (result.status) {
                         if (result.data.username != null && result.data.username != "") {
-							getNetworkStatus(function(result) {
-								if(result.status) {
-									if(result.data) {
-										syncTaskLists(null, function (result) {
-											if (result.status) {
-												$.mobile.changePage('#taskListPage');
-											}
-											else {
-												alert(result.message);
-											}
-										});
-									}
-									else {
-										$.mobile.changePage('#taskListPage');
-									}
-								}
-								else {
-									alert(result.message);
-								}
-							});
+                            getNetworkStatus(function(result) {
+                                if(result.status) {
+                                    if(result.data) {
+                                        syncTaskLists(null, function (result) {
+                                            if (result.status) {
+                                                $.mobile.changePage('#taskListPage');
+                                            }
+                                            else {
+                                                alert(result.message);
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        $.mobile.changePage('#taskListPage');
+                                    }
+                                }
+                                else {
+                                    alert(result.message);
+                                }
+                            });
                         }
                     }
-					else {
-						alert(result.message);
-					}
+                    else {
+                        alert(result.message);
+                    }
                 });
             });
         });
@@ -93,7 +93,7 @@
                 <div class="ui-block-b" style="text-align: right">
                     <button type="button" id="loginButton" data-inline="true" data-theme="a">
                         登录</button>
-                    <button type="button" id="skipLoginButton" data-inline="true">跳过</button>
+                    <a id="skipLoginButton" data-role="button" data-inline="true">跳过</a>
                 </div>
             </div>
             </form>
@@ -282,10 +282,11 @@
     <!-- 更换账号 -->
     <div id="setCurrentAccountPage" data-role="page">
         <div data-role="content">
-            <label>当前用户：</label>
-            <span id="currentUserName"></span>
+            <label id="currentUserName"></label>
             <br /><br />
             <a id="logoutButton" data-role="button" data-inline="true" data-theme="a">注销</a>
+            <a id="backToLoginPageButton" href="#loginPage" data-transition="slide" data-direction="reverse" data-role="button" data-inline="true" data-theme="a">去登录页面登录</a>
+            <a data-rel="back" data-role="button" data-inline="true">取消</a>
         </div>
     </div>
 </body>
