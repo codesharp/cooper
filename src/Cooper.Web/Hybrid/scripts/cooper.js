@@ -323,6 +323,7 @@
                         $("input[name='taskPriority']").checkboxradio('enable');
                         $("#taskDetailPage #gotoTaskEditPage").attr("href", "#taskEditPage?listId=" + pageData.listId + "&taskId=" + task.id);
                         $("#taskDetailPage #gotoTaskEditPage").show();
+                        $("#taskDetailPage #deleteTaskButton").show();
                     }
                     else {
                         $("#taskDetailPage #taskDueTime").attr('disabled', true);
@@ -330,6 +331,7 @@
                         $("input[name='taskPriority']").checkboxradio('disable');
                         $("#taskDetailPage #gotoTaskEditPage").attr("href", "#");
                         $("#taskDetailPage #gotoTaskEditPage").hide();
+                        $("#taskDetailPage #deleteTaskButton").hide();
                     }
 
                     $("input[name='taskPriority']").checkboxradio("refresh");
