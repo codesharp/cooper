@@ -763,8 +763,14 @@
             if (result.status) {
                 if (result.data.username != null && result.data.username != "") {
                     $('#currentUserName').html(lang.currentLoginUsernameLabel + result.data.username);
-                    $('#logoutButton').show();
-                    $('#backToLoginPageButton').hide();
+                    if (isMobileDevice()) {
+                        $('#logoutButton').show();
+                        $('#backToLoginPageButton').hide();
+                    }
+                    else {
+                        $('#logoutButton').hide();
+                        $('#backToLoginPageButton').show();
+                    }
                 }
                 else {
                     $('#currentUserName').html(lang.currentAnonymousUsernameLabel);

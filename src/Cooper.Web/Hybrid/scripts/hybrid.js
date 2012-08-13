@@ -42,7 +42,6 @@
 
 //Web接口地址声明
 var web_loginUrl = "../Account/Login";
-var web_logoutUrl = "../Account/LogoutOnly";
 var web_getTasklistsUrl = "../Personal/GetTasklists";
 var web_createTaskListUrl = "../Personal/CreateTasklist";
 var web_getTasksUrl = "../Personal/GetByPriority";
@@ -282,15 +281,6 @@ function logout(callback) {
                 }
             );
         });
-    }
-    else {
-        callWebAPI(
-            web_logoutUrl,
-            {},
-            function (result) {
-                callback({ status: result, data: {}, message: '' });
-            }
-        );
     }
 }
 //获取当前网络状态
