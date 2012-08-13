@@ -780,26 +780,43 @@
     $(document).delegate("#taskEditPage", "pageshow", function (e, data) {
         showTaskOnEditPage(pageData.taskId);
     });
+    $(document).delegate("#settingPage", "pagebeforeshow", function (e, data) {
+        var ul = $('#settingPage #settingListItems');
+        $("#settingPage #settingListItems > li").remove();
+        var liArray = [];
+
+        if (isMobileDevice()) {
+            liArray.push('<li><a href="#setCurrentAccountPage" data-transition="slide">账号设置</a></li>');
+            liArray.push('<li><a href="#aboutPage" data-transition="slide">版本信息</a></li>');
+        }
+        else {
+            liArray.push('<li><a href="#aboutPage" data-transition="slide">版本信息</a></li>');
+        }
+
+        ul.append(liArray.join(''));
+        ul.listview('refresh');
+    });
     $(document).delegate("#setCurrentAccountPage", "pagebeforeshow", function (e, data) {
-        getCurrentUser(function (result) {
-            if (result.status) {
-                if (result.data.username != null && result.data.username != "") {
-                    $('#currentUserName').html(lang.currentLoginUsernameLabel + result.data.username);
-                    if (isMobileDevice()) {
+        if (isMobileDevice()) {
+            getCurrentUser(function (result) {
+                if (result.status) {
+                    if (result.data.username != null && result.data.username != "") {
+                        $('#currentUserName').html(lang.currentLoginUsernameLabel + result.data.username);
                         $('#logoutButton').show();
                         $('#backToLoginPageButton').hide();
                     }
                     else {
+                        $('#currentUserName').html(lang.currentAnonymousUsernameLabel);
                         $('#logoutButton').hide();
                         $('#backToLoginPageButton').show();
                     }
                 }
-                else {
-                    $('#currentUserName').html(lang.currentAnonymousUsernameLabel);
-                    $('#logoutButton').hide();
-                    $('#backToLoginPageButton').show();
-                }
-            }
-        });
+            });
+        }
+        else {
+            $('#currentUserName').html('');
+            $('#logoutButton').hide();
+            $('#backToLoginPageButton').hide();
+        }
     });
 })();
