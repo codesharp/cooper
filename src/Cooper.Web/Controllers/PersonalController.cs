@@ -13,7 +13,7 @@ using CodeSharp.Core;
 
 namespace Cooper.Web.Controllers
 {
-    //个人任务 目前只编写该模式
+    //个人任务
     public class PersonalController : BaseController
     {
         private static readonly Sort[] _empty = new Sort[0];

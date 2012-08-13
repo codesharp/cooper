@@ -1,6 +1,6 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
-using Cooper.Model.AddressBooks;
+using Cooper.Model.Contacts;
 using FluentNHibernate.Mapping;
 
 namespace Cooper.Model.Mappings

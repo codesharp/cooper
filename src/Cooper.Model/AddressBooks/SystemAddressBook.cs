@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Cooper.Model.AddressBooks
+namespace Cooper.Model.Contacts
 {
     /// <summary>系统通讯簿模型
     /// <remarks>

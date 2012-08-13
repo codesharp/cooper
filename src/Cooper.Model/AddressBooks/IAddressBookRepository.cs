@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using CodeSharp.Core.RepositoryFramework;
 using Cooper.Model.Accounts;
 
-namespace Cooper.Model.AddressBooks
+namespace Cooper.Model.Contacts
 {
     /// <summary>
     /// 通讯簿仓储

@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cooper.Model.AddressBooks;
+using Cooper.Model.Contacts;
 using NUnit.Framework;
 
 namespace Cooper.Model.Test

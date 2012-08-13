@@ -5,8 +5,8 @@ using Castle.Services.Transaction;
 using CodeSharp.Core;
 using CodeSharp.Core.RepositoryFramework;
 using CodeSharp.Core.Services;
-using Cooper.Model.AddressBooks;
-using Cooper.Model.ContactGroups;
+using Cooper.Model.Contacts;
+using Cooper.Model.Contacts;
 
 namespace Cooper.Model.Contacts
 {

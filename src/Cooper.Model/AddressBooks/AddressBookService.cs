@@ -7,7 +7,7 @@ using CodeSharp.Core.RepositoryFramework;
 using CodeSharp.Core.Services;
 using Cooper.Model.Accounts;
 
-namespace Cooper.Model.AddressBooks
+namespace Cooper.Model.Contacts
 {
     /// <summary>通讯簿领域服务定义
     /// </summary>

@@ -2,9 +2,9 @@
 
 using System.Collections.Generic;
 using CodeSharp.Core.RepositoryFramework;
-using Cooper.Model.AddressBooks;
+using Cooper.Model.Contacts;
 
-namespace Cooper.Model.ContactGroups
+namespace Cooper.Model.Contacts
 {
     /// <summary>
     /// 联系人组仓储
