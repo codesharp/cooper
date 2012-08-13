@@ -94,7 +94,7 @@ namespace Cooper.Web
             //注册web上下文
             windsor.RegisterComponent(typeof(Cooper.Web.Controllers.WebContextService));
             //注册Fetch扩展
-            windsor.RegisterComponent(typeof(Cooper.Web.Controllers.FetchTasklistHelper));
+            windsor.RegisterComponent(typeof(Cooper.Web.Controllers.FetchTaskHelper));
         }
         private void ParpareExtend(WindsorResolver r)
         {

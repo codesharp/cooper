@@ -10,16 +10,16 @@ using Cooper.Model.Tasks;
 
 namespace Cooper.Repositories
 {
-    public class TasklistRepository : CodeSharp.Core.Castles.NHibernateRepositoryBase<int, Tasklist>, ITasklistRepository
+    public class TaskFolderRepository : CodeSharp.Core.Castles.NHibernateRepositoryBase<int, TaskFolder>, ITaskFolderRepository
     {
-        #region ITasklistRepository Members
+        #region ITaskFolderRepository Members
 
-        public IEnumerable<PersonalTasklist> FindBy(Account account)
+        public IEnumerable<PersonalTaskFolder> FindBy(Account account)
         {
             return this.GetSession()
-                .CreateCriteria<PersonalTasklist>()
+                .CreateCriteria<PersonalTaskFolder>()
                 .Add(Expression.Eq("OwnerAccountId", account.ID))
-                .List<PersonalTasklist>();
+                .List<PersonalTaskFolder>();
         }
 
         #endregion

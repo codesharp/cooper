@@ -50,9 +50,9 @@ namespace Cooper.Model.Tasks
         /// </summary>
         public virtual int? AssignedContacterId { get; private set; }
 
-        /// <summary>获取任务所在的任务表标识
+        /// <summary>获取任务所在的任务目录标识
         /// </summary>
-        public int? TasklistId { get; private set; }
+        public int? TaskFolderId { get; private set; }
 
         protected Task() { this.CreateTime = this.LastUpdateTime = DateTime.Now; }
         public Task(Account creator)
@@ -128,17 +128,17 @@ namespace Cooper.Model.Tasks
         {
             this.LastUpdateTime = lastUpdateTime;
         }
-        /// <summary>设置任务所在的任务表
+        /// <summary>设置任务所在的任务目录
         /// </summary>
-        /// <param name="tasklist"></param>
-        public void SetTasklist(Tasklist tasklist)
+        /// <param name="folder"></param>
+        public void SetTaskFolder(TaskFolder folder)
         {
-            Assert.IsValid(tasklist);
-            if (this.TasklistId == tasklist.ID) return;
-            //个人任务表与任务的关系严格对应
-            if (tasklist is PersonalTasklist)
-                Assert.AreEqual(this.CreatorAccountId, (tasklist as PersonalTasklist).OwnerAccountId);
-            this.TasklistId = tasklist.ID;
+            Assert.IsValid(folder);
+            if (this.TaskFolderId == folder.ID) 
+                return;
+            if (folder is PersonalTaskFolder)
+                Assert.AreEqual(this.CreatorAccountId, (folder as PersonalTaskFolder).OwnerAccountId);
+            this.TaskFolderId = folder.ID;
             this.MakeChange();
         }
 

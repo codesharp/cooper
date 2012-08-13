@@ -28,7 +28,7 @@ namespace Cooper.Model.Test
         protected IAccountService _accountService;
         protected IAccountConnectionService _accountConnectionService;
         protected IAccountHelper _accountHelper;
-        protected ITasklistService _tasklistService;
+        protected ITaskFolderService _taskFolderService;
         protected IAddressBookService _addressBookService;
         protected IContactGroupService _contactGroupService;
         protected IContactService _contactService;
@@ -64,7 +64,7 @@ namespace Cooper.Model.Test
             this._accountService = DependencyResolver.Resolve<IAccountService>();
             this._accountConnectionService = DependencyResolver.Resolve<IAccountConnectionService>();
             this._taskService = DependencyResolver.Resolve<ITaskService>();
-            this._tasklistService = DependencyResolver.Resolve<ITasklistService>();
+            this._taskFolderService = DependencyResolver.Resolve<ITaskFolderService>();
             this._addressBookService = DependencyResolver.Resolve<IAddressBookService>();
             this._contactGroupService = DependencyResolver.Resolve<IContactGroupService>();
             this._contactService = DependencyResolver.Resolve<IContactService>();
@@ -113,11 +113,11 @@ namespace Cooper.Model.Test
             this._accountService.Create(a);
             return a;
         }
-        protected PersonalTasklist CreatePersonalTasklist(Account a)
+        protected PersonalTaskFolder CreatePersonalTaskFolder(Account a)
         {
-            var list = new PersonalTasklist(this.RandomString(), a);
-            this._tasklistService.Create(list);
-            return list;
+            var folder = new PersonalTaskFolder(this.RandomString(), a);
+            this._taskFolderService.Create(folder);
+            return folder;
         }
         protected DateTime FormatTime(DateTime time)
         {

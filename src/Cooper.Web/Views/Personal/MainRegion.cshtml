@@ -1,7 +1,7 @@
 ﻿@{
     var mini = Convert.ToBoolean(Model);
-    var tasklists = ViewBag.Tasklists as IEnumerable<Cooper.Model.Tasks.PersonalTasklist>;
-    var fetchs = ViewBag.FetchTasklists as IDictionary<string, string>;
+    var folders = ViewBag.TaskFolders as IEnumerable<Cooper.Model.Tasks.PersonalTaskFolder>;
+    var fetchs = ViewBag.FetchTaskFolders as IDictionary<string, string>;
 }
 <!--撤销删除区域-->
 <div id="cancel_delete" class="alert alert-danger">
@@ -12,22 +12,22 @@
 </div>
 <div style="padding: 10px 5px 0;">
     <ul class="nav nav-tabs">
-        <li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown" title="@this.Lang().tasklist">
-            <span id="tasklist_title"></span><b class="caret"></b></a>
-            <ul id="tasklists" class="dropdown-menu flag_tasklists">
-                <li><a class="flag_openTasklists"><i class="icon-edit"></i><span>@this.Lang().new_tasklist</span>
+        <li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown" title="@this.Lang().taskFolder">
+            <span id="taskFolder_title"></span><b class="caret"></b></a>
+            <ul id="taskFolder" class="dropdown-menu flag_taskFolder">
+                <li><a class="flag_openTaskFolder"><i class="icon-edit"></i><span>@this.Lang().new_taskFolder</span>
                     <span class="label label-important">New</span></a></li>
                 <!--default id=0-->
-                <li><a class="changelist" id="0"><i class="icon-inbox"></i><span>@this.Lang().personal_task_management</span></a></li>
-                <!--fetch tasklists-->
+                <li><a class="flag_changeFolder" id="0"><i class="icon-inbox"></i><span>@this.Lang().personal_task_management</span></a></li>
+                <!--fetchtask-->
                 @foreach (var f in fetchs)
                 {
-                    <li><a class="changelist" id="@f.Key"><i class="icon-list-alt"></i><span>@f.Value</span></a></li>
+                    <li><a class="flag_changeFolder" id="@f.Key"><i class="icon-list-alt"></i><span>@f.Value</span></a></li>
                 }
-                <!--personal tasklists-->
-                @foreach (var l in tasklists)
+                <!--personal-->
+                @foreach (var l in folders)
                 {
-                    <li><a class="changelist" id="@l.ID"><i class="icon-list"></i><span>@l.Name</span> </a>
+                    <li><a class="flag_changeFolder" id="@l.ID"><i class="icon-list"></i><span>@l.Name</span> </a>
                     </li>
                 }
             </ul>
@@ -35,7 +35,7 @@
         <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">@this.Lang().more
             <span class="label label-warning">New!</span> <b class="caret"></b></a>
             <ul class="dropdown-menu">
-                <li class="flag_removeTasklist"><a><i class="icon-trash"></i>@this.Lang().delete_tasklist</a></li>
+                <li class="flag_removeTaskFolder"><a><i class="icon-trash"></i>@this.Lang().delete_taskFolder</a></li>
                 @*<li><a onclick="syncAccount()"><i class="icon-refresh"></i>@this.Lang().sync_to</a></li>*@
                 <li><a href="@Url.Action("", "Account", null)"><i class="icon-user"></i>@this.Lang().my_profile</a>
                 </li>

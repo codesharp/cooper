@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountConnections\AccountConnectionService.cs" />
+    <Compile Include="AccountConnections\Connections\WeiboConnection.cs" />
     <Compile Include="AccountConnections\Connections\GitHubConnection.cs" />
     <Compile Include="AccountConnections\IAccountConnectionRepository.cs" />
     <Compile Include="AccountHelper.cs" />
@@ -67,10 +68,10 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Lock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tasklists\ITasklistRepository.cs" />
-    <Compile Include="Tasklists\PersonalTasklist.cs" />
-    <Compile Include="Tasklists\Tasklist.cs" />
-    <Compile Include="Tasklists\TasklistService.cs" />
+    <Compile Include="TaskFolders\ITaskFolderRepository.cs" />
+    <Compile Include="TaskFolders\PersonalTasklist.cs" />
+    <Compile Include="TaskFolders\TaskFolder.cs" />
+    <Compile Include="TaskFolders\TaskFolderService.cs" />
     <Compile Include="Tasks\Extensions.cs" />
     <Compile Include="Tasks\ITaskRepository.cs" />
     <Compile Include="AccountConnections\AccountConnection.cs" />

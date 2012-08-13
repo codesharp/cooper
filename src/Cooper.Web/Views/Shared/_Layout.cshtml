@@ -1,6 +1,6 @@
 ﻿@{
     var cs = ViewBag.Connections as IEnumerable<Cooper.Model.Accounts.AccountConnection>;
-    var tasklists = ViewBag.Tasklists as IEnumerable<Cooper.Model.Tasks.PersonalTasklist>;
+    var folders = ViewBag.TaskFolders as IEnumerable<Cooper.Model.Tasks.PersonalTaskFolder>;
 }
 <!DOCTYPE html>
 <html>
@@ -76,8 +76,8 @@
                 </table>
             </div>
         </div>
-        <ul id="tmp_tasklist_item">
-            <li><a class="changelist" id="{id}"><i class="icon-list"></i><span>{name}</span></a></li>
+        <ul id="tmp_taskFolder_item">
+            <li><a class="flag_changeFolder" id="{id}"><i class="icon-list"></i><span>{name}</span></a></li>
         </ul>
     </div>
     <!--sync box hide-->
@@ -114,28 +114,28 @@
         <div class="modal-footer">
         </div>
     </div>
-    <!--tasklist box-->
-    <div class="modal hide" id="tasklistModal">
+    <!--task folder box-->
+    <div class="modal hide" id="taskFolderModal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">
                 ×</button>
             <h3>
-                @this.Lang().tasklist</h3>
+                @this.Lang().taskFolder</h3>
         </div>
         <div class="modal-body">
             <form class="well form-search well">
             <div class="control-group">
-                <input type="text" class="input-medium search-query" maxlength="50" placeholder="@this.Lang().tasklist" />
-                <button type="button" class="btn btn-primary flag_addTasklist">@this.Lang().add</button>
+                <input type="text" class="input-medium search-query" maxlength="50" placeholder="@this.Lang().taskFolder" />
+                <button type="button" class="btn btn-primary flag_addTaskFolder">@this.Lang().add</button>
             </div>
             <hr />
             <div class="control-group" style="line-height: 30px">
                 <div class="row show-grid">
-                    @foreach (var l in tasklists)
+                    @foreach (var f in folders)
                     {
-                        <div class="span2" title="@l.Name">
+                        <div class="span2" title="@f.Name">
                             <i class="icon-list"></i>
-                            @l.Name.ShortString(10)
+                            @f.Name.ShortString(10)
                         </div>
                     }
                 </div>
@@ -193,7 +193,7 @@
             $('#share_title').val($(e).parents('div.region_detail').eq(0).find('input').val() + lang.share_description);
         }
 
-        function openTasklists() { $('#tasklistModal').modal('show'); }
+        function openTaskFolder() { $('#taskFolderModal').modal('show'); }
         
     </script>
     @RenderSection("Bottom", false)

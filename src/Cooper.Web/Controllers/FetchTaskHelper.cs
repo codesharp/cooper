@@ -13,36 +13,36 @@ using Cooper.Model.Tasks;
 
 namespace Cooper.Web.Controllers
 {
-    /// <summary>定义FetchTasklist行为
+    /// <summary>定义FetchTask行为
     /// </summary>
-    public interface IFetchTasklistHelper
+    public interface IFetchTaskHelper
     {
-        bool IsFetchTasklist(string tasklistId);
-        TaskInfo[] FetchTasks(Account account, string tasklistId);
-        IDictionary<string, string> GetFetchTasklists(Account account);
+        bool IsFetchTaskFolder(string taskFolderId);
+        TaskInfo[] FetchTasks(Account account, string taskFolderId);
+        IDictionary<string, string> GetFetchTaskFolders(Account account);
     }
     /// <summary>Fetch默认实现
     /// </summary>
     [CodeSharp.Core.Component]
-    public class FetchTasklistHelper : IFetchTasklistHelper
+    public class FetchTaskHelper : IFetchTaskHelper
     {
         protected static readonly Serializer _serializer = new Serializer();
         protected IAccountConnectionService _connectionService;
         protected string _git_api_issues;
-        public FetchTasklistHelper(IAccountConnectionService connectionService, string git_api_issues)
+        public FetchTaskHelper(IAccountConnectionService connectionService, string git_api_issues)
         {
             this._connectionService = connectionService;
             this._git_api_issues = git_api_issues;
         }
 
-        public virtual bool IsFetchTasklist(string tasklistId)
+        public virtual bool IsFetchTaskFolder(string taskFolderId)
         {
-            return tasklistId == "github";
+            return taskFolderId == "github";
         }
-        public virtual TaskInfo[] FetchTasks(Account account, string tasklistId)
+        public virtual TaskInfo[] FetchTasks(Account account, string taskFolderId)
         {
             //集成github issues
-            if (tasklistId == "github")
+            if (taskFolderId == "github")
             {
                 var git = this._connectionService.GetConnections(account).FirstOrDefault(o => o is GitHubConnection);
                 if (git == null) return null;
@@ -72,7 +72,7 @@ namespace Cooper.Web.Controllers
             return null;
         }
         //获取
-        public virtual IDictionary<string, string> GetFetchTasklists(Account account)
+        public virtual IDictionary<string, string> GetFetchTaskFolders(Account account)
         {
             var dict = new Dictionary<string, string>();
 

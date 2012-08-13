@@ -124,7 +124,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\FetchTasklistHelper.cs" />
+    <Compile Include="Controllers\FetchTaskHelper.cs" />
     <Compile Include="Controllers\Helper.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IContextService.cs" />

@@ -10,21 +10,21 @@ using FluentNHibernate.Mapping;
 
 namespace Cooper.Model.Mappings
 {
-    public class TasklistMap : ClassMap<Tasklist>
+    public class TaskFolderMap : ClassMap<TaskFolder>
     {
-        public TasklistMap()
+        public TaskFolderMap()
         {
             Table("Cooper_Tasklist");
             Id(m => m.ID);
             Map(m => m.CreateTime);
             Map(m => m.Name).Length(50);
-            Map(Reveal.Member<Tasklist>("_extensions")).Column("Extensions");
+            Map(Reveal.Member<TaskFolder>("_extensions")).Column("Extensions");
             DiscriminateSubClassesOnColumn("ListType");
         }
     }
-    public class PersonalTasklistMap : SubclassMap<PersonalTasklist>
+    public class PersonalTaskFolderMap : SubclassMap<PersonalTaskFolder>
     {
-        public PersonalTasklistMap()
+        public PersonalTaskFolderMap()
         {
             Table("Cooper_Tasklist");
             Map(m => m.OwnerAccountId);

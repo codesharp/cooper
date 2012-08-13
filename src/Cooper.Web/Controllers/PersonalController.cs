@@ -24,24 +24,24 @@ namespace Cooper.Web.Controllers
 
         private ILog _log;
         private ITaskService _taskService;
-        private ITasklistService _tasklistService;
+        private ITaskFolderService _taskFolderService;
         private IAccountService _accountService;
         private IAccountConnectionService _accountConnectionService;
-        private IFetchTasklistHelper _fetchTasklistHelper;
+        private IFetchTaskHelper _fetchTaskHelper;
         public PersonalController(ILoggerFactory factory
             , ITaskService taskService
-            , ITasklistService tasklistService
+            , ITaskFolderService taskFolderService
             , IAccountService accountService
             , IAccountConnectionService accountConnectionService
-            , IFetchTasklistHelper fetchTasklistHelper)
+            , IFetchTaskHelper fetchTaskHelper)
             : base(factory)
         {
             this._log = factory.Create(typeof(PersonalController));
             this._taskService = taskService;
-            this._tasklistService = tasklistService;
+            this._taskFolderService = taskFolderService;
             this._accountService = accountService;
             this._accountConnectionService = accountConnectionService;
-            this._fetchTasklistHelper = fetchTasklistHelper;
+            this._fetchTaskHelper = fetchTaskHelper;
         }
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
@@ -134,76 +134,81 @@ namespace Cooper.Web.Controllers
         #region 各类显示模式数据获取
         //优先级列表模式 个人任务的完整模式
         [HttpPost]
-        public ActionResult GetByPriority(string tasklistId)
+        public ActionResult GetByPriority(string tasklistId, string taskFolderId)
         {
-            return this.GetBy(tasklistId
-                , this._taskService.GetTasksNotBelongAnyTasklist
+            return this.GetBy(taskFolderId ?? tasklistId
+                , this._taskService.GetTasksNotBelongAnyFolder
                 , this._taskService.GetTasks
                 , this.ParseSortsByPriority
                 , this.ParseSortsByPriority);
         }
         //优先级列表模式 不含已经完成
         [HttpPost]
-        public ActionResult GetIncompletedByPriority(string tasklistId)
+        public ActionResult GetIncompletedByPriority(string tasklistId, string taskFolderId)
         {
-            return this.GetBy(tasklistId
-                , this._taskService.GetIncompletedTasksAndNotBelongAnyTasklist
+            return this.GetBy(taskFolderId ?? tasklistId
+                , this._taskService.GetIncompletedTasksAndNotBelongAnyFolder
                 , this._taskService.GetIncompletedTasks
                 , this.ParseSortsByPriority
                 , this.ParseSortsByPriority);
         }
         //DueTime列表模式
         [HttpPost]
-        public ActionResult GetByDueTime(string tasklistId)
+        public ActionResult GetByDueTime(string tasklistId, string taskFolderId)
         {
-            return this.GetBy(tasklistId
-                , this._taskService.GetTasksNotBelongAnyTasklist
+            return this.GetBy(taskFolderId ?? tasklistId
+                , this._taskService.GetTasksNotBelongAnyFolder
                 , this._taskService.GetTasks
                 , this.ParseSortsByDueTime
                 , this.ParseSortsByDueTime);
         }
         #endregion
 
-        #region Tasklist处理
-        //返回所有可用的tasklists id|name
-        public ActionResult GetTasklists()
+        #region TaskFolder处理
+        //返回所有可用的folder id|name
+        public ActionResult GetTasklists() { return this.GetTaskFolders(); }
+        public ActionResult GetTaskFolders()
         {
-            var dict = this._fetchTasklistHelper.GetFetchTasklists(this.Context.Current);
-            this._tasklistService.GetTasklists(this.Context.Current).ToList()
+            var dict = this._fetchTaskHelper.GetFetchTaskFolders(this.Context.Current);
+            this._taskFolderService
+                .GetTaskFolders(this.Context.Current)
+                .ToList()
                 .ForEach(o => dict.Add(o.ID.ToString(), o.Name));
             return Json(dict);
         }
-        /// <summary>创建任务表
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult CreateTasklist(string name, string type) { return this.CreateTaskFolder(name, type); }
+        /// <summary>创建任务夹
         /// </summary>
         /// <param name="name"></param>
         /// <param name="type">任务表类型，如：personal，team，project...</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult CreateTasklist(string name, string type)
+        public ActionResult CreateTaskFolder(string name, string type)
         {
-            //目前只提供个人任务表
-            var list = new PersonalTasklist(name, this.Context.Current);
-            this._tasklistService.Create(list);
+            var list = new PersonalTaskFolder(name, this.Context.Current);
+            this._taskFolderService.Create(list);
             return Json(list.ID);
         }
-        /// <summary>批量创建任务表
+        /// <summary>批量创建任务夹
         /// </summary>
         /// <param name="data">[{ID:"",Name:"",Type:""}]</param>
         /// <returns>返回id变更修正</returns>
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult CreateTasklists(string data)
+        public ActionResult CreateTaskFolders(string data)
         {
             Assert.IsNotNullOrWhiteSpace(data);
             var collects = new List<Correction>();
-            var all = _serializer.JsonDeserialize<TasklistInfo[]>(data);
+            var all = _serializer.JsonDeserialize<TaskFolderInfo[]>(data);
             foreach (var l in all)
             {
                 try
                 {
-                    var list = new PersonalTasklist(l.Name, this.Context.Current);
-                    this._tasklistService.Create(list);
+                    var list = new PersonalTaskFolder(l.Name, this.Context.Current);
+                    this._taskFolderService.Create(list);
                     collects.Add(new Correction() { NewId = list.ID.ToString(), OldId = l.ID.ToString() });
                 }
                 catch (Exception e)
@@ -213,42 +218,38 @@ namespace Cooper.Web.Controllers
             }
             return Json(collects);
         }
-        /// <summary>删除任务表
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPost]
-        public ActionResult DeleteTasklist(string id)
+        public ActionResult DeleteTaskFolder(string id)
         {
-            var list = this.GetTasklist(id);
+            var list = this.GetTaskFolder(id);
             if (list != null)
-                this._tasklistService.Delete(list);
+                this._taskFolderService.Delete(list);
             return Json(true);
         }
         #endregion
 
-        /// <summary>用于接收终端的变更同步数据，按tasklist为同步
+        /// <summary>用于接收终端的变更同步数据，按folder同步
         /// </summary>
-        /// <param name="tasklistId">任务表标识，允许为空，客户端在同步数据前应先确保tasklist已经创建，通过CreateTasklist</param>
-        /// <param name="tasklistChanges">任务表变更数据</param>
+        /// <param name="tasklistId">兼容</param>
+        /// <param name="taskFolderId">允许为空，客户端在同步数据前应先确保folder已经创建</param>
         /// <param name="changes">变更数据 changelog[]</param>
         /// <param name="by">排序依据标识，参考静态变量PROFILE_SORT_PRIORITY、PROFILE_SORT_DUETIME等的值</param>
         /// <param name="sorts">排序数据 sort[]</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult Sync(string tasklistId, string tasklistChanges, string changes, string by, string sorts)
+        public ActionResult Sync(string tasklistId, string taskFolderId, string changes, string by, string sorts)
         {
             //模拟同步间隙
             //System.Threading.Thread.Sleep(2000);
 
             //HACK:Fetch模式不支持同步变更
-            Assert.IsFalse(this._fetchTasklistHelper.IsFetchTasklist(tasklistId));
+            Assert.IsFalse(this._fetchTaskHelper.IsFetchTaskFolder(taskFolderId ?? tasklistId));
 
             var account = this.Context.Current;
             var list = _serializer.JsonDeserialize<ChangeLog[]>(changes);
             var idChanges = new Dictionary<string, string>();//old,new
-            var tasklist = this.GetTasklist(tasklistId);
+            var folder = this.GetTaskFolder(taskFolderId ?? tasklistId);
 
             //UNDONE:详细考虑潜在异常以及批量事务的意外问题是否会造成丢失变更
             #region 对task执行对应变更
@@ -266,13 +267,13 @@ namespace Cooper.Web.Controllers
                     else if (c.ID.StartsWith(TEMP))
                     {
                         t = new Task(account);
-                        if (tasklist != null) t.SetTasklist(tasklist);
+                        if (folder != null) t.SetTaskFolder(folder);
                         this._taskService.Create(t);
                         idChanges.Add(c.ID, t.ID.ToString());//添加到id变更
 
                         if (this._log.IsDebugEnabled)
                             this._log.DebugFormat("从临时标识#{0}新建任务#{1}{2}"
-                                , c.ID, t.ID, tasklist != null ? "并加入任务表#" + tasklist.ID : string.Empty);
+                                , c.ID, t.ID, folder != null ? "并加入Folder#" + folder.ID : string.Empty);
                     }
                     else
                         t = this._taskService.GetTask(long.Parse(c.ID));
@@ -313,7 +314,7 @@ namespace Cooper.Web.Controllers
                 {
                     var d = _serializer.JsonSerialize(temp);
 
-                    if (tasklist == null)
+                    if (folder == null)
                     {
                         //更新排序信息至用户设置
                         account.SetProfile(by, d);
@@ -322,8 +323,8 @@ namespace Cooper.Web.Controllers
                     else
                     {
                         //更新排序信息至对应的任务表
-                        tasklist[by] = d;
-                        this._tasklistService.Update(tasklist);
+                        folder[by] = d;
+                        this._taskFolderService.Update(folder);
                     }
 
                     if (this._log.IsDebugEnabled)
@@ -339,40 +340,40 @@ namespace Cooper.Web.Controllers
             return Json(idChanges.Select(o => new Correction() { OldId = o.Key, NewId = o.Value }));
         }
 
-        private ActionResult GetBy(string tasklistId
+        private ActionResult GetBy(string folderId
             , Func<Account, IEnumerable<Task>> func1//没有任务表时的获取
-            , Func<Account, Tasklist, IEnumerable<Task>> func2
+            , Func<Account, TaskFolder, IEnumerable<Task>> func2
             , Func<Account, TaskInfo[], Sort[]> func3
-            , Func<Account, Tasklist, TaskInfo[], Sort[]> func4)
+            , Func<Account, TaskFolder, TaskInfo[], Sort[]> func4)
         {
-            var list = this.GetTasklist(tasklistId);
+            var folder = this.GetTaskFolder(folderId);
             var account = this.Context.Current;
 
             TaskInfo[] tasks = null;
 
-            var editable = list != null
-                || (tasks = this._fetchTasklistHelper.FetchTasks(account, tasklistId)) == null;
+            var editable = folder != null
+                || (tasks = this._fetchTaskHelper.FetchTasks(account, folderId)) == null;
 
-            tasks = list == null
+            tasks = folder == null
                 ? (tasks ?? this.ParseTasks(func1(account).ToArray()))
-                : this.ParseTasks(func2(account, list).ToArray());
+                : this.ParseTasks(func2(account, folder).ToArray());
 
             return Json(new
             {
                 Editable = editable,
                 List = tasks,
-                Sorts = list == null
+                Sorts = folder == null
                     ? func3(account, tasks)
-                    : func4(account, list, tasks),
+                    : func4(account, folder, tasks),
             });
         }
-        private Tasklist GetTasklist(string tasklistId)
+        private TaskFolder GetTaskFolder(string taskFolderId)
         {
             int listId;
-            var list = int.TryParse(tasklistId, out listId) ? this._tasklistService.GetTasklist(listId) : null;
+            var list = int.TryParse(taskFolderId, out listId) ? this._taskFolderService.GetTaskFolder(listId) : null;
             //HACK:个人任务列表只有拥有者能查看
-            if (list != null && list is PersonalTasklist)
-                Assert.AreEqual(this.Context.Current.ID, (list as PersonalTasklist).OwnerAccountId);
+            if (list != null && list is PersonalTaskFolder)
+                Assert.AreEqual(this.Context.Current.ID, (list as PersonalTaskFolder).OwnerAccountId);
             //UNDONE:根据不同类型的任务表验证权限
             return list;
         }
@@ -380,8 +381,8 @@ namespace Cooper.Web.Controllers
         {
             var a = this.Context.Current;
             ViewBag.Connections = this._accountConnectionService.GetConnections(a);
-            ViewBag.Tasklists = this._tasklistService.GetTasklists(a);
-            ViewBag.FetchTasklists = this._fetchTasklistHelper.GetFetchTasklists(a);
+            ViewBag.TaskFolders = this._taskFolderService.GetTaskFolders(a);
+            ViewBag.FetchTaskFolders = this._fetchTaskHelper.GetFetchTaskFolders(a);
         }
 
         private TaskInfo[] ParseTasks(params Task[] tasks)
@@ -402,10 +403,10 @@ namespace Cooper.Web.Controllers
                 , this.GetSorts(account, PROFILE_SORT_PRIORITY)
                 , tasks);
         }
-        private Sort[] ParseSortsByPriority(Account account, Tasklist tasklist, params TaskInfo[] tasks)
+        private Sort[] ParseSortsByPriority(Account account, TaskFolder folder, params TaskInfo[] tasks)
         {
             return this.ParseSortsByPriority(account
-                , this.GetSorts(tasklist, PROFILE_SORT_PRIORITY)
+                , this.GetSorts(folder, PROFILE_SORT_PRIORITY)
                 , tasks);
         }
         private Sort[] ParseSortsByPriority(Account account, Sort[] sorts, params TaskInfo[] tasks)
@@ -428,9 +429,9 @@ namespace Cooper.Web.Controllers
         {
             return this.ParseSortsByDueTime(account, this.GetSorts(account, PROFILE_SORT_DUETIME), tasks);
         }
-        private Sort[] ParseSortsByDueTime(Account account, Tasklist tasklist, params TaskInfo[] tasks)
+        private Sort[] ParseSortsByDueTime(Account account, TaskFolder folder, params TaskInfo[] tasks)
         {
-            return this.ParseSortsByDueTime(account, this.GetSorts(tasklist, PROFILE_SORT_DUETIME), tasks);
+            return this.ParseSortsByDueTime(account, this.GetSorts(folder, PROFILE_SORT_DUETIME), tasks);
         }
         private Sort[] ParseSortsByDueTime(Account account, Sort[] sorts, params TaskInfo[] tasks)
         {
@@ -477,7 +478,7 @@ namespace Cooper.Web.Controllers
                 ? _serializer.JsonDeserialize<Sort[]>(a.GetProfile(key))
                 : _empty;
         }
-        private Sort[] GetSorts(Tasklist a, string key)
+        private Sort[] GetSorts(TaskFolder a, string key)
         {
             return !string.IsNullOrWhiteSpace(a[key])
                 ? _serializer.JsonDeserialize<Sort[]>(a[key])
@@ -597,9 +598,9 @@ namespace Cooper.Web.Controllers
         /// </summary>
         public string[] Indexs { get; set; }
     }
-    /// <summary>描述在客户端中使用的任务表
+    /// <summary>描述在客户端中使用的任务夹
     /// </summary>
-    public class TasklistInfo
+    public class TaskFolderInfo
     {
         public string ID { get; set; }
         public string Name { get; set; }

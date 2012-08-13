@@ -79,8 +79,8 @@
     var url_task_byDueTime = '@Url.Action("GetByDueTime", "Personal", null)';
     var url_task_sync = '@Url.Action("Sync", "Personal", null)';
     var url_task_mini = '@Url.Action("Mini", "Personal", null)';
-    var url_tasklist_create = '@Url.Action("CreateTasklist", "Personal", null)';
-    var url_tasklist_delete = '@Url.Action("DeleteTasklist", "Personal", null)';
+    var url_taskFolder_create = '@Url.Action("CreateTaskFolder", "Personal", null)';
+    var url_taskFolder_delete = '@Url.Action("DeleteTaskFolder", "Personal", null)';
 
     var url_feedback = '@Url.Action("Feedback", "Home", null)';
     //简易feedback
@@ -119,10 +119,10 @@
                 Logout</a> | UI Auto Tests：
         <button type="button" class="btn btn-danger flag_tryfail">TryFail</button>
         <button type="button" class="btn" onclick="$('#qunit').show();runAll()">Full</button>
-        <button type="button" class="btn btn-primary" onclick="$('#qunit').show();runMouseTests()">mouse</button>
-        <button type="button" class="btn btn-info" onclick="$('#qunit').show();runShortcutsTests()">shortcuts</button>
-        <button type="button" class="btn btn-success" onclick="$('#qunit').show();runDetailTests()">detail</button>
-        <button type="button" class="btn btn-warning" onclick="$('#qunit').show();runTasklistTests()">tasklist</button>
+        <button type="button" class="btn btn-primary" onclick="$('#qunit').show();runMouseTests()">Mouse</button>
+        <button type="button" class="btn btn-info" onclick="$('#qunit').show();runShortcutsTests()">Shortcuts</button>
+        <button type="button" class="btn btn-success" onclick="$('#qunit').show();runDetailTests()">Detail</button>
+        <button type="button" class="btn btn-warning" onclick="$('#qunit').show();runTaskFolderTests()">TaskFolder</button>
         <div id="qunit" style="display: none; margin-top: 20px">
         </div>
     </div>

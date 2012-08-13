@@ -43,10 +43,10 @@ internal class Assert : NUnit.Framework.Assert
     }
     /// <summary>断言任务表是否有效
     /// </summary>
-    /// <param name="tasklist"></param>
-    public static void IsValid(Tasklist tasklist)
+    /// <param name="folder"></param>
+    public static void IsValid(TaskFolder folder)
     {
-        Assert.IsNotNull(tasklist);
-        Assert.Greater(tasklist.ID, 0);
+        Assert.IsNotNull(folder);
+        Assert.Greater(folder.ID, 0);
     }
 }

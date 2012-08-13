@@ -19,12 +19,12 @@ namespace Cooper.Repositories
             return this.FindAll(Expression.Eq("CreatorAccountId", account.ID));
         }
 
-        public IEnumerable<Task> FindBy(Account account, Tasklist tasklist)
+        public IEnumerable<Task> FindBy(Account account, TaskFolder folder)
         {
             return this.FindAll(Expression.Eq("CreatorAccountId", account.ID)
-                , tasklist == null
-                ? Expression.IsNull("TasklistId")
-                : Expression.Eq("TasklistId", tasklist.ID));
+                , folder == null
+                ? Expression.IsNull("TaskFolderId")
+                : Expression.Eq("TaskFolderId", folder.ID));
         }
 
         public IEnumerable<Task> FindBy(Account account, bool isCompleted)
@@ -32,13 +32,13 @@ namespace Cooper.Repositories
             return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Eq("IsCompleted", isCompleted));
         }
 
-        public IEnumerable<Task> FindBy(Account account, bool isCompleted, Tasklist tasklist)
+        public IEnumerable<Task> FindBy(Account account, bool isCompleted, TaskFolder folder)
         {
             return this.FindAll(Expression.Eq("CreatorAccountId", account.ID)
                 , Expression.Eq("IsCompleted", isCompleted)
-                , tasklist == null
-                ? Expression.IsNull("TasklistId")
-                : Expression.Eq("TasklistId", tasklist.ID));
+                , folder == null
+                ? Expression.IsNull("TaskFolderId")
+                : Expression.Eq("TaskFolderId", folder.ID));
         }
 
         #endregion

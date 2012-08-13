@@ -22,10 +22,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{D842
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigFiles", "src\ConfigFiles\ConfigFiles.csproj", "{0D3B0610-7FC5-43E6-8B51-DDCFFF7DF855}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Sync", "src\Cooper.Sync\Cooper.Sync.csproj", "{F8990C39-342D-4FE2-B9A4-66383531D568}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Sync.Test", "src\Cooper.Sync.Test\Cooper.Sync.Test.csproj", "{812A1236-3E32-4387-AA24-73818C343FE7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,14 +52,6 @@ Global
 		{0D3B0610-7FC5-43E6-8B51-DDCFFF7DF855}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D3B0610-7FC5-43E6-8B51-DDCFFF7DF855}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D3B0610-7FC5-43E6-8B51-DDCFFF7DF855}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8990C39-342D-4FE2-B9A4-66383531D568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8990C39-342D-4FE2-B9A4-66383531D568}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8990C39-342D-4FE2-B9A4-66383531D568}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8990C39-342D-4FE2-B9A4-66383531D568}.Release|Any CPU.Build.0 = Release|Any CPU
-		{812A1236-3E32-4387-AA24-73818C343FE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{812A1236-3E32-4387-AA24-73818C343FE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{812A1236-3E32-4387-AA24-73818C343FE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{812A1236-3E32-4387-AA24-73818C343FE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

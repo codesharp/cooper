@@ -31,7 +31,7 @@ function runAll() {
     runMouseTests();
     runShortcutsTests();
     runDetailTests();
-    runTasklistTests();
+    runTaskFolderTests();
 }
 
 function runMouseTests() {
@@ -246,22 +246,22 @@ function runDetailTests() {
     UI_List_Common.prototype.detail_timer_enable = true;
 }
 
-function runTasklistTests() {
+function runTaskFolderTests() {
     ///////////////////////////////////////////////////////////////////////////////
     //任务表操作
-    test('add_tasklist', function () {
-        $('.flag_openTasklists').click();
-        equal($('#tasklistModal').css('display'), 'block', 'tasklist modal show');
-        var tasklist = 'test tasklist';
-        $('#tasklistModal input').val(tasklist);
-        $('.flag_addTasklist').click();
+    test('add_taskFolder', function () {
+        $('.flag_openTaskFolder').click();
+        equal($('#taskFolderModal').css('display'), 'block', 'task folder modal show');
+        var folder = 'test';
+        $('#taskFolderModal input').val(folder);
+        $('.flag_addTaskFolder').click();
 
         //TODO:引入一个async框架
         setTimeout(function () {
-            test('remove_tasklist', function () {
-                equal($('#tasklist_title').html(), tasklist, 'tasklist created');
-                equal(taskCount(), 1, 'switch to new tasklist');
-                $('.flag_removeTasklist').click();
+            test('remove_taskFolder', function () {
+                equal($('#taskFolder_title').html(), folder, 'task folder created');
+                equal(taskCount(), 1, 'switch to new task folder');
+                $('.flag_removeTaskFolder').click();
                 ok(true);
             });
         }, 1000);

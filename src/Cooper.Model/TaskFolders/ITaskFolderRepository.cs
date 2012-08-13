@@ -8,10 +8,8 @@ using CodeSharp.Core.RepositoryFramework;
 
 namespace Cooper.Model.Tasks
 {
-    /// <summary>任务列表仓储
-    /// </summary>
-    public interface ITasklistRepository : IRepository<int, Tasklist>
+    public interface ITaskFolderRepository : IRepository<int, TaskFolder>
     {
-        IEnumerable<PersonalTasklist> FindBy(Accounts.Account account);
+        IEnumerable<PersonalTaskFolder> FindBy(Accounts.Account account);
     }
 }

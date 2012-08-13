@@ -16,6 +16,6 @@
 - Hybrid/images图标资源共享
 	- 图标按实际使用大小生成，不需要单独设置样式或高宽
 
-## Fetch Tasklist
+## FetchTask
 
 实时抓取用于展示的任务表，支持扩展任意来源，可与AccountConnection关联

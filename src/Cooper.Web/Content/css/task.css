@@ -23,11 +23,11 @@ div#error_lose_connect .progress {
 div#error_lose_connect .progress .bar {
 	width: 100%;
 }
-ul#tasklists {
+ul#taskFolder {
 	max-height: 350px;
 	overflow: auto;
 }
-ul#tasklists span {
+ul#taskFolder span {
 	padding-left: 3px;
 }
 .btn-toolbar i {

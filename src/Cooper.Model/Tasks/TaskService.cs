@@ -42,13 +42,13 @@ namespace Cooper.Model.Tasks
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        IEnumerable<Task> GetTasksNotBelongAnyTasklist(Account account);
+        IEnumerable<Task> GetTasksNotBelongAnyFolder(Account account);
         /// <summary>获取指定账号指定任务表的所有任务
         /// </summary>
         /// <param name="account"></param>
-        /// <param name="tasklist"></param>
+        /// <param name="folder"></param>
         /// <returns></returns>
-        IEnumerable<Task> GetTasks(Account account, Tasklist tasklist);
+        IEnumerable<Task> GetTasks(Account account, TaskFolder folder);
         /// <summary>获取指定账号的所有未完成任务
         /// </summary>
         /// <param name="account"></param>
@@ -58,13 +58,13 @@ namespace Cooper.Model.Tasks
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        IEnumerable<Task> GetIncompletedTasksAndNotBelongAnyTasklist(Account account);
+        IEnumerable<Task> GetIncompletedTasksAndNotBelongAnyFolder(Account account);
         /// <summary>获取指定账号指定任务表的所有未完成任务
         /// </summary>
         /// <param name="account"></param>
-        /// <param name="tasklist"></param>
+        /// <param name="folder"></param>
         /// <returns></returns>
-        IEnumerable<Task> GetIncompletedTasks(Account account, Tasklist tasklist);
+        IEnumerable<Task> GetIncompletedTasks(Account account, TaskFolder folder);
     }
     /// <summary>任务DomainService
     /// </summary>
@@ -110,25 +110,25 @@ namespace Cooper.Model.Tasks
         {
             return _repository.FindBy(account);
         }
-        IEnumerable<Task> ITaskService.GetTasksNotBelongAnyTasklist(Account account)
+        IEnumerable<Task> ITaskService.GetTasksNotBelongAnyFolder(Account account)
         {
             return _repository.FindBy(account, null);
         }
-        IEnumerable<Task> ITaskService.GetTasks(Account account, Tasklist tasklist)
+        IEnumerable<Task> ITaskService.GetTasks(Account account, TaskFolder folder)
         {
-            return _repository.FindBy(account, tasklist);
+            return _repository.FindBy(account, folder);
         }
         IEnumerable<Task> ITaskService.GetIncompletedTasks(Account account)
         {
             return _repository.FindBy(account, false);
         }
-        IEnumerable<Task> ITaskService.GetIncompletedTasksAndNotBelongAnyTasklist(Account account)
+        IEnumerable<Task> ITaskService.GetIncompletedTasksAndNotBelongAnyFolder(Account account)
         {
             return _repository.FindBy(account, false, null);
         }
-        IEnumerable<Task> ITaskService.GetIncompletedTasks(Account account, Tasklist tasklist)
+        IEnumerable<Task> ITaskService.GetIncompletedTasks(Account account, TaskFolder folder)
         {
-            return _repository.FindBy(account, false, tasklist);
+            return _repository.FindBy(account, false, folder);
         }
         #endregion
     }

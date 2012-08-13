@@ -69,46 +69,46 @@
     function archiveTasks() { ui_list_helper.archiveTasks(); }
     function hideArchive() { isShowArchive = false; if (ui_list_helper == ui_list_helper_priority) byPriority(); }
     function showArchive() { isShowArchive = true; if (ui_list_helper == ui_list_helper_priority) byPriority(); }
-    //tasklist ui
+    //taskfolder ui
     function list(id) {
-        $('#tasklists a.changelist').unbind().click(function () { list($(this).attr('id')); });
-        $('#tasklist_title').html($('#tasklists a.changelist[id="' + id + '"]').find('span').html());
+        $('#taskFolder .flag_changeFolder').unbind().click(function () { list($(this).attr('id')); });
+        $('#taskFolder_title').html($('#taskFolder .flag_changeFolder[id="' + id + '"]').find('span').html());
         currentMode(function () {
             currentList = id == 0 ? '' : id;
-            $('.flag_removeTasklist')[isNaN(parseInt(currentList)) ? 'hide' : 'show']();
+            $('.flag_removeTaskFolder')[isNaN(parseInt(currentList)) ? 'hide' : 'show']();
         }, function () {
             var temp = parseInt(id);
             if (isNaN(temp))
                 $('.flag_by').hide();
         });
     }
-    function addTasklist(id, name) {
-        var $e = $(render($('#tmp_tasklist_item').html(), { id: id }));
+    function addTaskFolder(id, name) {
+        var $e = $(render($('#tmp_taskFolder_item').html(), { id: id }));
         $e.find('span').text(name);
-        $('#tasklists').append($e);
+        $('#taskFolder').append($e);
     }
-    function doAddTasklist(btn) {
+    function doAddTaskFolder(btn) {
         var $btn = $(btn);
         var val = $.trim($btn.prev().val());
         $btn.parent()[val == '' ? 'addClass' : 'removeClass']('error');
         if (val == '') return;
 
-        $.post(url_tasklist_create, { tryfail: tryfail, name: val, type: 'personal' }, function (d) {
+        $.post(url_taskFolder_create, { tryfail: tryfail, name: val, type: 'personal' }, function (d) {
             endRequest();
-            debuger.info('new tasklist#' + d);
+            debuger.info('new taskFolder#' + d);
             $btn.prev().val('');
-            $('#tasklistModal').modal('hide');
-            addTasklist(d, val);
+            $('#taskFolderModal').modal('hide');
+            addTaskFolder(d, val);
             list(d);
         });
     }
-    function doRemoveTasklist() {
-        if (!confirm(lang.confirm_delete_tasklist)) return;
+    function doRemoveTaskFolder() {
+        if (!confirm(lang.confirm_delete_taskFolder)) return;
 
-        $.post(url_tasklist_delete, { tryfail: tryfail, id: currentList }, function () {
+        $.post(url_taskFolder_delete, { tryfail: tryfail, id: currentList }, function () {
             endRequest();
-            debuger.info('remove tasklist#' + currentList);
-            $('#tasklists a[id="' + currentList + '"]').parent().remove();
+            debuger.info('remove taskFolder#' + currentList);
+            $('#taskFolder a[id="' + currentList + '"]').parent().remove();
             list(0);
         });
     }
@@ -127,7 +127,7 @@
             $.ajax({
                 url: b ? url_task_byPriority : url_task_byPriority_incompleted,
                 //任务表标识
-                data: { tryfail: tryfail, tasklistId: currentList },
+                data: { tryfail: tryfail, taskFolderId: currentList },
                 type: 'POST',
                 dataType: 'json',
                 beforeSend: function () { $el_wrapper_region.empty().append($('#loading').html()); },
@@ -153,7 +153,7 @@
             $.ajax({
                 url: url_task_byDueTime,
                 //任务表标识
-                data: { tryfail: tryfail, tasklistId: currentList },
+                data: { tryfail: tryfail, taskFolderId: currentList },
                 type: 'POST',
                 dataType: 'json',
                 beforeSend: function () { $el_wrapper_region.empty().append($('#loading').html()); },
@@ -241,7 +241,7 @@
         //提交变更记录
         $.post(url_task_sync, {
             tryfail: tryfail,
-            tasklistId: currentList,
+            taskFolderId: currentList,
             //变更列表
             changes: $.toJSON(changes),
             //排序/显示模式
@@ -301,9 +301,9 @@
         $('.flag_byPriority').click(byPriority);
         $('.flag_byDueTime').click(byDueTime);
 
-        $('.flag_openTasklists').click(openTasklists);
-        $('.flag_addTasklist').click(function () { doAddTasklist(this); });
-        $('.flag_removeTasklist').click(doRemoveTasklist);
+        $('.flag_openTaskFolder').click(openTaskFolder);
+        $('.flag_addTaskFolder').click(function () { doAddTaskFolder(this); });
+        $('.flag_removeTaskFolder').click(doRemoveTaskFolder);
 
         $('.flag_archiveTasks').click(archiveTasks);
         $('.flag_hideArchive').click(hideArchive);
