@@ -190,6 +190,7 @@
     <Content Include="Hybrid\jquery\css\mobile\jquery.mobile-1.1.0.min.css" />
     <Content Include="Hybrid\jquery\css\mobile\jquery.mobile.structure-1.1.1.min.css" />
     <Content Include="Hybrid\jquery\jqm.page.params.js" />
+    <Content Include="Hybrid\jquery\jquery.cookie.js" />
     <Content Include="Hybrid\sample.htm" />
     <Content Include="Hybrid\scripts\cordova-1.9.0.js" />
     <Content Include="Hybrid\scripts\hybrid.js" />

@@ -1,4 +1,11 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
+
+///<reference path="../jquery/jquery-1.7.2.min.js" />
+///<reference path="../jquery/jquery.mobile-1.1.0.min.js" />
+///<reference path="../jquery/jquery.json-2.3.min.js" />
+///<reference path="../jquery/jquery.cookie.js" />
+///<reference path="lang.js" />
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 //JS 与 Native 交互接口格式约定
@@ -36,7 +43,6 @@
 //Web接口地址声明
 var web_loginUrl = "../Account/Login";
 var web_logoutUrl = "../Account/LogoutOnly";
-var web_getCurrentAccountNameUrl = "../Account/GetCurrentAccountName";
 var web_getTasklistsUrl = "../Personal/GetTasklists";
 var web_createTaskListUrl = "../Personal/CreateTasklist";
 var web_getTasksUrl = "../Personal/GetByPriority";
@@ -315,13 +321,8 @@ function getCurrentUser(callback) {
         );
     }
     else {
-        callWebAPI(
-            web_getCurrentAccountNameUrl,
-            {},
-            function (result) {
-                callback({ status: true, data: { username: result }, message: '' });
-            }
-        );
+        var loginUser = $.cookie('cooper_web_loginUser');
+        callback({ status: true, data: { username: loginUser }, message: '' });
     }
 }
 //获取当前用户的所有任务表
