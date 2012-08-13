@@ -3,6 +3,7 @@
 ///<reference path="../jquery/jquery-1.7.2.min.js" />
 ///<reference path="../jquery/jquery.mobile-1.1.0.min.js" />
 ///<reference path="../jquery/jquery.json-2.3.min.js" />
+///<reference path="../jquery/jquery.cookie.js" />
 ///<reference path="hybrid.js" />
 ///<reference path="lang.js" />
 
@@ -438,6 +439,7 @@
                     });
                 }
                 else {
+                    $.cookie('cooper_web_loginUser', userName);
                     showPage("taskListPage");
                 }
             }
