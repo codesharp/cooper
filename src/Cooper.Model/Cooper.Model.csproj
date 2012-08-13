@@ -79,6 +79,7 @@
     <Compile Include="Accounts\Account.cs" />
     <Compile Include="Tasks\Task.cs" />
     <Compile Include="Tasks\TaskService.cs" />
+    <Compile Include="Teams\Team.cs" />
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -87,7 +88,9 @@
     </None>
     <None Include="README.md" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Projects\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

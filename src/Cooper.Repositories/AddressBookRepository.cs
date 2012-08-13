@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using CodeSharp.Core.Castles;
 using Cooper.Model.Accounts;
-using Cooper.Model.AddressBooks;
+using Cooper.Model.Contacts;
 using NHibernate.Criterion;
 
 namespace Cooper.Repositories

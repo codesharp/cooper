@@ -75,8 +75,8 @@ Team <--> ContactGroup
 	- tag -> task
 	- project -> task
 
-[X]: Done
-[-]: Later
-[C]: Canceled
+X: Done
+-: Later
+C: Canceled
 
 ### Access Control

@@ -3,7 +3,7 @@
 using System;
 using CodeSharp.Core.DomainBase;
 
-namespace Cooper.Model.AddressBooks
+namespace Cooper.Model.Contacts
 {
     /// <summary>通讯簿模型
     /// <remarks>

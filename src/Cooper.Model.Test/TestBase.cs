@@ -11,8 +11,8 @@ using System.Reflection;
 using Cooper.Model.Tasks;
 using CodeSharp.Core.Services;
 using Cooper.Model.Accounts;
-using Cooper.Model.AddressBooks;
-using Cooper.Model.ContactGroups;
+using Cooper.Model.Contacts;
+using Cooper.Model.Contacts;
 using Cooper.Model.Contacts;
 
 namespace Cooper.Model.Test

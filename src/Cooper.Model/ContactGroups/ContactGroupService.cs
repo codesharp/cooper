@@ -5,9 +5,9 @@ using Castle.Services.Transaction;
 using CodeSharp.Core;
 using CodeSharp.Core.RepositoryFramework;
 using CodeSharp.Core.Services;
-using Cooper.Model.AddressBooks;
+using Cooper.Model.Contacts;
 
-namespace Cooper.Model.ContactGroups
+namespace Cooper.Model.Contacts
 {
     /// <summary>联系人组领域服务定义
     /// </summary>
