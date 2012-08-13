@@ -354,18 +354,28 @@ function getTasklists(callback) {
                 defaultTaskList.id = '0';
                 defaultTaskList.name = '默认列表';
                 taskLists.push(defaultTaskList);
+                var fetchedList = [];
+                var cooperList = [];
                 for (key in result) {
-                    var taskList = new TaskList();
-                    taskList.id = key;
-                    taskList.name = result[key];
-                    taskLists.push(taskList);
-                }
-                taskLists.sort(function (a, b) {
-                    if (a.id == b.id) {
-                        return 0;
+                    if (isNaN(key)) {
+                        var taskList = new TaskList();
+                        taskList.id = key;
+                        taskList.name = result[key];
+                        fetchedList.push(taskList);
                     }
-                    return a.id > b.id ? 1 : -1;
-                });
+                    else {
+                        var taskList = new TaskList();
+                        taskList.id = key;
+                        taskList.name = result[key];
+                        cooperList.push(taskList);
+                    }
+                }
+                for (var index = 0; index < fetchedList.length; index++) {
+                    taskLists.push(fetchedList[index]);
+                }
+                for (var index = 0; index < cooperList.length; index++) {
+                    taskLists.push(cooperList[index]);
+                }
                 callback({ status: true, data: { taskLists: taskLists }, message: '' });
             }
         );
