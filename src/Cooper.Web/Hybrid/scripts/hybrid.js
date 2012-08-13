@@ -42,7 +42,6 @@
 
 //Web接口地址声明
 var web_loginUrl = "../Account/Login";
-var web_logoutUrl = "../Account/LogoutOnly";
 var web_getTasklistsUrl = "../Personal/GetTasklists";
 var web_createTaskListUrl = "../Personal/CreateTasklist";
 var web_getTasksUrl = "../Personal/GetByPriority";
@@ -283,15 +282,6 @@ function logout(callback) {
             );
         });
     }
-    else {
-        callWebAPI(
-            web_logoutUrl,
-            {},
-            function (result) {
-                callback({ status: result, data: {}, message: '' });
-            }
-        );
-    }
 }
 //获取当前网络状态
 function getNetworkStatus(callback) {
@@ -393,28 +383,40 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
             function (result) {
                 var tasks = [];
                 var tasksFromNative = result.data.tasks;
-                for (var index = 0; index < tasksFromNative.length; index++) {
-                    var taskFromNative = tasksFromNative[index];
+                var isListEditable = result.editable;
 
-                    //过滤出不符合是否完成条件的任务
-                    if (isCompleted == "true" || isCompleted == "false") {
-                        if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != isCompleted) {
-                            continue;
+                for (var index = 0; index < result.sorts.length; index++) {
+                    var sort = result.sorts[index];
+                    for (var taskIdIndex = 0; taskIdIndex < sort.indexs.length; taskIdIndex++) {
+                        var taskId = sort.indexs[taskIdIndex];
+                        var taskFromNative = null;
+                        for (var taskIndex = 0; taskIndex < tasksFromNative.length; taskIndex++) {
+                            if (tasksFromNative[taskIndex]["ID"] == taskId) {
+                                taskFromNative = tasksFromNative[taskIndex];
+                                break;
+                            }
+                        }
+                        if (taskFromNative != null) {
+                            //过滤出不符合是否完成条件的任务
+                            if (isCompleted == "true" || isCompleted == "false") {
+                                if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != isCompleted) {
+                                    continue;
+                                }
+                            }
+
+                            var task = new Task();
+                            task.id = taskFromNative["id"];
+                            task.subject = taskFromNative["subject"] == null ? "" : taskFromNative["subject"];
+                            task.body = taskFromNative["body"] == null ? "" : taskFromNative["body"];
+                            task.dueTime = taskFromNative["dueTime"] == null ? "" : taskFromNative["dueTime"];
+                            task.priority = taskFromNative["priority"] == null ? "" : taskFromNative["priority"];
+                            task.isCompleted = taskFromNative["isCompleted"] == null ? "" : taskFromNative["isCompleted"];
+                            tasks.push(task);
                         }
                     }
-
-                    var task = new Task();
-                    task.id = taskFromNative["id"];
-                    task.subject = taskFromNative["subject"] == null ? "" : taskFromNative["subject"];
-                    task.body = taskFromNative["body"] == null ? "" : taskFromNative["body"];
-                    task.dueTime = taskFromNative["dueTime"] == null ? "" : taskFromNative["dueTime"];
-                    task.priority = taskFromNative["priority"] == null ? "" : taskFromNative["priority"];
-                    task.isCompleted = taskFromNative["isCompleted"] == null ? "" : taskFromNative["isCompleted"];
-                    task.isEditable = result.data.editable;
-                    tasks.push(task);
                 }
                 if (callback != null) {
-                    callback({ status: true, data: { tasks: tasks }, message: '' });
+                    callback({ status: true, data: { tasks: tasks, isListEditable: isListEditable }, message: '' });
                 }
             }
         );
@@ -425,29 +427,41 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
             { tasklistId: tasklistId },
             function (result) {
                 var tasks = [];
-                var tasksFromServer = result != null && result.List != null ? result.List : [];
-                for (var index = 0; index < tasksFromServer.length; index++) {
-                    var taskFromServer = tasksFromServer[index];
+                var tasksFromServer = result.List;
+                var isListEditable = result.Editable;
 
-                    //过滤出不符合是否完成条件的任务
-                    if (isCompleted == "true" || isCompleted == "false") {
-                        if (taskFromServer["IsCompleted"] == null || taskFromServer["IsCompleted"].toString() != isCompleted) {
-                            continue;
+                for (var index = 0; index < result.Sorts.length; index++) {
+                    var sort = result.Sorts[index];
+                    for (var taskIdIndex = 0; taskIdIndex < sort.Indexs.length; taskIdIndex++) {
+                        var taskId = sort.Indexs[taskIdIndex];
+                        var taskFromServer = null;
+                        for (var taskIndex = 0; taskIndex < tasksFromServer.length; taskIndex++) {
+                            if (tasksFromServer[taskIndex]["ID"] == taskId) {
+                                taskFromServer = tasksFromServer[taskIndex];
+                                break;
+                            }
+                        }
+                        if (taskFromServer != null) {
+                            //过滤出不符合是否完成条件的任务
+                            if (isCompleted == "true" || isCompleted == "false") {
+                                if (taskFromServer["IsCompleted"] == null || taskFromServer["IsCompleted"].toString() != isCompleted) {
+                                    continue;
+                                }
+                            }
+
+                            var task = new Task();
+                            task.id = taskFromServer["ID"];
+                            task.subject = taskFromServer["Subject"] == null ? "" : taskFromServer["Subject"];
+                            task.body = taskFromServer["Body"] == null ? "" : taskFromServer["Body"];
+                            task.dueTime = taskFromServer["DueTime"] == null ? "" : taskFromServer["DueTime"];
+                            task.priority = taskFromServer["Priority"] == null ? "" : taskFromServer["Priority"];
+                            task.isCompleted = taskFromServer["IsCompleted"] == null ? "" : taskFromServer["IsCompleted"];
+                            tasks.push(task);
                         }
                     }
-
-                    var task = new Task();
-                    task.id = taskFromServer["ID"];
-                    task.subject = taskFromServer["Subject"] == null ? "" : taskFromServer["Subject"];
-                    task.body = taskFromServer["Body"] == null ? "" : taskFromServer["Body"];
-                    task.dueTime = taskFromServer["DueTime"] == null ? "" : taskFromServer["DueTime"];
-                    task.priority = taskFromServer["Priority"] == null ? "" : taskFromServer["Priority"];
-                    task.isCompleted = taskFromServer["IsCompleted"] == null ? "" : taskFromServer["IsCompleted"];
-                    task.isEditable = taskFromServer["Editable"] == null ? "" : taskFromServer["Editable"];
-                    tasks.push(task);
                 }
                 if (callback != null) {
-                    callback({ status: true, data: { tasks: tasks }, message: '' });
+                    callback({ status: true, data: { tasks: tasks, isListEditable: isListEditable }, message: '' });
                 }
             }
         );
