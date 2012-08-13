@@ -393,6 +393,10 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
             function (result) {
                 var tasks = [];
                 var tasksFromNative = result.data.tasks;
+                var isListEditable = false;
+                if (result != null && result.editable != null && result.editable == true) {
+                    isListEditable = true;
+                }
                 for (var index = 0; index < tasksFromNative.length; index++) {
                     var taskFromNative = tasksFromNative[index];
 
@@ -410,11 +414,10 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
                     task.dueTime = taskFromNative["dueTime"] == null ? "" : taskFromNative["dueTime"];
                     task.priority = taskFromNative["priority"] == null ? "" : taskFromNative["priority"];
                     task.isCompleted = taskFromNative["isCompleted"] == null ? "" : taskFromNative["isCompleted"];
-                    task.isEditable = result.data.editable;
                     tasks.push(task);
                 }
                 if (callback != null) {
-                    callback({ status: true, data: { tasks: tasks }, message: '' });
+                    callback({ status: true, data: { tasks: tasks, isListEditable: isListEditable }, message: '' });
                 }
             }
         );
@@ -426,6 +429,10 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
             function (result) {
                 var tasks = [];
                 var tasksFromServer = result != null && result.List != null ? result.List : [];
+                var isListEditable = false;
+                if (result != null && result.Editable != null && result.Editable == true) {
+                    isListEditable = true;
+                }
                 for (var index = 0; index < tasksFromServer.length; index++) {
                     var taskFromServer = tasksFromServer[index];
 
@@ -443,11 +450,10 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
                     task.dueTime = taskFromServer["DueTime"] == null ? "" : taskFromServer["DueTime"];
                     task.priority = taskFromServer["Priority"] == null ? "" : taskFromServer["Priority"];
                     task.isCompleted = taskFromServer["IsCompleted"] == null ? "" : taskFromServer["IsCompleted"];
-                    task.isEditable = taskFromServer["Editable"] == null ? "" : taskFromServer["Editable"];
                     tasks.push(task);
                 }
                 if (callback != null) {
-                    callback({ status: true, data: { tasks: tasks }, message: '' });
+                    callback({ status: true, data: { tasks: tasks, isListEditable: isListEditable }, message: '' });
                 }
             }
         );
