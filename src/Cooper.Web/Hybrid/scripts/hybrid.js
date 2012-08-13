@@ -327,18 +327,51 @@ function getTasklists(callback) {
             function (result) {
                 if (result.status) {
                     var taskLists = [];
+                    var defaultTaskList = null; //默认任务列表
+                    var fetchedLists = [];      //外部任务列表
+                    var nativeLists = [];       //未同步过的本地任务列表
+                    var cooperLists = [];       //同步过的任务列表
                     for (key in result.data) {
-                        var taskList = new TaskList();
-                        taskList.id = key;
-                        taskList.name = result.data[key];
-                        taskLists.push(taskList);
-                    }
-                    taskLists.sort(function (a, b) {
-                        if (a.id == b.id) {
-                            return 0;
+                        if (key == "0") {
+                            defaultTaskList = new TaskList();
+                            defaultTaskList.id = key;
+                            defaultTaskList.name = result.data[key];
                         }
-                        return a.id > b.id ? 1 : -1;
-                    });
+                        else if (isNaN(key)) {
+                            if (key.indexOf(newTaskListTempIdPrefix) != -1) {
+                                var nativeTaskList = new TaskList();
+                                nativeTaskList.id = key;
+                                nativeTaskList.name = result.data[key];
+                                nativeLists.push(nativeTaskList);
+                            }
+                            else {
+                                var fetechedTaskList = new TaskList();
+                                fetechedTaskList.id = key;
+                                fetechedTaskList.name = result.data[key];
+                                fetchedLists.push(fetechedTaskList);
+                            }
+                        }
+                        else {
+                            var cooperTaskList = new TaskList();
+                            cooperTaskList.id = key;
+                            cooperTaskList.name = result.data[key];
+                            cooperLists.push(cooperTaskList);
+                        }
+                    }
+
+                    if (defaultTaskList != null) {
+                        taskLists.push(defaultTaskList);
+                    }
+                    for (var index = 0; index < fetchedLists.length; index++) {
+                        taskLists.push(fetchedLists[index]);
+                    }
+                    for (var index = 0; index < cooperLists.length; index++) {
+                        taskLists.push(cooperLists[index]);
+                    }
+                    for (var index = 0; index < nativeLists.length; index++) {
+                        taskLists.push(nativeLists[index]);
+                    }
+
                     callback({ status: true, data: { taskLists: taskLists }, message: '' });
                 }
             }
@@ -354,27 +387,27 @@ function getTasklists(callback) {
                 defaultTaskList.id = '0';
                 defaultTaskList.name = '默认列表';
                 taskLists.push(defaultTaskList);
-                var fetchedList = [];
-                var cooperList = [];
+                var fetchedLists = [];
+                var cooperLists = [];
                 for (key in result) {
                     if (isNaN(key)) {
                         var taskList = new TaskList();
                         taskList.id = key;
                         taskList.name = result[key];
-                        fetchedList.push(taskList);
+                        fetchedLists.push(taskList);
                     }
                     else {
                         var taskList = new TaskList();
                         taskList.id = key;
                         taskList.name = result[key];
-                        cooperList.push(taskList);
+                        cooperLists.push(taskList);
                     }
                 }
-                for (var index = 0; index < fetchedList.length; index++) {
-                    taskLists.push(fetchedList[index]);
+                for (var index = 0; index < fetchedLists.length; index++) {
+                    taskLists.push(fetchedLists[index]);
                 }
-                for (var index = 0; index < cooperList.length; index++) {
-                    taskLists.push(cooperList[index]);
+                for (var index = 0; index < cooperLists.length; index++) {
+                    taskLists.push(cooperLists[index]);
                 }
                 callback({ status: true, data: { taskLists: taskLists }, message: '' });
             }
