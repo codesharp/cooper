@@ -383,28 +383,37 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
             function (result) {
                 var tasks = [];
                 var tasksFromNative = result.data.tasks;
-                var isListEditable = false;
-                if (result != null && result.editable != null && result.editable == true) {
-                    isListEditable = true;
-                }
-                for (var index = 0; index < tasksFromNative.length; index++) {
-                    var taskFromNative = tasksFromNative[index];
+                var isListEditable = result.editable;
 
-                    //过滤出不符合是否完成条件的任务
-                    if (isCompleted == "true" || isCompleted == "false") {
-                        if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != isCompleted) {
-                            continue;
+                for (var index = 0; index < result.sorts.length; index++) {
+                    var sort = result.sorts[index];
+                    for (var taskIdIndex = 0; taskIdIndex < sort.indexs.length; taskIdIndex++) {
+                        var taskId = sort.indexs[taskIdIndex];
+                        var taskFromNative = null;
+                        for (var taskIndex = 0; taskIndex < tasksFromNative.length; taskIndex++) {
+                            if (tasksFromNative[taskIndex]["ID"] == taskId) {
+                                taskFromNative = tasksFromNative[taskIndex];
+                                break;
+                            }
+                        }
+                        if (taskFromNative != null) {
+                            //过滤出不符合是否完成条件的任务
+                            if (isCompleted == "true" || isCompleted == "false") {
+                                if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != isCompleted) {
+                                    continue;
+                                }
+                            }
+
+                            var task = new Task();
+                            task.id = taskFromNative["id"];
+                            task.subject = taskFromNative["subject"] == null ? "" : taskFromNative["subject"];
+                            task.body = taskFromNative["body"] == null ? "" : taskFromNative["body"];
+                            task.dueTime = taskFromNative["dueTime"] == null ? "" : taskFromNative["dueTime"];
+                            task.priority = taskFromNative["priority"] == null ? "" : taskFromNative["priority"];
+                            task.isCompleted = taskFromNative["isCompleted"] == null ? "" : taskFromNative["isCompleted"];
+                            tasks.push(task);
                         }
                     }
-
-                    var task = new Task();
-                    task.id = taskFromNative["id"];
-                    task.subject = taskFromNative["subject"] == null ? "" : taskFromNative["subject"];
-                    task.body = taskFromNative["body"] == null ? "" : taskFromNative["body"];
-                    task.dueTime = taskFromNative["dueTime"] == null ? "" : taskFromNative["dueTime"];
-                    task.priority = taskFromNative["priority"] == null ? "" : taskFromNative["priority"];
-                    task.isCompleted = taskFromNative["isCompleted"] == null ? "" : taskFromNative["isCompleted"];
-                    tasks.push(task);
                 }
                 if (callback != null) {
                     callback({ status: true, data: { tasks: tasks, isListEditable: isListEditable }, message: '' });
@@ -418,29 +427,38 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
             { tasklistId: tasklistId },
             function (result) {
                 var tasks = [];
-                var tasksFromServer = result != null && result.List != null ? result.List : [];
-                var isListEditable = false;
-                if (result != null && result.Editable != null && result.Editable == true) {
-                    isListEditable = true;
-                }
-                for (var index = 0; index < tasksFromServer.length; index++) {
-                    var taskFromServer = tasksFromServer[index];
+                var tasksFromServer = result.List;
+                var isListEditable = result.Editable;
 
-                    //过滤出不符合是否完成条件的任务
-                    if (isCompleted == "true" || isCompleted == "false") {
-                        if (taskFromServer["IsCompleted"] == null || taskFromServer["IsCompleted"].toString() != isCompleted) {
-                            continue;
+                for (var index = 0; index < result.Sorts.length; index++) {
+                    var sort = result.Sorts[index];
+                    for (var taskIdIndex = 0; taskIdIndex < sort.Indexs.length; taskIdIndex++) {
+                        var taskId = sort.Indexs[taskIdIndex];
+                        var taskFromServer = null;
+                        for (var taskIndex = 0; taskIndex < tasksFromServer.length; taskIndex++) {
+                            if (tasksFromServer[taskIndex]["ID"] == taskId) {
+                                taskFromServer = tasksFromServer[taskIndex];
+                                break;
+                            }
+                        }
+                        if (taskFromServer != null) {
+                            //过滤出不符合是否完成条件的任务
+                            if (isCompleted == "true" || isCompleted == "false") {
+                                if (taskFromServer["IsCompleted"] == null || taskFromServer["IsCompleted"].toString() != isCompleted) {
+                                    continue;
+                                }
+                            }
+
+                            var task = new Task();
+                            task.id = taskFromServer["ID"];
+                            task.subject = taskFromServer["Subject"] == null ? "" : taskFromServer["Subject"];
+                            task.body = taskFromServer["Body"] == null ? "" : taskFromServer["Body"];
+                            task.dueTime = taskFromServer["DueTime"] == null ? "" : taskFromServer["DueTime"];
+                            task.priority = taskFromServer["Priority"] == null ? "" : taskFromServer["Priority"];
+                            task.isCompleted = taskFromServer["IsCompleted"] == null ? "" : taskFromServer["IsCompleted"];
+                            tasks.push(task);
                         }
                     }
-
-                    var task = new Task();
-                    task.id = taskFromServer["ID"];
-                    task.subject = taskFromServer["Subject"] == null ? "" : taskFromServer["Subject"];
-                    task.body = taskFromServer["Body"] == null ? "" : taskFromServer["Body"];
-                    task.dueTime = taskFromServer["DueTime"] == null ? "" : taskFromServer["DueTime"];
-                    task.priority = taskFromServer["Priority"] == null ? "" : taskFromServer["Priority"];
-                    task.isCompleted = taskFromServer["IsCompleted"] == null ? "" : taskFromServer["IsCompleted"];
-                    tasks.push(task);
                 }
                 if (callback != null) {
                     callback({ status: true, data: { tasks: tasks, isListEditable: isListEditable }, message: '' });
