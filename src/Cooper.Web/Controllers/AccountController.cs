@@ -176,30 +176,14 @@ namespace Cooper.Web.Controllers
             else
                 throw new CooperknownException(this.Lang().username_or_password_was_wrong);
 
-            Regex isMobileRegex = new Regex(
-                @"(iemobile|iphone|ipod|android|nokia|sonyericsson|blackberry|samsung|sec\-|windows ce|motorola|mot\-|up.b|midp\-)",
-                RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-            bool isMobileDevice = !string.IsNullOrEmpty(Request.UserAgent) && isMobileRegex.IsMatch(Request.UserAgent);
-            return Request.IsAjaxRequest() || Request.Browser.IsMobileDevice || isMobileDevice ? Json(true) : this.Home();
+            return Request.IsAjaxRequest() ? Json(a.Name) : this.Home();
         }
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
-            return RedirectToAction("Login");
-        }
-        public ActionResult LogoutOnly()
-        {
-            FormsAuthentication.SignOut();
-            return Json(true);
-        }
-        public ActionResult GetCurrentAccountName()
-        {
-            if (_context.Current != null)
-            {
-                return Json(_context.Current.Name);
-            }
-            return Json(string.Empty);
+            if (Request.IsAjaxRequest())
+                return Json(true);
+            return this.RedirectToAction("Login");
         }
         #endregion
 
