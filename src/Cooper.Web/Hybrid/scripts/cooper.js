@@ -581,6 +581,14 @@
         var dueTime = $("#taskEditPage #duetime").val();
         var isCompleted = $("#taskEditPage #isCompleted").val();
 
+        //Mobile模式下，任务标题不允许为空，因为显示效果不好
+        if (isMobileDevice()) {
+            if (isNullOrEmpty(subject)) {
+                alert(lang.taskSubjectCannotEmpty);
+                return;
+            }
+        }
+
         if (taskId == "") {
             //新增任务
             var task = new Task();
@@ -620,8 +628,8 @@
                         taskInMemory.dueTime = task.dueTime;
                         taskInMemory.isCompleted = task.isCompleted;
                         taskInMemory.isDirty = false;
+                        history.back();
                     });
-                    history.back();
                 }
                 else {
                     alert(result.message);
