@@ -23,7 +23,7 @@ namespace Cooper.Web
             filters.Add(new Cooper.Web.Controllers.AppfailReportAttribute());
             filters.Add(new HandleErrorAttribute());
             //always https
-            //filters.Add(new Cooper.Web.Controllers.RequireHttpsAttribute());
+            filters.Add(new Cooper.Web.Controllers.RequireHttpsAttribute());
         }
         public static void RegisterRoutes(RouteCollection routes)
         {
