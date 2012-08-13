@@ -63,6 +63,8 @@
     function clearTaskPage() {
         $("#taskPage #taskPageTitle").html("");
         $("#taskPage #taskUl > li").remove();
+        $("#taskPage #displayInfoWhenNoTaskExist").html("");
+        $("#taskPage #addFirstTaskButton").hide();
     }
     //清空任务详情页面
     function clearTaskDetailPage() {
@@ -75,6 +77,7 @@
         $("#taskDetailPage #taskDueTime").val("");
         $("#taskDetailPage #isTaskCompleted").val("false");
         $("#taskDetailPage #isTaskCompleted").slider('refresh');
+        $("#taskDetailPage #deleteTaskButton").hide();
     }
     //清空任务编辑页面
     function clearTaskEditPage() {
@@ -741,12 +744,18 @@
         }
     });
     $(document).delegate("#taskListPage", "pagebeforeshow", function (e, data) {
+        clearTaskListPage();
+    });
+    $(document).delegate("#taskListPage", "pageshow", function (e, data) {
         loadAndShowTaskLists();
     });
     $(document).delegate("#addTaskListPage", "pagebeforeshow", function (e, data) {
         $("#tasklistName").val("");
     });
     $(document).delegate("#taskPage", "pagebeforeshow", function (e, data) {
+        clearTaskPage();
+    });
+    $(document).delegate("#taskPage", "pageshow", function (e, data) {
         loadAndShowTasks(pageData.listId, pageData.isCompleted);
 
         if (pageData.isCompleted == null || pageData.isCompleted == "all") {
@@ -760,13 +769,16 @@
         }
     });
     $(document).delegate("#taskDetailPage", "pagebeforeshow", function (e, data) {
+        clearTaskDetailPage();
+    });
+    $(document).delegate("#taskDetailPage", "pageshow", function (e, data) {
         showTaskOnDetailPage(pageData.taskId);
     });
     $(document).delegate("#taskEditPage", "pagebeforeshow", function (e, data) {
         clearTaskEditPage();
-        if (pageData != undefined && pageData.taskId != undefined && pageData.taskId != null && pageData.taskId != "") {
-            showTaskOnEditPage(pageData.taskId);
-        }
+    });
+    $(document).delegate("#taskEditPage", "pageshow", function (e, data) {
+        showTaskOnEditPage(pageData.taskId);
     });
     $(document).delegate("#setCurrentAccountPage", "pagebeforeshow", function (e, data) {
         getCurrentUser(function (result) {
