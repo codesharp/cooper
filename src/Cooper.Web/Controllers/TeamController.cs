@@ -31,9 +31,9 @@ namespace Cooper.Web.Controllers
         #region 各类显示模式数据获取
         //优先级列表模式 所有任务
         [HttpPost]
-        public ActionResult GetByPriority(string teamId, string projectId, string taskFolderId)
+        public ActionResult GetByPriority(string teamId, string projectId)
         {
-            return this.GetBy(taskFolderId
+            return this.GetBy(projectId ?? teamId
                 , this._taskService.GetTasksNotBelongAnyFolder
                 , this._taskService.GetTasks
                 , this.ParseSortsByPriority
@@ -41,9 +41,9 @@ namespace Cooper.Web.Controllers
         }
         //优先级列表模式 不含已经完成
         [HttpPost]
-        public ActionResult GetIncompletedByPriority(string teamId, string projectId, string taskFolderId)
+        public ActionResult GetIncompletedByPriority(string teamId, string projectId)
         {
-            return this.GetBy(taskFolderId
+            return this.GetBy(projectId ?? teamId
                 , this._taskService.GetIncompletedTasksAndNotBelongAnyFolder
                 , this._taskService.GetIncompletedTasks
                 , this.ParseSortsByPriority
@@ -51,9 +51,9 @@ namespace Cooper.Web.Controllers
         }
         //DueTime列表模式
         [HttpPost]
-        public ActionResult GetByDueTime(string teamId, string projectId, string taskFolderId)
+        public ActionResult GetByDueTime(string teamId, string projectId)
         {
-            return this.GetBy(taskFolderId
+            return this.GetBy(projectId ?? teamId
                 , this._taskService.GetTasksNotBelongAnyFolder
                 , this._taskService.GetTasks
                 , this.ParseSortsByDueTime
