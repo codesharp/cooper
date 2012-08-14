@@ -49,7 +49,6 @@ namespace Cooper.Web.Controllers
             base.OnActionExecuting(filterContext);
         }
 
-        public BaseController() { }
         public BaseController(ILoggerFactory factory)
         {
             this._log = factory.Create(typeof(BaseController));

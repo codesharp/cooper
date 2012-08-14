@@ -18,6 +18,8 @@
     var isShowArchive = false; //是否显示归档区域
     var currentMode = byPriority; //当前列表模式，默认使用优先级列表模式
     var currentList = null; //当前任务表标识
+    var currentTeam = ''; //当前团队标识
+    var currentProject = ''; //当前项目标识
 
     var timer;
     var idChanges = {};
@@ -126,8 +128,7 @@
             if (fn1 && typeof (fn1) == 'function') fn1();
             $.ajax({
                 url: b ? url_task_byPriority : url_task_byPriority_incompleted,
-                //任务表标识
-                data: { tryfail: tryfail, taskFolderId: currentList },
+                data: getPostData(),
                 type: 'POST',
                 dataType: 'json',
                 beforeSend: function () { $el_wrapper_region.empty().append($('#loading').html()); },
@@ -152,8 +153,7 @@
             if (fn1 && typeof (fn1) == 'function') fn1();
             $.ajax({
                 url: url_task_byDueTime,
-                //任务表标识
-                data: { tryfail: tryfail, taskFolderId: currentList },
+                data: getPostData(),
                 type: 'POST',
                 dataType: 'json',
                 beforeSend: function () { $el_wrapper_region.empty().append($('#loading').html()); },
@@ -202,7 +202,6 @@
         return sorts;
     }
     ////////////////////////////////////////////////////////////////////////////////////////
-    //TODO:增加网络异常修正逻辑
     function sync(fn) {
         if (timer)
             clearTimeout(timer);
@@ -239,16 +238,14 @@
         }
         preSorts = sorts;
         //提交变更记录
-        $.post(url_task_sync, {
-            tryfail: tryfail,
-            taskFolderId: currentList,
+        $.post(url_task_sync, getPostData({
             //变更列表
             changes: $.toJSON(changes),
             //排序/显示模式
             by: ui_list_helper.mode,
             //排序记录
             sorts: isSortsChange ? sorts : null
-        }, function (data) {
+        }), function (data) {
             changes = []; //成功提交变更后清空变更记录
             endRequest();
             //修正
@@ -272,6 +269,14 @@
     }
     function resetTimer() {
         timer = setTimeout(sync, 2000);
+    }
+    function getPostData(d) {
+        if (!d) d = {};
+        d.tryfail = tryfail;
+        d.taskFolderId = currentList;
+        d.teamId = currentTeam;
+        d.projectId = currentProject;
+        return d;
     }
 
     $(function () {
@@ -330,6 +335,12 @@
                 resetTimer();
             }
         });
+
+        //为团队功能填充全局变量
+        if (window.teamId)
+            currentTeam = window.teamId;
+        if (window.projectId)
+            currentProject = window.projectId;
         list(0);
     });
     function endRequest() {

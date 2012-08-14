@@ -81,6 +81,8 @@
         </ul>
     </div>
     <!--sync box hide-->
+    @if(cs!=null)
+    {
     <div class="modal hide" id="syncModal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">
@@ -114,7 +116,10 @@
         <div class="modal-footer">
         </div>
     </div>
+    }
     <!--task folder box-->
+    @if(folders!=null)
+    {
     <div class="modal hide" id="taskFolderModal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">
@@ -143,6 +148,7 @@
             </form>
         </div>
     </div>
+    }
     <!--share box-->
     <div class="modal hide" id="shareModal">
         <div class="modal-header">
@@ -183,6 +189,10 @@
             $(window).resize(resize);
 
             $('.btn').tooltip({ placement: 'bottom', delay: 800 });
+
+            //TODO:仅在变更时处理
+            if (sys_versionFlag == 'release')
+                window.onbeforeunload = function () { return 'Cooper Task'; };
         });
         function resize() {
             $('.todolist_wrapper').height($(window).height() - 170);

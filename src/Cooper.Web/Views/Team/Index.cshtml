@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = this.Lang().my_task;
+    ViewBag.Title = this.Lang().team;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="container-fluid" style="margin-top: 10px;">
@@ -20,12 +20,11 @@
 @{ Html.RenderPartial("TemplateRegion"); }
 @section Bottom{
     <script type="text/javascript">
+        window.teamId = 0;
+        window.projectId = 0;
+    </script>
+    <script type="text/javascript">
         $(function () {
-            //自动调整到mini模式
-            if ($(window).width() < 600) {
-                location.href = url_task_mini;
-                return;
-            }
             //为IE7做自适应
             if ($.browser.msie && $.browser.version.indexOf('7.') >= 0) {
                 $('div.row-fluid div.span4').removeClass('span4').addClass('span3');

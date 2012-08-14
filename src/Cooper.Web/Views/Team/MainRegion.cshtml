@@ -1,0 +1,66 @@
+﻿<!--撤销删除区域-->
+<div id="cancel_delete" class="alert alert-danger">
+    <span>1</span>@this.Lang().task_deleted
+    <a class="flag_cancelDelete">@this.Lang().revoke</a> <span></span>... <a class="flag_continueDelete">
+        <i class="icon-remove"></i></a>
+</div>
+<!--顶部按钮区域-->
+<div style="padding: 10px 5px 0;">
+    <ul class="nav nav-tabs">
+        <li class="dropdown active"><a><span id="taskFolder_title">@this.Lang().team</span></a></li>
+        <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">@this.Lang().more
+            <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li class="flag_removeProject"><a><i class="icon-trash"></i>@this.Lang().delete_project</a></li>
+                <li><a onclick="window.print()"><i class="icon-print"></i>@this.Lang().print</a></li>
+            </ul>
+        </li>
+    </ul>
+    <div class="btn-toolbar">
+        <div class="btn-group pull-left" data-toggle="buttons-radio">
+            <button class="btn active flag_byPriority" title="@this.Lang().by_priority_title">
+                <i class="icon-time"></i>@this.Lang().priority</button>
+            <button class="btn flag_byAssignee" title="@this.Lang().by_assignee_title">
+                <i class="icon-user"></i>@this.Lang().assignee</button>
+            <button class="btn flag_byDueTime" title="@this.Lang().by_dueTime_title">
+                <i class="icon-bell"></i>@this.Lang().time</button>
+        </div>
+        <div class="btn-group pull-right flag_editable flag_by flag_by_priority" data-toggle="buttons-radio">
+            <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-briefcase"></i>
+                @this.Lang().archive <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a class="flag_archiveTasks">@this.Lang().archive_finish</a></li>
+                <li><a class="flag_hideArchive">@this.Lang().hide_archive</a></li>
+                <li><a class="flag_showArchive">@this.Lang().show_archive</a></li>
+            </ul>
+        </div>
+        <div class="btn-group pull-right flag_editable">
+            <button class="btn flag_appendTask">
+                <i class="icon-plus"></i>@this.Lang().addNew</button>
+            <button class="btn flag_deleteTask">
+                <i class="icon-trash"></i>@this.Lang().delete</button>
+        </div>
+    </div>
+    <div style="clear: both; height: 10px">
+    </div>
+</div>
+<div id="todolist_wrapper" class="todolist_wrapper">
+</div>
+<!--快捷键说明-->
+<div style="border-top: 1px #ddd solid; padding: 10px;">
+    <span class="label label-info">↵ @this.Lang().addNew</span> <span class="label label-success">
+        Ctrl+↵
+        @this.Lang().complete</span> <span class="label ">Ctrl+↓ @this.Lang().sort</span>
+    <span class="label label-inverse">Ctrl/Shift+@this.Lang().mouse @this.Lang().select_inverse</span>
+    <span class="label label-warning">Backspace @this.Lang().delete</span>
+</div>
+<!--异常显示-->
+<div id="error_lose_connect" class="alert alert-error hide">
+    <strong>Oops !</strong><br />
+    @this.Lang().lose_conn<br />
+    @this.Lang().retry_lose_conn<br />
+    <div class="progress progress-danger progress-striped active">
+        <div class="bar">
+            retrying...</div>
+    </div>
+</div>

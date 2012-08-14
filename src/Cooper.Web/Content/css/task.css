@@ -23,6 +23,13 @@ div#error_lose_connect .progress {
 div#error_lose_connect .progress .bar {
 	width: 100%;
 }
+span#taskFolder_title {
+	display: inline-block;
+	height: 14.8px;
+	max-width: 85px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 ul#taskFolder {
 	max-height: 350px;
 	overflow: auto;
@@ -48,7 +55,7 @@ ul#taskFolder span {
 	width: 100%;
 }
 .todolist td {
-	border-top: 1px #ccc solid;
+	border-top: 1px #ddd solid;
 	line-height: 25px;
 }
 /***************************************************************************************/
@@ -61,7 +68,7 @@ ul#taskFolder span {
 	border-top: 0;
 }
 .todolist .row_header .cell_icon {
-	border-right: 1px #ccc solid;
+	border-right: 1px #ddd solid;
 	border-top: 0;
 	width: 30px;
 	text-align: center;
@@ -71,7 +78,7 @@ ul#taskFolder span {
 
 .todolist .row_task:hover td {
 	background-color: #FAEBD7;
-	border-color: #ccc;
+	border-color: #ddd;
 }
 .todolist .row_task:hover input {
 	background-color: #FAEBD7;
@@ -81,7 +88,7 @@ ul#taskFolder span {
 	background-color: #B0E0E6;
 }
 .todolist .row_active td.cell_num {
-	border-top: 1px #ccc solid;
+	border-top: 1px #ddd solid;
 }
 .todolist .row_active input {
 	background-color: #B0E0E6;
@@ -97,7 +104,7 @@ ul#taskFolder span {
 .todolist .row_task .cell_num {
 	width: 30px;
 	text-align: center;
-	border-right: 1px #ccc solid;
+	border-right: 1px #ddd solid;
 	border-top: 0;
 	color: #808080;
 }
@@ -113,7 +120,7 @@ ul#taskFolder span {
 .todolist .row_task .cell_bool {
 	width: 53px; /*ie7存在此宽度的兼容问题*/
 	text-align: center;
-	border-right: 1px #ccc solid;
+	border-right: 1px #ddd solid;
 }
 .todolist .row_task .cell_bool .icon-check {
 	cursor: pointer;
@@ -182,7 +189,7 @@ ul#taskFolder span {
 	font-size: 15px;
 }
 .detail input.detail-title[readonly] {
-	background-color:  #fff;
+	background-color: #fff;
 }
 .detail textarea.detail-note {
 	width: 90%;

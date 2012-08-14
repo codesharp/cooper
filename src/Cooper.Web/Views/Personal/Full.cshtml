@@ -11,11 +11,11 @@
 <div class="container-fluid" style="margin-top: 10px;">
     <div class="row-fluid">
         <!--Main-->
-        <div class="span8" style="border: 1px #ccc solid; background-color: #fff">
+        <div class="span8" style="border: 1px #ddd solid; background-color: #fff">
             @{ Html.RenderPartial("MainRegion"); }
         </div>
         <!--Detail-->
-        <div id="detail_wrapper" class="span4" style="border: 1px #ccc solid; border-left: 0;
+        <div id="detail_wrapper" class="span4" style="border: 1px #ddd solid; border-left: 0;
             padding: 5px 15px; overflow-y: auto; overflow-x: hidden; position: relative;">
         </div>
     </div>
@@ -29,9 +29,6 @@
             if ($.browser.msie && $.browser.version.indexOf('7.') >= 0) {
                 $('div.row-fluid div.span4').removeClass('span4').addClass('span3');
             }
-            //TODO:仅在变更时处理
-            if (sys_versionFlag != 'debug')
-                window.onbeforeunload = function () { return 'Cooper Task'; };
         });
     </script>
 }

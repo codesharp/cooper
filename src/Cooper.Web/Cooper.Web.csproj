@@ -129,6 +129,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IContextService.cs" />
     <Compile Include="Controllers\PersonalController.cs" />
+    <Compile Include="Controllers\TaskController.cs" />
     <Compile Include="Controllers\TeamController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -321,15 +322,15 @@
     <Content Include="Views\Personal\MainRegion.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Personal\TemplateRegion.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="README.md" />
     <Content Include="Views\Shared\ShareToRegion.cshtml" />
     <Content Include="Views\Home\Issues.cshtml" />
     <Content Include="Views\Shared\Scripts_Task.cshtml" />
     <Content Include="Views\Shared\Scripts.cshtml" />
     <Content Include="Views\Shared\Style.cshtml" />
+    <Content Include="Views\Team\Index.cshtml" />
+    <Content Include="Views\Team\MainRegion.cshtml" />
+    <Content Include="Views\Shared\TemplateRegion.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

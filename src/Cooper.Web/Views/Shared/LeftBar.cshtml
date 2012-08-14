@@ -6,7 +6,7 @@
     var isFetch = url.Contains("/fetch") ? active : string.Empty;
 }
 
-<div class="span2" style=" border: 0px #ccc solid; padding: 5px; margin:0;">
+<div class="span2" style=" border: 0px #ddd solid; padding: 5px; margin:0;">
     <ul class="nav nav-list">
         <li class="nav-header">WORK IN COOPER</li>
         <li @Html.Raw(isTask)>
@@ -15,17 +15,67 @@
             </a>
         </li>
         <li @Html.Raw(isAccount)><a href="@Url.Action("Connection", "Account", null)"><i class="icon-user"></i> @this.Lang().my_profile</a></li>
-        <li class="nav-header">@this.Lang().team</li>
-        <li><a>folder1</a></li>
-        <li><a>folder2</a></li>
-        <li><a>folder</a></li>
-
-        @Html.Raw(this.Lang().recent_changes)
+        <li class="nav-header">Code# Team</li>
+        @*@Html.Raw(this.Lang().recent_changes)*@
     </ul>
-    <br />
+    <div class="tabbable tabs-below">
+        <div class="tab-content" style="background-color:#fff; border:1px #ddd solid; border-bottom:0; padding-top:10px; height:150px; overflow-y:auto; overflow-x:hidden; text-overflow: ellipsis;">
+            <div id="tab1" class="tab-pane active">
+                <ul class="nav nav-list">
+                    <li class="nav-header"><i class="icon-plus"></i> Add Project</li>
+                    <li><a href="#Cooper">Cooper</a></li>
+                    <li><a href="#Properties">Properties</a></li>
+                    <li><a href="#NTFE">NTFE</a></li>
+                    <li><a href="#NSF">NSF</a></li>
+                    <li><a href="#Infrastructure">Infrastructure</a></li>
+                    <li><a href="#WebInfrastructure">WebInfrastructure</a></li>
+                    <li><a href="#Infrastructure">InfrastructureInfrastructure</a></li>
+                </ul>
+            </div>
+            <div id="tab2" class="tab-pane">
+                <ul class="nav nav-list">
+                    <li class="nav-header"><i class="icon-plus"></i> Add People</li>
+                    <li><a href="#Cooper">wsky</a></li>
+                    <li><a href="#Properties">sunleepy</a></li>
+                    <li><a href="#NTFE">tangxuehua</a></li>
+                </ul>
+            </div>
+            <div id="tab3" class="tab-pane">
+                <ul class="nav nav-list">
+                    <li><a href="#Cooper">tag</a></li>
+                    <li><a href="#Properties">Nothing</a></li>
+                    <li><a href="#NTFE">Wrong</a></li>
+                </ul>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" style="background-color:transparent">
+            <li class="active"><a href="#tab1" data-toggle="tab"><i class="icon-flag"></i></a></li>
+            <li><a href="#tab2" data-toggle="tab"><i class="icon-user"></i></a></li>
+            <li><a href="#tab3" data-toggle="tab"><i class="icon-tags"></i></a></li>
+        </ul>
+    </div>
+
+    <ul class="nav">
+        <li class="nav-header"><i class="icon-th-large"></i> @this.Lang().team</li>
+        <li style="max-height:150px; overflow-y:auto; overflow-x:hidden; padding-left:15px; border:1px #ddd solid; background-color:#fff">
+            <ul class="nav nav-list" style="margin:0; padding:0">
+                <li class="nav-header"><i class="icon-plus"></i> @this.Lang().add@this.Lang().team</li>
+                <li><a>Codesharp</a></li>
+                <li><a>Workflow</a></li>
+                <li><a>Ali-ENT</a></li>
+                <li><a>Codesharp</a></li>
+                <li><a>Workflow</a></li>
+                <li><a>Ali-ENT</a></li>
+                <li><a>Codesharp</a></li>
+                <li><a>Workflow</a></li>
+                <li><a>Ali-ENT</a></li>
+            </ul>
+        </li>
+    </ul>
+    
     <div class="alert alert-success">
         <strong>Like it ?</strong>
-        <a onclick="feedback()">feedback</a>!
+        <a onclick="feedback()">feedback!</a>
         or
         <a onclick="joinus()">Join us</a>.
     </div>

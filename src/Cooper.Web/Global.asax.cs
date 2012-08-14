@@ -257,7 +257,8 @@ public static class WebExtensions
         public override bool TryGetMember(System.Dynamic.GetMemberBinder binder, out object result)
         {
             //HACK:目前默认zh-cn语言
-            result = CodeSharp.Framework.SystemConfig.Settings["zhcn_" + binder.Name] ?? binder.Name;
+            result = CodeSharp.Framework.SystemConfig.Settings["zhcn_" + binder.Name];
+            result = string.IsNullOrEmpty((string)result) ? binder.Name : result;
             return true;
         }
     }
