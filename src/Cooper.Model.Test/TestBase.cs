@@ -12,8 +12,6 @@ using Cooper.Model.Tasks;
 using CodeSharp.Core.Services;
 using Cooper.Model.Accounts;
 using Cooper.Model.Contacts;
-using Cooper.Model.Contacts;
-using Cooper.Model.Contacts;
 
 namespace Cooper.Model.Test
 {
