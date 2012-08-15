@@ -23,19 +23,21 @@ namespace Cooper.Web.Controllers
             , taskFolderService
             , fetchTaskHelper) { }
 
-        public virtual ActionResult Index()
+        public ActionResult Index(string teamId, string projectId)
         {
+            ViewBag.Team = this.GetTeam(teamId);
+            ViewBag.Project = this.GetProject(projectId);
             return View();
         }
 
-        #region 各类显示模式数据获取
         //优先级列表模式 所有任务
         [HttpPost]
         public ActionResult GetByPriority(string teamId, string projectId)
         {
-            return this.GetBy(projectId ?? teamId
-                , this._taskService.GetTasksNotBelongAnyFolder
-                , this._taskService.GetTasks
+            return this.GetBy(teamId
+                , projectId
+                , this.GetTasksByTeam
+                , this.GetTasksByProject
                 , this.ParseSortsByPriority
                 , this.ParseSortsByPriority);
         }
@@ -43,9 +45,10 @@ namespace Cooper.Web.Controllers
         [HttpPost]
         public ActionResult GetIncompletedByPriority(string teamId, string projectId)
         {
-            return this.GetBy(projectId ?? teamId
-                , this._taskService.GetIncompletedTasksAndNotBelongAnyFolder
-                , this._taskService.GetIncompletedTasks
+            return this.GetBy(teamId
+                , projectId
+                , this.GetIncompletedTasksByTeam
+                , this.GetIncompletedTasksByProject
                 , this.ParseSortsByPriority
                 , this.ParseSortsByPriority);
         }
@@ -53,12 +56,115 @@ namespace Cooper.Web.Controllers
         [HttpPost]
         public ActionResult GetByDueTime(string teamId, string projectId)
         {
-            return this.GetBy(projectId ?? teamId
-                , this._taskService.GetTasksNotBelongAnyFolder
-                , this._taskService.GetTasks
+            return this.GetBy(teamId
+                , projectId
+                , this.GetTasksByTeam
+                , this.GetTasksByProject
                 , this.ParseSortsByDueTime
                 , this.ParseSortsByDueTime);
         }
-        #endregion
+
+        /// <summary>用于接收终端的变更同步数据，按team同步
+        /// </summary>
+        /// <param name="teamId">团队标识</param>
+        /// <param name="changes"></param>
+        /// <param name="by"></param>
+        /// <param name="sorts"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult Sync(string teamId, string projectId, string changes, string by, string sorts)
+        {
+            var team = this.GetTeam(teamId);
+            Assert.IsNotNull(team);
+            var project = this.GetProject(projectId);
+
+            return Json(this.Sync(changes, by, sorts
+                , o => { if (team != null) { } if (project != null) { } }
+                , () => project == null
+                , o => this.GetSortKey(team, o)
+                , o => { }));
+        }
+
+        protected override void ApplyUpdate(Task t, ChangeLog c)
+        {
+            base.ApplyUpdate(t, c);
+            //设置project
+            if (c.Name.Equals("projects", StringComparison.InvariantCultureIgnoreCase)) { }
+        }
+
+        //临时
+        private IEnumerable<Task> GetTasksByTeam(Account a, Team t) { return null; }
+        private IEnumerable<Task> GetIncompletedTasksByTeam(Account a, Team t) { return null; }
+        private IEnumerable<Task> GetTasksByProject(Project p) { return null; }
+        private IEnumerable<Task> GetIncompletedTasksByProject(Project p) { return null; }
+
+        private ActionResult GetBy(string teamId
+            , string projectId
+            , Func<Account, Team, IEnumerable<Task>> taskByTeam//没有projectId时的获取用户在团队内的任务
+            , Func<Project, IEnumerable<Task>> taskByProject//获取项目内的所有任务
+            , Func<Account, Team, TaskInfo[], Sort[]> sortByTeam
+            , Func<Project, TaskInfo[], Sort[]> sortByProject)
+        {
+            var account = this.Context.Current;
+            var team = this.GetTeam(teamId);
+            var project = this.GetProject(projectId);
+            var editable = true;//是否是非团队内成员浏览
+
+            var tasks = project == null
+                ? this.ParseTasks(taskByTeam(account, team).ToArray())
+                : this.ParseTasks(taskByProject(project).ToArray());
+
+            return Json(new
+            {
+                Editable = editable,
+                List = tasks,
+                Sorts = project == null
+                    ? sortByTeam(account, team, tasks)
+                    : sortByProject(project, tasks),
+            });
+        }
+        private Sort[] ParseSortsByPriority(Account account, Team team, params TaskInfo[] tasks)
+        {
+            return this.ParseSortsByPriority(this.GetSorts(account, team, SORT_PRIORITY), tasks);
+        }
+        private Sort[] ParseSortsByPriority(Project project, params TaskInfo[] tasks)
+        {
+            return this.ParseSortsByPriority(this.GetSorts(project, SORT_PRIORITY), tasks);
+        }
+        private Sort[] ParseSortsByDueTime(Account account, Team team, params TaskInfo[] tasks)
+        {
+            return this.ParseSortsByDueTime(this.GetSorts(account, team, SORT_DUETIME), tasks);
+        }
+        private Sort[] ParseSortsByDueTime(Project project, params TaskInfo[] tasks)
+        {
+            return this.ParseSortsByDueTime(this.GetSorts(project, SORT_DUETIME), tasks);
+        }
+        private Sort[] GetSorts(Account a, Team t, string by)
+        {
+            return this.GetSorts(a, this.GetSortKey(t, by));
+        }
+        private Sort[] GetSorts(Project p, string by)
+        {
+            return null;
+            //return !string.IsNullOrWhiteSpace(p[key])
+            //    ? _serializer.JsonDeserialize<Sort[]>(p[key])
+            //    : _empty;
+        }
+        private string GetSortKey(Team t, string by)
+        {
+            return by + "_" + t.ID;
+        }
+        private Team GetTeam(string teamId) { return null; }
+        private Project GetProject(string projectId) { return null; }
+
+        public class Team
+        {
+            public Guid ID { get; set; }
+        }
+        public class Project
+        {
+            public Guid ID { get; set; }
+        }
     }
 }

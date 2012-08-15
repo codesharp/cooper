@@ -3,6 +3,7 @@
 ///<reference path="task.js" />
 ///<reference path="task_bind.js" />
 ///<reference path="task_bind_shortcuts.js" />
+///<reference path="task_bind_team.js" />
 ///<reference path="task_row.js" />
 
 //任务列表UI模式 通用
@@ -160,6 +161,8 @@ UI_List_Common.prototype = {
         this._bind();
         //键盘快捷键绑定
         this._bindShortcuts();
+        //团队功能绑定
+        this._bindTeam();
         //允许额外的实现
         if (this.onPrepareBinds)
             this.onPrepareBinds();

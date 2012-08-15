@@ -233,6 +233,7 @@
     <Content Include="Hybrid\themes\images\icons-36-white.png" />
     <Content Include="Scripts\account.js" />
     <Content Include="Scripts\common.js" />
+    <Content Include="Scripts\task_bind_team.js" />
     <Content Include="Scripts\taskpage.js" />
     <Content Include="Scripts\task_row.js" />
     <Content Include="Scripts\task_bind_shortcuts.js" />

@@ -31,8 +31,9 @@ namespace Cooper.Web
             routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
 
             routes.MapRoute("Personal", "per/{action}/{id}", new { controller = "Personal", action = "Index", id = UrlParameter.Optional });
-            routes.MapRoute("Professional", "pro/{action}/{id}", new { controller = "Professional", action = "Index", id = UrlParameter.Optional });
-            routes.MapRoute("Enterprise", "ent/{action}/{id}", new { controller = "Enterprise", action = "Index", id = UrlParameter.Optional });
+
+            routes.MapRoute("Team", "t/{teamId}", new { controller = "Team", action = "Index", teamId = UrlParameter.Optional });
+            routes.MapRoute("TeamProject", "t/{teamId}/{projectId}", new { controller = "Team", action = "Index", teamId = UrlParameter.Optional, projectId = UrlParameter.Optional });
 
             routes.MapRoute("Account", "Account/{action}/{id}", new { controller = "Account", action = "Profile", id = UrlParameter.Optional });
             routes.MapRoute("Default", "{controller}/{action}/{id}", new { controller = "Home", action = "Index", id = UrlParameter.Optional });
@@ -102,7 +103,7 @@ namespace Cooper.Web
         }
     }
 
-    /// <summary>描述系统内已经异常
+    /// <summary>描述系统内已知异常
     /// </summary>
     public class CooperknownException : Exception
     {
