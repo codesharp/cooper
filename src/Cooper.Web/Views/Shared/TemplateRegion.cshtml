@@ -8,7 +8,7 @@
                     <td class="cell_icon">
                         @*<i class="icon-inbox"></i>*@
                     </td>
-                    <td colspan="2" style="padding-left: 10px">
+                    <td colspan="3" style="padding-left: 10px">
                         <span class="pull-left">{name}</span> 
                         <span id="region_total" class="badge pull-right" style="margin-top: 5px;cursor: pointer" onclick="$(this).parents('thead').next().toggle()">0</span>
                     </td>
@@ -41,6 +41,9 @@
                                 </ul>
                             </li>
                         </ul>
+                    </td>
+                    <td class="cell_assignee">
+                        <span id="assignee"></span>
                     </td>
                     <td class="cell_string">
                         <input id="subject" value="{subject}" maxlength="500" />
@@ -112,6 +115,29 @@
                                 <ul class="dropdown-menu">
                                 </ul>
                             </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="detail-item">
+                            @this.Lang().assignee
+                        </td>
+                        <td class="detail-content">
+                            <input type="text" class="input-small" style="display:none" onblur="$(this).parent().find('button,span').show();$(this).parent().find('input').hide();" />
+                            <span id="assignee"></span>
+                            <button class="btn btn-mini" onclick="$(this).parent().find('button,span').hide();$(this).parent().find('input').show().focus();"><i class="icon-pencil"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="detail-item">
+                            @this.Lang().project
+                        </td>
+                        <td class="detail-content">
+                            <span id="projects">
+                            <span>Cooper项目 <a>×</a></span>，
+                            <span>NSF <a>×</a></span>
+                            </span>
+                            <input type="text" class="input-small" style="display:none" onblur="$(this).next().show();$(this).hide();" />
+                            <button class="btn btn-mini" onclick="$(this).prev().show().focus();$(this).hide();"><i class="icon-plus"></i></button>
                         </td>
                     </tr>
                     <tr>

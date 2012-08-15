@@ -23,8 +23,10 @@ namespace Cooper.Web.Controllers
             , taskFolderService
             , fetchTaskHelper) { }
 
-        public virtual ActionResult Index()
+        public ActionResult Index(string teamId, string projectId)
         {
+            ViewBag.Team = this.GetTeam(teamId);
+            ViewBag.Project = this.GetProject(projectId);
             return View();
         }
 

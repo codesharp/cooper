@@ -1,18 +1,19 @@
 ﻿@{
     ViewBag.Title = this.Lang().team;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var team = ViewBag.Team;
+    var project = ViewBag.Project;
 }
 <div class="container-fluid" style="margin-top: 10px;">
     <div class="row-fluid">
         <!--leftbar-->
         @{ Html.RenderLeftBar(); }
         <!--Main-->
-        <div class="span6" style="border: 1px #ddd solid; background-color: #fff">
+        <div id="main" class="span6">
             @{ Html.RenderPartial("MainRegion"); }
         </div>
         <!--Detail-->
-        <div id="detail_wrapper" class="span4" style="border: 1px #ddd solid; border-left: 0;
-            padding: 5px 15px; overflow-y: auto; overflow-x: hidden; position: relative;">
+        <div id="detail_wrapper" class="span4">
         </div>
     </div>
 </div>
@@ -20,8 +21,8 @@
 @{ Html.RenderPartial("TemplateRegion"); }
 @section Bottom{
     <script type="text/javascript">
-        window.teamId = 0;
-        window.projectId = 0;
+        window.teamId = '@team';
+        window.projectId = '@project';
     </script>
     <script type="text/javascript">
         $(function () {

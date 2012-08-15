@@ -43,6 +43,18 @@ ul#taskFolder span {
 .dropdown-menu i {
 	margin-right: 3px;
 }
+div#main {
+	background-color: #fff;
+	border: 1px #ddd solid;
+}
+div#detail_wrapper {
+	border: 1px #ddd solid;
+	border-left: 0;
+	padding: 5px 15px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	position: relative;
+}
 /***************************************************************************************/
 .todolist_wrapper {
 	border-top: 1px #2f96b4 solid;
@@ -134,6 +146,21 @@ ul#taskFolder span {
 .todolist .row_task .cell_bool ul.nav li {
 	margin-left: 5px;
 }
+.todolist .row_task .cell_assignee {
+	width: 40px;
+}
+.todolist .row_task .cell_assignee span {
+	width: 30px;
+	height: 17px;
+	line-height: 17px;
+	display: block;
+	overflow: hidden;
+	color: #808080;
+	border-right: 2px #05C solid;
+	padding:0 3px;
+	text-align:right;
+	text-overflow: ellipsis;
+}
 .todolist .row_task .cell_string {
 	z-index: 60;
 }
@@ -142,7 +169,7 @@ ul#taskFolder span {
 	outline-width: 0;
 	position: absolute;
 	height: 17px;
-	width: 75%;
+	width: 70%;
 	z-index: 50;
 	margin-top: 0px;
 	margin-left: 2px;
@@ -207,6 +234,7 @@ ul#taskFolder span {
 }
 .detail .detail-content {
 	color: #808080;
+	line-height:30px;
 }
 /***************************************************************************************/
 .feed {
