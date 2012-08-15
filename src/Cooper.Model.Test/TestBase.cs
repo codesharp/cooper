@@ -1,18 +1,18 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using System.Reflection;
+using System.Text;
 using CodeSharp.Core;
 using CodeSharp.Core.Castles;
-using System.Reflection;
-using Cooper.Model.Tasks;
 using CodeSharp.Core.Services;
 using Cooper.Model.Accounts;
 using Cooper.Model.Contacts;
+using Cooper.Model.Tasks;
 using Cooper.Model.Teams;
+using NUnit.Framework;
 
 namespace Cooper.Model.Test
 {

@@ -33,7 +33,8 @@ namespace Cooper.Model.Mappings
     {
         public TeamTaskMap()
         {
-            Table("Cooper_Task");
+            Table("Cooper_Task"); 
+            EntityName("TeamTask");
             Map(m => m.TeamId);
             Map(m => m.AssigneeId);
             HasManyToMany(m => m.Projects)
