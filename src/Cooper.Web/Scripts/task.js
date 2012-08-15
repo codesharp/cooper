@@ -257,7 +257,7 @@ Task.prototype = {
     setDetail_Projects: function (ps) {
         if (!this.$el_detail || !ps) return;
         var $p = this._getDetailEl('projects').empty();
-        $.each(ps, function (i, n) { $p.append('<span>' + n['name'] + ' <a id="' + n['id'] + '" title="' + lang.remove_from_project + '">x</a></span> '); });
+        $.each(ps, function (i, n) { $p.append('<span>' + n['name'] + ' <a class="flag_removeProject" id="' + n['id'] + '" title="' + lang.remove_from_project + '">x</a></span> '); });
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////

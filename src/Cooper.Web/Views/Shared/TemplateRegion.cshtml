@@ -122,9 +122,9 @@
                             @this.Lang().assignee
                         </td>
                         <td class="detail-content">
-                            <input type="text" class="input-small" style="display:none" onblur="$(this).parent().find('button,span').show();$(this).parent().find('input').hide();" />
+                            <input id="assignee_input" type="text" class="input-small" style="display:none" onblur="$(this).parent().find('button,span').show();$(this).parent().find('input').hide();" />
                             <span id="assignee"></span>
-                            <button class="btn btn-mini" onclick="$(this).parent().find('button,span').hide();$(this).parent().find('input').show().focus();"><i class="icon-pencil"></i></button>
+                            <button id="assignee_btn" class="btn btn-mini"><i class="icon-pencil"></i></button>
                         </td>
                     </tr>
                     <tr>
@@ -133,11 +133,9 @@
                         </td>
                         <td class="detail-content">
                             <span id="projects">
-                            <span>Cooper项目 <a>×</a></span>，
-                            <span>NSF <a>×</a></span>
                             </span>
-                            <input type="text" class="input-small" style="display:none" onblur="$(this).next().show();$(this).hide();" />
-                            <button class="btn btn-mini" onclick="$(this).prev().show().focus();$(this).hide();"><i class="icon-plus"></i></button>
+                            <input id="projects_input" type="text" class="input-small" style="display:none" onblur="$(this).next().show();$(this).hide();" />
+                            <button id="projects_btn" class="btn btn-mini"><i class="icon-plus"></i></button>
                         </td>
                     </tr>
                     <tr>
