@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using CodeSharp.Core.RepositoryFramework;
 using Cooper.Model.Contacts;
-using Cooper.Model.Contacts;
 
 namespace Cooper.Model.Contacts
 {
