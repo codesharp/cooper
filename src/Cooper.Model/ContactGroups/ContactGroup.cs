@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using CodeSharp.Core.DomainBase;
 using Cooper.Model.Contacts;
-using Cooper.Model.Contacts;
 
 namespace Cooper.Model.Contacts
 {

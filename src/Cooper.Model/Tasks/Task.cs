@@ -43,12 +43,6 @@ namespace Cooper.Model.Tasks
         /// <summary>获取创建者账号标识
         /// </summary>
         public virtual int CreatorAccountId { get; private set; }
-        /// <summary>获取被分配的联系人标识
-        /// <remarks>
-        /// 任务是面向联系人分配，而不是直接分配到账号
-        /// </remarks>
-        /// </summary>
-        public virtual int? AssignedContacterId { get; private set; }
 
         /// <summary>获取任务所在的任务目录标识
         /// </summary>

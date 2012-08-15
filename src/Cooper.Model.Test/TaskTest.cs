@@ -39,7 +39,6 @@ namespace Cooper.Model.Test
             //Assert.AreEqual(task.CreateTime, task2.CreateTime);
             //Assert.AreEqual(task.LastUpdateTime, task2.LastUpdateTime);
             Assert.AreEqual(task.CreatorAccountId, task2.CreatorAccountId);
-            Assert.AreEqual(task.AssignedContacterId, task2.AssignedContacterId);
             Assert.AreEqual(task.TaskFolderId, task2.TaskFolderId);
         }
         [Test]
@@ -134,7 +133,7 @@ namespace Cooper.Model.Test
         {
             if (tasks == null) return;
             tasks.ToList().ForEach(o => this._log.InfoFormat(
-                "{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}"
+                "{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}"
                 , o.Subject
                 , o.Body
                 , o.Priority
@@ -142,8 +141,7 @@ namespace Cooper.Model.Test
                 , o.IsCompleted
                 , o.CreateTime
                 , o.LastUpdateTime
-                , o.CreatorAccountId
-                , o.AssignedContacterId));
+                , o.CreatorAccountId));
         }
     }
 }

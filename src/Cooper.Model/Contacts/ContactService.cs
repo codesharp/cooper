@@ -6,7 +6,6 @@ using CodeSharp.Core;
 using CodeSharp.Core.RepositoryFramework;
 using CodeSharp.Core.Services;
 using Cooper.Model.Contacts;
-using Cooper.Model.Contacts;
 
 namespace Cooper.Model.Contacts
 {
