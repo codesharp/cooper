@@ -166,5 +166,12 @@ UI_List_Common.prototype._bind = function () {
                         base.onDueTimeBatchChange(tasks, t);
             }
         });
+        //部分事件无法全局绑定
+        Task.prototype.bind_detail = function ($el_detail) {
+            //datepicker重复初始化问题
+            $el_detail.find('#dueTime').removeClass('hasDatepicker');
+            if (base.modeArgs.editable)
+                $el_detail.find('#dueTime').datepicker();
+        }
     }
 }

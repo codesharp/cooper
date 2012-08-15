@@ -60,10 +60,13 @@ Task.prototype = {
     renderDetail: function () {
         if (!this.$el_detail)
             this.$el_detail = this._generateDetail(this['data']);
-        //datepicker重复初始化问题
-        this.$el_detail.find('#dueTime').removeClass('hasDatepicker');
-        if (this.editable)
-            this.$el_detail.find('#dueTime').datepicker();
+        if (this.editable) {
+            //部分事件如blur无法全局因此在此执行一些额外的rebind
+            if (this.bind_detail)
+                this.bind_detail(this.$el_detail);
+            if (this.bind_detail_team)
+                this.bind_detail_team(this.$el_detail);
+        }
         //设置值
         this.setDetail_Completed(this.isCompleted());
         this.setDetail_Subject(this.subject());
