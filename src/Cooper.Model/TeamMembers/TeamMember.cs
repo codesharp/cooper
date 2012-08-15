@@ -18,15 +18,20 @@ namespace Cooper.Model.Teams
         /// <summary>获取团队成员的Email
         /// </summary>
         public string Email { get; private set; }
+        /// <summary>获取所属团队的标识
+        /// </summary>
+        public int TeamId { get; private set; }
         /// <summary>创建时间
         /// </summary>
         public DateTime CreateTime { get; private set; }
 
         protected TeamMember() { this.CreateTime = DateTime.Now; }
-        public TeamMember(string name, string email) : this()
+        public TeamMember(string name, string email, Team team) : this()
         {
+            Assert.IsValid(team);
             this.SetName(name);
             this.SetEmail(email);
+            this.TeamId = team.ID;
         }
 
         /// <summary>设置名称

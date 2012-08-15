@@ -21,15 +21,20 @@ namespace Cooper.Model.Teams
         /// </remarks>
         /// </summary>
         public bool IsPublic { get; private set; }
+        /// <summary>获取所属团队的标识
+        /// </summary>
+        public int TeamId { get; private set; }
         /// <summary>创建时间
         /// </summary>
         public DateTime CreateTime { get; private set; }
 
         protected Project() { this.CreateTime = DateTime.Now; }
-        public Project(string name, bool isPublic) : this()
+        public Project(string name, bool isPublic, Team team) : this()
         {
+            Assert.IsValid(team);
             this.SetName(name);
             this.SetIsPublic(isPublic);
+            this.TeamId = team.ID;
         }
 
         /// <summary>设置名称
