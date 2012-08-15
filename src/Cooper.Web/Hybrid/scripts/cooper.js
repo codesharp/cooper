@@ -478,6 +478,7 @@
             alert(lang.passwordCannotEmpty);
             return;
         }
+		showLoading("登录中...");
         login(userName, password, "normal", function (result) {
             if (!result.status) {
                 alert(result.message);
@@ -486,14 +487,17 @@
                 if (isMobileDevice()) {
                     syncTaskLists(null, function (result) {
                         if (result.status) {
+							hideLoading();
                             showPage("taskListPage");
                         }
                         else {
+							hideLoading();
                             alert(result.message);
                         }
                     });
                 }
                 else {
+					hideLoading();
                     $.cookie('cooper_web_loginUser', userName);
                     showPage("taskListPage");
                 }
@@ -515,11 +519,14 @@
     });
     //Setting中的更换账号页面:“注销”按钮事件响应
     $(document).delegate("#setCurrentAccountPage #logoutButton", "click", function () {
+		showLoading("注销中...");
         logout(function (result) {
             if (!result.status) {
+				hideLoading();
                 alert(result.message);
             }
             else {
+				hideLoading();
                 $('#backToLoginPageButton').click();
             }
         });
@@ -654,27 +661,32 @@
     //任务页面:“刷新”按钮事件响应
     $(document).delegate("#taskPage #refreshTasksButton", "click", function () {
         if (isMobileDevice()) {
-            showLoading();
-            syncTaskLists(pageData.listId, function (result) {
-                if (result.status) {
-                    getTasksByPriority(pageData.listId, pageData.isCompleted, function (result) {
-                        if (result.status) {
-                            tasksInCurrentList = result.data.tasks;
-                            isCurrentTaskListEditable = result.data.isListEditable;
-                            showTasks(pageData.listId, result.data.tasks, pageData.isCompleted);
-                            hideLoading();
-                        }
-                        else {
-                            hideLoading();
-                            alert(result.message);
-                        }
-                    });
-                }
-                else {
-                    hideLoading();
-                    alert(result.message);
-                }
-            });
+			if (isCurrentTaskListEditable == false) {
+				loadAndShowTasks(pageData.listId, pageData.isCompleted);
+			}
+			else if (isCurrentTaskListEditable == true) {
+				showLoading();
+				syncTaskLists(pageData.listId, function (result) {
+					if (result.status) {
+						getTasksByPriority(pageData.listId, pageData.isCompleted, function (result) {
+							if (result.status) {
+								tasksInCurrentList = result.data.tasks;
+								isCurrentTaskListEditable = result.data.isListEditable;
+								showTasks(pageData.listId, result.data.tasks, pageData.isCompleted);
+								hideLoading();
+							}
+							else {
+								hideLoading();
+								alert(result.message);
+							}
+						});
+					}
+					else {
+						hideLoading();
+						alert(result.message);
+					}
+				});
+			}
         }
         else {
             loadAndShowTasks(pageData.listId, pageData.isCompleted);

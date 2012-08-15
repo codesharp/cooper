@@ -424,44 +424,52 @@ function getTasksByPriority(tasklistId, isCompleted, callback) {
             native_getUrl,
             { key: 'GetTasksByPriority', tasklistId: tasklistId },
             function (result) {
-                var tasks = [];
-                var tasksFromNative = result.data.tasks;
-                var isListEditable = result.editable;
-
-                for (var index = 0; index < result.sorts.length; index++) {
-                    var sort = result.sorts[index];
-                    for (var taskIdIndex = 0; taskIdIndex < sort.indexs.length; taskIdIndex++) {
-                        var taskId = sort.indexs[taskIdIndex];
-                        var taskFromNative = null;
-                        for (var taskIndex = 0; taskIndex < tasksFromNative.length; taskIndex++) {
-                            if (tasksFromNative[taskIndex]["ID"] == taskId) {
-                                taskFromNative = tasksFromNative[taskIndex];
-                                break;
-                            }
-                        }
-                        if (taskFromNative != null) {
-                            //过滤出不符合是否完成条件的任务
-                            if (isCompleted == "true" || isCompleted == "false") {
-                                if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != isCompleted) {
-                                    continue;
-                                }
-                            }
-
-                            var task = new Task();
-                            task.id = taskFromNative["id"];
-                            task.subject = taskFromNative["subject"] == null ? "" : taskFromNative["subject"];
-                            task.body = taskFromNative["body"] == null ? "" : taskFromNative["body"];
-                            task.dueTime = taskFromNative["dueTime"] == null ? "" : taskFromNative["dueTime"];
-                            task.priority = taskFromNative["priority"] == null ? "" : taskFromNative["priority"];
-                            task.isCompleted = taskFromNative["isCompleted"] == null ? "" : taskFromNative["isCompleted"];
-                            tasks.push(task);
-                        }
-                    }
-                }
-                if (callback != null) {
-                    callback({ status: true, data: { tasks: tasks, isListEditable: isListEditable }, message: '' });
-                }
+                if(result.status) {
+					var tasks = [];
+					var tasksFromNative = result.data.tasks;
+					var isListEditable = result.data.editable;
+	
+					for (var index = 0; index < result.data.sorts.length; index++) {
+						var sort = result.data.sorts[index];
+						for (var taskIdIndex = 0; taskIdIndex < sort.indexs.length; taskIdIndex++) {
+							var taskId = sort.indexs[taskIdIndex];
+							var taskFromNative = null;
+							for (var taskIndex = 0; taskIndex < tasksFromNative.length; taskIndex++) {
+								if (tasksFromNative[taskIndex]["id"] == taskId) {
+									taskFromNative = tasksFromNative[taskIndex];
+									break;
+								}
+							}
+							if (taskFromNative != null) {
+								//过滤出不符合是否完成条件的任务
+								if (isCompleted == "true" || isCompleted == "false") {
+									if (taskFromNative["isCompleted"] == null || taskFromNative["isCompleted"].toString() != isCompleted) {
+										continue;
+									}
+								}
+	
+								var task = new Task();
+								task.id = taskFromNative["id"];
+								task.subject = taskFromNative["subject"] == null ? "" : taskFromNative["subject"];
+								task.body = taskFromNative["body"] == null ? "" : taskFromNative["body"];
+								task.dueTime = taskFromNative["dueTime"] == null ? "" : taskFromNative["dueTime"];
+								task.priority = taskFromNative["priority"] == null ? "" : taskFromNative["priority"];
+								task.isCompleted = taskFromNative["isCompleted"] == null ? "" : taskFromNative["isCompleted"];
+								tasks.push(task);
+							}
+						}
+					}
+					if (callback != null) {
+						callback({ status: true, data: { tasks: tasks, isListEditable: isListEditable }, message: '' });
+					}	
+				}
+				else {
+					if (callback != null) {
+						callback({ status: false, data: {}, message: result.message });
+					}
+				}
             }
+			
         );
     }
     else {
