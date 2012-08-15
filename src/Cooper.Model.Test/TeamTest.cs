@@ -1,10 +1,8 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
-using System.Linq;
-using Cooper.Model.Contacts;
-using NUnit.Framework;
 using Cooper.Model.Teams;
+using NUnit.Framework;
 
 namespace Cooper.Model.Test
 {

@@ -53,6 +53,10 @@
     <Compile Include="AddressBookRepository.cs" />
     <Compile Include="ContactGroupRepository.cs" />
     <Compile Include="ContactRepository.cs" />
+    <Compile Include="TeamTaskRepository.cs" />
+    <Compile Include="ProjectRepository.cs" />
+    <Compile Include="TeamMemberRepository.cs" />
+    <Compile Include="TeamRepository.cs" />
     <Compile Include="TasklistRepository.cs" />
     <Compile Include="LockRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
