@@ -11,13 +11,13 @@ using Cooper.Model.Accounts;
 
 namespace Cooper.Web.Controllers
 {
-    public class TaskController : BaseController
+    public abstract class TaskController : BaseController
     {
         protected static readonly Sort[] _empty = new Sort[0];
         protected static readonly Serializer _serializer = new Serializer();
         protected static readonly string TEMP = "temp_";
-        protected static readonly string PROFILE_SORT_PRIORITY = "ByPriority";
-        protected static readonly string PROFILE_SORT_DUETIME = "ByDueTime";
+        protected static readonly string SORT_PRIORITY = "ByPriority";
+        protected static readonly string SORT_DUETIME = "ByDueTime";
 
         protected ILog _log;
         protected IAccountService _accountService;
@@ -53,168 +53,19 @@ namespace Cooper.Web.Controllers
             return Redirect("~/hybrid/index.htm#taskListPage");
         }
 
-        /// <summary>用于接收终端的变更同步数据，按folder同步
-        /// </summary>
-        /// <param name="tasklistId">兼容</param>
-        /// <param name="taskFolderId">允许为空，客户端在同步数据前应先确保folder已经创建</param>
-        /// <param name="changes">变更数据 changelog[]</param>
-        /// <param name="by">排序依据标识，参考静态变量PROFILE_SORT_PRIORITY、PROFILE_SORT_DUETIME等的值</param>
-        /// <param name="sorts">排序数据 sort[]</param>
-        /// <returns></returns>
-        [HttpPost]
-        [ValidateInput(false)]
-        public ActionResult Sync(string tasklistId, string taskFolderId, string changes, string by, string sorts)
+        protected TaskInfo[] ParseTasks(params Task[] tasks)
         {
-            //模拟同步间隙
-            //System.Threading.Thread.Sleep(2000);
-
-            //HACK:Fetch模式不支持同步变更
-            Assert.IsFalse(this._fetchTaskHelper.IsFetchTaskFolder(taskFolderId ?? tasklistId));
-
-            var account = this.Context.Current;
-            var list = _serializer.JsonDeserialize<ChangeLog[]>(changes);
-            var idChanges = new Dictionary<string, string>();//old,new
-            var folder = this.GetTaskFolder(taskFolderId ?? tasklistId);
-
-            //UNDONE:详细考虑潜在异常以及批量事务的意外问题是否会造成丢失变更
-            #region 对task执行对应变更
-            foreach (var c in list)
+            return tasks.Select(o => new TaskInfo()
             {
-                try
-                {
-                    //临时记录无需删除
-                    if (c.Type == ChangeType.Delete && c.ID.StartsWith(TEMP))
-                        continue;
-
-                    Task t;
-                    if (idChanges.ContainsKey(c.ID))
-                        t = this._taskService.GetTask(long.Parse(idChanges[c.ID]));
-                    else if (c.ID.StartsWith(TEMP))
-                    {
-                        t = new Task(account);
-                        if (folder != null) t.SetTaskFolder(folder);
-                        this._taskService.Create(t);
-                        idChanges.Add(c.ID, t.ID.ToString());//添加到id变更
-
-                        if (this._log.IsDebugEnabled)
-                            this._log.DebugFormat("从临时标识#{0}新建任务#{1}{2}"
-                                , c.ID, t.ID, folder != null ? "并加入Folder#" + folder.ID : string.Empty);
-                    }
-                    else
-                        t = this._taskService.GetTask(long.Parse(c.ID));
-
-                    if (t == null)
-                    {
-                        this._log.WarnFormat("执行变更时出现不存在的任务#{0}", c.ID);
-                        continue;
-                    }
-
-                    if (c.Type == ChangeType.Update)
-                        this.ApplyUpdate(t, c);
-                    else if (c.Type == ChangeType.Delete)
-                        this._taskService.Delete(t);
-                }
-                catch (Exception e)
-                {
-                    this._log.Error(string.Format("执行变更时异常：{0}|{1}|{2}", c.ID, c.Name, c.Value), e);
-                }
-            }
-            #endregion
-
-            //没有变更则无需提交排序数据
-            if (!string.IsNullOrWhiteSpace(sorts) && sorts != "null")
-            {
-                #region 保存排序信息
-                var temp = _serializer.JsonDeserialize<Sort[]>(sorts);
-                foreach (var s in temp)
-                {
-                    s.Indexs = s.Indexs.Where(o =>
-                        !string.IsNullOrWhiteSpace(o)).Distinct().ToArray();
-                    for (var i = 0; i < s.Indexs.Length; i++)
-                        //修正索引中含有的临时标识
-                        if (s.Indexs[i].StartsWith(TEMP) && idChanges.ContainsKey(s.Indexs[i]))
-                            s.Indexs[i] = idChanges[s.Indexs[i]];
-                }
-                try
-                {
-                    var d = _serializer.JsonSerialize(temp);
-
-                    if (folder == null)
-                    {
-                        //更新排序信息至用户设置
-                        account.SetProfile(by, d);
-                        this._accountService.Update(account);
-                    }
-                    else
-                    {
-                        //更新排序信息至对应的任务表
-                        folder[by] = d;
-                        this._taskFolderService.Update(folder);
-                    }
-
-                    if (this._log.IsDebugEnabled)
-                        this._log.DebugFormat("修正后的排序数据为：{0}|{1}", by, d);
-                }
-                catch (Exception e)
-                {
-                    this._log.Error(string.Format("保存排序信息至用户设置时异常"), e);
-                }
-                #endregion
-            }
-            //返回修正列表
-            return Json(idChanges.Select(o => new Correction() { OldId = o.Key, NewId = o.Value }));
+                ID = o.ID.ToString(),
+                Subject = o.Subject,
+                Body = o.Body,
+                DueTime = o.DueTime.HasValue ? o.DueTime.Value.Date.ToString("yyyy-MM-dd") : null,
+                Priority = (int)o.Priority,
+                IsCompleted = o.IsCompleted
+            }).ToArray();
         }
-
-        protected ActionResult GetBy(string folderId
-            , Func<Account, IEnumerable<Task>> func1//没有任务表时的获取
-            , Func<Account, TaskFolder, IEnumerable<Task>> func2
-            , Func<Account, TaskInfo[], Sort[]> func3
-            , Func<Account, TaskFolder, TaskInfo[], Sort[]> func4)
-        {
-            var folder = this.GetTaskFolder(folderId);
-            var account = this.Context.Current;
-
-            TaskInfo[] tasks = null;
-
-            var editable = folder != null
-                || (tasks = this._fetchTaskHelper.FetchTasks(account, folderId)) == null;
-
-            tasks = folder == null
-                ? (tasks ?? this.ParseTasks(func1(account).ToArray()))
-                : this.ParseTasks(func2(account, folder).ToArray());
-
-            return Json(new
-            {
-                Editable = editable,
-                List = tasks,
-                Sorts = folder == null
-                    ? func3(account, tasks)
-                    : func4(account, folder, tasks),
-            });
-        }
-        protected TaskFolder GetTaskFolder(string taskFolderId)
-        {
-            int listId;
-            var list = int.TryParse(taskFolderId, out listId) ? this._taskFolderService.GetTaskFolder(listId) : null;
-            //HACK:个人任务列表只有拥有者能查看
-            if (list != null && list is PersonalTaskFolder)
-                Assert.AreEqual(this.Context.Current.ID, (list as PersonalTaskFolder).OwnerAccountId);
-            //UNDONE:根据不同类型的任务表验证权限
-            return list;
-        }
-        protected Sort[] ParseSortsByPriority(Account account, params TaskInfo[] tasks)
-        {
-            return this.ParseSortsByPriority(account
-                , this.GetSorts(account, PROFILE_SORT_PRIORITY)
-                , tasks);
-        }
-        protected Sort[] ParseSortsByPriority(Account account, TaskFolder folder, params TaskInfo[] tasks)
-        {
-            return this.ParseSortsByPriority(account
-                , this.GetSorts(folder, PROFILE_SORT_PRIORITY)
-                , tasks);
-        }
-        protected Sort[] ParseSortsByPriority(Account account, Sort[] sorts, params TaskInfo[] tasks)
+        protected Sort[] ParseSortsByPriority(Sort[] sorts, params TaskInfo[] tasks)
         {
             Sort today, upcoming, later;
             today = sorts.FirstOrDefault(o => o.Key == "0") ?? new Sort() { By = "priority", Key = "0" };
@@ -230,15 +81,7 @@ namespace Cooper.Web.Controllers
 
             return new Sort[] { today, upcoming, later };
         }
-        protected Sort[] ParseSortsByDueTime(Account account, params TaskInfo[] tasks)
-        {
-            return this.ParseSortsByDueTime(account, this.GetSorts(account, PROFILE_SORT_DUETIME), tasks);
-        }
-        protected Sort[] ParseSortsByDueTime(Account account, TaskFolder folder, params TaskInfo[] tasks)
-        {
-            return this.ParseSortsByDueTime(account, this.GetSorts(folder, PROFILE_SORT_DUETIME), tasks);
-        }
-        protected Sort[] ParseSortsByDueTime(Account account, Sort[] sorts, params TaskInfo[] tasks)
+        protected Sort[] ParseSortsByDueTime(Sort[] sorts, params TaskInfo[] tasks)
         {
             Sort due, today, upcoming, later;
             due = sorts.FirstOrDefault(o => o.Key == "dueTime") ?? new Sort() { By = "", Key = "dueTime" };
@@ -257,19 +100,154 @@ namespace Cooper.Web.Controllers
 
             return new Sort[] { due, today, upcoming, later };
         }
-
-        private TaskInfo[] ParseTasks(params Task[] tasks)
+        protected Sort[] GetSorts(Account a, string key)
         {
-            return tasks.Select(o => new TaskInfo()
-            {
-                ID = o.ID.ToString(),
-                Subject = o.Subject,
-                Body = o.Body,
-                DueTime = o.DueTime.HasValue ? o.DueTime.Value.Date.ToString("yyyy-MM-dd") : null,
-                Priority = (int)o.Priority,
-                IsCompleted = o.IsCompleted
-            }).ToArray();
+            return !string.IsNullOrWhiteSpace(a.GetProfile(key))
+                ? _serializer.JsonDeserialize<Sort[]>(a.GetProfile(key))
+                : _empty;
         }
+        /// <summary>用于接收终端的变更同步数据
+        /// </summary>
+        /// <param name="changes">变更数据 changelog[]</param>
+        /// <param name="by">排序依据标识，参考静态变量PROFILE_SORT_PRIORITY、PROFILE_SORT_DUETIME等的值</param>
+        /// <param name="sorts">排序数据 sort[]</param>
+        /// <param name="ifNew">为兼容原personalcontroller的taskfolder同步行为而设计</param>
+        /// <param name="isPersonalSorts">判断是否是个人排序数据</param>
+        /// <param name="saveSorts">保存非个人排序数据</param>
+        /// <returns></returns>
+        protected IEnumerable<Correction> Sync(string changes
+            , string by
+            , string sorts
+            , Action<Task> ifNew
+            , Func<bool> isPersonalSorts
+            , Func<string, string> getSortKey
+            , Action<string> saveSorts)
+        {
+            //模拟同步间隙
+            //System.Threading.Thread.Sleep(2000);
+
+            var account = this.Context.Current;
+            var list = _serializer.JsonDeserialize<ChangeLog[]>(changes);
+            var idChanges = new Dictionary<string, string>();//old,new
+            //同步变更
+            this.ApplyChanges(account, list, idChanges, ifNew);
+            //同步排序数据
+            this.UpdateSorts(account, by, sorts, idChanges, isPersonalSorts, getSortKey, saveSorts);
+            //返回修正记录
+            return idChanges.Select(o => new Correction() { OldId = o.Key, NewId = o.Value });
+        }
+        protected virtual void ApplyUpdate(Task t, ChangeLog c)
+        {
+            var n = c.Name.ToLower();
+
+            if (n.Equals("subject"))
+                t.SetSubject(c.Value);
+            else if (n.Equals("body"))
+                t.SetBody(c.Value);
+            else if (n.Equals("priority"))
+                t.SetPriority((Priority)Convert.ToInt32(c.Value));
+            else if (n.Equals("duetime"))
+                t.SetDueTime(string.IsNullOrWhiteSpace(c.Value) ? new DateTime?() : Convert.ToDateTime(c.Value));
+            else if (n.Equals("iscompleted"))
+                if (Convert.ToBoolean(c.Value))
+                    t.MarkAsCompleted();
+                else
+                    t.MarkAsInCompleted();
+        }
+
+        private void ApplyChanges(Account account
+            , ChangeLog[] list
+            , IDictionary<string, string> idChanges
+            , Action<Task> ifNew)
+        {
+            foreach (var c in list)
+            {
+                try
+                {
+                    //临时记录无需删除
+                    if (c.Type == ChangeType.Delete && c.ID.StartsWith(TEMP))
+                        continue;
+
+                    Task t;
+                    if (idChanges.ContainsKey(c.ID))
+                        t = this._taskService.GetTask(long.Parse(idChanges[c.ID]));
+                    else if (c.ID.StartsWith(TEMP))
+                    {
+                        t = new Task(account);
+                        ifNew(t);//为兼容原personalcontroller的taskfolder同步
+                        this._taskService.Create(t);
+                        idChanges.Add(c.ID, t.ID.ToString());//添加到id变更
+                    }
+                    else
+                        t = this._taskService.GetTask(long.Parse(c.ID));
+
+                    if (t == null)
+                    {
+                        this._log.WarnFormat("执行变更时出现不存在的任务#{0}", c.ID);
+                        continue;
+                    }
+
+                    if (c.Type == ChangeType.Update)
+                    {
+                        this.ApplyUpdate(t, c);
+                        this._taskService.Update(t);
+
+                        if (this._log.IsDebugEnabled)
+                            this._log.DebugFormat("为任务#{0}执行变更{1}|{2}|{3}", t.ID, c.ID, c.Name, c.Value);
+                    }
+                    else if (c.Type == ChangeType.Delete)
+                        this._taskService.Delete(t);
+                }
+                catch (Exception e)
+                {
+                    this._log.Error(string.Format("执行变更时异常：{0}|{1}|{2}", c.ID, c.Name, c.Value), e);
+                }
+            }
+        }
+        private void UpdateSorts(Account account
+            , string by
+            , string sorts
+            , IDictionary<string, string> idChanges
+            , Func<bool> isPersonalSorts
+            , Func<string, string> getSortKey
+            , Action<string> saveSorts)
+        {
+            //没有变更则无需提交排序数据
+            if (string.IsNullOrWhiteSpace(sorts) || sorts == "null") return;
+
+            var temp = _serializer.JsonDeserialize<Sort[]>(sorts);
+            foreach (var s in temp)
+            {
+                s.Indexs = s.Indexs.Where(o =>
+                    !string.IsNullOrWhiteSpace(o)).Distinct().ToArray();
+                for (var i = 0; i < s.Indexs.Length; i++)
+                    //修正索引中含有的临时标识
+                    if (s.Indexs[i].StartsWith(TEMP) && idChanges.ContainsKey(s.Indexs[i]))
+                        s.Indexs[i] = idChanges[s.Indexs[i]];
+            }
+            try
+            {
+                var d = _serializer.JsonSerialize(temp);
+
+                if (isPersonalSorts())
+                {
+                    //更新排序信息至用户设置
+                    account.SetProfile(getSortKey(by), d);
+                    this._accountService.Update(account);
+                }
+                else
+                    //更新排序信息到非个人存储区域
+                    saveSorts(d);
+
+                if (this._log.IsDebugEnabled)
+                    this._log.DebugFormat("修正后的排序数据为：{0}|{1}", by, d);
+            }
+            catch (Exception e)
+            {
+                this._log.Error(string.Format("保存排序信息至用户设置时异常"), e);
+            }
+        }
+
         private void RepairIndexs(Sort sort, IDictionary<string, TaskInfo> tasks)
         {
             var temp = (sort.Indexs ?? new string[0]).ToList();
@@ -289,38 +267,6 @@ namespace Cooper.Web.Controllers
             return tasks.Where(filter)
                 .Select(o => new KeyValuePair<string, TaskInfo>(o.ID, o))
                 .ToDictionary(o => o.Key, o => o.Value);
-        }
-        private Sort[] GetSorts(Account a, string key)
-        {
-            return !string.IsNullOrWhiteSpace(a.GetProfile(key))
-                ? _serializer.JsonDeserialize<Sort[]>(a.GetProfile(key))
-                : _empty;
-        }
-        private Sort[] GetSorts(TaskFolder a, string key)
-        {
-            return !string.IsNullOrWhiteSpace(a[key])
-                ? _serializer.JsonDeserialize<Sort[]>(a[key])
-                : _empty;
-        }
-        private void ApplyUpdate(Task t, ChangeLog c)
-        {
-            if (c.Name.Equals("subject", StringComparison.InvariantCultureIgnoreCase))
-                t.SetSubject(c.Value);
-            if (c.Name.Equals("body", StringComparison.InvariantCultureIgnoreCase))
-                t.SetBody(c.Value);
-            if (c.Name.Equals("priority", StringComparison.InvariantCultureIgnoreCase))
-                t.SetPriority((Priority)Convert.ToInt32(c.Value));
-            if (c.Name.Equals("duetime", StringComparison.InvariantCultureIgnoreCase))
-                t.SetDueTime(string.IsNullOrWhiteSpace(c.Value) ? new DateTime?() : Convert.ToDateTime(c.Value));
-            if (c.Name.Equals("iscompleted", StringComparison.InvariantCultureIgnoreCase))
-                if (Convert.ToBoolean(c.Value))
-                    t.MarkAsCompleted();
-                else
-                    t.MarkAsInCompleted();
-            this._taskService.Update(t);
-
-            if (this._log.IsDebugEnabled)
-                this._log.DebugFormat("为任务#{0}执行变更{1}|{2}|{3}", t.ID, c.ID, c.Name, c.Value);
         }
         private static int _flag = 0;
         private void TryFail()

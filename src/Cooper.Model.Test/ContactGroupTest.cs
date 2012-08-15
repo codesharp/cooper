@@ -3,8 +3,6 @@
 using System;
 using System.Linq;
 using Cooper.Model.Contacts;
-using Cooper.Model.Contacts;
-using Cooper.Model.Contacts;
 using NUnit.Framework;
 
 namespace Cooper.Model.Test

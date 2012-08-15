@@ -12,8 +12,7 @@ using Cooper.Model.Tasks;
 using CodeSharp.Core.Services;
 using Cooper.Model.Accounts;
 using Cooper.Model.Contacts;
-using Cooper.Model.Contacts;
-using Cooper.Model.Contacts;
+using Cooper.Model.Teams;
 
 namespace Cooper.Model.Test
 {
@@ -24,7 +23,7 @@ namespace Cooper.Model.Test
         protected static Random _rd = new Random();
         protected ILog _log;
         protected Castle.Facilities.NHibernateIntegration.ISessionManager _sessionManager;
-        protected ITaskService _taskService;
+        protected Cooper.Model.Tasks.ITaskService _taskService;
         protected IAccountService _accountService;
         protected IAccountConnectionService _accountConnectionService;
         protected IAccountHelper _accountHelper;
@@ -32,6 +31,7 @@ namespace Cooper.Model.Test
         protected IAddressBookService _addressBookService;
         protected IContactGroupService _contactGroupService;
         protected IContactService _contactService;
+        protected ITeamService _teamService;
 
         [TestFixtureSetUp]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestInitialize]
@@ -63,11 +63,12 @@ namespace Cooper.Model.Test
             this._accountHelper = DependencyResolver.Resolve<IAccountHelper>();
             this._accountService = DependencyResolver.Resolve<IAccountService>();
             this._accountConnectionService = DependencyResolver.Resolve<IAccountConnectionService>();
-            this._taskService = DependencyResolver.Resolve<ITaskService>();
+            this._taskService = DependencyResolver.Resolve<Cooper.Model.Tasks.ITaskService>();
             this._taskFolderService = DependencyResolver.Resolve<ITaskFolderService>();
             this._addressBookService = DependencyResolver.Resolve<IAddressBookService>();
             this._contactGroupService = DependencyResolver.Resolve<IContactGroupService>();
             this._contactService = DependencyResolver.Resolve<IContactService>();
+            this._teamService = DependencyResolver.Resolve<ITeamService>();
         }
 
         protected virtual void Resolve(Castle.Windsor.IWindsorContainer windsor)

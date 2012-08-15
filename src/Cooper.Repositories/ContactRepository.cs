@@ -3,8 +3,6 @@
 using System.Collections.Generic;
 using CodeSharp.Core.Castles;
 using Cooper.Model.Contacts;
-using Cooper.Model.Contacts;
-using Cooper.Model.Contacts;
 using NHibernate.Criterion;
 
 namespace Cooper.Repositories

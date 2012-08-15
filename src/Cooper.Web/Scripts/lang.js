@@ -11,3 +11,5 @@ lang.archive = '归档';
 lang.confirm_delete_taskFolder = '确定要删除当前任务表？任务表中的任务也将一起删除';
 
 lang.share_description = '\n\n - 我的任务 - Work IN Cooper';
+
+lang.remove_from_project = '移除该项目';

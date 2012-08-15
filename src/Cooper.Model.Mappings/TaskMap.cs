@@ -26,6 +26,23 @@ namespace Cooper.Model.Mappings
 
             Map(m => m.CreatorAccountId);
             Map(m => m.TaskFolderId).Column("TasklistId").Nullable();
+            DiscriminateSubClassesOnColumn("TaskType");
+        }
+    }
+    public class TeamTaskMap : SubclassMap<Cooper.Model.Teams.Task>
+    {
+        public TeamTaskMap()
+        {
+            Table("Cooper_Task");
+            Map(m => m.TeamId);
+            Map(m => m.AssigneeId);
+            HasManyToMany(m => m.Projects)
+                .Table("Cooper_TaskProjectRelationship")
+                .ParentKeyColumn("TaskId")
+                .ChildKeyColumn("ProjectId")
+                .LazyLoad()
+                .Cascade.SaveUpdate();
+            DiscriminatorValue("team");
         }
     }
 }

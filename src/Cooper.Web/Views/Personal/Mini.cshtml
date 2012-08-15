@@ -12,12 +12,11 @@
     }
 </style>
 <!--Main-->
-<div id="main" style="background-color: #fff">
+<div id="main" style="border:0">
     @{ Html.RenderPartial("MainRegion", true); }
 </div>
 <!--Detail-->
-<div id="detail_wrapper" style="display: none; padding: 5px 15px; overflow-y: auto;
-    overflow-x: hidden; position: relative;">
+<div id="detail_wrapper" style="display:none; border:0">
 </div>
 <!--template-->
 @{ Html.RenderPartial("TemplateRegion", true); }

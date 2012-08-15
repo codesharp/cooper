@@ -21,7 +21,10 @@ Task.prototype = {
             'priority': t['Priority'] != undefined ? t['Priority'] : 0, //0=today 1=upcoming 2=later priority 总是以string使用
             'dueTime': t['DueTime'] != undefined && t['DueTime'] != null && t['DueTime'] != '' ? this._parseDate(t['DueTime']) : null,
             'isCompleted': t['IsCompleted'] != undefined ? t['IsCompleted'] : false,
-            'tags': []
+            'tags': [],
+            //TODO:增加assignee projects
+            'assignee': { id: 0, name: 'wsky' },
+            'projects': [{ id: 0, name: 'NSF' + new Date() }, { id: 1, name: 'NTFE'}]
         }
         this.$el_row = this._generateItem(this['data']);
         this.$el_detail = null;
@@ -52,6 +55,7 @@ Task.prototype = {
         this.setCompleted(this.isCompleted());
         this.setPriority(this.priority());
         this.setDueTime(this.due());
+        this.setAssignee(this.assignee());
     },
     renderDetail: function () {
         if (!this.$el_detail)
@@ -65,7 +69,9 @@ Task.prototype = {
         this.setDetail_Subject(this.subject());
         this.setDetail_Priority(this.priority());
         this.setDetail_DueTime(this.due());
-        this.setDetail_Body(this.get('body'));
+        this.setDetail_Body(this.body());
+        this.setDetail_Assignee(this.assignee());
+        this.setDetail_Projects(this.projects());
         //设置url快捷链接区域 临时方案
         var $urls = this.$el_detail.find('#urls');
         $urls.find('ul').empty();
@@ -132,6 +138,8 @@ Task.prototype = {
     due: function () { return this.get('dueTime'); },
     subject: function () { return this.get('subject'); },
     body: function () { return this.get('body'); },
+    assignee: function () { return this.get('assignee'); },
+    projects: function () { return this.get('projects'); },
     ///////////////////////////////////////////////////////////////////////////////
     //属性以及ui设置
     setId: function (i) {
@@ -188,6 +196,18 @@ Task.prototype = {
         this._setClass($e, today >= date, 'cell_duetime_expired');
         this.setDetail_DueTime(t);
     },
+    setAssignee: function (u) {
+        var k = 'assignee';
+        this.update(k, u);
+        this._getRowEl(k).html(u['name']);
+        this.setDetail_Assignee(u);
+    },
+    setProjects: function (ps) {
+        if (!ps) return;
+        var k = 'projects';
+        this.update(k, u);
+        this.setDetail_Projects(ps);
+    },
     ///////////////////////////////////////////////////////////////////////////////
     //detail设置
     setDetail_Id: function (i) {
@@ -229,6 +249,15 @@ Task.prototype = {
         if (!this.$el_detail) return;
         if (t != null)
             this._getDetailEl('dueTime').val(this._parseFullDateString(t));
+    },
+    setDetail_Assignee: function (u) {
+        if (!this.$el_detail) return;
+        this._getDetailEl('assignee').html(u ? u['name'] : '');
+    },
+    setDetail_Projects: function (ps) {
+        if (!this.$el_detail || !ps) return;
+        var $p = this._getDetailEl('projects').empty();
+        $.each(ps, function (i, n) { $p.append('<span>' + n['name'] + ' <a class="flag_removeProject" id="' + n['id'] + '" title="' + lang.remove_from_project + '">x</a></span> '); });
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////
