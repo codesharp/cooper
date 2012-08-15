@@ -52,7 +52,6 @@ namespace Cooper.Web.Controllers
             return View();
         }
 
-        #region 各类显示模式数据获取
         //优先级列表模式 所有任务
         [HttpPost]
         public ActionResult GetByPriority(string tasklistId, string taskFolderId)
@@ -83,7 +82,6 @@ namespace Cooper.Web.Controllers
                 , this.ParseSortsByDueTime
                 , this.ParseSortsByDueTime);
         }
-        #endregion
 
         #region TaskFolder处理
         //返回所有可用的folder id|name
@@ -149,6 +147,94 @@ namespace Cooper.Web.Controllers
         }
         #endregion
 
+        /// <summary>用于接收终端的变更同步数据，按folder同步
+        /// </summary>
+        /// <param name="tasklistId">兼容</param>
+        /// <param name="taskFolderId">允许为空，客户端在同步数据前应先确保folder已经创建</param>
+        /// <param name="changes"></param>
+        /// <param name="by"></param>
+        /// <param name="sorts"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult Sync(string tasklistId, string taskFolderId, string changes, string by, string sorts)
+        {
+            //Fetch模式不支持同步变更
+            Assert.IsFalse(this._fetchTaskHelper.IsFetchTaskFolder(taskFolderId ?? tasklistId));
+            var folder = this.GetTaskFolder(taskFolderId ?? tasklistId);
+            return Json(this.Sync(changes, by, sorts
+                , o => { if (folder != null) o.SetTaskFolder(folder); }
+                , () => folder == null
+                , o => o
+                , o => { folder[by] = o; this._taskFolderService.Update(folder); }));
+        }
+
+        protected override void ApplyUpdate(Task t, ChangeLog c)
+        {
+            base.ApplyUpdate(t, c);
+            //目前暂不支持修改folder
+            if (c.Name.Equals("taskfolderid", StringComparison.InvariantCultureIgnoreCase))
+                t.SetTaskFolder(this.GetTaskFolder(c.Value));
+        }
+
+        private ActionResult GetBy(string folderId
+            , Func<Account, IEnumerable<Task>> func1//没有folder时的获取
+            , Func<Account, TaskFolder, IEnumerable<Task>> func2//folder内的所有任务
+            , Func<Account, TaskInfo[], Sort[]> func3
+            , Func<Account, TaskFolder, TaskInfo[], Sort[]> func4)
+        {
+            var folder = this.GetTaskFolder(folderId);
+            var account = this.Context.Current;
+
+            TaskInfo[] tasks = null;
+
+            var editable = folder != null
+                || (tasks = this._fetchTaskHelper.FetchTasks(account, folderId)) == null;
+
+            tasks = folder == null
+                ? (tasks ?? this.ParseTasks(func1(account).ToArray()))
+                : this.ParseTasks(func2(account, folder).ToArray());
+
+            return Json(new
+            {
+                Editable = editable,
+                List = tasks,
+                Sorts = folder == null
+                    ? func3(account, tasks)
+                    : func4(account, folder, tasks),
+            });
+        }
+        private TaskFolder GetTaskFolder(string taskFolderId)
+        {
+            int listId;
+            var list = int.TryParse(taskFolderId, out listId) ? this._taskFolderService.GetTaskFolder(listId) : null;
+            //HACK:个人任务列表只有拥有者能查看
+            if (list != null && list is PersonalTaskFolder)
+                Assert.AreEqual(this.Context.Current.ID, (list as PersonalTaskFolder).OwnerAccountId);
+            return list;
+        }
+        private Sort[] ParseSortsByPriority(Account account, params TaskInfo[] tasks)
+        {
+            return this.ParseSortsByPriority(this.GetSorts(account, SORT_PRIORITY), tasks);
+        }
+        private Sort[] ParseSortsByPriority(Account account, TaskFolder folder, params TaskInfo[] tasks)
+        {
+            return this.ParseSortsByPriority(this.GetSorts(folder, SORT_PRIORITY), tasks);
+        }
+        private Sort[] ParseSortsByDueTime(Account account, params TaskInfo[] tasks)
+        {
+            return this.ParseSortsByDueTime(this.GetSorts(account, SORT_DUETIME), tasks);
+        }
+        private Sort[] ParseSortsByDueTime(Account account, TaskFolder folder, params TaskInfo[] tasks)
+        {
+            return this.ParseSortsByDueTime(this.GetSorts(folder, SORT_DUETIME), tasks);
+        }
+        private Sort[] GetSorts(TaskFolder a, string by)
+        {
+            return !string.IsNullOrWhiteSpace(a[by])
+                ? _serializer.JsonDeserialize<Sort[]>(a[by])
+                : _empty;
+        }
         private void Prepare()
         {
             var a = this.Context.Current;

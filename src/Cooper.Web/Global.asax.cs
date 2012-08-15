@@ -102,7 +102,7 @@ namespace Cooper.Web
         }
     }
 
-    /// <summary>描述系统内已经异常
+    /// <summary>描述系统内已知异常
     /// </summary>
     public class CooperknownException : Exception
     {
@@ -271,6 +271,7 @@ public static class WebExtensions
     {
         return MvcHtmlString.Create(AppfailReporting.Appfail.RenderIncludes());
     }
+
 }
 //扩展断言
 internal class Assert : NUnit.Framework.Assert
