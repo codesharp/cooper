@@ -25,7 +25,6 @@ namespace Cooper.Model.Mappings
             Map(m => m.LastUpdateTime);
 
             Map(m => m.CreatorAccountId);
-            Map(m => m.AssignedContacterId);
             Map(m => m.TaskFolderId).Column("TasklistId").Nullable();
         }
     }

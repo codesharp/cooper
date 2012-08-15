@@ -11,6 +11,11 @@ namespace Cooper.Model.Teams
     /// </summary>
     public class Task : Cooper.Model.Tasks.Task
     {
-
+        /// <summary>获取被分配的团队成员标识
+        /// <remarks>
+        /// 团队任务是面向团队成员进行分配，而不是直接分配到账号
+        /// </remarks>
+        /// </summary>
+        public int? Assignee { get; private set; }
     }
 }
