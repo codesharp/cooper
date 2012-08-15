@@ -30,11 +30,9 @@ namespace Cooper.Model.Teams
         /// </summary>
         public IEnumerable<Project> Projects { get { return _projects; } }
 
-        protected Task()
-            : base()
+        protected Task() : base()
         { }
-        public Task(Account creator, Team team)
-            : base(creator)
+        public Task(Account creator, Team team) : base(creator)
         {
             Assert.IsValid(creator);
             Assert.IsValid(team);

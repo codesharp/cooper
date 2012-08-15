@@ -15,5 +15,43 @@ namespace Cooper.Model.Teams
         /// <summary>获取团队项目名称
         /// </summary>
         public string Name { get; private set; }
+        /// <summary>获取团队项目是否公开
+        /// <remarks>
+        /// 公开的项目可以被非团队成员浏览
+        /// </remarks>
+        /// </summary>
+        public bool IsPublic { get; private set; }
+        /// <summary>创建时间
+        /// </summary>
+        public DateTime CreateTime { get; private set; }
+
+        protected Project() { this.CreateTime = DateTime.Now; }
+        public Project(string name, bool isPublic) : this()
+        {
+            this.SetName(name);
+            this.SetIsPublic(isPublic);
+        }
+
+        /// <summary>设置名称
+        /// <remarks>
+        /// 长度应小于100
+        /// </remarks>
+        /// </summary>
+        public void SetName(string name)
+        {
+            Assert.IsNotNullOrWhiteSpace(name);
+            Assert.LessOrEqual(name.Length, 100);
+
+            if (this.Name != name)
+            {
+                this.Name = name;
+            }
+        }
+        /// <summary>设置是否公开
+        /// </summary>
+        public void SetIsPublic(bool isPublic)
+        {
+            this.IsPublic = isPublic;
+        }
     }
 }
