@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Cooper.Model.Teams
 {
-    /// <summary>团队模型
+    /// <summary>团队任务核心模型
     /// </summary>
-    public class Team
+    public class Task : Cooper.Model.Tasks.Task
     {
 
     }
