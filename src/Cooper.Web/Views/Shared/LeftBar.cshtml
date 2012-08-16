@@ -4,6 +4,10 @@
     var isAccount = url.Contains("/account") ? active : string.Empty;
     var isTask = url.Contains("/per") ? active : string.Empty;
     var isFetch = url.Contains("/fetch") ? active : string.Empty;
+    var team = ViewBag.Team;
+    var teams = ViewBag.Teams;
+    var projects = ViewBag.Projects;
+    var members = ViewBag.Members;
 }
 
 <div class="span2" style=" border: 0px #ddd solid; padding: 5px; margin:0;">
@@ -18,26 +22,27 @@
         <li class="nav-header">Code# Team</li>
         @*@Html.Raw(this.Lang().recent_changes)*@
     </ul>
+
+    @if (team != null)
+    {
     <div class="tabbable tabs-below">
-        <div class="tab-content" style="background-color:#fff; border:1px #ddd solid; border-bottom:0; padding-top:10px; height:150px; overflow-y:auto; overflow-x:hidden; text-overflow: ellipsis;">
+        <div class="tab-content" style="background-color:#fff; border:1px #ddd solid; border-bottom:0; padding-top:10px; max-height:150px; overflow-y:auto; overflow-x:hidden; text-overflow: ellipsis;">
             <div id="tab1" class="tab-pane active">
                 <ul class="nav nav-list">
-                    <li class="nav-header"><i class="icon-plus"></i> Add Project</li>
-                    <li><a href="#Cooper">Cooper</a></li>
-                    <li><a href="#Properties">Properties</a></li>
-                    <li><a href="#NTFE">NTFE</a></li>
-                    <li><a href="#NSF">NSF</a></li>
-                    <li><a href="#Infrastructure">Infrastructure</a></li>
-                    <li><a href="#WebInfrastructure">WebInfrastructure</a></li>
-                    <li><a href="#Infrastructure">InfrastructureInfrastructure</a></li>
+                    <li class="nav-header"><i class="icon-plus"></i> @this.Lang().add_project</li>
+                    @foreach (var p in projects)
+                    {
+                        <li><a href="/t/@team.ID/@p.ID">@p.Name</a></li>
+                    }
                 </ul>
             </div>
             <div id="tab2" class="tab-pane">
                 <ul class="nav nav-list">
-                    <li class="nav-header"><i class="icon-plus"></i> Add People</li>
-                    <li><a href="#Cooper">wsky</a></li>
-                    <li><a href="#Properties">sunleepy</a></li>
-                    <li><a href="#NTFE">tangxuehua</a></li>
+                    <li class="nav-header"><i class="icon-plus"></i> @this.Lang().add_member</li>
+                    @foreach (var m in members)
+                    {
+                        <li><a href="/t/@team.ID/@m.ID">@m.Name</a></li>
+                    }
                 </ul>
             </div>
             <div id="tab3" class="tab-pane">
@@ -54,25 +59,21 @@
             <li><a href="#tab3" data-toggle="tab"><i class="icon-tags"></i></a></li>
         </ul>
     </div>
-
-    <ul class="nav">
-        <li class="nav-header"><i class="icon-th-large"></i> @this.Lang().team</li>
-        <li style="max-height:150px; overflow-y:auto; overflow-x:hidden; padding-left:15px; border:1px #ddd solid; background-color:#fff">
-            <ul class="nav nav-list" style="margin:0; padding:0">
-                <li class="nav-header"><i class="icon-plus"></i> @this.Lang().add@this.Lang().team</li>
-                <li><a>Codesharp</a></li>
-                <li><a>Workflow</a></li>
-                <li><a>Ali-ENT</a></li>
-                <li><a>Codesharp</a></li>
-                <li><a>Workflow</a></li>
-                <li><a>Ali-ENT</a></li>
-                <li><a>Codesharp</a></li>
-                <li><a>Workflow</a></li>
-                <li><a>Ali-ENT</a></li>
-            </ul>
-        </li>
-    </ul>
+    }
     
+    <ul class="nav nav-list">
+        <li class="nav-header">@this.Lang().myteam</li>
+    </ul>
+    <div style="background-color:#fff; border:1px #ddd solid; border-bottom:0; padding-top:10px; max-height:150px; overflow-y:auto; overflow-x:hidden; text-overflow: ellipsis;">
+        <ul class="nav nav-list">
+            <li class="nav-header"><i class="icon-plus"></i> @this.Lang().add_team</li>
+            @foreach (var t in teams)
+            {
+                <li><a href="/t/@t.ID">@t.Name</a></li>
+            }
+        </ul>
+    </div>
+    <br />
     <div class="alert alert-success">
         <strong>Like it ?</strong>
         <a onclick="feedback()">feedback!</a>

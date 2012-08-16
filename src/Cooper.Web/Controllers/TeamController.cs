@@ -27,6 +27,11 @@ namespace Cooper.Web.Controllers
         {
             ViewBag.Team = this.GetTeam(teamId);
             ViewBag.Project = this.GetProject(projectId);
+            ViewBag.Teams = new Team[] { this.GetTeam("0"), this.GetTeam("1"), this.GetTeam("2") };
+            ViewBag.Projects = new Project[] { this.GetProject("0"), this.GetProject("1"), this.GetProject("2") }.Select(o => new { id = o.ID, name = o.Name });
+            ViewBag.Members = new TeamMember[] { this.GetMember("0"), this.GetMember("1"), this.GetMember("2") }.Select(o => new { id = o.ID, name = o.Name });
+            ViewBag.projects = new Project[] { this.GetProject("0"), this.GetProject("1"), this.GetProject("2") };
+            ViewBag.members = new TeamMember[] { this.GetMember("0"), this.GetMember("1"), this.GetMember("2") };
             return View();
         }
 
@@ -94,10 +99,17 @@ namespace Cooper.Web.Controllers
         }
 
         //临时
-        private IEnumerable<Task> GetTasksByTeam(Account a, Team t) { return null; }
-        private IEnumerable<Task> GetIncompletedTasksByTeam(Account a, Team t) { return null; }
-        private IEnumerable<Task> GetTasksByProject(Project p) { return null; }
-        private IEnumerable<Task> GetIncompletedTasksByProject(Project p) { return null; }
+        private Team GetTeam(string teamId) { return new Team() { ID = "1", Name = "CooperTestTeam" }; }
+        private Project GetProject(string projectId)
+        {
+            int id;
+            return int.TryParse(projectId, out id) ? new Project() { ID = projectId, Name = "Project-" + projectId } : null;
+        }
+        private TeamMember GetMember(string mId) { return new TeamMember() { ID = mId, Name = "Member-" + mId }; }
+        private IEnumerable<Task> GetTasksByTeam(Account a, Team t) { return new List<Task>(); }
+        private IEnumerable<Task> GetIncompletedTasksByTeam(Account a, Team t) { return new List<Task>(); }
+        private IEnumerable<Task> GetTasksByProject(Project p) { return new List<Task>(); }
+        private IEnumerable<Task> GetIncompletedTasksByProject(Project p) { return new List<Task>(); }
 
         private ActionResult GetBy(string teamId
             , string projectId
@@ -146,7 +158,7 @@ namespace Cooper.Web.Controllers
         }
         private Sort[] GetSorts(Project p, string by)
         {
-            return null;
+            return _empty;
             //return !string.IsNullOrWhiteSpace(p[key])
             //    ? _serializer.JsonDeserialize<Sort[]>(p[key])
             //    : _empty;
@@ -155,16 +167,21 @@ namespace Cooper.Web.Controllers
         {
             return by + "_" + t.ID;
         }
-        private Team GetTeam(string teamId) { return null; }
-        private Project GetProject(string projectId) { return null; }
 
         public class Team
         {
-            public Guid ID { get; set; }
+            public string ID { get; set; }
+            public string Name { get; set; }
+        }
+        public class TeamMember
+        {
+            public string ID { get; set; }
+            public string Name { get; set; }
         }
         public class Project
         {
-            public Guid ID { get; set; }
+            public string ID { get; set; }
+            public string Name { get; set; }
         }
     }
 }

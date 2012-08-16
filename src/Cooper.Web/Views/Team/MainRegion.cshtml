@@ -1,4 +1,9 @@
-﻿<!--撤销删除区域-->
+﻿@{
+    var team = ViewBag.Team;
+    var project = ViewBag.Project;
+    var title = project != null ? project.Name : team.Name;
+}
+<!--撤销删除区域-->
 <div id="cancel_delete" class="alert alert-danger">
     <span>1</span>@this.Lang().task_deleted
     <a class="flag_cancelDelete">@this.Lang().revoke</a> <span></span>... <a class="flag_continueDelete">
@@ -7,11 +12,14 @@
 <!--顶部按钮区域-->
 <div style="padding: 10px 5px 0;">
     <ul class="nav nav-tabs">
-        <li class="dropdown active"><a><span id="taskFolder_title">@this.Lang().team</span></a></li>
+        <li class="dropdown active"><a>@title</a></li>
         <li class="dropdown pull-right"><a class="dropdown-toggle" data-toggle="dropdown">@this.Lang().more
             <b class="caret"></b></a>
             <ul class="dropdown-menu">
-                <li class="flag_removeProject"><a><i class="icon-trash"></i>@this.Lang().delete_project</a></li>
+                @if (project != null)
+                {
+                    <li class="flag_removeProject"><a><i class="icon-trash"></i>@this.Lang().delete_project</a></li>
+                }
                 <li><a onclick="window.print()"><i class="icon-print"></i>@this.Lang().print</a></li>
             </ul>
         </li>
@@ -20,8 +28,11 @@
         <div class="btn-group pull-left" data-toggle="buttons-radio">
             <button class="btn active flag_byPriority" title="@this.Lang().by_priority_title">
                 <i class="icon-time"></i>@this.Lang().priority</button>
+            @if (project != null)
+            {
             <button class="btn flag_byAssignee" title="@this.Lang().by_assignee_title">
                 <i class="icon-user"></i>@this.Lang().assignee</button>
+            }
             <button class="btn flag_byDueTime" title="@this.Lang().by_dueTime_title">
                 <i class="icon-bell"></i>@this.Lang().time</button>
         </div>

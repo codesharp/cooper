@@ -22,8 +22,8 @@
     //team相关
     var currentTeam = '', //当前团队标识
         currentProject = '', //当前项目标识
-        currentTeamMembers = [{ id: 1, name: 'Xu Huang' }, { id: 2, name: 'Sunleepy' }, { id: 3, name: 'Xuehua Tang'}], //当前团队所有成员
-        currentTeamProjects = [{ id: 1, name: 'Cooper' }, { id: 2, name: 'NTFE' }, { id: 3, name: 'NSF'}]; //当前团队所有项目
+        currentTeamMembers = [], //当前团队所有成员
+        currentTeamProjects = []; //当前团队所有项目
 
     var timer;
     var idChanges = {};
@@ -76,8 +76,8 @@
     function hideArchive() { isShowArchive = false; if (ui_list_helper == ui_list_helper_priority) byPriority(); }
     function showArchive() { isShowArchive = true; if (ui_list_helper == ui_list_helper_priority) byPriority(); }
     //taskfolder ui
-    function list(id) {
-        $('#taskFolder .flag_changeFolder').unbind().click(function () { list($(this).attr('id')); });
+    function folder(id) {
+        $('#taskFolder .flag_changeFolder').unbind().click(function () { folder($(this).attr('id')); });
         $('#taskFolder_title').html($('#taskFolder .flag_changeFolder[id="' + id + '"]').find('span').html());
         currentMode(function () {
             currentList = id == 0 ? '' : id;
@@ -105,7 +105,7 @@
             $btn.prev().val('');
             $('#taskFolderModal').modal('hide');
             addTaskFolder(d, val);
-            list(d);
+            folder(d);
         });
     }
     function doRemoveTaskFolder() {
@@ -115,8 +115,18 @@
             endRequest();
             debuger.info('remove taskFolder#' + currentList);
             $('#taskFolder a[id="' + currentList + '"]').parent().remove();
-            list(0);
+            folder(0);
         });
+    }
+    //team
+    function team(id) {
+        currentMode(function () { currentTeam = id; }, function () { });
+    }
+    function project(id) {
+        currentMode(function () { currentProject = id; }, function () { });
+    }
+    function doRemoveProject() {
+        alert('todo');
     }
     ////////////////////////////////////////////////////////////////////////////////////////
     //切换tab时将总是从server读取最新数据以及正确的索引信息
@@ -305,6 +315,8 @@
         $('.flag_appendTask').click(appendTask);
         $('.flag_deleteTask').click(deleteTask);
 
+        $('.flag_removeProject').click(doRemoveProject);
+
         $('.flag_tryfail').click(function () { tryfail = !tryfail; $(this).html('tryfail=' + tryfail); });
     }
     function ajaxSetup() {
@@ -359,6 +371,12 @@
 
         globalBinds();
         ajaxSetup();
-        list(0);
+
+        if (currentProject)
+            project(currentProject);
+        else if (currentTeam)
+            team(currentTeam);
+        else
+            folder(0);
     });
 })();

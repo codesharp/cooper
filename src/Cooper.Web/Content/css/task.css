@@ -5,6 +5,7 @@ div#cancel_delete {
 	position: absolute;
 	margin: 10px 0 0 130px;
 	display: none;
+	z-index:999;
 }
 div#cancel_delete a {
 	cursor: pointer;
@@ -24,11 +25,6 @@ div#error_lose_connect .progress .bar {
 	width: 100%;
 }
 span#taskFolder_title {
-	display: inline-block;
-	height: 15px;
-	max-width: 85px;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 ul#taskFolder {
 	max-height: 350px;

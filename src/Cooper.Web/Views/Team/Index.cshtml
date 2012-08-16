@@ -3,6 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var team = ViewBag.Team;
     var project = ViewBag.Project;
+    var util = new CodeSharp.Core.Utils.Serializer();
 }
 <div class="container-fluid" style="margin-top: 10px;">
     <div class="row-fluid">
@@ -21,8 +22,10 @@
 @{ Html.RenderPartial("TemplateRegion"); }
 @section Bottom{
     <script type="text/javascript">
-        window.teamId = '@team';
-        window.projectId = '@project';
+        window.teamId = '@team.ID';
+        window.projectId = '@Html.Raw(project!=null?project.ID:null)';
+        window.members= @Html.Raw(util.JsonSerialize(ViewBag.members));
+        window.projects = @Html.Raw(util.JsonSerialize(ViewBag.projects));
     </script>
     <script type="text/javascript">
         $(function () {
