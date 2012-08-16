@@ -18,8 +18,12 @@
     var isShowArchive = false; //是否显示归档区域
     var currentMode = byPriority; //当前列表模式，默认使用优先级列表模式
     var currentList = null; //当前任务表标识
-    var currentTeam = ''; //当前团队标识
-    var currentProject = ''; //当前项目标识
+
+    //team相关
+    var currentTeam = '', //当前团队标识
+        currentProject = '', //当前项目标识
+        currentTeamMembers = [{ id: 1, name: 'Xu Huang' }, { id: 2, name: 'Sunleepy' }, { id: 3, name: 'Xuehua Tang'}], //当前团队所有成员
+        currentTeamProjects = [{ id: 1, name: 'Cooper' }, { id: 2, name: 'NTFE' }, { id: 3, name: 'NSF'}]; //当前团队所有项目
 
     var timer;
     var idChanges = {};
@@ -278,28 +282,11 @@
         d.projectId = currentProject;
         return d;
     }
-
-    $(function () {
-        $el_wrapper_region = $('#todolist_wrapper');
-        $el_wrapper_detail = $('#detail_wrapper');
-        $el_cancel_delete = $('#cancel_delete');
-
-        Sort.prototype._getTask = function (i) { return cached_tasks[i]; };
-        //为ui设置全局变量
-        UI_List_Common.prototype.$wrapper = $el_wrapper_region;
-        UI_List_Common.prototype.$wrapper_detail = $el_wrapper_detail;
-        UI_List_Common.prototype.$cancel_delete = $el_cancel_delete;
-        //为ui设置全局函数
-        UI_List_Common.prototype.commitDeletes = function (d) { changes = $.merge(changes, d); };
-        UI_List_Common.prototype.eachTask = function (fn) { for (var id in cached_tasks) if (cached_tasks[id]) fn(cached_tasks[id]); };
-        UI_List_Common.prototype.getTaskById = function (i) { return cached_tasks[i]; };
-        UI_List_Common.prototype.getSortByKey = function (k) { return cached_sorts[k]; };
-        UI_List_Common.prototype.setTask = function (i, t) { cached_tasks[i] = t; };
-
-        ui_list_helper_priority = create_UI_List_Priority();
-        ui_list_helper_due = create_UI_List_Due();
-
-        //global event bind
+    function endRequest() {
+        $('#error_lose_connect').fadeOut(500);
+        $('#region_error').hide();
+    }
+    function globalBinds() {
         $('.flag_continueDelete').click(continueDelete);
         $('.flag_cancelDelete').click(cancelDelete);
 
@@ -319,7 +306,8 @@
         $('.flag_deleteTask').click(deleteTask);
 
         $('.flag_tryfail').click(function () { tryfail = !tryfail; $(this).html('tryfail=' + tryfail); });
-
+    }
+    function ajaxSetup() {
         $.ajaxSetup({
             cache: false,
             error: function (x, e) {
@@ -335,16 +323,42 @@
                 resetTimer();
             }
         });
+    }
+    $(function () {
+        $el_wrapper_region = $('#todolist_wrapper');
+        $el_wrapper_detail = $('#detail_wrapper');
+        $el_cancel_delete = $('#cancel_delete');
+
+        Sort.prototype._getTask = function (i) { return cached_tasks[i]; };
+        //为ui设置全局变量
+        UI_List_Common.prototype.$wrapper = $el_wrapper_region;
+        UI_List_Common.prototype.$wrapper_detail = $el_wrapper_detail;
+        UI_List_Common.prototype.$cancel_delete = $el_cancel_delete;
+        //为ui设置全局函数
+        UI_List_Common.prototype.commitDeletes = function (d) { changes = $.merge(changes, d); };
+        UI_List_Common.prototype.eachTask = function (fn) { for (var id in cached_tasks) if (cached_tasks[id]) fn(cached_tasks[id]); };
+        UI_List_Common.prototype.getTaskById = function (i) { return cached_tasks[i]; };
+        UI_List_Common.prototype.getSortByKey = function (k) { return cached_sorts[k]; };
+        UI_List_Common.prototype.setTask = function (i, t) { cached_tasks[i] = t; };
+        //团队相关
+        UI_List_Common.prototype.getProjects = function () { return currentTeamProjects; }
+        UI_List_Common.prototype.getTeamMembers = function () { return currentTeamMembers; }
+
+        ui_list_helper_priority = create_UI_List_Priority();
+        ui_list_helper_due = create_UI_List_Due();
 
         //为团队功能填充全局变量
         if (window.teamId)
             currentTeam = window.teamId;
         if (window.projectId)
             currentProject = window.projectId;
+        if (window.projects)
+            currentTeamProjects = window.projects;
+        if (window.members)
+            currentTeamMembers = window.members;
+
+        globalBinds();
+        ajaxSetup();
         list(0);
     });
-    function endRequest() {
-        $('#error_lose_connect').fadeOut(500);
-        $('#region_error').hide();
-    }
 })();

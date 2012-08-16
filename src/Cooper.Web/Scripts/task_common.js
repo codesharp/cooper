@@ -48,6 +48,8 @@ UI_List_Common.prototype = {
     getTaskById: null,
     getSortByKey: null,
     setTask: null,
+    getProjects: null,
+    getTeamMembers: null,
     getTask: function ($r) { return this.getTaskById(this.getTaskId($r)); },
     getSort: function ($region) { return this.getSortByKey($region.attr('key')); },
     //修正批量详情中的临时id

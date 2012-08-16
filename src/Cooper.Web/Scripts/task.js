@@ -22,9 +22,12 @@ Task.prototype = {
             'dueTime': t['DueTime'] != undefined && t['DueTime'] != null && t['DueTime'] != '' ? this._parseDate(t['DueTime']) : null,
             'isCompleted': t['IsCompleted'] != undefined ? t['IsCompleted'] : false,
             'tags': [],
-            //TODO:增加assignee projects
-            'assignee': { id: 0, name: 'wsky' },
-            'projects': [{ id: 0, name: 'NSF' + new Date() }, { id: 1, name: 'NTFE'}]
+            //team模块相关
+            //TODO:待重构
+            'assignee': t['Assignee'] != undefined ? { 'id': t['Assignee']['ID'], 'name': t['Assignee']['Name']} : null,
+            'assigneeId': t['Assignee'] ? t['Assignee']['ID'] : null,
+            'projects': t['Projects'] ? $.map(t['Projects'], function (n) { return { 'id': n['ID'], 'name': n['Name'] }; }) : [],
+            'projectIds': t['Projects'] ? this._pickString(t['Projects'], 'ID', ',') : ''//'1,2,3'
         }
         this.$el_row = this._generateItem(this['data']);
         this.$el_detail = null;
@@ -50,6 +53,14 @@ Task.prototype = {
         return this.$el_detail[k];
     },
     _setClass: function ($e, b, c) { $e[b ? 'addClass' : 'removeClass'](c); },
+    _pickString: function (a, n, s) {
+        if (!a || a.length == 0)
+            return '';
+        var str = [a.length];
+        for (var i = 0; i < a.length; i++)
+            str[i] = a[i][n];
+        return str.join(s);
+    },
     ///////////////////////////////////////////////////////////////////////////////
     renderRow: function () {
         this.setCompleted(this.isCompleted());
@@ -63,9 +74,9 @@ Task.prototype = {
         if (this.editable) {
             //部分事件如blur无法全局因此在此执行一些额外的rebind
             if (this.bind_detail)
-                this.bind_detail(this.$el_detail);
+                this.bind_detail(this.$el_detail, this);
             if (this.bind_detail_team)
-                this.bind_detail_team(this.$el_detail);
+                this.bind_detail_team(this.$el_detail, this);
         }
         //设置值
         this.setDetail_Completed(this.isCompleted());
@@ -115,7 +126,7 @@ Task.prototype = {
             this.changes = {};
         //只记录最后一次
         this.changes[k] = { 'ID': this.id(), 'Name': k, 'Value': v };
-        debuger.info('new changelog ' + k + ' of ' + this.id(), this.changes[k]);
+        debuger.info('new changelog for ' + k + ' of task#' + this.id(), this.changes[k]);
         return true;
     },
     set: function (k, v) {
@@ -201,15 +212,23 @@ Task.prototype = {
     },
     setAssignee: function (u) {
         var k = 'assignee';
-        this.update(k, u);
-        this._getRowEl(k).html(u['name']);
+        this.update(k + 'Id', u ? u['id'] : null); //只更新assigneeId
+        this['data'][k] = u; //直接更新assignee对象
+        this._getRowEl(k).html(u ? u['name'] : '')[u ? 'show' : 'hide']();
         this.setDetail_Assignee(u);
     },
     setProjects: function (ps) {
         if (!ps) return;
-        var k = 'projects';
-        this.update(k, u);
+        this.update('projectIds', this._pickString(ps, 'id', ','));
+        this['data']['projects'] = ps; //直接更新projects数组
         this.setDetail_Projects(ps);
+    },
+    addProject: function (p) {
+        debuger.assert(p);
+        this.setProjects($.merge($.grep(this.projects(), function (n, i) { return n['id'] != p['id']; }), [p]));
+    },
+    removeProject: function (p) {
+        this.setProjects($.grep(this.projects(), function (n, i) { return n['id'] != p; }));
     },
     ///////////////////////////////////////////////////////////////////////////////
     //detail设置
@@ -259,8 +278,8 @@ Task.prototype = {
     },
     setDetail_Projects: function (ps) {
         if (!this.$el_detail || !ps) return;
-        var $p = this._getDetailEl('projects').empty();
-        $.each(ps, function (i, n) { $p.append('<span>' + n['name'] + ' <a class="flag_removeProject" id="' + n['id'] + '" title="' + lang.remove_from_project + '">x</a></span> '); });
+        if (this.render_detail_projects)
+            this.render_detail_projects(this._getDetailEl('projects'), ps);
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -276,7 +295,7 @@ Sort.prototype = {
         this.$el_region = $(render($('#tmp_region').html(), this));
         this._clearRegion();
     },
-    _getTask: null,
+    _getTask: null, //涉及全局变量处理由全局UI指定此实现
     _getRows: function () { return this.el().find('tbody').find('tr') },
     _append: function (e) { this.el().find('tbody').append(e); },
     _prepend: function (e) { this.el().find('tbody').prepend(e); },

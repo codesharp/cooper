@@ -1,4 +1,7 @@
-﻿@{ var mini = Convert.ToBoolean(Model); }
+﻿@{ 
+    var mini = Convert.ToBoolean(Model);
+    var team = (ViewBag.Team as object) != null;
+}
 
 <div style="display: none">
     <div id="tmp_region">
@@ -42,9 +45,12 @@
                             </li>
                         </ul>
                     </td>
+                    @if (team)
+                    {
                     <td class="cell_assignee">
                         <span id="assignee"></span>
                     </td>
+                    }
                     <td class="cell_string">
                         <input id="subject" value="{subject}" maxlength="500" />
                         <div>
@@ -117,6 +123,8 @@
                             </div>
                         </td>
                     </tr>
+                    @if (team)
+                    {
                     <tr>
                         <td class="detail-item">
                             @this.Lang().assignee
@@ -138,6 +146,7 @@
                             <button id="projects_btn" class="btn btn-mini"><i class="icon-plus"></i></button>
                         </td>
                     </tr>
+                    }
                     <tr>
                         <td class="detail-item">
                             @this.Lang().priority

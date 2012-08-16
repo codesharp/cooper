@@ -117,6 +117,7 @@ debuger.isErrorEnable = debuger.enable && true;
         <include name="${build.absolutepath}\cooper_web\scripts\task_row.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_bind.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_bind_shortcuts.js" />
+        <include name="${build.absolutepath}\cooper_web\scripts\task_bind_team.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_priority.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_due.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\taskpage.js" />
