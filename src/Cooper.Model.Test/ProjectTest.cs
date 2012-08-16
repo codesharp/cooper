@@ -19,6 +19,7 @@ namespace Cooper.Model.Test
             UpdateProject();
             DeleteProject();
             GetProjects();
+            ExtensionsTest();
         }
 
         [Test]
@@ -120,7 +121,7 @@ namespace Cooper.Model.Test
 
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void Extension()
+        public void ExtensionsTest()
         {
             var team = new Team("Test Team");
             this._teamService.Create(team);
