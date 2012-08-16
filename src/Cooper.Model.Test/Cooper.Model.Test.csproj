@@ -87,6 +87,9 @@
     <Compile Include="AddressBookTest.cs" />
     <Compile Include="ContactTest.cs" />
     <Compile Include="ContactGroupTest.cs" />
+    <Compile Include="TeamTaskTest.cs" />
+    <Compile Include="ProjectTest.cs" />
+    <Compile Include="TeamMemberTest.cs" />
     <Compile Include="TeamTest.cs" />
     <Compile Include="TaskFolderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
