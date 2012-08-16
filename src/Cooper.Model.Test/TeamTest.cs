@@ -12,6 +12,15 @@ namespace Cooper.Model.Test
     {
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void TotalTests()
+        {
+            CreateTeam();
+            UpdateTeam();
+            DeleteTeam();
+        }
+
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateTeam()
         {
             var team = new Team("Team 1");

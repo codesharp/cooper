@@ -72,7 +72,7 @@
     <Compile Include="Projects\ProjectService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskFolders\ITaskFolderRepository.cs" />
-    <Compile Include="TaskFolders\PersonalTasklist.cs" />
+    <Compile Include="TaskFolders\PersonalTaskFolder.cs" />
     <Compile Include="TaskFolders\TaskFolder.cs" />
     <Compile Include="TaskFolders\TaskFolderService.cs" />
     <Compile Include="Tasks\Extensions.cs" />

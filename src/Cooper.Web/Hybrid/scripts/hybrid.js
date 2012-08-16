@@ -183,6 +183,10 @@ function log(data) {
         Cordova.exec(null, null, 'CooperPlugin', 'debug', params);
     }
 }
+//隐藏Loading效果
+function hideLoadingMsg() {
+    $.mobile.hidePageLoadingMsg();
+}
 //与PhoneGap Native API进行交互
 function callNativeAPI(url, data, callback) {
     var items = url.split("/");
@@ -221,10 +225,12 @@ function callIfNetworkAvailable(fn) {
                 fn();
             }
             else {
+                hideLoadingMsg();
                 alert(lang.networkUnAvailable);
             }
         }
         else {
+            hideLoadingMsg();
             alert(lang.getNetworkAvailableStatusFailed);
         }
     });

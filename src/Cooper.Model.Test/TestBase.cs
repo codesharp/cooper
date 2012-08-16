@@ -32,6 +32,9 @@ namespace Cooper.Model.Test
         protected IContactGroupService _contactGroupService;
         protected IContactService _contactService;
         protected ITeamService _teamService;
+        protected ITeamMemberService _teamMemberService;
+        protected IProjectService _projectService;
+        protected Cooper.Model.Teams.ITaskService _teamTaskService;
 
         [TestFixtureSetUp]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestInitialize]
@@ -69,6 +72,9 @@ namespace Cooper.Model.Test
             this._contactGroupService = DependencyResolver.Resolve<IContactGroupService>();
             this._contactService = DependencyResolver.Resolve<IContactService>();
             this._teamService = DependencyResolver.Resolve<ITeamService>();
+            this._teamMemberService = DependencyResolver.Resolve<ITeamMemberService>();
+            this._projectService = DependencyResolver.Resolve<IProjectService>();
+            this._teamTaskService = DependencyResolver.Resolve<Cooper.Model.Teams.ITaskService>();
         }
 
         protected virtual void Resolve(Castle.Windsor.IWindsorContainer windsor)

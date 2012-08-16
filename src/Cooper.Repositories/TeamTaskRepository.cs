@@ -21,7 +21,7 @@ namespace Cooper.Repositories
             return this.GetSession()
                 .CreateCriteria<Task>()
                 .CreateAlias("Projects", "projects")
-                .Add(Expression.Eq("projects.ProjectId", project.ID))
+                .Add(Expression.Eq("projects.ID", project.ID))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(TeamMember teamMember)
