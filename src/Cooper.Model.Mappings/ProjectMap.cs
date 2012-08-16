@@ -1,8 +1,8 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
-using Cooper.Model.Contacts;
-using FluentNHibernate.Mapping;
 using Cooper.Model.Teams;
+using FluentNHibernate;
+using FluentNHibernate.Mapping;
 
 namespace Cooper.Model.Mappings
 {
@@ -15,6 +15,7 @@ namespace Cooper.Model.Mappings
             Map(m => m.Name).Length(100);
             Map(m => m.IsPublic);
             Map(m => m.TeamId);
+            Map(Reveal.Member<Project>("_extensions")).Column("Extensions");
             Map(m => m.CreateTime);
         }
     }

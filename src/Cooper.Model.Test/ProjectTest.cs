@@ -117,5 +117,22 @@ namespace Cooper.Model.Test
             Assert.IsTrue(projects.Any(x => x.ID == project2.ID));
             Assert.IsTrue(projects.Any(x => x.ID == project3.ID));
         }
+
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void Extension()
+        {
+            var team = new Team("Test Team");
+            this._teamService.Create(team);
+
+            var project = new Project("Project 1", true, team);
+            project["key"] = "abc";
+            this._projectService.Create(project);
+
+            this.Evict(project);
+
+            project = this._projectService.GetProject(project.ID);
+            Assert.AreEqual("abc", project["key"]);
+        }
     }
 }

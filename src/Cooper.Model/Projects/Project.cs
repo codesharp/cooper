@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CodeSharp.Core.DomainBase;
+using CodeSharp.Core.Utils;
 
 namespace Cooper.Model.Teams
 {
@@ -12,6 +13,10 @@ namespace Cooper.Model.Teams
     /// </summary>
     public class Project : EntityBase<int>, IAggregateRoot
     {
+        private static readonly Serializer _serializer = new Serializer();
+        private string _extensions { get; set; }
+        private IDictionary<string, string> _dict;
+
         /// <summary>获取团队项目名称
         /// </summary>
         public string Name { get; private set; }
@@ -27,6 +32,28 @@ namespace Cooper.Model.Teams
         /// <summary>创建时间
         /// </summary>
         public DateTime CreateTime { get; private set; }
+        /// <summary>根据键获取对应设置
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public string this[string key]
+        {
+            get
+            {
+                Assert.IsNotNullOrWhiteSpace(key);
+                if (this._dict == null)
+                    this._dict = this.Parse();
+                return this._dict.ContainsKey(key) ? this._dict[key] : null;
+            }
+            set
+            {
+                Assert.IsNotNullOrWhiteSpace(key);
+                if (this._dict == null)
+                    this._dict = this.Parse();
+                this._dict[key] = value;
+                this._extensions = _serializer.JsonSerialize(this._dict);
+            }
+        }
 
         protected Project() { this.CreateTime = DateTime.Now; }
         public Project(string name, bool isPublic, Team team) : this()
@@ -57,6 +84,13 @@ namespace Cooper.Model.Teams
         public void SetIsPublic(bool isPublic)
         {
             this.IsPublic = isPublic;
+        }
+
+        private IDictionary<string, string> Parse()
+        {
+            return string.IsNullOrWhiteSpace(this._extensions)
+                ? new Dictionary<string, string>()
+                : _serializer.JsonDeserialize<IDictionary<string, string>>(this._extensions);
         }
     }
 }
