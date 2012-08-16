@@ -137,6 +137,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\angular\angular-1.0.1.min.js" />
     <Content Include="Content\bootstrap\css\bootstrap.css" />
     <Content Include="Content\bootstrap\css\bootstrap.min.css" />
     <Content Include="Content\bootstrap\img\glyphicons-halflings-white.png" />
@@ -332,6 +333,7 @@
     <Content Include="Views\Team\Index.cshtml" />
     <Content Include="Views\Team\MainRegion.cshtml" />
     <Content Include="Views\Shared\TemplateRegion.cshtml" />
+    <Content Include="Views\Team\LeftBar.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

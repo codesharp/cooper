@@ -28,10 +28,10 @@ namespace Cooper.Web.Controllers
             ViewBag.Team = this.GetTeam(teamId);
             ViewBag.Project = this.GetProject(projectId);
             ViewBag.Teams = new Team[] { this.GetTeam("0"), this.GetTeam("1"), this.GetTeam("2") };
-            ViewBag.Projects = new Project[] { this.GetProject("0"), this.GetProject("1"), this.GetProject("2") }.Select(o => new { id = o.ID, name = o.Name });
-            ViewBag.Members = new TeamMember[] { this.GetMember("0"), this.GetMember("1"), this.GetMember("2") }.Select(o => new { id = o.ID, name = o.Name });
-            ViewBag.projects = new Project[] { this.GetProject("0"), this.GetProject("1"), this.GetProject("2") };
-            ViewBag.members = new TeamMember[] { this.GetMember("0"), this.GetMember("1"), this.GetMember("2") };
+            ViewBag.Projects = new Project[] { this.GetProject("0"), this.GetProject("1"), this.GetProject("2") };
+            ViewBag.Members = new TeamMember[] { this.GetMember("0"), this.GetMember("1"), this.GetMember("2") };
+            ViewBag.projects = new Project[] { this.GetProject("0"), this.GetProject("1"), this.GetProject("2") }.Select(o => new { id = o.ID, name = o.Name });
+            ViewBag.members = new TeamMember[] { this.GetMember("0"), this.GetMember("1"), this.GetMember("2") }.Select(o => new { id = o.ID, name = o.Name });
             return View();
         }
 

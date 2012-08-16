@@ -1,0 +1,84 @@
+﻿@{
+    var url = Request.Url.ToString().ToLower();
+    var active="class=\"active\"";
+    var isAccount = url.Contains("/account") ? active : string.Empty;
+    var isTask = url.Contains("/per") ? active : string.Empty;
+    var isFetch = url.Contains("/fetch") ? active : string.Empty;
+    var team = ViewBag.Team;
+    var teams = ViewBag.Teams;
+    var projects = ViewBag.Projects;
+    var members = ViewBag.Members;
+}
+
+<div class="span2" style=" border: 0px #ddd solid; padding: 5px; margin:0;">
+    <ul class="nav nav-list">
+        <li class="nav-header">WORK IN COOPER</li>
+        <li @Html.Raw(isTask)>
+            <a href="@Url.Action("Index", "Per", null)">
+                <i class="icon-inbox"></i> @this.Lang().my_task
+            </a>
+        </li>
+        <li @Html.Raw(isAccount)><a href="@Url.Action("Connection", "Account", null)"><i class="icon-user"></i> @this.Lang().my_profile</a></li>
+        <li class="nav-header">Code# Team</li>
+        @*@Html.Raw(this.Lang().recent_changes)*@
+    </ul>
+
+    <div class="tabbable tabs-below" ng-controller="TeamLeftCtrl">
+        <div class="tab-content" style="background-color:#fff; border:1px #ddd solid; border-bottom:0; padding-top:10px; max-height:150px; overflow-y:auto; overflow-x:hidden; text-overflow: ellipsis;">
+            <div id="tab1" class="tab-pane active">
+                <ul class="nav nav-list">
+                    <li class="nav-header"><i class="icon-plus"></i> @this.Lang().add_project</li>
+                    <li ng-repeat="p in projects"><a href="/t/{{team.id}}/{{p.id}}">{{p.name}}</a></li>
+                </ul>
+            </div>
+            <div id="tab2" class="tab-pane">
+                <ul class="nav nav-list">
+                    <li class="nav-header"><i class="icon-plus"></i> @this.Lang().add_member</li>
+                    <li ng-repeat="m in members"><a href="/t/{{team.id}}/{{m.id}}">{{m.name}}</a></li>                   
+                </ul>
+            </div>
+            <div id="tab3" class="tab-pane">
+                <ul class="nav nav-list">
+                    <li><a href="#Cooper">tag</a></li>
+                    <li><a href="#Properties">Nothing</a></li>
+                    <li><a href="#NTFE">Wrong</a></li>
+                </ul>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" style="background-color:transparent">
+            <li class="active"><a href="#tab1" data-toggle="tab"><i class="icon-flag"></i></a></li>
+            <li><a href="#tab2" data-toggle="tab"><i class="icon-user"></i></a></li>
+            <li><a href="#tab3" data-toggle="tab"><i class="icon-tags"></i></a></li>
+        </ul>
+    </div>
+    
+    <ul class="nav nav-list">
+        <li class="nav-header">@this.Lang().myteam</li>
+    </ul>
+    <div style="background-color:#fff; border:1px #ddd solid; border-bottom:0; padding-top:10px; max-height:150px; overflow-y:auto; overflow-x:hidden; text-overflow: ellipsis;">
+        <ul class="nav nav-list">
+            <li class="nav-header"><i class="icon-plus"></i> @this.Lang().add_team</li>
+            @foreach (var t in teams)
+            {
+                <li><a href="/t/@t.ID">@t.Name</a></li>
+            }
+        </ul>
+    </div>
+    
+    <br />
+    <div class="alert alert-success">
+        <strong>Like it ?</strong>
+        <a onclick="feedback()">feedback!</a>
+        or
+        <a onclick="joinus()">Join us</a>.
+    </div>
+    <br />
+    <div id="error" class="alert alert-danger hide">@this.Lang().error_and_retry_later</div>
+</div>
+
+<script type="text/javascript">
+    function TeamLeftCtrl($scope) {
+        $scope.projects = window.projects;
+        $scope.members = window.members;
+    }
+</script>
