@@ -67,9 +67,12 @@
     <div style="background-color:#fff; border:1px #ddd solid; border-bottom:0; padding-top:10px; max-height:150px; overflow-y:auto; overflow-x:hidden; text-overflow: ellipsis;">
         <ul class="nav nav-list">
             <li class="nav-header"><i class="icon-plus"></i> @this.Lang().add_team</li>
-            @foreach (var t in teams)
+            @if (teams != null)
             {
+                foreach (var t in teams)
+                {
                 <li><a href="/t/@t.ID">@t.Name</a></li>
+                }
             }
         </ul>
     </div>
