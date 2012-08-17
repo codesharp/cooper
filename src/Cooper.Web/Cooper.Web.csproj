@@ -184,6 +184,15 @@
     <Content Include="Global.asax" />
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="html\modules\cooper.js" />
+    <Content Include="html\controllers\main.js" />
+    <Content Include="html\task\task_detail.htm" />
+    <Content Include="html\task\task_templates.htm" />
+    <Content Include="html\task\task_list.htm" />
+    <Content Include="html\task\team_list.htm" />
+    <Content Include="html\task\team_detail.htm" />
+    <Content Include="html\task\index.htm" />
+    <Content Include="html\task\left.htm" />
     <Content Include="Hybrid\jquery\css\mobile\images\ajax-loader.gif" />
     <Content Include="Hybrid\jquery\css\mobile\images\ajax-loader.png" />
     <Content Include="Hybrid\jquery\css\mobile\images\icons-18-black.png" />
@@ -335,7 +344,9 @@
     <Content Include="Views\Shared\TemplateRegion.cshtml" />
     <Content Include="Views\Team\LeftBar.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="html\account\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

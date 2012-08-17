@@ -55,5 +55,12 @@ namespace Cooper.Web.Controllers
             this._log.InfoFormat("来自用户{0}的反馈：{1} | {2}", User.Identity.Name, level, content);
             return Content(string.Empty);
         }
+
+        public ActionResult Langs()
+        {
+            var str = "";
+            WebExtensions.LangExpando.Langs.ToList().ForEach(o => str += string.Format("lang.{0}='{1}';<br/>", o.Key, o.Value));
+            return Content(str);
+        }
     }
 }

@@ -21,7 +21,7 @@ UI_List_Priority.prototype.modeArgs = {
 ////////////////////////////////////////////////////////////////////////////////////////
 //归档
 UI_List_Priority.prototype.todolist_archived = 'todolist_archived';
-UI_List_Priority.prototype.archive = new Sort('', 'archived', lang.archive, []);
+UI_List_Priority.prototype.archive = null;
 UI_List_Priority.prototype._isArchivedRow = function ($r) { return this.getRegionOfRow($r).hasClass(this.todolist_archived); }
 UI_List_Priority.prototype._isArchivedRegion = function ($r) { return $r.hasClass(this.todolist_archived); }
 UI_List_Priority.prototype.showArchive = function () { this.archive.el().show(); }
@@ -148,5 +148,6 @@ UI_List_Priority.onPriorityChange = function (base, $r, task, old, p) {
 //对象创建
 function create_UI_List_Priority() {
     var ui = new UI_List_Priority();
+    ui.archive = new Sort('', 'archived', lang.archive, []);
     return ui;
 }

@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html ng-app="cooper">
+<head>
+    <title></title>
+    <link href="../../Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../../Content/jquery/css/smoothness/jquery-ui-1.8.21.custom.css" rel="stylesheet"
+        type="text/css" />
+    <link href="../../Content/css/base.css" rel="stylesheet" type="text/css" />
+    <link href="../../Content/css/task.css" rel="stylesheet" type="text/css" />
+</head>
+<body ng-controller="MainCtrl">
+    <div class="container-fluid" style="margin-top: 10px;">
+        <div class="row-fluid">
+            <!--leftbar-->
+            <div class="span2" style="padding: 5px; margin: 0;" ng-show="!mini&&!full">
+                <div ng-include="tmp.left">
+                </div>
+                <br />
+                <div ng-include="tmp.team_list" ng-controller="TeamListCtrl">
+                </div>
+                <br />
+                <div ng-include="tmp.team_detail" ng-controller="TeamDetailCtrl">
+                </div>
+            </div>
+            <!--Main-->
+            <div id="main" ng-class="class_tasklist"  ng-include="tmp.task_list"></div>
+            <!--Detail-->
+            <div id="detail_wrapper" ng-class="class_taskdetail"></div>
+        </div>
+    </div>
+    <script src="../../Content/jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../../Content/jquery/jquery-ui-1.8.22.custom.min.js" type="text/javascript"></script>
+    <script src="../../Content/jquery/jquery.json-2.3.min.js" type="text/javascript"></script>
+    <script src="../../Content/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="../../Content/angular/angular-1.0.1.min.js" type="text/javascript"></script>
+    <script src="../../Scripts/common.js" type="text/javascript"></script>
+    <script src="../../Scripts/lang.js" type="text/javascript"></script>
+    <script src="../../Scripts/task.js" type="text/javascript"></script>
+    <script src="../../Scripts/task_common.js" type="text/javascript"></script>
+    <script src="../../Scripts/task_row.js" type="text/javascript"></script>
+    <script src="../../Scripts/task_bind.js" type="text/javascript"></script>
+    <script src="../../Scripts/task_bind_shortcuts.js" type="text/javascript"></script>
+    <script src="../../Scripts/task_bind_team.js" type="text/javascript"></script>
+    <script src="../../Scripts/task_due.js" type="text/javascript"></script>
+    <script src="../../Scripts/task_priority.js" type="text/javascript"></script>
+    <script src="../modules/cooper.js" type="text/javascript"></script>
+    <script src="../controllers/Main.js" type="text/javascript"></script>
+    <script src="../controllers/TaskList.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        window.teamId = '10';
+        window.projectId = '5';
+        window.members = [];
+        window.projects = [];
+
+        //输出运行时动态设置用于脚本使用
+        var sys_versionFlag = 'debug';
+
+        var url_task_sync = '/team/sync';
+        var url_task_byPriority = '/team/GetByPriority';
+        var url_task_byPriority_incompleted = '/team/GetIncompletedByPriority';
+        var url_task_byDueTime = '/team/GetByDueTime';
+        var url_task_byAssignee = '/team/GetByAssignee';
+        var url_task_byAssignee_incompleted = '/team/GetIncompletedByAssignee';
+
+        var url_task_mini = '@Url.Action("Mini", "Personal", null)';
+        var url_taskFolder_create = '@Url.Action("CreateTaskFolder", "Personal", null)';
+        var url_taskFolder_delete = '@Url.Action("DeleteTaskFolder", "Personal", null)';
+
+        function resize() {
+            $('.todolist_wrapper').height($(window).height() - 170);
+            $('.span4').height($(window).height() - 30);
+        }
+        function share(e) {
+            $('#shareModal').modal('show');
+            $('#share_title').val($(e).parents('div.region_detail').eq(0).find('input').val() + lang.share_description);
+        }
+
+        function openTaskFolder() { $('#taskFolderModal').modal('show'); }
+
+        $(function () {
+            //避免意外切换页面
+            $(document).keydown(function (e) {
+                if (e.keyCode != 8) return;
+                if ($(e.target).is('body'))
+                    return false;
+            });
+
+            resize();
+            $(window).resize(resize);
+
+            $('.btn').tooltip({ placement: 'bottom', delay: 800 });
+
+            //TODO:仅在变更时处理
+            if (sys_versionFlag == 'release')
+                window.onbeforeunload = function () { return 'Cooper Task'; };
+        });
+    </script>
+</body>
+</html>

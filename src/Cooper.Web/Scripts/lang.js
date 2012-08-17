@@ -1,5 +1,4 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
-//TODO:从this.Lang()自动生成此文案
 
 //简易提供文案
 var lang = {};
@@ -9,7 +8,70 @@ lang.batch_task = '个任务';
 lang.archive = '归档';
 
 lang.confirm_delete_taskFolder = '确定要删除当前任务表？任务表中的任务也将一起删除';
-
 lang.share_description = '\n\n - 我的任务 - Work IN Cooper';
-
 lang.remove_from_project = '移除该项目';
+
+lang.my_task = '个人任务';
+lang.my_profile = '我的设置';
+lang.my_team = '我的团队';
+lang.add_team = '新建团队';
+lang.add_project = '新建项目';
+lang.add_member = '添加成员';
+lang.members = '成员';
+lang.n_members = '位成员';
+lang.settings = '设置';
+lang.email = '邮箱';
+lang.nick = '昵称';
+lang.send_invite = '发送邀请';
+lang.team_current_have = '团队当前有';
+lang.team_name = '团队名称：';
+lang.submit = '提交';
+lang.deal_success = '操作成功';
+lang.my_team_task = '我的任务';
+lang.inbox = '收件箱';
+lang.new_project_name = '新建项目';
+
+
+lang.my_task = '个人任务';
+lang.my_profile = '我的设置';
+lang.myteam = '我的团队';
+lang.add_team = '新建团队';
+lang.error_occur = '发生错误';
+lang.webSiteSuffix = '- WORK IN COOPER - OpenSource Task Management';
+lang.team = '团队';
+lang.add_project = '新建项目';
+lang.add_member = '添加成员';
+lang.error_and_retry_later = '错误，请稍后再试';
+lang.task_deleted = '个任务已删除，';
+lang.revoke = '撤销';
+lang.more = '更多';
+lang.print = '打印';
+lang.by_priority_title = '以优先级排序方式查看任务';
+lang.priority = '优先级';
+lang.by_dueTime_title = '以截止时间排序查看任务';
+lang.time = '时间';
+lang.archive = '归档';
+lang.archive_finish = '归档已完成的任务';
+lang.hide_archive = '隐藏归档任务';
+lang.show_archive = '显示归档任务';
+lang.addNew = '新建';
+lang.complete = '完成';
+lang.sort = '调整顺序';
+lang.mouse = '鼠标';
+lang.select_inverse = '多选/反选';
+lang.lose_conn = '与Cooper失去连接';
+lang.retry_lose_conn = '请您稍后再试...';
+lang.priority_today = '尽快完成';
+lang.priority_upcoming = '稍后完成';
+lang.priority_later = '迟些再说';
+lang.share_to = '分享到';
+lang.assignee = '执行人';
+lang.project = '项目';
+lang.priority_title = '指定任务希望在何时处理';
+lang.dueTime = '截止日期';
+lang.mobi_install = '客户端安装';
+lang.download_address = '下载地址';
+lang.web_analysis = ' ';
+lang.back = '返回';
+lang.detail = '详情';
+lang.del='删除';

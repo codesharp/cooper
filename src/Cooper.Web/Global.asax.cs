@@ -255,11 +255,14 @@ public static class WebExtensions
     }
     public class LangExpando : System.Dynamic.DynamicObject
     {
+        public static IDictionary<string, string> Langs = new Dictionary<string, string>();
         public override bool TryGetMember(System.Dynamic.GetMemberBinder binder, out object result)
         {
             //HACK:目前默认zh-cn语言
             result = CodeSharp.Framework.SystemConfig.Settings["zhcn_" + binder.Name];
             result = string.IsNullOrEmpty((string)result) ? binder.Name : result;
+            if (!Langs.ContainsKey(binder.Name))
+                Langs.Add(binder.Name, result.ToString());
             return true;
         }
     }

@@ -1,0 +1,25 @@
+﻿<ul class="nav nav-list">
+    <li class="nav-header">{{lang.my_team}}</li>
+    <li ng-repeat="t in teams"><a href="{{url_team(t)}}">{{t.name}}</a></li>
+    <li class="nav-header"><a ng-click="showAddTeam()"><i class="icon-plus"></i>{{lang.add_team}}</a></li>
+</ul>
+<div class="modal hide">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+            ×</button>
+        <h3>
+            {{lang.add_team}}
+        </h3>
+    </div>
+    <div class="modal-body">
+        <form name="teamAddForm" class="form-inline" ng-controller="TeamAddFormCtrl">
+        <div class="well">
+            {{lang.team_name}}
+            <input name="name" type="text" ng-model="name" required />
+            <button ng-click="addTeam()" class="btn">{{lang.submit}}</button>
+        </div>
+        <div class="alert alert-success hide"><i class="icon-ok"></i>{{lang.deal_success}}</div>
+        <div class="alert alert-error hide"><i class="icon-exclamation-sign"></i>{{lang.sorry_error_occur_retry_later}}</div>
+        </form>
+    </div>
+</div>

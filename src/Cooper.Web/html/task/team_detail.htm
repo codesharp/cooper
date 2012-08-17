@@ -1,0 +1,81 @@
+﻿<ul class="nav nav-list">
+    <li class="nav-header">{{team.name}}</li>
+</ul>
+<ul class="nav nav-tabs nav-stacked" style="margin-bottom:5px">
+    <li><a><i class="icon-inbox"></i> {{lang.my_team_task}}</a></li>
+    <li><a><i class="icon-envelope"></i> {{lang.inbox}}</a></li>
+</ul>
+<div class="tabbable tabs-below">
+    <div class="tab-content" style="background-color: #fff; border: 1px #ddd solid; border-bottom: 0;
+        padding-top: 10px; max-height: 150px; overflow-y: auto; overflow-x: hidden; text-overflow: ellipsis;">
+        <div id="tab1" class="tab-pane active">
+            <ul class="nav nav-list">
+                <li class="nav-header" ng-click="addProject(lang.new_project_name)"><i class="icon-plus"></i>{{lang.add_project}}</li>
+                <li ng-repeat="p in team.projects"><a href="{{url_project(team,p)}}">{{p.name}}</a></li>
+            </ul>
+            <br />
+        </div>
+        <div id="tab2" class="tab-pane">
+            <ul class="nav nav-list">
+                <li class="nav-header" ng-click="showMembers()"><i class="icon-plus"></i>{{lang.add_member}}</li>
+                <li ng-repeat="m in team.members"><a href="{{url_member(team,m)}}">{{m.name}}</a></li>
+            </ul>
+            <br />
+        </div>
+    </div>
+    <ul class="nav nav-tabs" style="background-color: transparent">
+        <li class="active"><a href="#tab1" data-toggle="tab"><i class="icon-flag"></i></a>
+        </li>
+        <li><a href="#tab2" data-toggle="tab"><i class="icon-user"></i></a></li>
+        <li><a ng-click="showModify()"><i class="icon-cog"></i></a></li>
+    </ul>
+</div><!--Team Detail Block-->
+<div class="modal hide">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+            ×</button>
+        <h3>
+            {{team.name}}
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div class="tabbable">
+            <ul class="nav nav-tabs">
+                <li><a href="#settings" data-toggle="tab"><i class="icon-cog"></i> {{lang.settings}}</a></li>
+                <li><a href="#members" data-toggle="tab"><i class="icon-user"></i> {{lang.members}}</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="settings" class="tab-pane">
+                    <form name="teamSettingsForm" class="form-inline" ng-controller="TeamSettingsFormCtrl">
+                        <div class="well">
+                            {{lang.team_name}}
+                            <input name="name" type="text" ng-model="team.name"  required/>
+                            <button ng-click="updateTeam()" class="btn">{{lang.submit}}</button>
+                        </div>
+                        <div class="alert alert-success hide"><i class="icon-ok"></i> {{lang.deal_success}}</div>
+                        <div class="alert alert-error hide"><i class="icon-exclamation-sign"></i> {{lang.sorry_error_occur_retry_later}}</div>
+                    </form>
+                </div><!--settings-->
+                <div id="members" class="tab-pane">
+                    <div class="alert alert-info">{{lang.team_current_have}} {{team.members.length}} {{lang.n_members}}</div>
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li ng-repeat="m in team.members"><a>
+                            <code>{{m.email}}</code>
+                            {{m.name}}
+                            <button type="button" class="close" onclick="return false;" ng-show="m.id!=user.id" ng-click="removeMember(m.id)">x</button></a>
+                        </li>
+                    </ul>
+                    <form name="formTeamMembers" class="form-inline" ng-controller="TeamMembersFormCtrl">
+                    <div class="well">
+                        <input name="email" type="email" class="input-medium" placeholder="{{lang.email}}" ng-model="email" required />
+                        <input name="name" type="text" class="input-medium" placeholder="{{lang.nick}}" ng-model="name" required />
+                        <button ng-click="addMember()" class="btn">{{lang.send_invite}}</button>
+                    </div>
+                    <div class="alert alert-success hide"><i class="icon-ok"></i> {{lang.deal_success}}</div>
+                    <div class="alert alert-error hide"><i class="icon-exclamation-sign"></i> {{lang.sorry_error_occur_retry_later}}</div>
+                    </form>
+                </div><!--members-->
+            </div>
+        </div>
+    </div>
+</div><!--Team Detail Edit Box-->
