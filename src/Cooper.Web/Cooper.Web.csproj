@@ -184,8 +184,9 @@
     <Content Include="Global.asax" />
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />
+    <Content Include="html\controllers\TaskList.js" />
     <Content Include="html\modules\cooper.js" />
-    <Content Include="html\controllers\main.js" />
+    <Content Include="html\controllers\Main.js" />
     <Content Include="html\task\task_detail.htm" />
     <Content Include="html\task\task_templates.htm" />
     <Content Include="html\task\task_list.htm" />
