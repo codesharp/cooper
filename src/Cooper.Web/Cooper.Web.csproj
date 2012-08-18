@@ -188,8 +188,6 @@
     <Content Include="webui\controllers\TaskList.js" />
     <Content Include="webui\modules\cooper.js" />
     <Content Include="webui\controllers\Main.js" />
-    <Content Include="webui\task\detail.htm" />
-    <Content Include="webui\task\templates.htm" />
     <Content Include="webui\task\list.htm" />
     <Content Include="webui\team\full.htm" />
     <Content Include="webui\team\list.htm" />

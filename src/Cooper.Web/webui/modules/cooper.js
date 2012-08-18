@@ -26,9 +26,9 @@ cooper.value('tmp', {
 cooper.value('urls', {
     personal: url_root + '/per',
     account: url_root + '/account',
-    team: function (t) { return url_root + '/t/' + t.id; },
-    member: function (t, m) { return url_root + '/t/' + t.id + '/m/' + m.id; },
-    project: function (t, p) { return url_root + '/t/' + t.id + '/p/' + p.id; }
+    team: function (t) { if (t) return url_root + '/t/' + t.id; },
+    member: function (t, m) { if (t && m) return url_root + '/t/' + t.id + '/m/' + m.id; },
+    project: function (t, p) { if (t && p) return url_root + '/t/' + t.id + '/p/' + p.id; }
 });
 
 cooper.value('params', { teamId: currentTeamId, projectId: currentProjectId, memberId: currentMemberId });

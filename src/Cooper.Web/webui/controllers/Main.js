@@ -22,6 +22,23 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
     $rootScope.lang = lang;
     $rootScope.user = { id: 1, name: 'Xu Huang', email: 'wskyhx@gmail.com' };
 
+    //大小模式
+    $scope.mini = false;
+    $scope.full = false;
+    var b = $.browser.msie && $.browser.version.indexOf('7.') >= 0;
+    if (!$scope.full && !$scope.mini) {
+        $scope.class_tasklist = 'span6';
+        $scope.class_taskdetail = b ? 'span3' : 'span4';
+    }
+    else if ($scope.full) {
+        $scope.class_tasklist = 'span8';
+        $scope.class_taskdetail = b ? 'span3' : 'span4';
+    }
+    else if ($scope.mini) {
+        $scope.class_tasklist = '';
+        $scope.class_taskdetail = 'hide';
+    }
+
     var team1 = {
         id: 1,
         name: 'Code# Team',
@@ -42,87 +59,87 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
     team2.name = 'Ali-ENT';
     team3.id = 3;
     team3.name = 'NetShare';
-    $scope.teams = [team1, team2, team3];
-    debuger.debug('teams', $scope.teams);
+
+    //$scope.teams = [team1, team2, team3];
+    //debuger.debug('teams', $scope.teams);
 
     debuger.debug('$routeParams', $routeParams);
     debuger.debug('params', params);
     var p = $routeParams.teamId ? $routeParams : params;
 
-    debuger.debug('current teamId=', p.teamId);
-    $rootScope.team = $scope.teams[parseInt(p.teamId) - 1];
-    debuger.debug('current team', $scope.team);
+    $http.get('/team/getteams').success(function (data, status, headers, config) {
+        debuger.assert(data);
+        $scope.teams = data;
+        debuger.debug('teams', $scope.teams);
+        debuger.debug('current teamId=', p.teamId);
+        $rootScope.team = findBy($scope.teams, 'id', p.teamId);
+        debuger.debug('current team', $scope.team);
 
-    //当前必须有一个team
-    debuger.assert($rootScope.team);
-    if (!$rootScope.team) {
-        if ($scope.teams.length > 0)
-            location.href = urls.team($scope.teams[0]);
-        return;
-    }
+        //当前必须有一个team
+        debuger.assert($rootScope.team);
+        if (!$rootScope.team) {
+            if ($scope.teams.length > 0)
+                location.href = urls.team($scope.teams[0]);
+            return;
+        }
 
-    debuger.debug('current projectId=', p.projectId);
-    $rootScope.project = isNaN(parseInt(p.projectId)) ? null : $scope.team.projects[parseInt(p.projectId) - 1];
-    debuger.debug('current project', $scope.project);
+        debuger.debug('current projectId=', p.projectId);
+        $rootScope.project = findBy($scope.team.projects, 'id', p.projectId);
+        debuger.debug('current project', $scope.project);
 
-    debuger.debug('current memberId=', p.memberId);
-    $rootScope.member = isNaN(parseInt(p.memberId)) ? null : $scope.team.members[parseInt(p.memberId) - 1];
-    debuger.debug('current member', $scope.member);
-
-    //大小模式
-    $scope.mini = false;
-    $scope.full = false;
-    var b = $.browser.msie && $.browser.version.indexOf('7.') >= 0;
-    if (!$scope.full && !$scope.mini) {
-        $scope.class_tasklist = 'span6';
-        $scope.class_taskdetail = b ? 'span3' : 'span4';
-    }
-    else if ($scope.full) {
-        $scope.class_tasklist = 'span8';
-        $scope.class_taskdetail = b ? 'span3' : 'span4';
-    }
-    else if ($scope.mini) {
-        $scope.class_tasklist = '';
-        $scope.class_taskdetail = 'hide';
-    }
+        debuger.debug('current memberId=', p.memberId);
+        $rootScope.member = findBy($scope.team.members, 'id', p.memberId);
+        debuger.debug('current member', $scope.member);
+    });
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //team list
 function TeamListCtrl($scope, $http, $element) {
     $scope.showAddTeam = function () { $element.find('div.modal').modal('show'); }
+    $scope.hideAddTeam = function () { $element.find('div.modal').modal('hide'); }
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
     $scope.currentId = 0;
-    if ($scope.teams.length == 0)
+    if ($scope.teams && $scope.teams.length == 0)
         $scope.showAddTeam();
 }
-function TeamAddFormCtrl($scope, $element) {
+function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
     var $form = $element;
     $scope.addTeam = function () {
         var t = {};
         $.each($form.serializeArray(), function (i, n) { t[n.name] = n.value; });
         if ($scope.teamAddForm.$valid) {
-            $scope.teams = $.merge($scope.teams, [t]);
-            success($form);
-            //TODO:切换到新增的team
+            $http.post('/team/CreateTeam', t).success(function (data, status, headers, config) {
+                success($form);
+                debuger.debug(data);
+                t.id = eval('(' + data + ')');
+                $scope.teams = $.merge($scope.teams, [t]);
+                $scope.hideAddTeam();
+                $location.path(urls.team(t));
+            });
         }
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //team detail
-function TeamDetailCtrl($scope, $http, $element) {
-    if (!$scope.tab)
-        $scope.tab = $scope.member ? 'm' : 'p';
+function TeamDetailCtrl($scope, $http, $element, $location, urls) {
+    $scope.initTab = function () { $scope.tab = $scope.member ? 'm' : 'p'; }
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
     $scope.showModify = function () { $scope.tab2 = 's'; $element.find('div.modal').modal('show'); }
     $scope.showMembers = function () { $scope.tab2 = 'm'; $element.find('div.modal').modal('show'); }
     $scope.removeMember = function (id) {
         debuger.assert(id != $scope.user.id);
         $scope.team.members = $.grep($scope.team.members, function (n) { return n.id != id });
+        $http.post('/team/DeleteMember', { teamId: $scope.team.id, memberId: id }).success(function () { });
     }
     $scope.addProject = function (n) {
-        $scope.team.projects = $.merge($scope.team.projects, [{ id: 10, name: n}]);
-        //TODO:切换到新建项目
+        $http.post('/team/CreateProject', { teamId: $scope.team.id, name: n }).success(function (data, status, headers, config) {
+            debuger.debug(data);
+            var p = { name: n };
+            p.id = eval('(' + data + ')');
+            //$scope.team.projects = $.merge($scope.team.projects, [p]);
+            $location.path(urls.project($scope.team, p));
+        });
     }
 }
 function TeamSettingsFormCtrl($scope, $element) {
@@ -139,14 +156,21 @@ function TeamSettingsFormCtrl($scope, $element) {
             $scope.team.name = prev_name;
     }
 }
-function TeamMembersFormCtrl($scope, $element) {
+function TeamMembersFormCtrl($scope, $element, $http) {
     var $form = $element;
+
+    //TODO:增加email/member重复验证
     $scope.addMember = function () {
         var m = {};
         $.each($form.serializeArray(), function (i, n) { m[n.name] = n.value; });
         if ($scope.formTeamMembers.$valid) {
-            $scope.team.members = $.merge($scope.team.members, [m]);
-            success($form);
+            m.teamId = $scope.team.id;
+            $http.post('/team/CreateMember', m).success(function (data, status, headers, config) {
+                debuger.debug(data);
+                m.id = eval('(' + data + ')');
+                $scope.team.members = $.merge($scope.team.members, [m]);
+                success($form);
+            }).error(function () { error($form); });
         }
     }
 }
@@ -157,4 +181,10 @@ function error($e) {
 function success($e) {
     $e.find('div.alert-error').hide();
     $e.find('div.alert-success').show().fadeOut(3000);
+}
+function findBy(a, k, v) {
+    for (var i = 0; i < a.length; i++)
+        if (a[i][k] == v)
+            return a[i];
+    return null;
 }

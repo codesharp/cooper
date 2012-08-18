@@ -3,6 +3,7 @@
 ///<reference path="task.js" />
 ///<reference path="task_common.js" />
 
+//取代taskpage.js
 function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
     //page内全局元素
     var $el_wrapper_region = null;
@@ -30,7 +31,9 @@ function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
 
     var tryfail = false; //异常流模拟标识
 
-    ////////////////////////////////////////////////////////////////////////////////////////
+    // *****************************************************
+    // taskpage.js main changes here
+    // *****************************************************
     if ($scope.project)
         $scope.title = $scope.project.name;
     else if ($scope.member)
@@ -44,6 +47,7 @@ function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
     currentProject = $scope.project;
     currentTeamProjects = $scope.team.projects;
     currentTeamMembers = $scope.team.members;
+
     ////////////////////////////////////////////////////////////////////////////////////////
     //all=来自server的所有任务数组
     //sorts=分组排序
@@ -368,6 +372,9 @@ function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
         UI_List_Common.prototype.getSortByKey = function (k) { return cached_sorts[k]; };
         UI_List_Common.prototype.setTask = function (i, t) { cached_tasks[i] = t; };
         //团队相关
+        // *****************************************************
+        // taskpage.js main changes here
+        // *****************************************************
         UI_List_Common.prototype.getProjects = function () { return $scope.team.projects; }
         UI_List_Common.prototype.getTeamMembers = function () { return $scope.team.members; }
 

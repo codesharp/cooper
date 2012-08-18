@@ -1,6 +1,10 @@
 ﻿<ul class="nav nav-list">
-    <li class="nav-header">{{lang.my_team}}</li>
-    <li ng-repeat="t in teams" class="{{activeClass(team.id==t.id)}}"><a href="{{urls.team(t)}}">{{t.name}}</a></li>
+    <li class="nav-header">{{lang.my_team}}</li></ul>
+<ul class="nav nav-list" style="max-height: 200px; overflow-y: auto; overflow-x: hidden">
+    <li ng-repeat="t in teams" class="{{activeClass(team.id==t.id)}}"><a href="{{urls.team(t)}}">
+        {{t.name}}</a></li>
+</ul>
+<ul class="nav nav-list">
     <li class="nav-header"><a ng-click="showAddTeam()"><i class="icon-plus"></i>{{lang.add_team}}</a></li>
 </ul>
 <div class="modal hide">
@@ -16,10 +20,13 @@
         <div class="well">
             {{lang.team_name}}
             <input name="name" type="text" ng-model="name" required />
-            <button ng-click="addTeam()" class="btn">{{lang.submit}}</button>
+            <button ng-click="addTeam()" class="btn">
+                {{lang.submit}}</button>
         </div>
-        <div class="alert alert-success hide"><i class="icon-ok"></i>{{lang.deal_success}}</div>
-        <div class="alert alert-error hide"><i class="icon-exclamation-sign"></i>{{lang.sorry_error_occur_retry_later}}</div>
+        <div class="alert alert-success hide">
+            <i class="icon-ok"></i>{{lang.deal_success}}</div>
+        <div class="alert alert-error hide">
+            <i class="icon-exclamation-sign"></i>{{lang.sorry_error_occur_retry_later}}</div>
         </form>
     </div>
 </div>

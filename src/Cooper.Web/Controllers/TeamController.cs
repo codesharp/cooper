@@ -23,7 +23,7 @@ namespace Cooper.Web.Controllers
             , taskFolderService
             , fetchTaskHelper) { }
 
-        public ActionResult Index(string teamId,string projectId,string memberId)
+        public ActionResult Index(string teamId, string projectId, string memberId)
         {
             ViewBag.TeamId = teamId;
             ViewBag.ProjectId = projectId;
@@ -65,6 +65,47 @@ namespace Cooper.Web.Controllers
                 , this.ParseSortsByDueTime);
         }
 
+        private static IList<Team> _teams = new List<Team>() { GetTeam("1"), GetTeam("2"), GetTeam("3"), GetTeam("4") };
+        public ActionResult GetTeams()
+        {
+            return Json(_teams, JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult CreateTeam(string name)
+        {
+            var t = GetTeam((_teams.Count + 1).ToString());
+            t.name = name;
+            _teams.Add(t);
+            return Json(t.id);
+        }
+        public ActionResult CreateProject(string teamId, string name)
+        {
+            var t = _teams.Single(o => o.id == teamId);
+            var p = GetProject((t.projects.Length + 1).ToString());
+            p.name = name;
+            var all = t.projects.ToList();
+            all.Add(p);
+            t.projects = all.ToArray();
+            return Json(p.id);
+        }
+        public ActionResult CreateMember(string teamId, string name)
+        {
+            var t = _teams.Single(o => o.id == teamId);
+            var m = GetMember((t.members.Length + 1).ToString());
+            m.name = name;
+            var all = t.members.ToList();
+            all.Add(m);
+            t.members = all.ToArray();
+            return Json(m.id);
+        }
+        public ActionResult DeleteMember(string teamId, string memberId)
+        {
+            var t = _teams.Single(o => o.id == teamId);
+            var all = t.members.ToList();
+            all.Remove(t.members.Single(o => o.id == memberId));
+            t.members = all.ToArray();
+            return Json(true);
+        }
+
         /// <summary>用于接收终端的变更同步数据，按team同步
         /// </summary>
         /// <param name="teamId">团队标识</param>
@@ -76,9 +117,9 @@ namespace Cooper.Web.Controllers
         [ValidateInput(false)]
         public ActionResult Sync(string teamId, string projectId, string changes, string by, string sorts)
         {
-            var team = this.GetTeam(teamId);
+            var team = GetTeam(teamId);
             Assert.IsNotNull(team);
-            var project = this.GetProject(projectId);
+            var project = GetProject(projectId);
 
             return Json(this.Sync(changes, by, sorts
                 , o => { if (team != null) { } if (project != null) { } }
@@ -95,13 +136,22 @@ namespace Cooper.Web.Controllers
         }
 
         //临时
-        private Team GetTeam(string teamId) { return new Team() { ID = "1", Name = "CooperTestTeam" }; }
-        private Project GetProject(string projectId)
+        private static Team GetTeam(string teamId)
+        {
+            return new Team()
+            {
+                id = teamId,
+                name = "CooperTestTeam-" + teamId,
+                members = new TeamMember[] { GetMember("1"), GetMember("2"), GetMember("3") },
+                projects = new Project[] { GetProject("1"), GetProject("2"), GetProject("3") }
+            };
+        }
+        private static Project GetProject(string projectId)
         {
             int id;
-            return int.TryParse(projectId, out id) ? new Project() { ID = projectId, Name = "Project-" + projectId } : null;
+            return int.TryParse(projectId, out id) ? new Project() { id = projectId, name = "Project-" + projectId } : null;
         }
-        private TeamMember GetMember(string mId) { return new TeamMember() { ID = mId, Name = "Member-" + mId }; }
+        private static TeamMember GetMember(string mId) { return new TeamMember() { id = mId, name = "Member-" + mId, email = "xwwwx@gmail.com" }; }
         private IEnumerable<Task> GetTasksByTeam(Account a, Team t) { return new List<Task>(); }
         private IEnumerable<Task> GetIncompletedTasksByTeam(Account a, Team t) { return new List<Task>(); }
         private IEnumerable<Task> GetTasksByProject(Project p) { return new List<Task>(); }
@@ -115,8 +165,8 @@ namespace Cooper.Web.Controllers
             , Func<Project, TaskInfo[], Sort[]> sortByProject)
         {
             var account = this.Context.Current;
-            var team = this.GetTeam(teamId);
-            var project = this.GetProject(projectId);
+            var team = GetTeam(teamId);
+            var project = GetProject(projectId);
             var editable = true;//是否是非团队内成员浏览
 
             var tasks = project == null
@@ -161,23 +211,27 @@ namespace Cooper.Web.Controllers
         }
         private string GetSortKey(Team t, string by)
         {
-            return by + "_" + t.ID;
+            return by + "_" + t.id;
         }
 
         public class Team
         {
-            public string ID { get; set; }
-            public string Name { get; set; }
+            public string id { get; set; }
+            public string name { get; set; }
+
+            public TeamMember[] members { get; set; }
+            public Project[] projects { get; set; }
         }
         public class TeamMember
         {
-            public string ID { get; set; }
-            public string Name { get; set; }
+            public string id { get; set; }
+            public string name { get; set; }
+            public string email { get; set; }
         }
         public class Project
         {
-            public string ID { get; set; }
-            public string Name { get; set; }
+            public string id { get; set; }
+            public string name { get; set; }
         }
     }
 }
