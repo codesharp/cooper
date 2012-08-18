@@ -3,7 +3,7 @@
 ///<reference path="task.js" />
 ///<reference path="task_common.js" />
 
-function TaskListCtrl($scope, $element, $routeParams) {
+function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
     //page内全局元素
     var $el_wrapper_region = null;
     var $el_wrapper_detail = null;
@@ -31,7 +31,14 @@ function TaskListCtrl($scope, $element, $routeParams) {
     var tryfail = false; //异常流模拟标识
 
     ////////////////////////////////////////////////////////////////////////////////////////
-    $scope.title = $scope.project ? $scope.project.name : $scope.team.name;
+    if ($scope.project)
+        $scope.title = $scope.project.name;
+    else if ($scope.member)
+        $scope.title = $scope.member.name;
+    else if ($scope.team)
+        $scope.title = $scope.team.name;
+    if ($scope.team)
+        $rootScope.title = $scope.title == $scope.team.name ? $scope.title : $scope.title + ' - ' + $scope.team.name;
     //为团队功能填充全局变量
     currentTeam = $scope.team;
     currentProject = $scope.project;
@@ -369,6 +376,7 @@ function TaskListCtrl($scope, $element, $routeParams) {
 
         globalBinds();
         ajaxSetup();
+
 
         if (currentProject)
             project(currentProject);

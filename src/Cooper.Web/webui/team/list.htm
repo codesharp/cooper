@@ -1,6 +1,6 @@
 ﻿<ul class="nav nav-list">
     <li class="nav-header">{{lang.my_team}}</li>
-    <li ng-repeat="t in teams"><a href="{{url_team(t)}}">{{t.name}}</a></li>
+    <li ng-repeat="t in teams" class="{{activeClass(team.id==t.id)}}"><a href="{{urls.team(t)}}">{{t.name}}</a></li>
     <li class="nav-header"><a ng-click="showAddTeam()"><i class="icon-plus"></i>{{lang.add_team}}</a></li>
 </ul>
 <div class="modal hide">

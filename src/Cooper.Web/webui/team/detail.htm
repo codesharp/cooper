@@ -8,26 +8,25 @@
 <div class="tabbable tabs-below">
     <div class="tab-content" style="background-color: #fff; border: 1px #ddd solid; border-bottom: 0;
         padding-top: 10px; max-height: 150px; overflow-y: auto; overflow-x: hidden; text-overflow: ellipsis;">
-        <div id="tab1" class="tab-pane active">
+        <div class="tab-pane {{activeClass(tab=='p')}}">
             <ul class="nav nav-list">
                 <li class="nav-header" ng-click="addProject(lang.new_project_name)"><i class="icon-plus"></i>{{lang.add_project}}</li>
-                <li ng-repeat="p in team.projects"><a href="{{url_project(team,p)}}">{{p.name}}</a></li>
+                <li ng-repeat="p in team.projects" class="{{activeClass(p.id==project.id)}}"><a href="{{urls.project(team,p)}}">{{p.name}}</a></li>
             </ul>
             <br />
         </div>
-        <div id="tab2" class="tab-pane">
+        <div class="tab-pane {{activeClass(tab=='m')}}">
             <ul class="nav nav-list">
                 <li class="nav-header" ng-click="showMembers()"><i class="icon-plus"></i>{{lang.add_member}}</li>
-                <li ng-repeat="m in team.members"><a href="{{url_member(team,m)}}">{{m.name}}</a></li>
+                <li ng-repeat="m in team.members" class="{{activeClass(m.id==member.id)}}"><a href="{{urls.member(team,m)}}">{{m.name}}</a></li>
             </ul>
             <br />
         </div>
     </div>
     <ul class="nav nav-tabs" style="background-color: transparent">
-        <li class="active"><a href="#tab1" data-toggle="tab"><i class="icon-flag"></i></a>
-        </li>
-        <li><a href="#tab2" data-toggle="tab"><i class="icon-user"></i></a></li>
-        <li><a ng-click="showModify()"><i class="icon-cog"></i></a></li>
+        <li class="{{activeClass(tab=='p')}}" ng-click="tab='p'"><a data-toggle="tab"><i class="icon-flag"></i></a></li>
+        <li class="{{activeClass(tab=='m')}}" ng-click="tab='m'"><a data-toggle="tab"><i class="icon-user"></i></a></li>
+        <li ng-click="showModify()"><a><i class="icon-cog"></i></a></li>
     </ul>
 </div><!--Team Detail Block-->
 <div class="modal hide">
@@ -41,11 +40,11 @@
     <div class="modal-body">
         <div class="tabbable">
             <ul class="nav nav-tabs">
-                <li><a href="#settings" data-toggle="tab"><i class="icon-cog"></i> {{lang.settings}}</a></li>
-                <li><a href="#members" data-toggle="tab"><i class="icon-user"></i> {{lang.members}}</a></li>
+                <li class="{{activeClass(tab2=='s')}}" ng-click="tab2='s'"><a data-toggle="tab"><i class="icon-cog"></i> {{lang.settings}}</a></li>
+                <li class="{{activeClass(tab2=='m')}}" ng-click="tab2='m'"><a data-toggle="tab"><i class="icon-user"></i> {{lang.members}}</a></li>
             </ul>
             <div class="tab-content">
-                <div id="settings" class="tab-pane">
+                <div class="tab-pane {{activeClass(tab2=='s')}}">
                     <form name="teamSettingsForm" class="form-inline" ng-controller="TeamSettingsFormCtrl">
                         <div class="well">
                             {{lang.team_name}}
@@ -56,7 +55,7 @@
                         <div class="alert alert-error hide"><i class="icon-exclamation-sign"></i> {{lang.sorry_error_occur_retry_later}}</div>
                     </form>
                 </div><!--settings-->
-                <div id="members" class="tab-pane">
+                <div class="tab-pane {{activeClass(tab2=='m')}}">
                     <div class="alert alert-info">{{lang.team_current_have}} {{team.members.length}} {{lang.n_members}}</div>
                     <ul class="nav nav-tabs nav-stacked">
                         <li ng-repeat="m in team.members"><a>

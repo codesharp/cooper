@@ -2,6 +2,8 @@
 
 //简易提供文案
 var lang = {};
+lang.work_in_cooper = 'WORK IN COOPER';
+lang.suffix = '- WORK IN COOPER - OpenSource Task Base Platform';
 lang.sorry_error_occur_retry_later = '抱歉，发生错误，请稍后再试';
 lang.today = '今天';
 lang.batch_task = '个任务';
@@ -27,7 +29,7 @@ lang.team_current_have = '团队当前有';
 lang.team_name = '团队名称：';
 lang.submit = '提交';
 lang.deal_success = '操作成功';
-lang.my_team_task = '我的任务';
+lang.my_team_task = '我的团队任务';
 lang.inbox = '收件箱';
 lang.new_project_name = '新建项目';
 

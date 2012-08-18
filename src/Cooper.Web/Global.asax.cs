@@ -31,10 +31,9 @@ namespace Cooper.Web
             routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
 
             routes.MapRoute("Personal", "per/{action}/{id}", new { controller = "Personal", action = "Index", id = UrlParameter.Optional });
-
-            routes.MapRoute("Team", "t/{teamId}", new { controller = "Team", action = "Index", teamId = UrlParameter.Optional });
-            routes.MapRoute("TeamProject", "t/{teamId}/{projectId}", new { controller = "Team", action = "Index", teamId = UrlParameter.Optional, projectId = UrlParameter.Optional });
-
+            routes.MapRoute("Team", "t/{teamId}", new { controller = "Team", action = "Index" });
+            routes.MapRoute("TeamProject", "t/{teamId}/p/{projectId}", new { controller = "Team", action = "Index" });
+            routes.MapRoute("TeamMember", "t/{teamId}/m/{memberId}", new { controller = "Team", action = "Index" });
             routes.MapRoute("Account", "Account/{action}/{id}", new { controller = "Account", action = "Profile", id = UrlParameter.Optional });
             routes.MapRoute("Default", "{controller}/{action}/{id}", new { controller = "Home", action = "Index", id = UrlParameter.Optional });
         }

@@ -1,38 +1,85 @@
-﻿@{
-    ViewBag.Title = this.Lang().team;
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    var team = ViewBag.Team;
-    var project = ViewBag.Project;
-    var util = new CodeSharp.Core.Utils.Serializer();
+﻿@{ 
+    Layout = null;
 }
-<div class="container-fluid" style="margin-top: 10px;">
-    <div class="row-fluid">
-        <!--leftbar-->
-        @{ Html.RenderLeftBar(); }
-        <!--Main-->
-        <div id="main" class="span6">
-            @{ Html.RenderPartial("MainRegion"); }
-        </div>
-        <!--Detail-->
-        <div id="detail_wrapper" class="span4">
+<!DOCTYPE html>
+<html ng-app="cooper">
+<head>
+    <meta charset="uis.Sutf-8" />
+    <title>{{title}} {{lang.suffix}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @{ Html.RenderPartial("Style"); }
+    <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/css/task.css")" />
+</head>
+<body>
+    <div class="container-fluid" style="margin-top: 10px;" ng-controller="MainCtrl">
+        <div class="row-fluid">
+            <!--leftbar-->
+            <div class="span2" style="padding: 5px; margin: 0;" ng-show="!mini&&!full">
+                <div ng-include="tmp.left">
+                </div>
+                <br />
+                <div ng-include="tmp.team_list" ng-controller="TeamListCtrl">
+                </div>
+                <br />
+                <div ng-include="tmp.team_detail" ng-controller="TeamDetailCtrl" ng-show="team">
+                </div>
+            </div>
+            <ng:view></ng:view>
         </div>
     </div>
-</div>
-<!--template-->
-@{ Html.RenderPartial("TemplateRegion"); }
-@section Bottom{
+
+
+    @{ Html.RenderSettings(); }
+    
     <script type="text/javascript">
-        window.teamId = '@team.ID';
-        window.projectId = '@Html.Raw(project!=null?project.ID:null)';
-        window.members= @Html.Raw(util.JsonSerialize(ViewBag.members));
-        window.projects = @Html.Raw(util.JsonSerialize(ViewBag.projects));
+        var url_root = '@Url.Content("~")';
+        url_root = url_root == '/' ? '' : url_root;
+        var url_root_webui = '@Url.Content("~/webui")';
+        var currentTeamId='@ViewBag.TeamId';
+        var currentProjectId = '@ViewBag.ProjectId';
+        var currentMemberId = '@ViewBag.MemberId';
+        var currentUser={ id:1,name:'',email:'' };
     </script>
+
+    <script type="text/javascript" src="@Url.Content("~/scripts/task.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/task_common.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/task_row.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/task_bind.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/task_bind_shortcuts.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/task_bind_team.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/task_priority.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/task_due.js")"></script>
+
+    <script src="@Url.Content("~/content/angular/angular-1.0.1.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/content/angular/angular-bootstrap-1.0.1.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/webui/modules/cooper.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/webui/controllers/Main.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/webui/controllers/TaskList.js")" type="text/javascript"></script>
+
     <script type="text/javascript">
+        function resize() {
+            $('.todolist_wrapper').height($(window).height() - 170);
+            $('.span4').height($(window).height() - 30);
+        }
+        function share(e) {
+            $('#shareModal').modal('show');
+            $('#share_title').val($(e).parents('div.region_detail').eq(0).find('input').val() + lang.share_description);
+        }
+
+        function openTaskFolder() { $('#taskFolderModal').modal('show'); }
+
         $(function () {
-            //为IE7做自适应
-            if ($.browser.msie && $.browser.version.indexOf('7.') >= 0) {
-                $('div.row-fluid div.span4').removeClass('span4').addClass('span3');
-            }
+            //避免意外切换页面
+            $(document).keydown(function (e) {
+                if (e.keyCode != 8) return;
+                if ($(e.target).is('body'))
+                    return false;
+            });
+
+            resize();
+            $(window).resize(resize);
+            $('.btn').tooltip({ placement: 'bottom', delay: 800 });
         });
     </script>
-}
+</body>
+</html>

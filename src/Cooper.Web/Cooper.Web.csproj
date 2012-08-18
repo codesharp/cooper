@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\angular\angular-1.0.1.min.js" />
+    <Content Include="Content\angular\angular-bootstrap-1.0.1.js" />
     <Content Include="Content\bootstrap\css\bootstrap.css" />
     <Content Include="Content\bootstrap\css\bootstrap.min.css" />
     <Content Include="Content\bootstrap\img\glyphicons-halflings-white.png" />
@@ -184,16 +185,17 @@
     <Content Include="Global.asax" />
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />
-    <Content Include="html\controllers\TaskList.js" />
-    <Content Include="html\modules\cooper.js" />
-    <Content Include="html\controllers\Main.js" />
-    <Content Include="html\task\task_detail.htm" />
-    <Content Include="html\task\task_templates.htm" />
-    <Content Include="html\task\task_list.htm" />
-    <Content Include="html\task\team_list.htm" />
-    <Content Include="html\task\team_detail.htm" />
-    <Content Include="html\task\index.htm" />
-    <Content Include="html\task\left.htm" />
+    <Content Include="webui\controllers\TaskList.js" />
+    <Content Include="webui\modules\cooper.js" />
+    <Content Include="webui\controllers\Main.js" />
+    <Content Include="webui\task\detail.htm" />
+    <Content Include="webui\task\templates.htm" />
+    <Content Include="webui\task\list.htm" />
+    <Content Include="webui\team\full.htm" />
+    <Content Include="webui\team\list.htm" />
+    <Content Include="webui\team\detail.htm" />
+    <Content Include="webui\index.htm" />
+    <Content Include="webui\left.htm" />
     <Content Include="Hybrid\jquery\css\mobile\images\ajax-loader.gif" />
     <Content Include="Hybrid\jquery\css\mobile\images\ajax-loader.png" />
     <Content Include="Hybrid\jquery\css\mobile\images\icons-18-black.png" />
@@ -345,9 +347,7 @@
     <Content Include="Views\Shared\TemplateRegion.cshtml" />
     <Content Include="Views\Team\LeftBar.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="html\account\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
