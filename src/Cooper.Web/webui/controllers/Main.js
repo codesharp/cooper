@@ -10,10 +10,8 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
     //临时处理部分需要直接跳转的地址
     $scope.$on('$locationChangeStart', function (e, url) {
         debuger.debug(url);
-        if (url.indexOf('/per') >= 0) {
-            e.preventDefault()
+        if (url.indexOf('/per') >= 0)
             location.href = '/per';
-        }
         else if (url.indexOf('/account') >= 0)
             location.href = '/account';
     });
@@ -39,29 +37,28 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
         $scope.class_taskdetail = 'hide';
     }
 
-    var team1 = {
-        id: 1,
-        name: 'Code# Team',
-        projects: [
-            { id: 1, name: 'NSF' },
-            { id: 2, name: 'NTFE' },
-            { id: 3, name: 'CooperWeb' }
-        ],
-        members: [
-            { id: 1, name: 'Xu Huang', email: 'wskyhx@gmail.com' },
-            { id: 2, name: 'Sunleepy', email: 'sunleepy@gmail.com' },
-            { id: 3, name: 'Xuhua Tang', email: 'txh@gmail.com' }
-        ]
-    },
-        team2 = angular.copy(team1),
-        team3 = angular.copy(team1);
-    team2.id = 2;
-    team2.name = 'Ali-ENT';
-    team3.id = 3;
-    team3.name = 'NetShare';
-
-    //$scope.teams = [team1, team2, team3];
-    //debuger.debug('teams', $scope.teams);
+//    var team1 = {
+//        id: 1,
+//        name: 'Code# Team',
+//        projects: [
+//            { id: 1, name: 'NSF' },
+//            { id: 2, name: 'NTFE' },
+//            { id: 3, name: 'CooperWeb' }
+//        ],
+//        members: [
+//            { id: 1, name: 'Xu Huang', email: 'wskyhx@gmail.com' },
+//            { id: 2, name: 'Sunleepy', email: 'sunleepy@gmail.com' },
+//            { id: 3, name: 'Xuhua Tang', email: 'txh@gmail.com' }
+//        ]
+//    },
+//        team2 = angular.copy(team1),
+//        team3 = angular.copy(team1);
+//    team2.id = 2;
+//    team2.name = 'Ali-ENT';
+//    team3.id = 3;
+//    team3.name = 'NetShare';
+//    $scope.teams = [team1, team2, team3];
+//    debuger.debug('teams', $scope.teams);
 
     debuger.debug('$routeParams', $routeParams);
     debuger.debug('params', params);
@@ -71,25 +68,33 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
         debuger.assert(data);
         $scope.teams = data;
         debuger.debug('teams', $scope.teams);
+
+        // *****************************************************
+        // 设置rootScope 必须有一个team
+        // *****************************************************
         debuger.debug('current teamId=', p.teamId);
         $rootScope.team = findBy($scope.teams, 'id', p.teamId);
         debuger.debug('current team', $scope.team);
-
-        //当前必须有一个team
         debuger.assert($rootScope.team);
         if (!$rootScope.team) {
             if ($scope.teams.length > 0)
                 location.href = urls.team($scope.teams[0]);
             return;
         }
-
         debuger.debug('current projectId=', p.projectId);
         $rootScope.project = findBy($scope.team.projects, 'id', p.projectId);
         debuger.debug('current project', $scope.project);
-
         debuger.debug('current memberId=', p.memberId);
         $rootScope.member = findBy($scope.team.members, 'id', p.memberId);
         debuger.debug('current member', $scope.member);
+        //htmltitle
+        if ($rootScope.project)
+            $rootScope.title = $rootScope.project.name;
+        else if ($rootScope.member)
+            $rootScope.title = $rootScope.member.name;
+        else if ($rootScope.team)
+            $rootScope.title = $rootScope.team.name;
+        $rootScope.title = $rootScope.title == $rootScope.team.name ? $rootScope.title : $rootScope.title + ' - ' + $rootScope.team.name;
     });
 }
 
