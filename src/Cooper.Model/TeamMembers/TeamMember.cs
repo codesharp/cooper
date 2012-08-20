@@ -9,9 +9,16 @@ using CodeSharp.Core.DomainBase;
 namespace Cooper.Model.Teams
 {
     /// <summary>团队成员模型
+    /// <remarks>
+    /// 团队成员在目前的Cooper模型中，完全由团队模型管理，团队成员的概念只存在于团队上下文。
+    /// 而目前仍然将团队成员设计为独立聚合根，是因为团队成员会直接和任务关联；
+    /// 考虑到聚合根不能引用其他聚合根内的实体，所以将团队成员设计为聚合根；
+    /// </remarks>
     /// </summary>
     public class TeamMember : EntityBase<int>, IAggregateRoot
     {
+        private IList<Task> _assignedTasks = new List<Task>();
+
         /// <summary>获取团队成员显示的名字
         /// </summary>
         public string Name { get; private set; }
@@ -21,6 +28,9 @@ namespace Cooper.Model.Teams
         /// <summary>获取所属团队的标识
         /// </summary>
         public int TeamId { get; private set; }
+        /// <summary>获取分配给当前团队成员的任务
+        /// </summary>
+        public IEnumerable<Task> AssignedTasks { get { return _assignedTasks; } }
         /// <summary>创建时间
         /// </summary>
         public DateTime CreateTime { get; private set; }

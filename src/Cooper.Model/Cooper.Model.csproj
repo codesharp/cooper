@@ -69,7 +69,6 @@
     <Compile Include="Lock.cs" />
     <Compile Include="Projects\IProjectRepository.cs" />
     <Compile Include="Projects\Project.cs" />
-    <Compile Include="Projects\ProjectService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskFolders\ITaskFolderRepository.cs" />
     <Compile Include="TaskFolders\PersonalTaskFolder.cs" />
@@ -83,7 +82,6 @@
     <Compile Include="Tasks\Task.cs" />
     <Compile Include="Tasks\TaskService.cs" />
     <Compile Include="TeamMembers\ITeamMemberRepository.cs" />
-    <Compile Include="TeamMembers\TeamMemberService.cs" />
     <Compile Include="TeamMembers\TeamMember.cs" />
     <Compile Include="Teams\ITeamRepository.cs" />
     <Compile Include="Teams\TeamService.cs" />

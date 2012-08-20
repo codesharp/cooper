@@ -12,6 +12,5 @@ namespace Cooper.Model.Teams
     /// </summary>
     public interface ITeamMemberRepository : IRepository<int, TeamMember>
     {
-        IEnumerable<TeamMember> FindBy(Team team);
     }
 }

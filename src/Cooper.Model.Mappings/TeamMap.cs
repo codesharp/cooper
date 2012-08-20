@@ -14,6 +14,8 @@ namespace Cooper.Model.Mappings
             Id(m => m.ID);
             Map(m => m.Name).Length(200);
             Map(m => m.CreateTime);
+            HasMany(m => m.Members).KeyColumn("TeamId").LazyLoad().Cascade.All();
+            HasMany(m => m.Projects).KeyColumn("TeamId").LazyLoad().Cascade.All();
         }
     }
 }

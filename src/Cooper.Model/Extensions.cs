@@ -76,6 +76,7 @@ internal class Assert : NUnit.Framework.Assert
         Assert.IsNotNull(project);
         Assert.Greater(project.ID, 0);
         Assert.IsNotNullOrWhiteSpace(project.Name);
+        Assert.Greater(project.TeamId, 0);
     }
     /// <summary>断言团队成员是否有效
     /// </summary>
@@ -86,5 +87,6 @@ internal class Assert : NUnit.Framework.Assert
         Assert.Greater(teamMember.ID, 0);
         Assert.IsNotNullOrWhiteSpace(teamMember.Name);
         Assert.IsNotNullOrWhiteSpace(teamMember.Email);
+        Assert.Greater(teamMember.TeamId, 0);
     }
 }

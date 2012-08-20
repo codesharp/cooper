@@ -12,6 +12,5 @@ namespace Cooper.Model.Teams
     /// </summary>
     public interface IProjectRepository : IRepository<int, Project>
     {
-        IEnumerable<Project> FindBy(Team team);
     }
 }

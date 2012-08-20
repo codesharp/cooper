@@ -13,25 +13,15 @@ namespace Cooper.Model.Test
     {
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void TotalTests()
-        {
-            CreateTeamTask();
-            UpdateTeamTask();
-            DeleteTeamTask();
-            GetTeamTasks();
-        }
-
-        [Test]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateTeamTask()
         {
             var a = this.CreateAccount();
             var team = new Team("Team 1");
             _teamService.Create(team);
             var teamMember = new TeamMember("xuehua", "xuehua@163.com", team);
-            _teamMemberService.Create(teamMember);
+            _teamService.AddMember(teamMember);
             var project = new Project("Project 1", true, team);
-            _projectService.Create(project);
+            _teamService.AddProject(project);
             var task = new Task(a, team);
             task.AssignTo(teamMember);
             task.AddToProject(project);
@@ -73,9 +63,9 @@ namespace Cooper.Model.Test
             var team = new Team("Team 1");
             _teamService.Create(team);
             var teamMember = new TeamMember("xuehua", "xuehua@163.com", team);
-            _teamMemberService.Create(teamMember);
+            _teamService.AddMember(teamMember);
             var project = new Project("Project 1", true, team);
-            _projectService.Create(project);
+            _teamService.AddProject(project);
             var task = new Task(a, team);
             task.AssignTo(teamMember);
             task.AddToProject(project);
@@ -85,7 +75,7 @@ namespace Cooper.Model.Test
 
             var task2 = this._teamTaskService.GetTask(task.ID);
             var teamMember2 = new TeamMember("ylw", "ylw@163.com", team);
-            _teamMemberService.Create(teamMember2);
+            _teamService.AddMember(teamMember2);
 
             task2.AssignTo(teamMember2);
             task2.RemoveFromProject(project);
@@ -131,9 +121,9 @@ namespace Cooper.Model.Test
             var team = new Team("Team 1");
             _teamService.Create(team);
             var teamMember = new TeamMember("xuehua", "xuehua@163.com", team);
-            _teamMemberService.Create(teamMember);
+            _teamService.AddMember(teamMember);
             var project = new Project("Project 1", true, team);
-            _projectService.Create(project);
+            _teamService.AddProject(project);
             var task = new Task(a, team);
             task.AssignTo(teamMember);
             task.AddToProject(project);
@@ -159,10 +149,9 @@ namespace Cooper.Model.Test
             var team = new Team("Team 1");
             _teamService.Create(team);
             var teamMember = new TeamMember("xuehua", "xuehua@163.com", team);
-            _teamMemberService.Create(teamMember);
+            _teamService.AddMember(teamMember);
             var project = new Project("Project 1", true, team);
-            _projectService.Create(project);
-
+            _teamService.AddProject(project);
 
             var teamTask1 = new Task(a, team);
             teamTask1.AssignTo(teamMember);
