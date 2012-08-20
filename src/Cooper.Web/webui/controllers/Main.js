@@ -75,7 +75,6 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
         debuger.debug('current teamId=', p.teamId);
         $rootScope.team = findBy($scope.teams, 'id', p.teamId);
         debuger.debug('current team', $scope.team);
-        debuger.assert($rootScope.team);
         if (!$rootScope.team) {
             if ($scope.teams.length > 0)
                 location.href = urls.team($scope.teams[0]);
@@ -104,9 +103,10 @@ function TeamListCtrl($scope, $http, $element) {
     $scope.showAddTeam = function () { $element.find('div.modal').modal('show'); }
     $scope.hideAddTeam = function () { $element.find('div.modal').modal('hide'); }
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
-    $scope.currentId = 0;
-    if ($scope.teams && $scope.teams.length == 0)
-        $scope.showAddTeam();
+    $scope.checkTeams = function () {
+        if (!$scope.teams || $scope.teams && $scope.teams.length == 0)
+            $scope.showAddTeam();
+    }
 }
 function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
     var $form = $element;
