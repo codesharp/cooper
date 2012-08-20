@@ -41,10 +41,11 @@ namespace Cooper.Model.Teams
 
         /// <summary>将任务分配给指定的团队成员
         /// </summary>
-        public void AssignTo(TeamMember teamMember)
+        public void AssignTo(Member member)
         {
-            Assert.IsValid(teamMember);
-            this.AssigneeId = teamMember.ID;
+            Assert.IsValid(member);
+            Assert.AreEqual(this.TeamId, member.TeamId);
+            this.AssigneeId = member.ID;
         }
         /// <summary>移除当前任务的Assignee
         /// </summary>
@@ -60,6 +61,7 @@ namespace Cooper.Model.Teams
         public void AddToProject(Project project)
         {
             Assert.IsValid(project);
+            Assert.AreEqual(this.TeamId, project.TeamId);
             if (!_projects.Any(x => x.ID == project.ID))
             {
                 _projects.Add(project);
@@ -73,6 +75,7 @@ namespace Cooper.Model.Teams
         public void RemoveFromProject(Project project)
         {
             Assert.IsValid(project);
+            Assert.AreEqual(this.TeamId, project.TeamId);
             var projectToRemove = _projects.SingleOrDefault(x => x.ID == project.ID);
             if (projectToRemove != null)
             {

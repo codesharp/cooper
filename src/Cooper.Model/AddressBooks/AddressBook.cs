@@ -33,13 +33,12 @@ namespace Cooper.Model.Contacts
 
         /// <summary>设置通讯簿名称
         /// <remarks>
-        /// 长度应小于200
+        /// 长度应小于255
         /// </remarks>
         /// </summary>
         public void SetName(string name)
         {
-            Assert.IsNotNullOrWhiteSpace(name);
-            Assert.LessOrEqual(name.Length, 200);
+            Assert.IsValidKey(name);
 
             if (this.Name != name)
             {

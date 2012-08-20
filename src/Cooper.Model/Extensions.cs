@@ -26,6 +26,14 @@ internal class Assert : NUnit.Framework.Assert
         Assert.IsNotNullOrEmpty(input.Trim());
         //Assert.IsFalse(string.IsNullOrWhiteSpace(input));
     }
+    /// <summary>IsNotNullOrWhiteSpace, LessOrEqual 255
+    /// </summary>
+    /// <param name="input"></param>
+    public static void IsValidKey(string input)
+    {
+        Assert.IsNotNullOrWhiteSpace(input);
+        Assert.LessOrEqual(input.Length, 255);
+    }
     /// <summary>断言账号是否有效
     /// </summary>
     /// <param name="account"></param>
@@ -76,15 +84,17 @@ internal class Assert : NUnit.Framework.Assert
         Assert.IsNotNull(project);
         Assert.Greater(project.ID, 0);
         Assert.IsNotNullOrWhiteSpace(project.Name);
+        Assert.Greater(project.TeamId, 0);
     }
     /// <summary>断言团队成员是否有效
     /// </summary>
-    /// <param name="teamMember"></param>
-    public static void IsValid(TeamMember teamMember)
+    /// <param name="member"></param>
+    public static void IsValid(Member member)
     {
-        Assert.IsNotNull(teamMember);
-        Assert.Greater(teamMember.ID, 0);
-        Assert.IsNotNullOrWhiteSpace(teamMember.Name);
-        Assert.IsNotNullOrWhiteSpace(teamMember.Email);
+        Assert.IsNotNull(member);
+        Assert.Greater(member.ID, 0);
+        Assert.IsNotNullOrWhiteSpace(member.Name);
+        Assert.IsNotNullOrWhiteSpace(member.Email);
+        Assert.Greater(member.TeamId, 0);
     }
 }

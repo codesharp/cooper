@@ -9,7 +9,12 @@ using CodeSharp.Core.Utils;
 
 namespace Cooper.Model.Teams
 {
-    /// <summary>团队项目模型
+    /// <summary>项目模型
+    /// <remarks>
+    /// 项目在目前的Cooper模型中，完全由团队模型管理，项目的概念只存在于团队上下文。
+    /// 而目前仍然将项目设计为独立聚合根，是因为项目会直接和任务关联；
+    /// 考虑到聚合根不能引用其他聚合根内的实体，所以将项目设计为聚合根；
+    /// </remarks>
     /// </summary>
     public class Project : EntityBase<int>, IAggregateRoot
     {
@@ -66,13 +71,12 @@ namespace Cooper.Model.Teams
 
         /// <summary>设置名称
         /// <remarks>
-        /// 长度应小于100
+        /// 长度应小于255
         /// </remarks>
         /// </summary>
         public void SetName(string name)
         {
-            Assert.IsNotNullOrWhiteSpace(name);
-            Assert.LessOrEqual(name.Length, 100);
+            Assert.IsValidKey(name);
 
             if (this.Name != name)
             {

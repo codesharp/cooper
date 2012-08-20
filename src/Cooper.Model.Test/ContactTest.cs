@@ -13,16 +13,6 @@ namespace Cooper.Model.Test
     {
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void TotalTests()
-        {
-            CreateContact();
-            UpdateContact();
-            DeleteContact();
-            GetContacts();
-        }
-
-        [Test]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateContact()
         {
             var personalAddressBook = this.CreatePersonalAddressBook();

@@ -38,18 +38,60 @@ namespace Cooper.Model.Teams
         /// <param name="account"></param>
         /// <returns></returns>
         IEnumerable<Team> GetTeamsByAccount(Account account);
+
+        /// <summary>将一个指定的团队成员添加到团队
+        /// </summary>
+        /// <param name="member"></param>
+        void AddMember(Member member);
+        /// <summary>更新一个指定的团队成员
+        /// </summary>
+        /// <param name="member"></param>
+        void UpdateMember(Member member);
+        /// <summary>将一个指定的团队成员从团队移除
+        /// </summary>
+        /// <param name="member"></param>
+        void RemoveMember(Member member);
+        /// <summary>根据标识获取成员
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Member GetMember(int id);
+
+        /// <summary>将一个指定的项目添加到团队
+        /// </summary>
+        /// <param name="project"></param>
+        void AddProject(Project project);
+        /// <summary>更新一个指定的项目
+        /// </summary>
+        /// <param name="project"></param>
+        void UpdateProject(Project project);
+        /// <summary>将一个指定的项目从团队移除
+        /// </summary>
+        /// <param name="project"></param>
+        void RemoveProject(Project project);
+        /// <summary>根据标识获取项目
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Project GetProject(int id);
     }
     /// <summary>团队领域服务
     /// </summary>
     [Transactional]
     public class TeamService : ITeamService
     {
-        private static ITeamRepository _repository;
+        private static ITeamRepository _teamRepository;
+        private static ITaskRepository _taskRepository;
+        private static IMemberRepository _memberRepository;
+        private static IProjectRepository _projectRepository;
         private ILog _log;
 
         static TeamService()
         {
-            _repository = RepositoryFactory.GetRepository<ITeamRepository, int, Team>();
+            _teamRepository = RepositoryFactory.GetRepository<ITeamRepository, int, Team>();
+            _memberRepository = RepositoryFactory.GetRepository<IMemberRepository, int, Member>();
+            _taskRepository = RepositoryFactory.GetRepository<ITaskRepository, long, Task>();
+            _projectRepository = RepositoryFactory.GetRepository<IProjectRepository, int, Project>();
         }
         public TeamService(ILoggerFactory factory)
         {
@@ -60,29 +102,92 @@ namespace Cooper.Model.Teams
         [Transaction(TransactionMode.Requires)]
         void ITeamService.Create(Team team)
         {
-            _repository.Add(team);
+            _teamRepository.Add(team);
             if (this._log.IsInfoEnabled)
                 this._log.InfoFormat("新增团队#{0}|{1}", team.ID, team.Name);
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.Update(Team team)
         {
-            _repository.Update(team);
+            _teamRepository.Update(team);
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.Delete(Team team)
         {
-            _repository.Remove(team);
+            _teamRepository.Remove(team);
             if (this._log.IsInfoEnabled)
                 this._log.InfoFormat("删除团队#{0}", team.ID);
         }
         Team ITeamService.GetTeam(int id)
         {
-            return _repository.FindBy(id);
+            return _teamRepository.FindBy(id);
         }
         IEnumerable<Team> ITeamService.GetTeamsByAccount(Account account)
         {
-            return _repository.FindBy(account);
+            return _teamRepository.FindBy(account);
+        }
+
+        [Transaction(TransactionMode.Requires)]
+        void ITeamService.AddMember(Member member)
+        {
+            var team = _teamRepository.FindBy(member.TeamId);
+            team.AddMember(member);
+            _teamRepository.Update(team);
+        }
+        [Transaction(TransactionMode.Requires)]
+        void ITeamService.UpdateMember(Member member)
+        {
+            Assert.IsValid(member);
+            var team = _teamRepository.FindBy(member.TeamId);
+            Assert.IsFalse(team.IsMemberEmailDuplicated(member));
+            _memberRepository.Update(member);
+        }
+        [Transaction(TransactionMode.Requires)]
+        void ITeamService.RemoveMember(Member member)
+        {
+            //先将团队成员从团队中移除
+            var team = _teamRepository.FindBy(member.TeamId);
+            team.RemoveMember(member);
+            _teamRepository.Update(team);
+            _memberRepository.Remove(member);
+
+            //再将分配给团队成员的所有任务收回
+            foreach (var task in member.AssignedTasks)
+            {
+                task.RemoveAssignee();
+                _taskRepository.Update(task);
+            }
+        }
+        Member ITeamService.GetMember(int id)
+        {
+            return _memberRepository.FindBy(id);
+        }
+
+        [Transaction(TransactionMode.Requires)]
+        void ITeamService.AddProject(Project project)
+        {
+            var team = _teamRepository.FindBy(project.TeamId);
+            team.AddProject(project);
+            _teamRepository.Update(team);
+        }
+        [Transaction(TransactionMode.Requires)]
+        void ITeamService.UpdateProject(Project project)
+        {
+            Assert.IsValid(project);
+            var team = _teamRepository.FindBy(project.TeamId);
+            _projectRepository.Update(project);
+        }
+        [Transaction(TransactionMode.Requires)]
+        void ITeamService.RemoveProject(Project project)
+        {
+            var team = _teamRepository.FindBy(project.TeamId);
+            team.RemoveProject(project);
+            _teamRepository.Update(team);
+            _projectRepository.Remove(project);
+        }
+        Project ITeamService.GetProject(int id)
+        {
+            return _projectRepository.FindBy(id);
         }
         #endregion
     }

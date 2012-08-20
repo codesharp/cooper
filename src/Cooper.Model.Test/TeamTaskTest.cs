@@ -13,27 +13,17 @@ namespace Cooper.Model.Test
     {
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void TotalTests()
-        {
-            CreateTeamTask();
-            UpdateTeamTask();
-            DeleteTeamTask();
-            GetTeamTasks();
-        }
-
-        [Test]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateTeamTask()
         {
             var a = this.CreateAccount();
             var team = new Team("Team 1");
             _teamService.Create(team);
-            var teamMember = new TeamMember("xuehua", "xuehua@163.com", team);
-            _teamMemberService.Create(teamMember);
+            var member = new Member("xuehua", "xuehua@163.com", team);
+            _teamService.AddMember(member);
             var project = new Project("Project 1", true, team);
-            _projectService.Create(project);
+            _teamService.AddProject(project);
             var task = new Task(a, team);
-            task.AssignTo(teamMember);
+            task.AssignTo(member);
             task.AddToProject(project);
 
             Assert.AreNotEqual(DateTime.MinValue, task.CreateTime);
@@ -72,25 +62,25 @@ namespace Cooper.Model.Test
             var a = this.CreateAccount();
             var team = new Team("Team 1");
             _teamService.Create(team);
-            var teamMember = new TeamMember("xuehua", "xuehua@163.com", team);
-            _teamMemberService.Create(teamMember);
+            var member = new Member("xuehua", "xuehua@163.com", team);
+            _teamService.AddMember(member);
             var project = new Project("Project 1", true, team);
-            _projectService.Create(project);
+            _teamService.AddProject(project);
             var task = new Task(a, team);
-            task.AssignTo(teamMember);
+            task.AssignTo(member);
             task.AddToProject(project);
             this._teamTaskService.Create(task);
 
             this.Evict(task);
 
             var task2 = this._teamTaskService.GetTask(task.ID);
-            var teamMember2 = new TeamMember("ylw", "ylw@163.com", team);
-            _teamMemberService.Create(teamMember2);
+            var member2 = new Member("ylw", "ylw@163.com", team);
+            _teamService.AddMember(member2);
 
-            task2.AssignTo(teamMember2);
+            task2.AssignTo(member2);
             task2.RemoveFromProject(project);
 
-            Assert.AreEqual(teamMember2.ID, task2.AssigneeId.Value);
+            Assert.AreEqual(member2.ID, task2.AssigneeId.Value);
             Assert.AreEqual(0, task2.Projects.Count());
 
             this._teamTaskService.Update(task2);
@@ -130,12 +120,12 @@ namespace Cooper.Model.Test
             var a = this.CreateAccount();
             var team = new Team("Team 1");
             _teamService.Create(team);
-            var teamMember = new TeamMember("xuehua", "xuehua@163.com", team);
-            _teamMemberService.Create(teamMember);
+            var member = new Member("xuehua", "xuehua@163.com", team);
+            _teamService.AddMember(member);
             var project = new Project("Project 1", true, team);
-            _projectService.Create(project);
+            _teamService.AddProject(project);
             var task = new Task(a, team);
-            task.AssignTo(teamMember);
+            task.AssignTo(member);
             task.AddToProject(project);
             this._teamTaskService.Create(task);
 
@@ -158,22 +148,21 @@ namespace Cooper.Model.Test
             var a = this.CreateAccount();
             var team = new Team("Team 1");
             _teamService.Create(team);
-            var teamMember = new TeamMember("xuehua", "xuehua@163.com", team);
-            _teamMemberService.Create(teamMember);
+            var member = new Member("xuehua", "xuehua@163.com", team);
+            _teamService.AddMember(member);
             var project = new Project("Project 1", true, team);
-            _projectService.Create(project);
-
+            _teamService.AddProject(project);
 
             var teamTask1 = new Task(a, team);
-            teamTask1.AssignTo(teamMember);
+            teamTask1.AssignTo(member);
             teamTask1.AddToProject(project);
 
             var teamTask2 = new Task(a, team);
-            teamTask2.AssignTo(teamMember);
+            teamTask2.AssignTo(member);
             teamTask2.AddToProject(project);
 
             var teamTask3 = new Task(a, team);
-            teamTask3.AssignTo(teamMember);
+            teamTask3.AssignTo(member);
             teamTask3.AddToProject(project);
 
             this._teamTaskService.Create(teamTask1);
@@ -186,7 +175,7 @@ namespace Cooper.Model.Test
 
             var teamTasks = this._teamTaskService.GetTasksByTeam(team);
             var projectTasks = this._teamTaskService.GetTasksByProject(project);
-            var teamMemberTasks = this._teamTaskService.GetTasksByTeamMember(teamMember);
+            var memberTasks = this._teamTaskService.GetTasksByTeamMember(member);
 
             Assert.AreEqual(3, teamTasks.Count());
             Assert.IsTrue(teamTasks.Any(x => x.ID == teamTask1.ID));
@@ -198,10 +187,10 @@ namespace Cooper.Model.Test
             Assert.IsTrue(projectTasks.Any(x => x.ID == teamTask2.ID));
             Assert.IsTrue(projectTasks.Any(x => x.ID == teamTask3.ID));
 
-            Assert.AreEqual(3, teamMemberTasks.Count());
-            Assert.IsTrue(teamMemberTasks.Any(x => x.ID == teamTask1.ID));
-            Assert.IsTrue(teamMemberTasks.Any(x => x.ID == teamTask2.ID));
-            Assert.IsTrue(teamMemberTasks.Any(x => x.ID == teamTask3.ID));
+            Assert.AreEqual(3, memberTasks.Count());
+            Assert.IsTrue(memberTasks.Any(x => x.ID == teamTask1.ID));
+            Assert.IsTrue(memberTasks.Any(x => x.ID == teamTask2.ID));
+            Assert.IsTrue(memberTasks.Any(x => x.ID == teamTask3.ID));
         }
     }
 }

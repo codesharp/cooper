@@ -55,7 +55,7 @@
     <Compile Include="ContactRepository.cs" />
     <Compile Include="TeamTaskRepository.cs" />
     <Compile Include="ProjectRepository.cs" />
-    <Compile Include="TeamMemberRepository.cs" />
+    <Compile Include="MemberRepository.cs" />
     <Compile Include="TeamRepository.cs" />
     <Compile Include="TasklistRepository.cs" />
     <Compile Include="LockRepository.cs" />

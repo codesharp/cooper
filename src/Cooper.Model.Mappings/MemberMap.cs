@@ -6,16 +6,17 @@ using Cooper.Model.Teams;
 
 namespace Cooper.Model.Mappings
 {
-    public class TeamMemberMap : ClassMap<TeamMember>
+    public class MemberMap : ClassMap<Member>
     {
-        public TeamMemberMap()
+        public MemberMap()
         {
             Table("Cooper_TeamMember");
             Id(m => m.ID);
             Map(m => m.TeamId);
-            Map(m => m.Name).Length(100);
-            Map(m => m.Email).Length(100);
+            Map(m => m.Name).Length(255);
+            Map(m => m.Email).Length(255);
             Map(m => m.CreateTime);
+            HasMany(m => m.AssignedTasks).EntityName("TeamTask").KeyColumn("AssigneeId").LazyLoad();
         }
     }
 }
