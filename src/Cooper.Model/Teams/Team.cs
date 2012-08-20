@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CodeSharp.Core.DomainBase;
+using Cooper.Model.Accounts;
 
 namespace Cooper.Model.Teams
 {
@@ -56,6 +57,17 @@ namespace Cooper.Model.Teams
             Assert.AreEqual(0, member.ID);
             Assert.AreEqual(this.ID, member.TeamId);
             Assert.IsFalse(IsMemberExist(member));
+            _members.Add(member);
+        }
+        /// <summary>更新团队成员
+        /// </summary>
+        /// <param name="member"></param>
+        internal void UpdateMember(Member member)
+        {
+            Assert.IsValid(member);
+            Assert.AreEqual(this.ID, member.TeamId);
+            Assert.IsFalse(IsMemberEmailDuplicated(member));
+            _members.Remove(_members.Single(x => x.ID == member.ID));
             _members.Add(member);
         }
         /// <summary>从团队中移除一个成员

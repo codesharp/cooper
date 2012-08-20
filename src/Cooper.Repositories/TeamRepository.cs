@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using CodeSharp.Core.Castles;
 using Cooper.Model.Accounts;
 using Cooper.Model.Teams;
+using NHibernate.Criterion;
 
 namespace Cooper.Repositories
 {
@@ -11,8 +12,11 @@ namespace Cooper.Repositories
     {
         public IEnumerable<Team> FindBy(Account account)
         {
-            //TODO
-            return null;
+            return this.GetSession()
+                .CreateCriteria<Team>()
+                .CreateAlias("Members", "members")
+                .Add(Expression.Eq("members.AssociatedAccountId", account.ID))
+                .List<Team>();
         }
     }
 }

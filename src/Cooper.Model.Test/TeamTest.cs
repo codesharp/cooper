@@ -305,5 +305,38 @@ namespace Cooper.Model.Test
             project = this._teamService.GetProject(project.ID);
             Assert.AreEqual("abc", project["key"]);
         }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void GetTeamsByAccount()
+        {
+            var account = CreateAccount();
+            var team1 = new Team("Test Team1");
+            var team2 = new Team("Test Team2");
+            var team3 = new Team("Test Team3");
+
+            this._teamService.Create(team1);
+            this._teamService.Create(team2);
+            this._teamService.Create(team3);
+
+            var member1 = new Member("Team Member1", "xuehua1@163.com", team1);
+            var member2 = new Member("Team Member2", "xuehua2@163.com", team2);
+            var member3 = new Member("Team Member3", "xuehua3@163.com", team3);
+
+            this._teamService.AddMember(member1);
+            this._teamService.AddMember(member2);
+            this._teamService.AddMember(member3);
+
+            member1.SetAssociateAccount(account);
+            member3.SetAssociateAccount(account);
+
+            this._teamService.UpdateMember(member1);
+            this._teamService.UpdateMember(member3);
+
+            var teams = this._teamService.GetTeamsByAccount(account);
+
+            Assert.AreEqual(2, teams.Count());
+            Assert.IsTrue(teams.Any(x => x.ID == team1.ID));
+            Assert.IsTrue(teams.Any(x => x.ID == team3.ID));
+        }
     }
 }

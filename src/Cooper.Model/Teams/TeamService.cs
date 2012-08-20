@@ -139,8 +139,9 @@ namespace Cooper.Model.Teams
         {
             Assert.IsValid(member);
             var team = _teamRepository.FindBy(member.TeamId);
-            Assert.IsFalse(team.IsMemberEmailDuplicated(member));
-            _memberRepository.Update(member);
+            Assert.IsNotNull(team);
+            team.UpdateMember(member);
+            _teamRepository.Update(team);
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.RemoveMember(Member member)
