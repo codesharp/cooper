@@ -15,7 +15,7 @@ namespace Cooper.Model.Teams
     /// 考虑到聚合根不能引用其他聚合根内的实体，所以将团队成员设计为聚合根；
     /// </remarks>
     /// </summary>
-    public class TeamMember : EntityBase<int>, IAggregateRoot
+    public class Member : EntityBase<int>, IAggregateRoot
     {
         private IList<Task> _assignedTasks = new List<Task>();
 
@@ -35,8 +35,8 @@ namespace Cooper.Model.Teams
         /// </summary>
         public DateTime CreateTime { get; private set; }
 
-        protected TeamMember() { this.CreateTime = DateTime.Now; }
-        public TeamMember(string name, string email, Team team) : this()
+        protected Member() { this.CreateTime = DateTime.Now; }
+        public Member(string name, string email, Team team) : this()
         {
             Assert.IsValid(team);
             this.SetName(name);

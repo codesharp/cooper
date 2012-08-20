@@ -42,20 +42,20 @@ namespace Cooper.Model.Teams
         /// <summary>将一个指定的团队成员添加到团队
         /// </summary>
         /// <param name="member"></param>
-        void AddMember(TeamMember member);
+        void AddMember(Member member);
         /// <summary>更新一个指定的团队成员
         /// </summary>
         /// <param name="member"></param>
-        void UpdateMember(TeamMember member);
+        void UpdateMember(Member member);
         /// <summary>将一个指定的团队成员从团队移除
         /// </summary>
         /// <param name="member"></param>
-        void RemoveMember(TeamMember member);
+        void RemoveMember(Member member);
         /// <summary>根据标识获取成员
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        TeamMember GetMember(int id);
+        Member GetMember(int id);
 
         /// <summary>将一个指定的项目添加到团队
         /// </summary>
@@ -82,14 +82,14 @@ namespace Cooper.Model.Teams
     {
         private static ITeamRepository _teamRepository;
         private static ITaskRepository _taskRepository;
-        private static ITeamMemberRepository _memberRepository;
+        private static IMemberRepository _memberRepository;
         private static IProjectRepository _projectRepository;
         private ILog _log;
 
         static TeamService()
         {
             _teamRepository = RepositoryFactory.GetRepository<ITeamRepository, int, Team>();
-            _memberRepository = RepositoryFactory.GetRepository<ITeamMemberRepository, int, TeamMember>();
+            _memberRepository = RepositoryFactory.GetRepository<IMemberRepository, int, Member>();
             _taskRepository = RepositoryFactory.GetRepository<ITaskRepository, long, Task>();
             _projectRepository = RepositoryFactory.GetRepository<IProjectRepository, int, Project>();
         }
@@ -128,14 +128,14 @@ namespace Cooper.Model.Teams
         }
 
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.AddMember(TeamMember member)
+        void ITeamService.AddMember(Member member)
         {
             var team = _teamRepository.FindBy(member.TeamId);
             team.AddMember(member);
             _teamRepository.Update(team);
         }
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.UpdateMember(TeamMember member)
+        void ITeamService.UpdateMember(Member member)
         {
             Assert.IsValid(member);
             var team = _teamRepository.FindBy(member.TeamId);
@@ -143,7 +143,7 @@ namespace Cooper.Model.Teams
             _memberRepository.Update(member);
         }
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.RemoveMember(TeamMember member)
+        void ITeamService.RemoveMember(Member member)
         {
             //先将团队成员从团队中移除
             var team = _teamRepository.FindBy(member.TeamId);
@@ -158,7 +158,7 @@ namespace Cooper.Model.Teams
                 _taskRepository.Update(task);
             }
         }
-        TeamMember ITeamService.GetMember(int id)
+        Member ITeamService.GetMember(int id)
         {
             return _memberRepository.FindBy(id);
         }

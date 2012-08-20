@@ -41,10 +41,10 @@ namespace Cooper.Model.Teams
 
         /// <summary>将任务分配给指定的团队成员
         /// </summary>
-        public void AssignTo(TeamMember teamMember)
+        public void AssignTo(Member member)
         {
-            Assert.IsValid(teamMember);
-            this.AssigneeId = teamMember.ID;
+            Assert.IsValid(member);
+            this.AssigneeId = member.ID;
         }
         /// <summary>移除当前任务的Assignee
         /// </summary>

@@ -45,9 +45,9 @@ namespace Cooper.Model.Teams
         IEnumerable<Task> GetTasksByProject(Project project);
         /// <summary>获取指定团队成员的所有任务
         /// </summary>
-        /// <param name="teamMember"></param>
+        /// <param name="member"></param>
         /// <returns></returns>
-        IEnumerable<Task> GetTasksByTeamMember(TeamMember teamMember);
+        IEnumerable<Task> GetTasksByTeamMember(Member member);
     }
     /// <summary>团队任务领域服务
     /// </summary>
@@ -98,9 +98,9 @@ namespace Cooper.Model.Teams
         {
             return _repository.FindBy(project);
         }
-        IEnumerable<Task> ITaskService.GetTasksByTeamMember(TeamMember teamMember)
+        IEnumerable<Task> ITaskService.GetTasksByTeamMember(Member member)
         {
-            return _repository.FindBy(teamMember);
+            return _repository.FindBy(member);
         }
         #endregion
     }

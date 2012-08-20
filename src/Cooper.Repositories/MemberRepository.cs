@@ -7,14 +7,14 @@ using NHibernate.Criterion;
 
 namespace Cooper.Repositories
 {
-    public class TeamMemberRepository : NHibernateRepositoryBase<int, TeamMember>, ITeamMemberRepository
+    public class MemberRepository : NHibernateRepositoryBase<int, Member>, IMemberRepository
     {
-        public IEnumerable<TeamMember> FindBy(Team team)
+        public IEnumerable<Member> FindBy(Team team)
         {
             return this.GetSession()
-                .CreateCriteria<TeamMember>()
+                .CreateCriteria<Member>()
                 .Add(Expression.Eq("TeamId", team.ID))
-                .List<TeamMember>();
+                .List<Member>();
         }
     }
 }

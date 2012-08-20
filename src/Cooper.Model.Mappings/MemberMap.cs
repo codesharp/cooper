@@ -6,9 +6,9 @@ using Cooper.Model.Teams;
 
 namespace Cooper.Model.Mappings
 {
-    public class TeamMemberMap : ClassMap<TeamMember>
+    public class MemberMap : ClassMap<Member>
     {
-        public TeamMemberMap()
+        public MemberMap()
         {
             Table("Cooper_TeamMember");
             Id(m => m.ID);

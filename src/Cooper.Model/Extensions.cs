@@ -80,13 +80,13 @@ internal class Assert : NUnit.Framework.Assert
     }
     /// <summary>断言团队成员是否有效
     /// </summary>
-    /// <param name="teamMember"></param>
-    public static void IsValid(TeamMember teamMember)
+    /// <param name="member"></param>
+    public static void IsValid(Member member)
     {
-        Assert.IsNotNull(teamMember);
-        Assert.Greater(teamMember.ID, 0);
-        Assert.IsNotNullOrWhiteSpace(teamMember.Name);
-        Assert.IsNotNullOrWhiteSpace(teamMember.Email);
-        Assert.Greater(teamMember.TeamId, 0);
+        Assert.IsNotNull(member);
+        Assert.Greater(member.ID, 0);
+        Assert.IsNotNullOrWhiteSpace(member.Name);
+        Assert.IsNotNullOrWhiteSpace(member.Email);
+        Assert.Greater(member.TeamId, 0);
     }
 }

@@ -24,11 +24,11 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("projects.ID", project.ID))
                 .List<Task>();
         }
-        public IEnumerable<Task> FindBy(TeamMember teamMember)
+        public IEnumerable<Task> FindBy(Member member)
         {
             return this.GetSession()
                 .CreateCriteria<Task>()
-                .Add(Expression.Eq("AssigneeId", teamMember.ID))
+                .Add(Expression.Eq("AssigneeId", member.ID))
                 .List<Task>();
         }
     }

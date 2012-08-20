@@ -12,7 +12,7 @@ namespace Cooper.Model.Teams
     /// </summary>
     public class Team : EntityBase<int>, IAggregateRoot
     {
-        private IList<TeamMember> _members = new List<TeamMember>();
+        private IList<Member> _members = new List<Member>();
         private IList<Project> _projects = new List<Project>();
 
         /// <summary>获取团队名称
@@ -23,7 +23,7 @@ namespace Cooper.Model.Teams
         public DateTime CreateTime { get; private set; }
         /// <summary>获取团队的所有成员
         /// </summary>
-        public IEnumerable<TeamMember> Members { get { return _members; } }
+        public IEnumerable<Member> Members { get { return _members; } }
         /// <summary>获取团队的所有项目
         /// </summary>
         public IEnumerable<Project> Projects { get { return _projects; } }
@@ -52,7 +52,7 @@ namespace Cooper.Model.Teams
         /// <summary>往团队中添加一个新成员
         /// </summary>
         /// <param name="member"></param>
-        internal void AddMember(TeamMember member)
+        internal void AddMember(Member member)
         {
             Assert.AreEqual(0, member.ID);
             Assert.AreEqual(this.ID, member.TeamId);
@@ -61,7 +61,7 @@ namespace Cooper.Model.Teams
         /// <summary>从团队中移除一个成员
         /// </summary>
         /// <param name="member"></param>
-        internal void RemoveMember(TeamMember member)
+        internal void RemoveMember(Member member)
         {
             Assert.IsValid(member);
             Assert.AreEqual(this.ID, member.TeamId);
@@ -91,7 +91,7 @@ namespace Cooper.Model.Teams
         /// </summary>
         /// <param name="member"></param>
         /// <returns></returns>
-        public bool IsMemberEmailDuplicated(TeamMember member)
+        public bool IsMemberEmailDuplicated(Member member)
         {
             foreach (var existingMember in _members)
             {
@@ -110,7 +110,7 @@ namespace Cooper.Model.Teams
         /// </summary>
         /// <param name="member"></param>
         /// <returns></returns>
-        public bool IsMemberExist(TeamMember member)
+        public bool IsMemberExist(Member member)
         {
             return _members.Any(x => x.ID == member.ID) || _members.Any(x => x.Email == member.Email);
         }

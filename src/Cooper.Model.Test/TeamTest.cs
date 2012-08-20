@@ -86,22 +86,22 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var teamMember = new TeamMember("TeamMember 1", "xuehua@163.com", team);
+            var member = new Member("TeamMember 1", "xuehua@163.com", team);
 
             Assert.AreNotEqual(DateTime.MinValue, team.CreateTime);
-            Assert.AreEqual(team.ID, teamMember.TeamId);
+            Assert.AreEqual(team.ID, member.TeamId);
 
-            this._teamService.AddMember(teamMember);
-            Assert.Greater(teamMember.ID, 0);
+            this._teamService.AddMember(member);
+            Assert.Greater(member.ID, 0);
 
-            this.Evict(teamMember);
+            this.Evict(member);
 
-            var teamMember2 = this._teamService.GetMember(teamMember.ID);
+            var member2 = this._teamService.GetMember(member.ID);
 
-            Assert.AreEqual(teamMember.Name, teamMember2.Name);
-            Assert.AreEqual(teamMember.Email, teamMember2.Email);
-            Assert.AreEqual(teamMember.TeamId, teamMember2.TeamId);
-            Assert.AreEqual(FormatTime(teamMember.CreateTime), FormatTime(teamMember2.CreateTime));
+            Assert.AreEqual(member.Name, member2.Name);
+            Assert.AreEqual(member.Email, member2.Email);
+            Assert.AreEqual(member.TeamId, member2.TeamId);
+            Assert.AreEqual(FormatTime(member.CreateTime), FormatTime(member2.CreateTime));
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
@@ -110,24 +110,24 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var teamMember = new TeamMember("TeamMember 1", "xuehua@163.com", team);
-            this._teamService.AddMember(teamMember);
+            var member = new Member("TeamMember 1", "xuehua@163.com", team);
+            this._teamService.AddMember(member);
 
-            this.Evict(teamMember);
+            this.Evict(member);
 
-            var teamMember2 = this._teamService.GetMember(teamMember.ID);
+            var member2 = this._teamService.GetMember(member.ID);
 
-            teamMember2.SetName(teamMember.Name + "_updated");
-            teamMember2.SetEmail(teamMember.Email + "_updated");
+            member2.SetName(member.Name + "_updated");
+            member2.SetEmail(member.Email + "_updated");
 
-            this._teamService.UpdateMember(teamMember2);
-            this.Evict(teamMember2);
-            var teamMember3 = this._teamService.GetMember(teamMember2.ID);
+            this._teamService.UpdateMember(member2);
+            this.Evict(member2);
+            var member3 = this._teamService.GetMember(member2.ID);
 
-            Assert.AreEqual(teamMember2.Name, teamMember3.Name);
-            Assert.AreEqual(teamMember2.Email, teamMember3.Email);
-            Assert.AreEqual(teamMember2.TeamId, teamMember3.TeamId);
-            Assert.AreEqual(FormatTime(teamMember2.CreateTime), FormatTime(teamMember3.CreateTime));
+            Assert.AreEqual(member2.Name, member3.Name);
+            Assert.AreEqual(member2.Email, member3.Email);
+            Assert.AreEqual(member2.TeamId, member3.TeamId);
+            Assert.AreEqual(FormatTime(member2.CreateTime), FormatTime(member3.CreateTime));
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
@@ -136,20 +136,20 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var teamMember = new TeamMember("TeamMember 1", "xuehua@163.com", team);
-            this._teamService.AddMember(teamMember);
+            var member = new Member("TeamMember 1", "xuehua@163.com", team);
+            this._teamService.AddMember(member);
 
-            this.Evict(teamMember);
+            this.Evict(member);
 
-            var teamMember2 = this._teamService.GetMember(teamMember.ID);
+            var member2 = this._teamService.GetMember(member.ID);
 
-            this._teamService.RemoveMember(teamMember2);
+            this._teamService.RemoveMember(member2);
 
-            this.Evict(teamMember2);
+            this.Evict(member2);
 
-            var teamMember3 = this._teamService.GetMember(teamMember2.ID);
+            var member3 = this._teamService.GetMember(member2.ID);
 
-            Assert.IsNull(teamMember3);
+            Assert.IsNull(member3);
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
@@ -158,24 +158,24 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var teamMember1 = new TeamMember("TeamMember 1", "xuehua1@163.com", team);
-            var teamMember2 = new TeamMember("TeamMember 2", "xuehua2@163.com", team);
-            var teamMember3 = new TeamMember("TeamMember 3", "xuehua3@163.com", team);
+            var member1 = new Member("TeamMember 1", "xuehua1@163.com", team);
+            var member2 = new Member("TeamMember 2", "xuehua2@163.com", team);
+            var member3 = new Member("TeamMember 3", "xuehua3@163.com", team);
 
-            this._teamService.AddMember(teamMember1);
-            this._teamService.AddMember(teamMember2);
-            this._teamService.AddMember(teamMember3);
+            this._teamService.AddMember(member1);
+            this._teamService.AddMember(member2);
+            this._teamService.AddMember(member3);
 
             this.Evict(team);
 
             team = _teamService.GetTeam(team.ID);
 
-            var teamMembers = team.Members;
+            var members = team.Members;
 
-            Assert.AreEqual(3, teamMembers.Count());
-            Assert.IsTrue(teamMembers.Any(x => x.ID == teamMember1.ID));
-            Assert.IsTrue(teamMembers.Any(x => x.ID == teamMember2.ID));
-            Assert.IsTrue(teamMembers.Any(x => x.ID == teamMember3.ID));
+            Assert.AreEqual(3, members.Count());
+            Assert.IsTrue(members.Any(x => x.ID == member1.ID));
+            Assert.IsTrue(members.Any(x => x.ID == member2.ID));
+            Assert.IsTrue(members.Any(x => x.ID == member3.ID));
         }
 
         [Test]

@@ -10,7 +10,7 @@ namespace Cooper.Model.Teams
 {
     /// <summary>团队成员仓储
     /// </summary>
-    public interface ITeamMemberRepository : IRepository<int, TeamMember>
+    public interface IMemberRepository : IRepository<int, Member>
     {
     }
 }
