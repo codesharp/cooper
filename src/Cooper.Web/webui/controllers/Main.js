@@ -37,28 +37,28 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
         $scope.class_taskdetail = 'hide';
     }
 
-//    var team1 = {
-//        id: 1,
-//        name: 'Code# Team',
-//        projects: [
-//            { id: 1, name: 'NSF' },
-//            { id: 2, name: 'NTFE' },
-//            { id: 3, name: 'CooperWeb' }
-//        ],
-//        members: [
-//            { id: 1, name: 'Xu Huang', email: 'wskyhx@gmail.com' },
-//            { id: 2, name: 'Sunleepy', email: 'sunleepy@gmail.com' },
-//            { id: 3, name: 'Xuhua Tang', email: 'txh@gmail.com' }
-//        ]
-//    },
-//        team2 = angular.copy(team1),
-//        team3 = angular.copy(team1);
-//    team2.id = 2;
-//    team2.name = 'Ali-ENT';
-//    team3.id = 3;
-//    team3.name = 'NetShare';
-//    $scope.teams = [team1, team2, team3];
-//    debuger.debug('teams', $scope.teams);
+    //    var team1 = {
+    //        id: 1,
+    //        name: 'Code# Team',
+    //        projects: [
+    //            { id: 1, name: 'NSF' },
+    //            { id: 2, name: 'NTFE' },
+    //            { id: 3, name: 'CooperWeb' }
+    //        ],
+    //        members: [
+    //            { id: 1, name: 'Xu Huang', email: 'wskyhx@gmail.com' },
+    //            { id: 2, name: 'Sunleepy', email: 'sunleepy@gmail.com' },
+    //            { id: 3, name: 'Xuhua Tang', email: 'txh@gmail.com' }
+    //        ]
+    //    },
+    //        team2 = angular.copy(team1),
+    //        team3 = angular.copy(team1);
+    //    team2.id = 2;
+    //    team2.name = 'Ali-ENT';
+    //    team3.id = 3;
+    //    team3.name = 'NetShare';
+    //    $scope.teams = [team1, team2, team3];
+    //    debuger.debug('teams', $scope.teams);
 
     debuger.debug('$routeParams', $routeParams);
     debuger.debug('params', params);
@@ -134,8 +134,12 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls) {
     $scope.showMembers = function () { $scope.tab2 = 'm'; $element.find('div.modal').modal('show'); }
     $scope.removeMember = function (id) {
         debuger.assert(id != $scope.user.id);
-        $scope.team.members = $.grep($scope.team.members, function (n) { return n.id != id });
-        $http.post('/team/DeleteMember', { teamId: $scope.team.id, memberId: id }).success(function () { });
+        $http.post('/team/DeleteMember', { teamId: $scope.team.id, memberId: id }).success(function () {
+            $scope.team.members = $.grep($scope.team.members, function (n) { return n.id != id });
+            //若删除的是当前member，跳转到team
+            if ($scope.member && $scope.member.id == id)
+                $location.path(urls.team($scope.team));
+        });
     }
     $scope.addProject = function (n) {
         $http.post('/team/CreateProject', { teamId: $scope.team.id, name: n }).success(function (data, status, headers, config) {
@@ -147,15 +151,17 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls) {
         });
     }
 }
-function TeamSettingsFormCtrl($scope, $element) {
+function TeamSettingsFormCtrl($scope, $element, $http) {
     var $form = $element;
     var prev_name = $scope.team ? $scope.team.name : '';
 
     $scope.updateTeam = function () {
         $.each($form.serializeArray(), function (i, n) { $scope.team[n.name] = n.value; });
         if ($scope.teamSettingsForm.$valid) {
-            prev_name = $scope.team.name;
-            success($form);
+            $http.put('/team/UpdateTeam', $scope.team).success(function (data) {
+                prev_name = $scope.team.name;
+                success($form);
+            });
         }
         else
             $scope.team.name = prev_name;
@@ -163,12 +169,14 @@ function TeamSettingsFormCtrl($scope, $element) {
 }
 function TeamMembersFormCtrl($scope, $element, $http) {
     var $form = $element;
-
-    //TODO:增加email/member重复验证
     $scope.addMember = function () {
         var m = {};
         $.each($form.serializeArray(), function (i, n) { m[n.name] = n.value; });
         if ($scope.formTeamMembers.$valid) {
+            //email/member不能重复
+            $scope.duplicate = findBy($scope.team.members, 'email', m.email) ? true : false;
+            if ($scope.duplicate) return;
+
             m.teamId = $scope.team.id;
             $http.post('/team/CreateMember', m).success(function (data, status, headers, config) {
                 debuger.debug(data);
@@ -181,11 +189,11 @@ function TeamMembersFormCtrl($scope, $element, $http) {
 }
 function error($e) {
     $e.find('div.alert-success').hide();
-    $e.find('div.alert-error').show().fadeOut(3000);
+    $e.find('div.alert-error:eq(0)').show().fadeOut(4000);
 }
 function success($e) {
     $e.find('div.alert-error').hide();
-    $e.find('div.alert-success').show().fadeOut(3000);
+    $e.find('div.alert-success').show().fadeOut(4000);
 }
 function findBy(a, k, v) {
     for (var i = 0; i < a.length; i++)

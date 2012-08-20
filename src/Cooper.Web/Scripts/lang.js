@@ -32,7 +32,8 @@ lang.deal_success = '操作成功';
 lang.my_team_task = '我的团队任务';
 lang.inbox = '收件箱';
 lang.new_project_name = '新建项目';
-
+lang.duplicate_email_in_team = '邮箱地址已经存在';
+lang.delete_project = '删除该项目';
 
 lang.my_task = '个人任务';
 lang.my_profile = '我的设置';
