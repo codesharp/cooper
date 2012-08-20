@@ -97,6 +97,7 @@ namespace Cooper.Model.Test
             this.Evict(member);
 
             var member2 = this._teamService.GetMember(member.ID);
+            this.Evict(member2);
 
             Assert.AreEqual(member.Name, member2.Name);
             Assert.AreEqual(member.Email, member2.Email);
@@ -114,6 +115,7 @@ namespace Cooper.Model.Test
             this._teamService.AddMember(member);
 
             this.Evict(member);
+            this.Evict(team);
 
             var member2 = this._teamService.GetMember(member.ID);
 
@@ -123,7 +125,7 @@ namespace Cooper.Model.Test
             this._teamService.UpdateMember(member2);
             this.Evict(member2);
             var member3 = this._teamService.GetMember(member2.ID);
-
+            this.Evict(member3);
             Assert.AreEqual(member2.Name, member3.Name);
             Assert.AreEqual(member2.Email, member3.Email);
             Assert.AreEqual(member2.TeamId, member3.TeamId);
@@ -140,14 +142,15 @@ namespace Cooper.Model.Test
             this._teamService.AddMember(member);
 
             this.Evict(member);
+            this.Evict(team);
 
             var member2 = this._teamService.GetMember(member.ID);
 
             this._teamService.RemoveMember(member2);
 
             this.Evict(member2);
-
             var member3 = this._teamService.GetMember(member2.ID);
+            this.Evict(member3);
 
             Assert.IsNull(member3);
         }
@@ -167,12 +170,16 @@ namespace Cooper.Model.Test
             this._teamService.AddMember(member3);
 
             this.Evict(team);
+            this.Evict(member1);
+            this.Evict(member2);
+            this.Evict(member3);
 
             team = _teamService.GetTeam(team.ID);
 
             var members = team.Members;
 
             Assert.AreEqual(3, members.Count());
+
             Assert.IsTrue(members.Any(x => x.ID == member1.ID));
             Assert.IsTrue(members.Any(x => x.ID == member2.ID));
             Assert.IsTrue(members.Any(x => x.ID == member3.ID));
@@ -194,8 +201,10 @@ namespace Cooper.Model.Test
             Assert.Greater(project.ID, 0);
 
             this.Evict(project);
+            this.Evict(team);
 
             var project2 = this._teamService.GetProject(project.ID);
+            this.Evict(project2);
 
             Assert.AreEqual(project.Name, project2.Name);
             Assert.AreEqual(project.IsPublic, project2.IsPublic);
@@ -213,6 +222,7 @@ namespace Cooper.Model.Test
             this._teamService.AddProject(project);
 
             this.Evict(project);
+            this.Evict(team);
 
             var project2 = this._teamService.GetProject(project.ID);
 
@@ -222,6 +232,7 @@ namespace Cooper.Model.Test
             this._teamService.UpdateProject(project2);
             this.Evict(project2);
             var project3 = this._teamService.GetProject(project2.ID);
+            this.Evict(project3);
 
             Assert.AreEqual(project2.Name, project3.Name);
             Assert.AreEqual(project2.IsPublic, project3.IsPublic);
@@ -237,6 +248,7 @@ namespace Cooper.Model.Test
             this._teamService.AddProject(project);
 
             this.Evict(project);
+            this.Evict(team);
 
             var project2 = this._teamService.GetProject(project.ID);
 
@@ -245,6 +257,7 @@ namespace Cooper.Model.Test
             this.Evict(project2);
 
             var project3 = this._teamService.GetProject(project2.ID);
+            this.Evict(project3);
 
             Assert.IsNull(project3);
         }
@@ -264,6 +277,9 @@ namespace Cooper.Model.Test
             this._teamService.AddProject(project3);
 
             this.Evict(team);
+            this.Evict(project1);
+            this.Evict(project2);
+            this.Evict(project3);
 
             var projects = this._teamService.GetTeam(team.ID).Projects;
 
@@ -284,6 +300,7 @@ namespace Cooper.Model.Test
             this._teamService.AddProject(project);
 
             this.Evict(project);
+            this.Evict(team);
 
             project = this._teamService.GetProject(project.ID);
             Assert.AreEqual("abc", project["key"]);
