@@ -98,9 +98,7 @@ namespace Cooper.Web.Controllers
         [HttpGet]
         public ActionResult GetTeams()
         {
-            return Json(new TeamInfo[] { }, JsonRequestBehavior.AllowGet);
-            //return Json(this._teamService.GetTeamsByAccount(this.Context.Current).Select(o => this.Parse(o)), JsonRequestBehavior.AllowGet);
-            //return Json(_teams, JsonRequestBehavior.AllowGet);
+            return Json(this._teamService.GetTeamsByAccount(this.Context.Current).Select(o => this.Parse(o)), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public ActionResult CreateTeam(string name)
@@ -109,11 +107,6 @@ namespace Cooper.Web.Controllers
             //TODO:将当前用户加入到该team
             this._teamService.Create(t);
             return Json(t.ID);
-
-            //var t = GenerateTeam((_teams.Count + 1).ToString());
-            //t.name = name;
-            //_teams.Add(t);
-            //return Json(t.id);
         }
         [HttpPut]
         public ActionResult UpdateTeam(string id, string name)
@@ -126,19 +119,24 @@ namespace Cooper.Web.Controllers
         [HttpPost]
         public ActionResult CreateProject(string teamId, string name)
         {
-            //UNDONE:新建项目
-            return Json(0);
+            var t = this.GetTeam(teamId);
+            var p = new Teams.Project(name, false, t);
+            this._teamProjectService.Create(p);
+            return Json(p.ID);
         }
         [HttpPost]
         public ActionResult CreateMember(string teamId, string name, string email)
         {
+            var t = this.GetTeam(teamId);
+            var m = new Teams.TeamMember(name, email, t);
             //UNDONE:新建Member
-            return Json(0);
+            return Json(m.ID);
         }
         [HttpPost]
         //[HttpDelete]//需要路由支持 team/{teamId}/member/{memberId}
         public ActionResult DeleteMember(string teamId, string memberId)
         {
+            //UNDONE:删除Member
             return Json(true);
         }
         #endregion
@@ -229,6 +227,7 @@ namespace Cooper.Web.Controllers
                 throw new CooperknownException(this.Lang().member_not_match_team);
             return m;
         }
+        //UNDONE:团队任务查询
         private IEnumerable<Teams.Task> GetTasksByMember(Teams.TeamMember member) { return new List<Teams.Task>(); }
         private IEnumerable<Teams.Task> GetIncompletedTasksByMember(Teams.TeamMember member) { return new List<Teams.Task>(); }
         private IEnumerable<Teams.Task> GetTasksByProject(Teams.Project p) { return new List<Teams.Task>(); }
@@ -239,6 +238,7 @@ namespace Cooper.Web.Controllers
             {
                 id = team.ID.ToString(),
                 name = team.Name,
+                //UNDONE:teaminfo填充完整
                 projects = new TeamProjectInfo[] { }, //this._teamProjectService.GetProjectsByTeam(team).Select(p => this.Parse(p)).ToArray(),
                 members = new TeamMemberInfo[] { }
             };
