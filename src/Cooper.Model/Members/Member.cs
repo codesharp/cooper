@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CodeSharp.Core.DomainBase;
+using Cooper.Model.Accounts;
 
 namespace Cooper.Model.Teams
 {
@@ -31,6 +32,9 @@ namespace Cooper.Model.Teams
         /// <summary>获取分配给当前团队成员的任务
         /// </summary>
         public IEnumerable<Task> AssignedTasks { get { return _assignedTasks; } }
+        /// <summary>获取关联账号的标识
+        /// </summary>
+        public int? AssociatedAccountId { get; private set; }
         /// <summary>创建时间
         /// </summary>
         public DateTime CreateTime { get; private set; }
@@ -71,6 +75,14 @@ namespace Cooper.Model.Teams
             {
                 this.Email = email;
             }
+        }
+        /// <summary>设置关联账号
+        /// </summary>
+        /// <param name="account"></param>
+        public void SetAssociateAccount(Account account)
+        {
+            Assert.IsValid(account);
+            this.AssociatedAccountId = account.ID;
         }
     }
 }
