@@ -13,8 +13,8 @@ namespace Cooper.Model.Mappings
             Id(m => m.ID);
             Map(m => m.AddressBookId);
             Map(m => m.AccountId);
-            Map(m => m.FullName).Length(200);
-            Map(m => m.Email).Length(100);
+            Map(m => m.FullName).Length(255);
+            Map(m => m.Email).Length(255);
             Map(m => m.Phone).Length(100);
             Map(m => m.CreateTime);
             Map(m => m.LastUpdateTime);

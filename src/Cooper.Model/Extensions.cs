@@ -26,6 +26,14 @@ internal class Assert : NUnit.Framework.Assert
         Assert.IsNotNullOrEmpty(input.Trim());
         //Assert.IsFalse(string.IsNullOrWhiteSpace(input));
     }
+    /// <summary>IsNotNullOrWhiteSpace, LessOrEqual 255
+    /// </summary>
+    /// <param name="input"></param>
+    public static void IsValidKey(string input)
+    {
+        Assert.IsNotNullOrWhiteSpace(input);
+        Assert.LessOrEqual(input.Length, 255);
+    }
     /// <summary>断言账号是否有效
     /// </summary>
     /// <param name="account"></param>

@@ -46,13 +46,12 @@ namespace Cooper.Model.Teams
 
         /// <summary>设置名称
         /// <remarks>
-        /// 长度应小于100
+        /// 长度应小于255
         /// </remarks>
         /// </summary>
         public void SetName(string name)
         {
-            Assert.IsNotNullOrWhiteSpace(name);
-            Assert.LessOrEqual(name.Length, 100);
+            Assert.IsValidKey(name);
 
             if (this.Name != name)
             {
@@ -61,13 +60,12 @@ namespace Cooper.Model.Teams
         }
         /// <summary>设置Email
         /// <remarks>
-        /// 长度应小于100
+        /// 长度应小于255
         /// </remarks>
         /// </summary>
         public void SetEmail(string email)
         {
-            Assert.IsNotNullOrWhiteSpace(email);
-            Assert.LessOrEqual(email.Length, 100);
+            Assert.IsValidKey(email);
 
             if (this.Email != email)
             {

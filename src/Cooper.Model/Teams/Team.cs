@@ -36,13 +36,12 @@ namespace Cooper.Model.Teams
 
         /// <summary>设置名称
         /// <remarks>
-        /// 长度应小于200
+        /// 长度应小于255
         /// </remarks>
         /// </summary>
         public void SetName(string name)
         {
-            Assert.IsNotNullOrWhiteSpace(name);
-            Assert.LessOrEqual(name.Length, 200);
+            Assert.IsValidKey(name);
 
             if (this.Name != name)
             {
@@ -56,6 +55,7 @@ namespace Cooper.Model.Teams
         {
             Assert.AreEqual(0, member.ID);
             Assert.AreEqual(this.ID, member.TeamId);
+            Assert.IsFalse(IsMemberExist(member));
             _members.Add(member);
         }
         /// <summary>从团队中移除一个成员
@@ -102,8 +102,7 @@ namespace Cooper.Model.Teams
             }
             return false;
         }
-        /// <summary>
-        /// 判断指定的团队成员是否在当前团队中存在
+        /// <summary>判断指定的团队成员是否在当前团队中存在
         /// <remarks>
         /// 成员ID或Email相同认为是同一个团队成员
         /// </remarks>

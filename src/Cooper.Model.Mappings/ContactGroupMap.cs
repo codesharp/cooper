@@ -11,7 +11,7 @@ namespace Cooper.Model.Mappings
         {
             Table("Cooper_ContactGroup");
             Id(m => m.ID);
-            Map(m => m.Name).Length(200);
+            Map(m => m.Name).Length(255);
             Map(m => m.AddressBookId);
             Map(m => m.CreateTime);
             HasMany(m => m.Contacts).KeyColumn("GroupId").LazyLoad();

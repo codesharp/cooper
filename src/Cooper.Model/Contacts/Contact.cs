@@ -59,13 +59,12 @@ namespace Cooper.Model.Contacts
         }
         /// <summary>设置全名
         /// <remarks>
-        /// 长度应小于200
+        /// 长度应小于255
         /// </remarks>
         /// </summary>
         public void SetFullName(string fullName)
         {
-            Assert.IsNotNullOrWhiteSpace(fullName);
-            Assert.LessOrEqual(fullName.Length, 200);
+            Assert.IsValidKey(fullName);
 
             if (this.FullName != fullName)
             {
@@ -75,13 +74,12 @@ namespace Cooper.Model.Contacts
         }
         /// <summary>设置邮箱
         /// <remarks>
-        /// 长度应小于100
+        /// 长度应小于255
         /// </remarks>
         /// </summary>
         public void SetEmail(string email)
         {
-            Assert.IsNotNullOrWhiteSpace(email);
-            Assert.LessOrEqual(email.Length, 100);
+            Assert.IsValidKey(email);
 
             if (this.Email != email)
             {

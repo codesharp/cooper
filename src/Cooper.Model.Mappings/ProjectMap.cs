@@ -12,7 +12,7 @@ namespace Cooper.Model.Mappings
         {
             Table("Cooper_Project");
             Id(m => m.ID);
-            Map(m => m.Name).Length(100);
+            Map(m => m.Name).Length(255);
             Map(m => m.IsPublic);
             Map(m => m.TeamId);
             Map(Reveal.Member<Project>("_extensions")).Column("Extensions");
