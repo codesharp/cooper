@@ -14,7 +14,6 @@ namespace Cooper.Web.Controllers
     public class TeamController : TaskController
     {
         private Teams.ITeamService _teamService;
-        private Teams.IProjectService _teamProjectService;
         private Teams.ITaskService _teamTaskService;
         public TeamController(ILoggerFactory factory
             , IAccountService accountService
@@ -22,7 +21,6 @@ namespace Cooper.Web.Controllers
             , ITaskFolderService taskFolderService
             , IFetchTaskHelper fetchTaskHelper
             , Teams.ITeamService teamService
-            , Teams.IProjectService teamProjectService
             , Teams.ITaskService teamTaskService)
             : base(factory
             , accountService
@@ -31,7 +29,6 @@ namespace Cooper.Web.Controllers
             , fetchTaskHelper)
         {
             this._teamService = teamService;
-            this._teamProjectService = teamProjectService;
             this._teamTaskService = teamTaskService;
         }
 
@@ -121,14 +118,15 @@ namespace Cooper.Web.Controllers
         {
             var t = this.GetTeam(teamId);
             var p = new Teams.Project(name, false, t);
-            this._teamProjectService.Create(p);
+            //UNDONE:创建project
+            //this._teamProjectService.Create(p);
             return Json(p.ID);
         }
         [HttpPost]
         public ActionResult CreateMember(string teamId, string name, string email)
         {
             var t = this.GetTeam(teamId);
-            var m = new Teams.TeamMember(name, email, t);
+            var m = new Teams.Member(name, email, t);
             //UNDONE:新建Member
             return Json(m.ID);
         }
@@ -166,7 +164,12 @@ namespace Cooper.Web.Controllers
                 }
                 , () => project == null
                 , o => this.GetSortKey(team, o)
-                , o => { project[by] = o; this._teamProjectService.Update(project); }));
+                , o =>
+                {
+                    project[by] = o;
+                    //UNDONE:保存project信息
+                    //this._teamProjectService.Update(project);
+                }));
         }
         protected override void ApplyUpdate(Task t, ChangeLog c)
         {
@@ -180,10 +183,10 @@ namespace Cooper.Web.Controllers
                     //UNDONE:teamTask.AssignTo()
                     break;
                 case "projects":
-                    if (c.Type == ChangeType.Insert)
-                        teamTask.AddToProject(this._teamProjectService.GetProject(int.Parse(c.Value)));
-                    else if (c.Type == ChangeType.Delete)
-                        teamTask.RemoveFromProject(this._teamProjectService.GetProject(int.Parse(c.Value)));
+                    //if (c.Type == ChangeType.Insert)
+                        //teamTask.AddToProject(this._teamProjectService.GetProject(int.Parse(c.Value)));
+                    //else if (c.Type == ChangeType.Delete)
+                        //teamTask.RemoveFromProject(this._teamProjectService.GetProject(int.Parse(c.Value)));
                     break;
             }
         }
@@ -208,7 +211,7 @@ namespace Cooper.Web.Controllers
         {
             int id;
             var p = int.TryParse(projectId, out id)
-                ? this._teamProjectService.GetProject(id)
+                ? new Cooper.Model.Teams.Project("", false, team)//this._teamProjectService.GetProject(id)
                 : null;
             if (p == null)
                 throw new CooperknownException(this.Lang().project_not_found);
@@ -216,11 +219,11 @@ namespace Cooper.Web.Controllers
                 throw new CooperknownException(this.Lang().project_not_match_team);
             return p;
         }
-        private Teams.TeamMember GetMember(Teams.Team team, string memberId)
+        private Teams.Member GetMember(Teams.Team team, string memberId)
         {
             int id;
             int.TryParse(memberId, out id);
-            Teams.TeamMember m = null;
+            Teams.Member m = null;
             if (m == null)
                 throw new CooperknownException(this.Lang().member_not_found);
             if (m.TeamId != team.ID)
@@ -228,8 +231,8 @@ namespace Cooper.Web.Controllers
             return m;
         }
         //UNDONE:团队任务查询
-        private IEnumerable<Teams.Task> GetTasksByMember(Teams.TeamMember member) { return new List<Teams.Task>(); }
-        private IEnumerable<Teams.Task> GetIncompletedTasksByMember(Teams.TeamMember member) { return new List<Teams.Task>(); }
+        private IEnumerable<Teams.Task> GetTasksByMember(Teams.Member member) { return new List<Teams.Task>(); }
+        private IEnumerable<Teams.Task> GetIncompletedTasksByMember(Teams.Member member) { return new List<Teams.Task>(); }
         private IEnumerable<Teams.Task> GetTasksByProject(Teams.Project p) { return new List<Teams.Task>(); }
         private IEnumerable<Teams.Task> GetIncompletedTasksByProject(Teams.Project p) { return new List<Teams.Task>(); }
         private TeamInfo Parse(Teams.Team team)
@@ -251,7 +254,7 @@ namespace Cooper.Web.Controllers
                 name = project.Name
             };
         }
-        private TeamMemberInfo Parse(Teams.TeamMember member)
+        private TeamMemberInfo Parse(Teams.Member member)
         {
             return new TeamMemberInfo()
             {
@@ -264,7 +267,7 @@ namespace Cooper.Web.Controllers
         private ActionResult GetBy(string teamId
             , string projectId
             , string memberId
-            , Func<Teams.TeamMember, IEnumerable<Teams.Task>> taskByMember//获取成员在指定team任务
+            , Func<Teams.Member, IEnumerable<Teams.Task>> taskByMember//获取成员在指定team任务
             , Func<Teams.Project, IEnumerable<Teams.Task>> taskByProject//获取项目内的所有任务
             , Func<Account, Teams.Team, TaskInfo[], Sort[]> sortByTeam
             , Func<Teams.Project, TaskInfo[], Sort[]> sortByProject)
