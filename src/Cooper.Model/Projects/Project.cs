@@ -61,11 +61,11 @@ namespace Cooper.Model.Teams
         }
 
         protected Project() { this.CreateTime = DateTime.Now; }
-        public Project(string name, bool isPublic, Team team) : this()
+        public Project(string name, Team team) : this()
         {
             Assert.IsValid(team);
             this.SetName(name);
-            this.SetIsPublic(isPublic);
+            this.SetIsPublic(false); //默认False
             this.TeamId = team.ID;
         }
 

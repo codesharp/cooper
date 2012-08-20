@@ -20,7 +20,7 @@ namespace Cooper.Model.Test
             _teamService.Create(team);
             var member = new Member("xuehua", "xuehua@163.com", team);
             _teamService.AddMember(member);
-            var project = new Project("Project 1", true, team);
+            var project = new Project("Project 1", team);
             _teamService.AddProject(project);
             var task = new Task(a, team);
             task.AssignTo(member);
@@ -64,7 +64,7 @@ namespace Cooper.Model.Test
             _teamService.Create(team);
             var member = new Member("xuehua", "xuehua@163.com", team);
             _teamService.AddMember(member);
-            var project = new Project("Project 1", true, team);
+            var project = new Project("Project 1", team);
             _teamService.AddProject(project);
             var task = new Task(a, team);
             task.AssignTo(member);
@@ -122,7 +122,7 @@ namespace Cooper.Model.Test
             _teamService.Create(team);
             var member = new Member("xuehua", "xuehua@163.com", team);
             _teamService.AddMember(member);
-            var project = new Project("Project 1", true, team);
+            var project = new Project("Project 1", team);
             _teamService.AddProject(project);
             var task = new Task(a, team);
             task.AssignTo(member);
@@ -150,7 +150,7 @@ namespace Cooper.Model.Test
             _teamService.Create(team);
             var member = new Member("xuehua", "xuehua@163.com", team);
             _teamService.AddMember(member);
-            var project = new Project("Project 1", true, team);
+            var project = new Project("Project 1", team);
             _teamService.AddProject(project);
 
             var teamTask1 = new Task(a, team);

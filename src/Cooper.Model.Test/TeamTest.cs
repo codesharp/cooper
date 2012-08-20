@@ -192,7 +192,7 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var project = new Project("Project 1", true, team);
+            var project = new Project("Project 1", team);
 
             Assert.AreNotEqual(DateTime.MinValue, team.CreateTime);
             Assert.AreEqual(team.ID, project.TeamId);
@@ -218,7 +218,7 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var project = new Project("Project 1", true, team);
+            var project = new Project("Project 1", team);
             this._teamService.AddProject(project);
 
             this.Evict(project);
@@ -244,7 +244,7 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var project = new Project("Project 1", true, team);
+            var project = new Project("Project 1", team);
             this._teamService.AddProject(project);
 
             this.Evict(project);
@@ -268,9 +268,9 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var project1 = new Project("Project 1", true, team);
-            var project2 = new Project("Project 2", true, team);
-            var project3 = new Project("Project 3", true, team);
+            var project1 = new Project("Project 1", team);
+            var project2 = new Project("Project 2", team);
+            var project3 = new Project("Project 3", team);
 
             this._teamService.AddProject(project1);
             this._teamService.AddProject(project2);
@@ -295,7 +295,7 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var project = new Project("Project 1", true, team);
+            var project = new Project("Project 1", team);
             project["key"] = "abc";
             this._teamService.AddProject(project);
 
