@@ -16,5 +16,9 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("TeamId", team.ID))
                 .List<Member>();
         }
+        public Member FindBy(string email)
+        {
+            return this.FindOne(Expression.Eq("Email", email));
+        }
     }
 }

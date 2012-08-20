@@ -17,7 +17,6 @@ namespace Cooper.Model.Mappings
             Map(m => m.Email).Length(255);
             Map(m => m.CreateTime);
             Map(m => m.AssociatedAccountId);
-            HasMany(m => m.AssignedTasks).EntityName("TeamTask").KeyColumn("AssigneeId").LazyLoad();
         }
     }
 }

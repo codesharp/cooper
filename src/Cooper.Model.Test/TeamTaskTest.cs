@@ -18,7 +18,7 @@ namespace Cooper.Model.Test
             var a = this.CreateAccount();
             var team = new Team("Team 1");
             _teamService.Create(team);
-            var member = new Member("xuehua", "xuehua@163.com", team);
+            var member = new Member("xuehua",  RandomString() + "xuehua@163.com", team);
             _teamService.AddMember(member);
             var project = new Project("Project 1", team);
             _teamService.AddProject(project);
@@ -62,7 +62,7 @@ namespace Cooper.Model.Test
             var a = this.CreateAccount();
             var team = new Team("Team 1");
             _teamService.Create(team);
-            var member = new Member("xuehua", "xuehua@163.com", team);
+            var member = new Member("xuehua", RandomString() + "xuehua@163.com", team);
             _teamService.AddMember(member);
             var project = new Project("Project 1", team);
             _teamService.AddProject(project);
@@ -74,7 +74,7 @@ namespace Cooper.Model.Test
             this.Evict(task);
 
             var task2 = this._teamTaskService.GetTask(task.ID);
-            var member2 = new Member("ylw", "ylw@163.com", team);
+            var member2 = new Member("ylw", RandomString() + "ylw@163.com", team);
             _teamService.AddMember(member2);
 
             task2.AssignTo(member2);
@@ -120,7 +120,7 @@ namespace Cooper.Model.Test
             var a = this.CreateAccount();
             var team = new Team("Team 1");
             _teamService.Create(team);
-            var member = new Member("xuehua", "xuehua@163.com", team);
+            var member = new Member("xuehua", RandomString() + "xuehua@163.com", team);
             _teamService.AddMember(member);
             var project = new Project("Project 1", team);
             _teamService.AddProject(project);
@@ -148,7 +148,7 @@ namespace Cooper.Model.Test
             var a = this.CreateAccount();
             var team = new Team("Team 1");
             _teamService.Create(team);
-            var member = new Member("xuehua", "xuehua@163.com", team);
+            var member = new Member("xuehua", RandomString() + "xuehua@163.com", team);
             _teamService.AddMember(member);
             var project = new Project("Project 1", team);
             _teamService.AddProject(project);

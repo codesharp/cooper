@@ -59,17 +59,6 @@ namespace Cooper.Model.Teams
             Assert.IsFalse(IsMemberExist(member));
             _members.Add(member);
         }
-        /// <summary>更新团队成员
-        /// </summary>
-        /// <param name="member"></param>
-        internal void UpdateMember(Member member)
-        {
-            Assert.IsValid(member);
-            Assert.AreEqual(this.ID, member.TeamId);
-            Assert.IsFalse(IsMemberEmailDuplicated(member));
-            _members.Remove(_members.Single(x => x.ID == member.ID));
-            _members.Add(member);
-        }
         /// <summary>从团队中移除一个成员
         /// </summary>
         /// <param name="member"></param>

@@ -51,6 +51,7 @@ namespace Cooper.Model.Test
                 DependencyResolver.Resolve<ILockHelper>().Init<Account>();
                 DependencyResolver.Resolve<ILockHelper>().Init<GoogleConnection>();
                 DependencyResolver.Resolve<ILockHelper>().Init<GitHubConnection>();
+                DependencyResolver.Resolve<ILockHelper>().Init<Member>();
             }
             catch (Exception e)
             {

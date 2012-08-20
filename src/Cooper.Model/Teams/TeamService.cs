@@ -84,6 +84,7 @@ namespace Cooper.Model.Teams
         private static ITaskRepository _taskRepository;
         private static IMemberRepository _memberRepository;
         private static IProjectRepository _projectRepository;
+        private ILockHelper _locker;
         private ILog _log;
 
         static TeamService()
@@ -93,9 +94,10 @@ namespace Cooper.Model.Teams
             _taskRepository = RepositoryFactory.GetRepository<ITaskRepository, long, Task>();
             _projectRepository = RepositoryFactory.GetRepository<IProjectRepository, int, Project>();
         }
-        public TeamService(ILoggerFactory factory)
+        public TeamService(ILoggerFactory factory, ILockHelper locker)
         {
             this._log = factory.Create(typeof(TeamService));
+            this._locker = locker;
         }
 
         #region ITeamService Members
@@ -130,7 +132,14 @@ namespace Cooper.Model.Teams
         [Transaction(TransactionMode.Requires)]
         void ITeamService.AddMember(Member member)
         {
+            Assert.AreEqual(0, member.ID);
+            Assert.Greater(member.TeamId, 0);
             var team = _teamRepository.FindBy(member.TeamId);
+            Assert.IsNotNull(team);
+
+            this._locker.Require<Member>();
+            Assert.IsNull(_memberRepository.FindBy(member.Email));
+
             team.AddMember(member);
             _teamRepository.Update(team);
         }
@@ -140,20 +149,30 @@ namespace Cooper.Model.Teams
             Assert.IsValid(member);
             var team = _teamRepository.FindBy(member.TeamId);
             Assert.IsNotNull(team);
-            team.UpdateMember(member);
-            _teamRepository.Update(team);
+
+            this._locker.Require<Member>();
+            var memberFromEmail = _memberRepository.FindBy(member.Email);
+            if (memberFromEmail != null)
+            {
+                Assert.AreEqual(memberFromEmail.Email, member.Email);
+            }
+
+            Assert.IsFalse(team.IsMemberEmailDuplicated(member));
+            _memberRepository.Update(member);
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.RemoveMember(Member member)
         {
+            Assert.IsValid(member);
+
             //先将团队成员从团队中移除
             var team = _teamRepository.FindBy(member.TeamId);
             team.RemoveMember(member);
             _teamRepository.Update(team);
-            _memberRepository.Remove(member);
 
             //再将分配给团队成员的所有任务收回
-            foreach (var task in member.AssignedTasks)
+            var tasksAssignedToMember = _taskRepository.FindBy(member);
+            foreach (var task in tasksAssignedToMember)
             {
                 task.RemoveAssignee();
                 _taskRepository.Update(task);
@@ -167,7 +186,10 @@ namespace Cooper.Model.Teams
         [Transaction(TransactionMode.Requires)]
         void ITeamService.AddProject(Project project)
         {
+            Assert.AreEqual(0, project.ID);
+            Assert.Greater(project.TeamId, 0);
             var team = _teamRepository.FindBy(project.TeamId);
+            Assert.IsNotNull(team);
             team.AddProject(project);
             _teamRepository.Update(team);
         }
@@ -176,15 +198,16 @@ namespace Cooper.Model.Teams
         {
             Assert.IsValid(project);
             var team = _teamRepository.FindBy(project.TeamId);
+            Assert.IsNotNull(team);
             _projectRepository.Update(project);
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.RemoveProject(Project project)
         {
+            Assert.IsValid(project);
             var team = _teamRepository.FindBy(project.TeamId);
             team.RemoveProject(project);
             _teamRepository.Update(team);
-            _projectRepository.Remove(project);
         }
         Project ITeamService.GetProject(int id)
         {

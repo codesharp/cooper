@@ -18,8 +18,6 @@ namespace Cooper.Model.Teams
     /// </summary>
     public class Member : EntityBase<int>, IAggregateRoot
     {
-        private IList<Task> _assignedTasks = new List<Task>();
-
         /// <summary>获取团队成员显示的名字
         /// </summary>
         public string Name { get; private set; }
@@ -29,9 +27,6 @@ namespace Cooper.Model.Teams
         /// <summary>获取所属团队的标识
         /// </summary>
         public int TeamId { get; private set; }
-        /// <summary>获取分配给当前团队成员的任务
-        /// </summary>
-        public IEnumerable<Task> AssignedTasks { get { return _assignedTasks; } }
         /// <summary>获取关联账号的标识
         /// </summary>
         public int? AssociatedAccountId { get; private set; }
@@ -81,8 +76,15 @@ namespace Cooper.Model.Teams
         /// <param name="account"></param>
         public void SetAssociateAccount(Account account)
         {
-            Assert.IsValid(account);
-            this.AssociatedAccountId = account.ID;
+            if (account != null)
+            {
+                Assert.IsValid(account);
+                this.AssociatedAccountId = account.ID;
+            }
+            else
+            {
+                this.AssociatedAccountId = null;
+            }
         }
     }
 }

@@ -68,7 +68,15 @@ namespace Cooper.Model.Teams
             this.SetIsPublic(false); //默认False
             this.TeamId = team.ID;
         }
-
+        /// <summary>获取所有项目设置信息
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, string> GetExtensions()
+        {
+            if (this._dict == null)
+                this._dict = this.Parse();
+            return this._dict;
+        }
         /// <summary>设置名称
         /// <remarks>
         /// 长度应小于255

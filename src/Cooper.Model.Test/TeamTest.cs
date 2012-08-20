@@ -86,7 +86,7 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var member = new Member("TeamMember 1", "xuehua@163.com", team);
+            var member = new Member("TeamMember 1", RandomString() + "xuehua@163.com", team);
 
             Assert.AreNotEqual(DateTime.MinValue, team.CreateTime);
             Assert.AreEqual(team.ID, member.TeamId);
@@ -111,7 +111,7 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var member = new Member("TeamMember 1", "xuehua@163.com", team);
+            var member = new Member("TeamMember 1", RandomString() + "xuehua@163.com", team);
             this._teamService.AddMember(member);
 
             this.Evict(member);
@@ -138,7 +138,7 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var member = new Member("TeamMember 1", "xuehua@163.com", team);
+            var member = new Member("TeamMember 1", RandomString() + "xuehua@163.com", team);
             this._teamService.AddMember(member);
 
             this.Evict(member);
@@ -161,18 +161,13 @@ namespace Cooper.Model.Test
             var team = new Team("Test Team");
             this._teamService.Create(team);
 
-            var member1 = new Member("TeamMember 1", "xuehua1@163.com", team);
-            var member2 = new Member("TeamMember 2", "xuehua2@163.com", team);
-            var member3 = new Member("TeamMember 3", "xuehua3@163.com", team);
+            var member1 = new Member("TeamMember 1", RandomString() + "xuehua1@163.com", team);
+            var member2 = new Member("TeamMember 2", RandomString() + "xuehua2@163.com", team);
+            var member3 = new Member("TeamMember 3", RandomString() + "xuehua3@163.com", team);
 
             this._teamService.AddMember(member1);
             this._teamService.AddMember(member2);
             this._teamService.AddMember(member3);
-
-            this.Evict(team);
-            this.Evict(member1);
-            this.Evict(member2);
-            this.Evict(member3);
 
             team = _teamService.GetTeam(team.ID);
 
@@ -276,11 +271,6 @@ namespace Cooper.Model.Test
             this._teamService.AddProject(project2);
             this._teamService.AddProject(project3);
 
-            this.Evict(team);
-            this.Evict(project1);
-            this.Evict(project2);
-            this.Evict(project3);
-
             var projects = this._teamService.GetTeam(team.ID).Projects;
 
             Assert.AreEqual(3, projects.Count());
@@ -318,13 +308,16 @@ namespace Cooper.Model.Test
             this._teamService.Create(team2);
             this._teamService.Create(team3);
 
-            var member1 = new Member("Team Member1", "xuehua1@163.com", team1);
-            var member2 = new Member("Team Member2", "xuehua2@163.com", team2);
-            var member3 = new Member("Team Member3", "xuehua3@163.com", team3);
+            var member1 = new Member("Team Member1", RandomString() + "xuehua1@163.com", team1);
+            var member2 = new Member("Team Member2", RandomString() + "xuehua2@163.com", team2);
+            var member3 = new Member("Team Member3", RandomString() + "xuehua3@163.com", team3);
 
             this._teamService.AddMember(member1);
             this._teamService.AddMember(member2);
             this._teamService.AddMember(member3);
+
+            member1 = this._teamService.GetMember(member1.ID);
+            member3 = this._teamService.GetMember(member3.ID);
 
             member1.SetAssociateAccount(account);
             member3.SetAssociateAccount(account);
