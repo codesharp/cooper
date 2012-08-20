@@ -333,11 +333,11 @@ namespace Cooper.Web.Controllers
         /// </summary>
         Update = 0,
         /// <summary>删除
-        /// <remarks>可用于描述对集合属性的删除</remarks>
+        /// <remarks>可用于描述数据实体删除以及对实体中集合属性的元素的删除</remarks>
         /// </summary>
         Delete = 1,
         /// <summary>插入
-        /// <remarks>可用于描述对集合属性的插入</remarks>
+        /// <remarks>可用于描述对集合属性的元素插入</remarks>
         /// </summary>
         Insert = 2
     }

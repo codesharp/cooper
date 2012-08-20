@@ -172,7 +172,10 @@ namespace Cooper.Web.Controllers
                     //teamTask.AssignTo()
                     break;
                 case "projects":
-                    //teamTask.AddToProject
+                    if (c.Type == ChangeType.Insert)
+                        teamTask.AddToProject(this._teamProjectService.GetProject(int.Parse(c.Value)));
+                    else if (c.Type == ChangeType.Delete)
+                        teamTask.RemoveFromProject(this._teamProjectService.GetProject(int.Parse(c.Value)));
                     break;
             }
         }

@@ -26,8 +26,7 @@ Task.prototype = {
             //TODO:待重构
             'assignee': t['Assignee'] != undefined ? { 'id': t['Assignee']['ID'], 'name': t['Assignee']['Name']} : null,
             'assigneeId': t['Assignee'] ? t['Assignee']['ID'] : null,
-            'projects': t['Projects'] ? $.map(t['Projects'], function (n) { return { 'id': n['ID'], 'name': n['Name'] }; }) : [],
-            'projectIds': t['Projects'] ? this._pickString(t['Projects'], 'ID', ',') : ''//'1,2,3'
+            'projects': t['Projects'] ? $.map(t['Projects'], function (n) { return { 'id': n['ID'], 'name': n['Name'] }; }) : []
         }
         this.$el_row = this._generateItem(this['data']);
         this.$el_detail = null;
@@ -60,6 +59,21 @@ Task.prototype = {
         for (var i = 0; i < a.length; i++)
             str[i] = a[i][n];
         return str.join(s);
+    },
+    _addDeleteChange: function (k, i) {
+        this._addChange(k + i, { 'Name': k, 'Value': i, 'Type': 1 });
+    },
+    _addInsertChange: function (k, i) {
+        this._addChange(k + i, { 'Name': k, 'Value': i, 'Type': 2 });
+    },
+    _addChange: function (k, c) {
+        c['ID'] = this.id();
+        //变更列表，用于提交到server
+        if (!this.changes)
+            this.changes = {};
+        //只记录最后一次
+        this.changes[k] = c;
+        debuger.info('new changelog for ' + k + ' of task#' + this.id(), this.changes[k]);
     },
     ///////////////////////////////////////////////////////////////////////////////
     renderRow: function () {
@@ -121,12 +135,7 @@ Task.prototype = {
         if (!this.editable) return;
         if (this['data'][k] == v) return false;
         this['data'][k] = v;
-        //设计变更列表，用于提交到server
-        if (!this.changes)
-            this.changes = {};
-        //只记录最后一次
-        this.changes[k] = { 'ID': this.id(), 'Name': k, 'Value': v };
-        debuger.info('new changelog for ' + k + ' of task#' + this.id(), this.changes[k]);
+        this._addChange(k, { 'Name': k, 'Value': v });
         return true;
     },
     set: function (k, v) {
@@ -219,15 +228,16 @@ Task.prototype = {
     },
     setProjects: function (ps) {
         if (!ps) return;
-        this.update('projectIds', this._pickString(ps, 'id', ','));
         this['data']['projects'] = ps; //直接更新projects数组
         this.setDetail_Projects(ps);
     },
     addProject: function (p) {
         debuger.assert(p);
+        this._addInsertChange('projects', p['id']);
         this.setProjects($.merge($.grep(this.projects(), function (n, i) { return n['id'] != p['id']; }), [p]));
     },
     removeProject: function (p) {
+        this._addDeleteChange('projects', p);
         this.setProjects($.grep(this.projects(), function (n, i) { return n['id'] != p; }));
     },
     ///////////////////////////////////////////////////////////////////////////////
