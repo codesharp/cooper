@@ -70,7 +70,7 @@ namespace Cooper.Model.Tasks
         void ITaskFolderService.Delete(TaskFolder folder)
         {
             _repository.Remove(folder);
-            //UNDONE:是否删除任务表下的所有任务？
+            //HACK:目前不会删除任务表下的所有任务
             if (this._log.IsInfoEnabled)
                 this._log.InfoFormat("删除任务表#{0}", folder.ID);
         }

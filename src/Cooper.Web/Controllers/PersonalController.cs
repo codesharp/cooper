@@ -163,7 +163,13 @@ namespace Cooper.Web.Controllers
             Assert.IsFalse(this._fetchTaskHelper.IsFetchTaskFolder(taskFolderId ?? tasklistId));
             var folder = this.GetTaskFolder(taskFolderId ?? tasklistId);
             return Json(this.Sync(changes, by, sorts
-                , o => { if (folder != null) o.SetTaskFolder(folder); }
+                , () =>
+                {
+                    var o = new Task(this.Context.Current);
+                    if (folder != null)
+                        o.SetTaskFolder(folder);
+                    return o;
+                }
                 , () => folder == null
                 , o => o
                 , o => { folder[by] = o; this._taskFolderService.Update(folder); }));

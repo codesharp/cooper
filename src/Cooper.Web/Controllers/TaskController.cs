@@ -55,14 +55,21 @@ namespace Cooper.Web.Controllers
 
         protected TaskInfo[] ParseTasks(params Task[] tasks)
         {
-            return tasks.Select(o => new TaskInfo()
+            return this.ParseTasks(() => new TaskInfo(), (t, tInfo) => { }, tasks);
+        }
+        protected TaskInfo[] ParseTasks(Func<TaskInfo> create, Action<Task, TaskInfo> filter, params Task[] tasks)
+        {
+            return tasks.Select(o =>
             {
-                ID = o.ID.ToString(),
-                Subject = o.Subject,
-                Body = o.Body,
-                DueTime = o.DueTime.HasValue ? o.DueTime.Value.Date.ToString("yyyy-MM-dd") : null,
-                Priority = (int)o.Priority,
-                IsCompleted = o.IsCompleted
+                var t = create();
+                t.ID = o.ID.ToString();
+                t.Subject = o.Subject;
+                t.Body = o.Body;
+                t.DueTime = o.DueTime.HasValue ? o.DueTime.Value.Date.ToString("yyyy-MM-dd") : null;
+                t.Priority = (int)o.Priority;
+                t.IsCompleted = o.IsCompleted;
+                filter(o, t);
+                return t;
             }).ToArray();
         }
         protected Sort[] ParseSortsByPriority(Sort[] sorts, params TaskInfo[] tasks)
@@ -118,7 +125,7 @@ namespace Cooper.Web.Controllers
         protected IEnumerable<Correction> Sync(string changes
             , string by
             , string sorts
-            , Action<Task> ifNew
+            , Func<Task> ifNew
             , Func<bool> isPersonalSorts
             , Func<string, string> getSortKey
             , Action<string> saveSorts)
@@ -158,7 +165,7 @@ namespace Cooper.Web.Controllers
         private void ApplyChanges(Account account
             , ChangeLog[] list
             , IDictionary<string, string> idChanges
-            , Action<Task> ifNew)
+            , Func<Task> ifNew)
         {
             foreach (var c in list)
             {
@@ -173,8 +180,7 @@ namespace Cooper.Web.Controllers
                         t = this._taskService.GetTask(long.Parse(idChanges[c.ID]));
                     else if (c.ID.StartsWith(TEMP))
                     {
-                        t = new Task(account);
-                        ifNew(t);//为兼容原personalcontroller的taskfolder同步
+                        t = ifNew();
                         this._taskService.Create(t);
                         idChanges.Add(c.ID, t.ID.ToString());//添加到id变更
                     }
@@ -333,8 +339,13 @@ namespace Cooper.Web.Controllers
         /// </summary>
         Update = 0,
         /// <summary>删除
+        /// <remarks>可用于描述数据实体删除以及对实体中集合属性的元素的删除</remarks>
         /// </summary>
-        Delete = 1
+        Delete = 1,
+        /// <summary>插入
+        /// <remarks>可用于描述对集合属性的元素插入</remarks>
+        /// </summary>
+        Insert = 2
     }
     /// <summary>描述对于客户端数据的修正
     /// </summary>
