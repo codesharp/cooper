@@ -341,9 +341,7 @@
     <Content Include="Views\Shared\Scripts.cshtml" />
     <Content Include="Views\Shared\Style.cshtml" />
     <Content Include="Views\Team\Index.cshtml" />
-    <Content Include="Views\Team\MainRegion.cshtml" />
     <Content Include="Views\Shared\TemplateRegion.cshtml" />
-    <Content Include="Views\Team\LeftBar.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

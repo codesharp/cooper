@@ -24,9 +24,9 @@ Task.prototype = {
             'tags': [],
             //team模块相关
             //TODO:待重构
-            'assignee': t['Assignee'] != undefined ? { 'id': t['Assignee']['ID'], 'name': t['Assignee']['Name']} : null,
-            'assigneeId': t['Assignee'] ? t['Assignee']['ID'] : null,
-            'projects': t['Projects'] ? $.map(t['Projects'], function (n) { return { 'id': n['ID'], 'name': n['Name'] }; }) : []
+            'assignee': t['Assignee'] != undefined ? { 'id': t['Assignee']['ID'] || t['Assignee']['id'], 'name': t['Assignee']['Name'] || t['Assignee']['name']} : null,
+            'assigneeId': t['Assignee'] ? t['Assignee']['ID'] || t['Assignee']['id'] : null,
+            'projects': t['Projects'] ? $.map(t['Projects'], function (n) { return { 'id': n['ID'] || n['id'], 'name': n['Name'] || n['name'] }; }) : []
         }
         this.$el_row = this._generateItem(this['data']);
         this.$el_detail = null;

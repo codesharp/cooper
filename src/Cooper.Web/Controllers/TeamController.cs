@@ -101,11 +101,10 @@ namespace Cooper.Web.Controllers
         public ActionResult CreateTeam(string name)
         {
             var t = new Teams.Team(name);
-            //UNDONE:将当前用户加入到该team
             this._teamService.Create(t);
-            var m = this._teamService.AddMember(this.Context.Current.Name, "wskyhx@gmail.com", t);
-            m.Associate(this.Context.Current);
-            this._teamService.Update(t);
+            //HACK:创建team同时将当前用户加入到该team
+            //UNDONE:从accountconnection中获取email?或者让创建时提交member信息
+            var m = this._teamService.AddMember(this.Context.Current.Name, "wskyhx@gmail.com", t, this.Context.Current);
             return Json(t.ID);
         }
         [HttpPut]

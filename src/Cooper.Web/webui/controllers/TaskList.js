@@ -116,9 +116,6 @@ function TaskListCtrl($scope, $element, $routeParams) {
     function team() {
         currentMode();
     }
-    function project() {
-        currentMode();
-    }
     function doRemoveProject() {
         alert('todo');
     }
@@ -285,6 +282,8 @@ function TaskListCtrl($scope, $element, $routeParams) {
         // *****************************************************
         // taskpage.js main changes here
         // *****************************************************
+        if (!$scope.teamMode)
+            return d;
         if ($scope.team)
             d.teamId = $scope.team.id;
         if ($scope.project)
@@ -337,14 +336,9 @@ function TaskListCtrl($scope, $element, $routeParams) {
             }
         });
     }
-    resize();
-
-    if ($scope.team && !window.flag) {
-        render();
-    }
-    $scope.$on('ready', render);
+    function renderPersonalTask() { render(); folder(0); }
+    function renderTeamTask() { window.teamModeflag = true; render(); team(); }
     function render() {
-        window.flag = true;
         $el_wrapper_region = $('#todolist_wrapper');
         $el_wrapper_detail = $('#detail_wrapper');
         $el_cancel_delete = $('#cancel_delete');
@@ -372,15 +366,16 @@ function TaskListCtrl($scope, $element, $routeParams) {
 
         globalBinds();
         ajaxSetup();
-
-        if ($scope.project) {
-            project();
-        }
-        else if ($scope.team) {
-            team();
-        }
-        else {
-            folder(0);
-        }
     }
+
+    // *****************************************************
+    // taskpage.js main changes here
+    // *****************************************************
+    resize(); 
+    if ($scope.teamMode) {
+        $scope.$on('ready_team', renderTeamTask);
+        if ($scope.team && !window.teamModeflag)
+            renderTeamTask();
+    } else
+        renderPersonalTask();
 }

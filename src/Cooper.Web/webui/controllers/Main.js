@@ -4,19 +4,19 @@
 /// <reference path="../../Scripts/common.js" />
 /// <reference path="../../Scripts/lang.js" />
 
-'use strict';
-
-function MainCtrl($scope, $rootScope, $http, $routeParams,$location, tmp, urls, lang, params) {
+//$scope.teamMode
+function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls, lang, params) {
     debuger.debug('$routeParams', $routeParams);
     debuger.debug('params', params);
     var p = $routeParams.teamId ? $routeParams : params;
     //临时处理部分需要直接跳转的地址
     $scope.$on('$locationChangeStart', function (e, url) {
         debuger.debug(url);
-        if (url.indexOf('/per') >= 0)
-            location.href = '/per';
-        else if (url.indexOf('/account') >= 0)
+        url = url.toLowerCase();
+        if (url.indexOf('/account') >= 0)
             location.href = '/account';
+        else if (url.indexOf('/per') >= 0)
+            location.href = '/per';
     });
     $rootScope.tmp = tmp;
     $rootScope.urls = urls;
@@ -42,12 +42,26 @@ function MainCtrl($scope, $rootScope, $http, $routeParams,$location, tmp, urls, 
         $scope.class_tasklist = '';
         $scope.class_taskdetail = 'hide';
     }
-
+    // *****************************************************
+    // Team/Personal模式
+    // *****************************************************
+    var url = $location.$$url.toLowerCase();
+    $scope.teamMode = url.indexOf('/team') >= 0 || url.indexOf('/t') >= 0;
+    debuger.debug($scope.teamMode);
+    // *****************************************************
+    // Personal
+    // *****************************************************
+    //TODO:获取taskfolder
+    if (!$scope.teamMode) {
+        return;
+    }
+    // *****************************************************
+    // Team
+    // *****************************************************
     $http.get('/team/getteams').success(function (data, status, headers, config) {
         debuger.assert(data);
         $scope.teams = data;
         debuger.debug('teams', $scope.teams);
-
         // *****************************************************
         // 设置rootScope 必须有一个team
         // *****************************************************
@@ -74,17 +88,16 @@ function MainCtrl($scope, $rootScope, $http, $routeParams,$location, tmp, urls, 
             $rootScope.title = $rootScope.team.name;
         $rootScope.title = $rootScope.title == $rootScope.team.name ? $rootScope.title : $rootScope.title + ' - ' + $rootScope.team.name;
         //data ready
-        $scope.$broadcast('ready');
+        $scope.$broadcast('ready_team');
     });
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //team list
 function TeamListCtrl($scope, $rootScope, $http, $element) {
     $scope.showAddTeam = function () { $element.find('div.modal').modal('show'); }
     $scope.hideAddTeam = function () { $element.find('div.modal').modal('hide'); }
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
-    $scope.$on('ready', function () {
+    $scope.$on('ready_team', function () {
         if ($scope.teams.length == 0)
             $scope.showAddTeam();
     });
@@ -109,7 +122,8 @@ function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //team detail
 function TeamDetailCtrl($scope, $http, $element, $location, urls) {
-    $scope.$on('ready', function () { $scope.tab = $scope.member ? 'm' : 'p'; });
+    $scope.initTab = function () { $scope.tab = $scope.member ? 'm' : 'p'; }
+    $scope.$on('ready_team', $scope.initTab);
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
     $scope.showModify = function () { $scope.tab2 = 's'; $element.find('div.modal').modal('show'); }
     $scope.showMembers = function () { $scope.tab2 = 'm'; $element.find('div.modal').modal('show'); }

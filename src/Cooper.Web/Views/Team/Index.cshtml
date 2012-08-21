@@ -15,14 +15,14 @@
         <div class="row-fluid">
             <!--leftbar-->
             <div class="span2" style="padding: 5px; margin: 0;" ng-show="!mini&&!full">
-                <div ng-include="tmp.left">
-                </div>
+                @*<div ng-include="tmp.left"></div>*@
+                @Html.Raw(File.ReadAllText(Server.MapPath("~/webui/left.htm")))
                 <br />
-                <div ng-include="tmp.team_list" ng-controller="TeamListCtrl">
-                </div>
+                @*<div ng-include="tmp.team_list" ng-controller="TeamListCtrl"></div>*@
+                <div ng-controller="TeamListCtrl">@Html.Raw(File.ReadAllText(Server.MapPath("~/webui/team/list.htm")))</div>
                 <br />
-                <div ng-include="tmp.team_detail" ng-controller="TeamDetailCtrl" ng-show="team">
-                </div>
+                @*<div ng-include="tmp.team_detail" ng-controller="TeamDetailCtrl" ng-show="team"></div>*@
+                <div ng-controller="TeamDetailCtrl" ng-show="team">@Html.Raw(File.ReadAllText(Server.MapPath("~/webui/team/detail.htm")))</div>
             </div>
             <ng:view></ng:view>
         </div>
