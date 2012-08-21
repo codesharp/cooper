@@ -166,8 +166,7 @@ namespace Cooper.Model.Test
         {
             var team = CreateSampleTeam();
             var projectName = RandomString();
-            team.AddProject(projectName);
-            this._teamService.Update(team);
+            this._teamService.AddProject(projectName, team);
 
             this.Evict(team);
 

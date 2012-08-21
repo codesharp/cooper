@@ -88,15 +88,15 @@ namespace Cooper.Model.Teams
         /// <summary>往团队中添加一个新项目
         /// </summary>
         /// <param name="name"></param>
-        public void AddProject(string name)
+        internal void AddProject(Project project)
         {
-            Assert.IsValidKey(name);
-            _projects.Add(new Project(name, this));
+            Assert.AreEqual(this.ID, project.TeamId);
+            _projects.Add(project);
         }
         /// <summary>从团队中移除一个项目
         /// </summary>
         /// <param name="project"></param>
-        public void RemoveProject(Project project)
+        internal void RemoveProject(Project project)
         {
             Assert.IsValid(project);
             Assert.AreEqual(this.ID, project.TeamId);

@@ -164,7 +164,7 @@ namespace Cooper.Web.Controllers
                 , o =>
                 {
                     project[by] = o;
-                    this._teamService.UpdateProject(project, team);
+                    this._teamService.Update(team);
                 }));
         }
         protected override void ApplyUpdate(Task t, ChangeLog c)

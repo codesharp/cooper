@@ -143,9 +143,7 @@ namespace Cooper.Model.Test
         }
         protected Project AddSampleProjectToTeam(Team team)
         {
-            team.AddProject(this.RandomString());
-            this._teamService.Update(team);
-            return team.Projects.Last();
+            return this._teamService.AddProject(this.RandomString(), team);
         }
     }
 }

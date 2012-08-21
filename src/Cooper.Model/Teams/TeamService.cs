@@ -59,6 +59,12 @@ namespace Cooper.Model.Teams
         /// <param name="member"></param>
         /// <param name="team"></param>
         void RemoveMember(Member member, Team team);
+        /// <summary>往团队新增一个项目
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="team"></param>
+        /// <returns></returns>
+        Project AddProject(string name, Team team);
         /// <summary>将一个指定的项目从团队移除
         /// </summary>
         /// <param name="project"></param>
@@ -159,6 +165,16 @@ namespace Cooper.Model.Teams
                 task.RemoveAssignee();
                 _taskRepository.Update(task);
             }
+        }
+        [Transaction(TransactionMode.Requires)]
+        Project ITeamService.AddProject(string name, Team team)
+        {
+            Assert.IsValidKey(name);
+            Assert.IsValid(team);
+            var project = new Project(name, team);
+            team.AddProject(project);
+            _teamRepository.Update(team);
+            return project;
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.RemoveProject(Project project, Team team)
