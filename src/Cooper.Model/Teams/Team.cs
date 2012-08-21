@@ -105,21 +105,6 @@ namespace Cooper.Model.Teams
             _projects.Remove(projectToRemove);
         }
 
-        /// <summary>判断指定的团队成员是否和团队内的其他成员的Email重复
-        /// </summary>
-        /// <param name="member"></param>
-        /// <returns></returns>
-        public bool IsMemberEmailDuplicated(Member member)
-        {
-            foreach (var existingMember in _members)
-            {
-                if (existingMember.ID != member.ID && existingMember.Email == member.Email)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
         /// <summary>判断指定的团队成员是否在当前团队中存在
         /// <remarks>
         /// 成员ID或Email相同认为是同一个团队成员
