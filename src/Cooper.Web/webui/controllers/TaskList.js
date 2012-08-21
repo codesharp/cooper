@@ -4,7 +4,7 @@
 ///<reference path="task_common.js" />
 
 //取代taskpage.js
-function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
+function TaskListCtrl($scope, $element, $routeParams) {
     //page内全局元素
     var $el_wrapper_region = null;
     var $el_wrapper_detail = null;
@@ -19,29 +19,12 @@ function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
     var currentMode = byPriority; //当前列表模式，默认使用优先级列表模式
     var currentList = null; //当前任务表标识
 
-    //team相关
-    var currentTeam = '', //当前团队标识
-        currentProject = '', //当前项目标识
-        currentTeamMembers = [], //当前团队所有成员
-        currentTeamProjects = []; //当前团队所有项目
-
     var timer;
     var idChanges = {};
     var preSorts = null;
 
     var tryfail = false; //异常流模拟标识
 
-    // *****************************************************
-    // taskpage.js main changes here
-    // *****************************************************
-    //为团队功能填充全局变量
-    if ($scope.team) {
-        currentTeam = $scope.team.id;
-        currentTeamProjects = currentTeam.projects;
-        currentTeamMembers = currentTeam.members;
-    }
-    if ($scope.project)
-        currentProject = $scope.project.id;
     ////////////////////////////////////////////////////////////////////////////////////////
     //all=来自server的所有任务数组
     //sorts=分组排序
@@ -130,11 +113,11 @@ function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
         });
     }
     //team
-    function team(id) {
-        currentMode(function () { currentTeam = id; }, function () { });
+    function team() {
+        currentMode();
     }
-    function project(id) {
-        currentMode(function () { currentProject = id; }, function () { });
+    function project() {
+        currentMode();
     }
     function doRemoveProject() {
         alert('todo');
@@ -299,8 +282,15 @@ function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
         if (!d) d = {};
         d.tryfail = tryfail;
         d.taskFolderId = currentList;
-        d.teamId = currentTeam;
-        d.projectId = currentProject;
+        // *****************************************************
+        // taskpage.js main changes here
+        // *****************************************************
+        if ($scope.team)
+            d.teamId = $scope.team.id;
+        if ($scope.project)
+            d.projectId = $scope.project.id;
+        if ($scope.member)
+            d.memberId = $scope.member.id;
         return d;
     }
     function endRequest() {
@@ -347,9 +337,14 @@ function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
             }
         });
     }
-    $(function () {
-        resize();
+    resize();
 
+    if ($scope.team && !window.flag) {
+        render();
+    }
+    $scope.$on('ready', render);
+    function render() {
+        window.flag = true;
         $el_wrapper_region = $('#todolist_wrapper');
         $el_wrapper_detail = $('#detail_wrapper');
         $el_cancel_delete = $('#cancel_delete');
@@ -378,12 +373,14 @@ function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
         globalBinds();
         ajaxSetup();
 
-
-        if (currentProject)
-            project(currentProject);
-        else if (currentTeam)
-            team(currentTeam);
-        else
+        if ($scope.project) {
+            project();
+        }
+        else if ($scope.team) {
+            team();
+        }
+        else {
             folder(0);
-    });
+        }
+    }
 }

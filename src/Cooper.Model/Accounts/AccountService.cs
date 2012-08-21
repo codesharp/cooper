@@ -73,7 +73,7 @@ namespace Cooper.Model.Accounts
         void IAccountService.Update(Account account, string name)
         {
             this._locker.Require<Account>();
-            //HACK:由于此时在事务中，并且account可能被更新，此时的查询会导致nh提供事务因此应该先查询再SetName
+            //HACK:由于此时在事务中，并且account可能被更新，此时的查询会导致nh提交事务因此应该先查询再SetName
             Assert.IsNull((this as IAccountService).GetAccount(name));
             account.SetName(name);
             if (this._log.IsInfoEnabled)

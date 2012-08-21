@@ -145,7 +145,7 @@ namespace Cooper.Model.Teams
             Assert.IsNull(_memberRepository.FindBy(team, email));
 
             team.AddMember(member);
-            _teamRepository.Update(team);
+            _teamRepository.Add(team);
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.UpdateMember(Member member, string email, Team team)
@@ -163,7 +163,7 @@ namespace Cooper.Model.Teams
             }
 
             Assert.IsFalse(team.IsMemberEmailDuplicated(member));
-            _memberRepository.Update(member);
+            _memberRepository.Add(member);
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.RemoveMember(Member member, Team team)

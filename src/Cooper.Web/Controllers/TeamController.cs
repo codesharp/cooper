@@ -103,7 +103,9 @@ namespace Cooper.Web.Controllers
             var t = new Teams.Team(name);
             //UNDONE:将当前用户加入到该team
             this._teamService.Create(t);
-            this._teamService.AddMember(new Teams.Member(this.Context.Current.Name, "wskyhx@gmail.com", t));
+            var m = this._teamService.AddMember(this.Context.Current.Name, "wskyhx@gmail.com", t);
+            m.Associate(this.Context.Current);
+            this._teamService.Update(t);
             return Json(t.ID);
         }
         [HttpPut]
@@ -117,25 +119,19 @@ namespace Cooper.Web.Controllers
         [HttpPost]
         public ActionResult CreateProject(string teamId, string name)
         {
-            var t = this.GetTeam(teamId);
-            var p = new Teams.Project(name, t);
-            this._teamService.AddProject(p);
-            return Json(p.ID);
+            return Json(this._teamService.AddProject(name, this.GetTeam(teamId)).ID);
         }
         [HttpPost]
         public ActionResult CreateMember(string teamId, string name, string email)
         {
-            var t = this.GetTeam(teamId);
-            var m = new Teams.Member(name, email, t);
-            this._teamService.AddMember(m);
-            return Json(m.ID);
+            return Json(this._teamService.AddMember(name, email, this.GetTeam(teamId)).ID);
         }
         [HttpPost]//[HttpDelete]//需要路由支持 team/{teamId}/member/{memberId}
         public ActionResult DeleteMember(string teamId, string memberId)
         {
             var t = this.GetTeam(teamId);
             var m = this.GetMember(t, memberId);
-            this._teamService.RemoveMember(m);
+            this._teamService.RemoveMember(m, t);
             return Json(true);
         }
         #endregion
@@ -168,7 +164,7 @@ namespace Cooper.Web.Controllers
                 , o =>
                 {
                     project[by] = o;
-                    this._teamService.UpdateProject(project);
+                    this._teamService.UpdateProject(project, team);
                 }));
         }
         protected override void ApplyUpdate(Task t, ChangeLog c)
@@ -219,9 +215,7 @@ namespace Cooper.Web.Controllers
         private Teams.Project GetProject(Teams.Team team, string projectId)
         {
             int id;
-            var p = int.TryParse(projectId, out id)
-                ? this._teamService.GetProject(id)
-                : null;
+            var p = int.TryParse(projectId, out id) ? team.GetProject(id) : null;
             if (p == null)
                 throw new CooperknownException(this.Lang().project_not_found);
             if (p.TeamId != team.ID)
@@ -231,9 +225,7 @@ namespace Cooper.Web.Controllers
         private Teams.Member GetMember(Teams.Team team, string memberId)
         {
             int id;
-            var m = int.TryParse(memberId, out id)
-                ? this._teamService.GetMember(id)
-                : null;
+            var m = int.TryParse(memberId, out id) ? team.GetMember(id) : null;
             if (m == null)
                 throw new CooperknownException(this.Lang().member_not_found);
             if (m.TeamId != team.ID)
@@ -293,7 +285,7 @@ namespace Cooper.Web.Controllers
                 var teamTaskInfo = taskInfo as TeamTaskInfo;
 
                 if (teamTask.AssigneeId.HasValue
-                    && (m = this._teamService.GetMember(teamTask.AssigneeId.Value)) != null)
+                    && (m = team.GetMember(teamTask.AssigneeId.Value)) != null)
                     teamTaskInfo.Assignee = this.Parse(m);
 
                 teamTaskInfo.Projects = teamTask.Projects.Select(o => this.Parse(o)).ToArray();

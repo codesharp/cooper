@@ -6,7 +6,10 @@
 
 'use strict';
 
-function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, params) {
+function MainCtrl($scope, $rootScope, $http, $routeParams,$location, tmp, urls, lang, params) {
+    debuger.debug('$routeParams', $routeParams);
+    debuger.debug('params', params);
+    var p = $routeParams.teamId ? $routeParams : params;
     //临时处理部分需要直接跳转的地址
     $scope.$on('$locationChangeStart', function (e, url) {
         debuger.debug(url);
@@ -18,9 +21,12 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
     $rootScope.tmp = tmp;
     $rootScope.urls = urls;
     $rootScope.lang = lang;
+    //TODO:当前用户
     $rootScope.user = { id: 1, name: 'Xu Huang', email: 'wskyhx@gmail.com' };
 
-    //大小模式
+    // *****************************************************
+    // 大小模式
+    // *****************************************************
     $scope.mini = false;
     $scope.full = false;
     var b = $.browser.msie && $.browser.version.indexOf('7.') >= 0;
@@ -37,33 +43,6 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
         $scope.class_taskdetail = 'hide';
     }
 
-    //    var team1 = {
-    //        id: 1,
-    //        name: 'Code# Team',
-    //        projects: [
-    //            { id: 1, name: 'NSF' },
-    //            { id: 2, name: 'NTFE' },
-    //            { id: 3, name: 'CooperWeb' }
-    //        ],
-    //        members: [
-    //            { id: 1, name: 'Xu Huang', email: 'wskyhx@gmail.com' },
-    //            { id: 2, name: 'Sunleepy', email: 'sunleepy@gmail.com' },
-    //            { id: 3, name: 'Xuhua Tang', email: 'txh@gmail.com' }
-    //        ]
-    //    },
-    //        team2 = angular.copy(team1),
-    //        team3 = angular.copy(team1);
-    //    team2.id = 2;
-    //    team2.name = 'Ali-ENT';
-    //    team3.id = 3;
-    //    team3.name = 'NetShare';
-    //    $scope.teams = [team1, team2, team3];
-    //    debuger.debug('teams', $scope.teams);
-
-    debuger.debug('$routeParams', $routeParams);
-    debuger.debug('params', params);
-    var p = $routeParams.teamId ? $routeParams : params;
-
     $http.get('/team/getteams').success(function (data, status, headers, config) {
         debuger.assert(data);
         $scope.teams = data;
@@ -77,7 +56,7 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
         debuger.debug('current team', $scope.team);
         if (!$rootScope.team) {
             if ($scope.teams.length > 0)
-                location.href = urls.team($scope.teams[0]);
+                $location.path(urls.team($scope.teams[0]));
             return;
         }
         debuger.debug('current projectId=', p.projectId);
@@ -86,7 +65,7 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
         debuger.debug('current memberId=', p.memberId);
         $rootScope.member = findBy($scope.team.members, 'id', p.memberId);
         debuger.debug('current member', $scope.member);
-        //htmltitle
+        //html.title
         if ($rootScope.project)
             $rootScope.title = $rootScope.project.name;
         else if ($rootScope.member)
@@ -94,19 +73,21 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, tmp, urls, lang, para
         else if ($rootScope.team)
             $rootScope.title = $rootScope.team.name;
         $rootScope.title = $rootScope.title == $rootScope.team.name ? $rootScope.title : $rootScope.title + ' - ' + $rootScope.team.name;
+        //data ready
+        $scope.$broadcast('ready');
     });
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //team list
-function TeamListCtrl($scope, $http, $element) {
+function TeamListCtrl($scope, $rootScope, $http, $element) {
     $scope.showAddTeam = function () { $element.find('div.modal').modal('show'); }
     $scope.hideAddTeam = function () { $element.find('div.modal').modal('hide'); }
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
-    $scope.checkTeams = function () {
-        if (!$scope.teams || $scope.teams && $scope.teams.length == 0)
+    $scope.$on('ready', function () {
+        if ($scope.teams.length == 0)
             $scope.showAddTeam();
-    }
+    });
 }
 function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
     var $form = $element;
@@ -128,7 +109,7 @@ function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //team detail
 function TeamDetailCtrl($scope, $http, $element, $location, urls) {
-    $scope.initTab = function () { $scope.tab = $scope.member ? 'm' : 'p'; }
+    $scope.$on('ready', function () { $scope.tab = $scope.member ? 'm' : 'p'; });
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
     $scope.showModify = function () { $scope.tab2 = 's'; $element.find('div.modal').modal('show'); }
     $scope.showMembers = function () { $scope.tab2 = 'm'; $element.find('div.modal').modal('show'); }

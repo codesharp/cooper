@@ -297,5 +297,6 @@ namespace Cooper.Model.Test
             Assert.IsTrue(teams.Any(x => x.ID == team1.ID));
             Assert.IsTrue(teams.Any(x => x.ID == team3.ID));
         }
+
     }
 }
