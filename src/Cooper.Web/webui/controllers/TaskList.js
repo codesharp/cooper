@@ -35,12 +35,13 @@ function TaskListCtrl($scope, $rootScope, $element, $routeParams) {
     // taskpage.js main changes here
     // *****************************************************
     //为团队功能填充全局变量
-    currentTeam = $scope.team;
-    currentProject = $scope.project;
-    if (currentTeam) {
+    if ($scope.team) {
+        currentTeam = $scope.team.id;
         currentTeamProjects = currentTeam.projects;
         currentTeamMembers = currentTeam.members;
     }
+    if ($scope.project)
+        currentProject = $scope.project.id;
     ////////////////////////////////////////////////////////////////////////////////////////
     //all=来自server的所有任务数组
     //sorts=分组排序
