@@ -62,7 +62,7 @@ namespace Cooper.Model.Teams
         /// 长度应小于255
         /// </remarks>
         /// </summary>
-        public void SetEmail(string email)
+        internal void SetEmail(string email)
         {
             Assert.IsValidKey(email);
 

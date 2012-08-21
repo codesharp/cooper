@@ -46,28 +46,19 @@ namespace Cooper.Model.Teams
         /// <param name="team"></param>
         /// <returns></returns>
         Member AddMember(string name, string email, Team team);
-        /// <summary>更新一个指定的团队成员
+        /// <summary>新增一个指定的成员，并自动关联到指定账号
         /// </summary>
-        /// <param name="member"></param>
+        /// <param name="name"></param>
+        /// <param name="email"></param>
         /// <param name="team"></param>
-        void UpdateMember(Member member, string email, Team team);
+        /// <param name="account"></param>
+        /// <returns></returns>
+        Member AddMember(string name, string email, Team team, Account account);
         /// <summary>将一个指定的团队成员从团队移除
         /// </summary>
         /// <param name="member"></param>
         /// <param name="team"></param>
         void RemoveMember(Member member, Team team);
-
-        /// <summary>将一个指定的项目添加到团队
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="team"></param>
-        /// <returns></returns>
-        Project AddProject(string name, Team team);
-        /// <summary>更新一个指定的项目
-        /// </summary>
-        /// <param name="project"></param>
-        /// <param name="team"></param>
-        void UpdateProject(Project project, Team team);
         /// <summary>将一个指定的项目从团队移除
         /// </summary>
         /// <param name="project"></param>
@@ -127,43 +118,29 @@ namespace Cooper.Model.Teams
         {
             return _teamRepository.FindBy(account);
         }
+        [Transaction(TransactionMode.Requires)]
         Member ITeamService.AddMember(string name, string email, Team team)
+        {
+            return (this as ITeamService).AddMember(name, email, team, null);
+        }
+        [Transaction(TransactionMode.Requires)]
+        Member ITeamService.AddMember(string name, string email, Team team, Account account)
         {
             Assert.IsValidKey(name);
             Assert.IsValidKey(email);
             Assert.IsValid(team);
             var member = new Member(name, email, team);
-            AddTeamMember(team, member, email);
-            return member;
-        }
-        [Transaction(TransactionMode.Requires)]
-        protected virtual void AddTeamMember(Team team, Member member, string email)
-        {
+            member.Associate(account);
+
             //HACK:由于此时在事务中，并且member可能被更新，此时的查询会导致nh提供事务因此应该先查询再AddMember
             //这样做可以确保数据库所有的Member的Email唯一
             this._locker.Require<Member>();
-            Assert.IsNull(_memberRepository.FindBy(team, email));
+            Assert.IsNull(_memberRepository.FindBy(team, member.Email));
 
             team.AddMember(member);
-            _teamRepository.Add(team);
-        }
-        [Transaction(TransactionMode.Requires)]
-        void ITeamService.UpdateMember(Member member, string email, Team team)
-        {
-            Assert.IsValid(member);
-            Assert.IsValid(team);
+            _teamRepository.Update(team);
 
-            //HACK:由于此时在事务中，并且member可能被更新，此时的查询会导致nh提供事务因此应该先查询再UpdateMember
-            //这样做可以确保数据库所有的Member的Email唯一
-            this._locker.Require<Member>();
-            var memberFromEmail = _memberRepository.FindBy(team, email);
-            if (memberFromEmail != null)
-            {
-                Assert.AreEqual(memberFromEmail.ID, member.ID);
-            }
-
-            Assert.IsFalse(team.IsMemberEmailDuplicated(member));
-            _memberRepository.Add(member);
+            return member;
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.RemoveMember(Member member, Team team)
@@ -182,31 +159,6 @@ namespace Cooper.Model.Teams
                 task.RemoveAssignee();
                 _taskRepository.Update(task);
             }
-        }
-
-        [Transaction(TransactionMode.Requires)]
-        Project ITeamService.AddProject(string name, Team team)
-        {
-            Assert.IsValidKey(name);
-            Assert.IsValid(team);
-
-            var project = new Project(name, team);
-            AddTeamProject(team, project);
-
-            return project;
-        }
-        [Transaction(TransactionMode.Requires)]
-        protected virtual void AddTeamProject(Team team, Project project)
-        {
-            team.AddProject(project);
-            _teamRepository.Update(team);
-        }
-        [Transaction(TransactionMode.Requires)]
-        void ITeamService.UpdateProject(Project project, Team team)
-        {
-            Assert.IsValid(project);
-            Assert.IsValid(team);
-            _projectRepository.Update(project);
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.RemoveProject(Project project, Team team)

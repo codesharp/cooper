@@ -71,7 +71,7 @@ namespace Cooper.Model.Test
 
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void CreateTeamMember()
+        public void AddTeamMember()
         {
             var team = CreateSampleTeam();
             var member = this._teamService.AddMember(RandomString(), RandomString(), team);
@@ -104,9 +104,8 @@ namespace Cooper.Model.Test
             member = team.GetMember(member.ID);
 
             member.SetName(member.Name + "_updated");
-            member.SetEmail(member.Email + "_updated");
 
-            this._teamService.UpdateMember(member, member.Email, team);
+            this._teamService.Update(team);
 
             this.Evict(member);
             this.Evict(team);
@@ -121,7 +120,7 @@ namespace Cooper.Model.Test
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void DeleteTeamMember()
+        public void RemoveTeamMember()
         {
             var team = CreateSampleTeam();
             var member = AddSampleMemberToTeam(team);
@@ -163,23 +162,23 @@ namespace Cooper.Model.Test
 
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void CreateProject()
+        public void AddProject()
         {
             var team = CreateSampleTeam();
-            var project = this._teamService.AddProject("Project 1", team);
-            Assert.Greater(project.ID, 0);
-            Assert.AreEqual(team.ID, project.TeamId);
+            var projectName = RandomString();
+            team.AddProject(projectName);
+            this._teamService.Update(team);
 
-            this.Evict(project);
             this.Evict(team);
 
             team = _teamService.GetTeam(team.ID);
-            var projectCreated = team.GetProject(project.ID);
+            Assert.AreEqual(1, team.Projects.Count());
+            var project = team.Projects.First();
 
-            Assert.AreEqual(project.Name, projectCreated.Name);
-            Assert.AreEqual(project.IsPublic, projectCreated.IsPublic);
-            Assert.AreEqual(project.TeamId, projectCreated.TeamId);
-            Assert.AreEqual(FormatTime(project.CreateTime), FormatTime(projectCreated.CreateTime));
+            Assert.Greater(project.ID, 0);
+            Assert.AreEqual(team.ID, project.TeamId);
+            Assert.AreEqual(projectName, project.Name);
+            Assert.AreEqual(false, project.IsPublic);
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
@@ -199,7 +198,7 @@ namespace Cooper.Model.Test
             project.SetName(project.Name + "_updated");
             project.SetIsPublic(!project.IsPublic);
 
-            this._teamService.UpdateProject(project, team);
+            this._teamService.Update(team);
 
             this.Evict(project);
             this.Evict(team);
@@ -212,7 +211,7 @@ namespace Cooper.Model.Test
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void DeleteProject()
+        public void RemoveProject()
         {
             var team = CreateSampleTeam();
             var project = AddSampleProjectToTeam(team);
@@ -260,11 +259,12 @@ namespace Cooper.Model.Test
 
             var project = AddSampleProjectToTeam(team);
             project["key"] = "abc";
-            this._teamService.UpdateProject(project, team);
+            this._teamService.Update(team);
 
             this.Evict(project);
             this.Evict(team);
 
+            team = _teamService.GetTeam(team.ID);
             project = team.GetProject(project.ID);
             Assert.AreEqual("abc", project["key"]);
         }
@@ -288,8 +288,8 @@ namespace Cooper.Model.Test
             member1.Associate(account);
             member3.Associate(account);
 
-            this._teamService.UpdateMember(member1, member1.Email, team1);
-            this._teamService.UpdateMember(member3, member3.Email, team3);
+            this._teamService.Update(team1);
+            this._teamService.Update(team3);
 
             var teams = this._teamService.GetTeamsByAccount(account);
 
@@ -297,6 +297,5 @@ namespace Cooper.Model.Test
             Assert.IsTrue(teams.Any(x => x.ID == team1.ID));
             Assert.IsTrue(teams.Any(x => x.ID == team3.ID));
         }
-
     }
 }

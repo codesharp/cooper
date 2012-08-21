@@ -137,9 +137,15 @@ namespace Cooper.Model.Test
         {
             return this._teamService.AddMember(RandomString(), RandomString(), team);
         }
+        protected Member AddSampleMemberToTeam(Account associatedAccount, Team team)
+        {
+            return this._teamService.AddMember(RandomString(), RandomString(), team, associatedAccount);
+        }
         protected Project AddSampleProjectToTeam(Team team)
         {
-            return this._teamService.AddProject(RandomString(), team);
+            team.AddProject(this.RandomString());
+            this._teamService.Update(team);
+            return team.Projects.Last();
         }
     }
 }

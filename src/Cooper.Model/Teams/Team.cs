@@ -87,21 +87,22 @@ namespace Cooper.Model.Teams
         }
         /// <summary>往团队中添加一个新项目
         /// </summary>
-        /// <param name="project"></param>
-        internal void AddProject(Project project)
+        /// <param name="name"></param>
+        public void AddProject(string name)
         {
-            Assert.AreEqual(0, project.ID);
-            Assert.AreEqual(this.ID, project.TeamId);
-            _projects.Add(project);
+            Assert.IsValidKey(name);
+            _projects.Add(new Project(name, this));
         }
         /// <summary>从团队中移除一个项目
         /// </summary>
         /// <param name="project"></param>
-        internal void RemoveProject(Project project)
+        public void RemoveProject(Project project)
         {
             Assert.IsValid(project);
             Assert.AreEqual(this.ID, project.TeamId);
-            _projects.Remove(_projects.Single(x => x.ID == project.ID));
+            var projectToRemove = _projects.SingleOrDefault(x => x.ID == project.ID);
+            Assert.IsNotNull(projectToRemove);
+            _projects.Remove(projectToRemove);
         }
 
         /// <summary>判断指定的团队成员是否和团队内的其他成员的Email重复
