@@ -16,12 +16,9 @@ namespace Cooper.Model.Test
         public void CreateTeamTask()
         {
             var a = this.CreateAccount();
-            var team = new Team("Team 1");
-            _teamService.Create(team);
-            var member = new Member("xuehua",  RandomString() + "xuehua@163.com", team);
-            _teamService.AddMember(member);
-            var project = new Project("Project 1", team);
-            _teamService.AddProject(project);
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(team);
+            var project = AddSampleProjectToTeam(team);
             var task = new Task(a, team);
             task.AssignTo(member);
             task.AddToProject(project);
@@ -60,12 +57,9 @@ namespace Cooper.Model.Test
         public void UpdateTeamTask()
         {
             var a = this.CreateAccount();
-            var team = new Team("Team 1");
-            _teamService.Create(team);
-            var member = new Member("xuehua", RandomString() + "xuehua@163.com", team);
-            _teamService.AddMember(member);
-            var project = new Project("Project 1", team);
-            _teamService.AddProject(project);
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(team);
+            var project = AddSampleProjectToTeam(team);
             var task = new Task(a, team);
             task.AssignTo(member);
             task.AddToProject(project);
@@ -74,8 +68,7 @@ namespace Cooper.Model.Test
             this.Evict(task);
 
             var task2 = this._teamTaskService.GetTask(task.ID);
-            var member2 = new Member("ylw", RandomString() + "ylw@163.com", team);
-            _teamService.AddMember(member2);
+            var member2 = AddSampleMemberToTeam(team);
 
             task2.AssignTo(member2);
             task2.RemoveFromProject(project);
@@ -118,12 +111,9 @@ namespace Cooper.Model.Test
         public void DeleteTeamTask()
         {
             var a = this.CreateAccount();
-            var team = new Team("Team 1");
-            _teamService.Create(team);
-            var member = new Member("xuehua", RandomString() + "xuehua@163.com", team);
-            _teamService.AddMember(member);
-            var project = new Project("Project 1", team);
-            _teamService.AddProject(project);
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(team);
+            var project = AddSampleProjectToTeam(team);
             var task = new Task(a, team);
             task.AssignTo(member);
             task.AddToProject(project);
@@ -146,12 +136,9 @@ namespace Cooper.Model.Test
         public void GetTeamTasks()
         {
             var a = this.CreateAccount();
-            var team = new Team("Team 1");
-            _teamService.Create(team);
-            var member = new Member("xuehua", RandomString() + "xuehua@163.com", team);
-            _teamService.AddMember(member);
-            var project = new Project("Project 1", team);
-            _teamService.AddProject(project);
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(team);
+            var project = AddSampleProjectToTeam(team);
 
             var teamTask1 = new Task(a, team);
             teamTask1.AssignTo(member);

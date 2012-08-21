@@ -127,5 +127,19 @@ namespace Cooper.Model.Test
         {
             return new DateTime(time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
         }
+        protected Team CreateSampleTeam()
+        {
+            var team = new Team(this.RandomString());
+            this._teamService.Create(team);
+            return team;
+        }
+        protected Member AddSampleMemberToTeam(Team team)
+        {
+            return this._teamService.AddMember(RandomString(), RandomString(), team);
+        }
+        protected Project AddSampleProjectToTeam(Team team)
+        {
+            return this._teamService.AddProject(RandomString(), team);
+        }
     }
 }

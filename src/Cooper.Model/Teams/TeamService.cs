@@ -41,39 +41,38 @@ namespace Cooper.Model.Teams
 
         /// <summary>将一个指定的团队成员添加到团队
         /// </summary>
-        /// <param name="member"></param>
-        void AddMember(Member member);
+        /// <param name="name"></param>
+        /// <param name="email"></param>
+        /// <param name="team"></param>
+        /// <returns></returns>
+        Member AddMember(string name, string email, Team team);
         /// <summary>更新一个指定的团队成员
         /// </summary>
         /// <param name="member"></param>
-        void UpdateMember(Member member);
+        /// <param name="team"></param>
+        void UpdateMember(Member member, string email, Team team);
         /// <summary>将一个指定的团队成员从团队移除
         /// </summary>
         /// <param name="member"></param>
-        void RemoveMember(Member member);
-        /// <summary>根据标识获取成员
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Member GetMember(int id);
+        /// <param name="team"></param>
+        void RemoveMember(Member member, Team team);
 
         /// <summary>将一个指定的项目添加到团队
         /// </summary>
-        /// <param name="project"></param>
-        void AddProject(Project project);
+        /// <param name="name"></param>
+        /// <param name="team"></param>
+        /// <returns></returns>
+        Project AddProject(string name, Team team);
         /// <summary>更新一个指定的项目
         /// </summary>
         /// <param name="project"></param>
-        void UpdateProject(Project project);
+        /// <param name="team"></param>
+        void UpdateProject(Project project, Team team);
         /// <summary>将一个指定的项目从团队移除
         /// </summary>
         /// <param name="project"></param>
-        void RemoveProject(Project project);
-        /// <summary>根据标识获取项目
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Project GetProject(int id);
+        /// <param name="team"></param>
+        void RemoveProject(Project project, Team team);
     }
     /// <summary>团队领域服务
     /// </summary>
@@ -128,90 +127,104 @@ namespace Cooper.Model.Teams
         {
             return _teamRepository.FindBy(account);
         }
-
-        [Transaction(TransactionMode.Requires)]
-        void ITeamService.AddMember(Member member)
+        Member ITeamService.AddMember(string name, string email, Team team)
         {
-            Assert.AreEqual(0, member.ID);
-            Assert.Greater(member.TeamId, 0);
-            var team = _teamRepository.FindBy(member.TeamId);
-            Assert.IsNotNull(team);
-
+            Assert.IsValidKey(name);
+            Assert.IsValidKey(email);
+            Assert.IsValid(team);
+            var member = new Member(name, email, team);
+            AddTeamMember(team, member, email);
+            return member;
+        }
+        [Transaction(TransactionMode.Requires)]
+        protected virtual void AddTeamMember(Team team, Member member, string email)
+        {
+            //HACK:由于此时在事务中，并且member可能被更新，此时的查询会导致nh提供事务因此应该先查询再AddMember
+            //这样做可以确保数据库所有的Member的Email唯一
             this._locker.Require<Member>();
-            Assert.IsNull(_memberRepository.FindBy(member.Email));
+            Assert.IsNull(_memberRepository.FindBy(team, email));
 
             team.AddMember(member);
             _teamRepository.Update(team);
         }
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.UpdateMember(Member member)
+        void ITeamService.UpdateMember(Member member, string email, Team team)
         {
             Assert.IsValid(member);
-            var team = _teamRepository.FindBy(member.TeamId);
-            Assert.IsNotNull(team);
+            Assert.IsValid(team);
 
+            //HACK:由于此时在事务中，并且member可能被更新，此时的查询会导致nh提供事务因此应该先查询再UpdateMember
+            //这样做可以确保数据库所有的Member的Email唯一
             this._locker.Require<Member>();
-            var memberFromEmail = _memberRepository.FindBy(member.Email);
+            var memberFromEmail = _memberRepository.FindBy(team, email);
             if (memberFromEmail != null)
             {
-                Assert.AreEqual(memberFromEmail.Email, member.Email);
+                Assert.AreEqual(memberFromEmail.ID, member.ID);
             }
 
             Assert.IsFalse(team.IsMemberEmailDuplicated(member));
             _memberRepository.Update(member);
         }
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.RemoveMember(Member member)
+        void ITeamService.RemoveMember(Member member, Team team)
         {
             Assert.IsValid(member);
+            Assert.IsValid(team);
 
-            //先将团队成员从团队中移除
-            var team = _teamRepository.FindBy(member.TeamId);
+            //将团队成员从团队中移除
             team.RemoveMember(member);
             _teamRepository.Update(team);
 
-            //再将分配给团队成员的所有任务收回
-            var tasksAssignedToMember = _taskRepository.FindBy(member);
-            foreach (var task in tasksAssignedToMember)
+            //将分配给团队成员的所有任务收回
+            var memberTasks = _taskRepository.FindBy(member);
+            foreach (var task in memberTasks)
             {
                 task.RemoveAssignee();
                 _taskRepository.Update(task);
             }
         }
-        Member ITeamService.GetMember(int id)
-        {
-            return _memberRepository.FindBy(id);
-        }
 
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.AddProject(Project project)
+        Project ITeamService.AddProject(string name, Team team)
         {
-            Assert.AreEqual(0, project.ID);
-            Assert.Greater(project.TeamId, 0);
-            var team = _teamRepository.FindBy(project.TeamId);
-            Assert.IsNotNull(team);
+            Assert.IsValidKey(name);
+            Assert.IsValid(team);
+
+            var project = new Project(name, team);
+            AddTeamProject(team, project);
+
+            return project;
+        }
+        [Transaction(TransactionMode.Requires)]
+        protected virtual void AddTeamProject(Team team, Project project)
+        {
             team.AddProject(project);
             _teamRepository.Update(team);
         }
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.UpdateProject(Project project)
+        void ITeamService.UpdateProject(Project project, Team team)
         {
             Assert.IsValid(project);
-            var team = _teamRepository.FindBy(project.TeamId);
-            Assert.IsNotNull(team);
+            Assert.IsValid(team);
             _projectRepository.Update(project);
         }
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.RemoveProject(Project project)
+        void ITeamService.RemoveProject(Project project, Team team)
         {
             Assert.IsValid(project);
-            var team = _teamRepository.FindBy(project.TeamId);
+            Assert.IsValid(team);
+
+            //将团项目从团队中移除
             team.RemoveProject(project);
             _teamRepository.Update(team);
-        }
-        Project ITeamService.GetProject(int id)
-        {
-            return _projectRepository.FindBy(id);
+
+            //将与该项目相关的所有任务对该项目解除关联
+            var projectTasks = _taskRepository.FindBy(project);
+            foreach (var task in projectTasks)
+            {
+                task.RemoveFromProject(project);
+                _taskRepository.Update(task);
+            }
         }
         #endregion
     }

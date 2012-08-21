@@ -35,7 +35,7 @@ namespace Cooper.Model.Teams
         public DateTime CreateTime { get; private set; }
 
         protected Member() { this.CreateTime = DateTime.Now; }
-        public Member(string name, string email, Team team) : this()
+        internal Member(string name, string email, Team team) : this()
         {
             Assert.IsValid(team);
             this.SetName(name);
@@ -74,7 +74,7 @@ namespace Cooper.Model.Teams
         /// <summary>设置关联账号
         /// </summary>
         /// <param name="account"></param>
-        public void SetAssociateAccount(Account account)
+        public void Associate(Account account)
         {
             if (account != null)
             {

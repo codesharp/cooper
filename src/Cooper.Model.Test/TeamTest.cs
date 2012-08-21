@@ -33,12 +33,7 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void UpdateTeam()
         {
-            var team = new Team("Team 1");
-
-            Assert.AreNotEqual(DateTime.MinValue, team.CreateTime);
-
-            this._teamService.Create(team);
-            Assert.Greater(team.ID, 0);
+            var team = CreateSampleTeam();
 
             this.Evict(team);
 
@@ -59,12 +54,7 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void DeleteTeam()
         {
-            var team = new Team("Team 1");
-
-            Assert.AreNotEqual(DateTime.MinValue, team.CreateTime);
-
-            this._teamService.Create(team);
-            Assert.Greater(team.ID, 0);
+            var team = CreateSampleTeam();
 
             this.Evict(team);
 
@@ -83,95 +73,86 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateTeamMember()
         {
-            var team = new Team("Test Team");
-            this._teamService.Create(team);
+            var team = CreateSampleTeam();
+            var member = this._teamService.AddMember(RandomString(), RandomString(), team);
 
-            var member = new Member("TeamMember 1", RandomString() + "xuehua@163.com", team);
-
-            Assert.AreNotEqual(DateTime.MinValue, team.CreateTime);
+            Assert.Greater(member.ID, 0);
             Assert.AreEqual(team.ID, member.TeamId);
 
-            this._teamService.AddMember(member);
-            Assert.Greater(member.ID, 0);
-
             this.Evict(member);
+            this.Evict(team);
 
-            var member2 = this._teamService.GetMember(member.ID);
-            this.Evict(member2);
+            team = _teamService.GetTeam(team.ID);
+            var memberCreated = team.GetMember(member.ID);
 
-            Assert.AreEqual(member.Name, member2.Name);
-            Assert.AreEqual(member.Email, member2.Email);
-            Assert.AreEqual(member.TeamId, member2.TeamId);
-            Assert.AreEqual(FormatTime(member.CreateTime), FormatTime(member2.CreateTime));
+            Assert.AreEqual(member.Name, memberCreated.Name);
+            Assert.AreEqual(member.Email, memberCreated.Email);
+            Assert.AreEqual(member.TeamId, memberCreated.TeamId);
+            Assert.AreEqual(FormatTime(member.CreateTime), FormatTime(memberCreated.CreateTime));
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void UpdateTeamMember()
         {
-            var team = new Team("Test Team");
-            this._teamService.Create(team);
-
-            var member = new Member("TeamMember 1", RandomString() + "xuehua@163.com", team);
-            this._teamService.AddMember(member);
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(team);
 
             this.Evict(member);
             this.Evict(team);
 
-            var member2 = this._teamService.GetMember(member.ID);
+            team = _teamService.GetTeam(team.ID);
+            member = team.GetMember(member.ID);
 
-            member2.SetName(member.Name + "_updated");
-            member2.SetEmail(member.Email + "_updated");
+            member.SetName(member.Name + "_updated");
+            member.SetEmail(member.Email + "_updated");
 
-            this._teamService.UpdateMember(member2);
-            this.Evict(member2);
-            var member3 = this._teamService.GetMember(member2.ID);
-            this.Evict(member3);
-            Assert.AreEqual(member2.Name, member3.Name);
-            Assert.AreEqual(member2.Email, member3.Email);
-            Assert.AreEqual(member2.TeamId, member3.TeamId);
-            Assert.AreEqual(FormatTime(member2.CreateTime), FormatTime(member3.CreateTime));
+            this._teamService.UpdateMember(member, member.Email, team);
+
+            this.Evict(member);
+            this.Evict(team);
+
+            team = _teamService.GetTeam(team.ID);
+            var memberUpdated = team.GetMember(member.ID);
+
+            Assert.AreEqual(member.Name, memberUpdated.Name);
+            Assert.AreEqual(member.Email, memberUpdated.Email);
+            Assert.AreEqual(member.TeamId, memberUpdated.TeamId);
+            Assert.AreEqual(FormatTime(member.CreateTime), FormatTime(memberUpdated.CreateTime));
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void DeleteTeamMember()
         {
-            var team = new Team("Test Team");
-            this._teamService.Create(team);
-
-            var member = new Member("TeamMember 1", RandomString() + "xuehua@163.com", team);
-            this._teamService.AddMember(member);
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(team);
 
             this.Evict(member);
             this.Evict(team);
 
-            var member2 = this._teamService.GetMember(member.ID);
+            team = _teamService.GetTeam(team.ID);
+            member = team.GetMember(member.ID);
 
-            this._teamService.RemoveMember(member2);
+            this._teamService.RemoveMember(member, team);
 
-            this.Evict(member2);
-            var member3 = this._teamService.GetMember(member2.ID);
-            this.Evict(member3);
+            this.Evict(member);
+            this.Evict(team);
 
-            Assert.IsNull(member3);
+            team = _teamService.GetTeam(team.ID);
+            member = team.GetMember(member.ID);
+
+            Assert.IsNull(member);
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void GetTeamMembers()
         {
-            var team = new Team("Test Team");
-            this._teamService.Create(team);
+            var team = CreateSampleTeam();
 
-            var member1 = new Member("TeamMember 1", RandomString() + "xuehua1@163.com", team);
-            var member2 = new Member("TeamMember 2", RandomString() + "xuehua2@163.com", team);
-            var member3 = new Member("TeamMember 3", RandomString() + "xuehua3@163.com", team);
+            var member1 = AddSampleMemberToTeam(team);
+            var member2 = AddSampleMemberToTeam(team);
+            var member3 = AddSampleMemberToTeam(team);
 
-            this._teamService.AddMember(member1);
-            this._teamService.AddMember(member2);
-            this._teamService.AddMember(member3);
-
-            team = _teamService.GetTeam(team.ID);
-
-            var members = team.Members;
+            var members = _teamService.GetTeam(team.ID).Members;
 
             Assert.AreEqual(3, members.Count());
 
@@ -184,92 +165,85 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void CreateProject()
         {
-            var team = new Team("Test Team");
-            this._teamService.Create(team);
-
-            var project = new Project("Project 1", team);
-
-            Assert.AreNotEqual(DateTime.MinValue, team.CreateTime);
-            Assert.AreEqual(team.ID, project.TeamId);
-
-            this._teamService.AddProject(project);
+            var team = CreateSampleTeam();
+            var project = this._teamService.AddProject("Project 1", team);
             Assert.Greater(project.ID, 0);
+            Assert.AreEqual(team.ID, project.TeamId);
 
             this.Evict(project);
             this.Evict(team);
 
-            var project2 = this._teamService.GetProject(project.ID);
-            this.Evict(project2);
+            team = _teamService.GetTeam(team.ID);
+            var projectCreated = team.GetProject(project.ID);
 
-            Assert.AreEqual(project.Name, project2.Name);
-            Assert.AreEqual(project.IsPublic, project2.IsPublic);
-            Assert.AreEqual(project.TeamId, project2.TeamId);
-            Assert.AreEqual(FormatTime(project.CreateTime), FormatTime(project.CreateTime));
+            Assert.AreEqual(project.Name, projectCreated.Name);
+            Assert.AreEqual(project.IsPublic, projectCreated.IsPublic);
+            Assert.AreEqual(project.TeamId, projectCreated.TeamId);
+            Assert.AreEqual(FormatTime(project.CreateTime), FormatTime(projectCreated.CreateTime));
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void UpdateProject()
         {
-            var team = new Team("Test Team");
-            this._teamService.Create(team);
-
-            var project = new Project("Project 1", team);
-            this._teamService.AddProject(project);
+            var team = CreateSampleTeam();
+            var project = AddSampleProjectToTeam(team);
 
             this.Evict(project);
             this.Evict(team);
 
-            var project2 = this._teamService.GetProject(project.ID);
+            team = _teamService.GetTeam(team.ID);
+            project = team.GetProject(project.ID);
 
-            project2.SetName(project.Name + "_updated");
-            project2.SetIsPublic(!project.IsPublic);
+            Assert.IsNotNull(project);
 
-            this._teamService.UpdateProject(project2);
-            this.Evict(project2);
-            var project3 = this._teamService.GetProject(project2.ID);
-            this.Evict(project3);
+            project.SetName(project.Name + "_updated");
+            project.SetIsPublic(!project.IsPublic);
 
-            Assert.AreEqual(project2.Name, project3.Name);
-            Assert.AreEqual(project2.IsPublic, project3.IsPublic);
+            this._teamService.UpdateProject(project, team);
+
+            this.Evict(project);
+            this.Evict(team);
+
+            team = _teamService.GetTeam(team.ID);
+            var projectUpdated = team.GetProject(project.ID);
+
+            Assert.AreEqual(project.Name, projectUpdated.Name);
+            Assert.AreEqual(project.IsPublic, projectUpdated.IsPublic);
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void DeleteProject()
         {
-            var team = new Team("Test Team");
-            this._teamService.Create(team);
-
-            var project = new Project("Project 1", team);
-            this._teamService.AddProject(project);
+            var team = CreateSampleTeam();
+            var project = AddSampleProjectToTeam(team);
 
             this.Evict(project);
             this.Evict(team);
 
-            var project2 = this._teamService.GetProject(project.ID);
+            team = _teamService.GetTeam(team.ID);
+            project = team.GetProject(project.ID);
 
-            this._teamService.RemoveProject(project2);
+            Assert.IsNotNull(project);
 
-            this.Evict(project2);
+            this._teamService.RemoveProject(project, team);
 
-            var project3 = this._teamService.GetProject(project2.ID);
-            this.Evict(project3);
+            this.Evict(project);
+            this.Evict(team);
 
-            Assert.IsNull(project3);
+            team = _teamService.GetTeam(team.ID);
+            project = team.GetProject(project.ID);
+
+            Assert.IsNull(project);
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void GetProjects()
         {
-            var team = new Team("Test Team");
-            this._teamService.Create(team);
+            var team = CreateSampleTeam();
 
-            var project1 = new Project("Project 1", team);
-            var project2 = new Project("Project 2", team);
-            var project3 = new Project("Project 3", team);
-
-            this._teamService.AddProject(project1);
-            this._teamService.AddProject(project2);
-            this._teamService.AddProject(project3);
+            var project1 = AddSampleProjectToTeam(team);
+            var project2 = AddSampleProjectToTeam(team);
+            var project3 = AddSampleProjectToTeam(team);
 
             var projects = this._teamService.GetTeam(team.ID).Projects;
 
@@ -282,17 +256,16 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void ExtensionsTest()
         {
-            var team = new Team("Test Team");
-            this._teamService.Create(team);
+            var team = CreateSampleTeam();
 
-            var project = new Project("Project 1", team);
+            var project = AddSampleProjectToTeam(team);
             project["key"] = "abc";
-            this._teamService.AddProject(project);
+            this._teamService.UpdateProject(project, team);
 
             this.Evict(project);
             this.Evict(team);
 
-            project = this._teamService.GetProject(project.ID);
+            project = team.GetProject(project.ID);
             Assert.AreEqual("abc", project["key"]);
         }
         [Test]
@@ -300,30 +273,23 @@ namespace Cooper.Model.Test
         public void GetTeamsByAccount()
         {
             var account = CreateAccount();
-            var team1 = new Team("Test Team1");
-            var team2 = new Team("Test Team2");
-            var team3 = new Team("Test Team3");
 
-            this._teamService.Create(team1);
-            this._teamService.Create(team2);
-            this._teamService.Create(team3);
+            var team1 = CreateSampleTeam();
+            var team2 = CreateSampleTeam();
+            var team3 = CreateSampleTeam();
 
-            var member1 = new Member("Team Member1", RandomString() + "xuehua1@163.com", team1);
-            var member2 = new Member("Team Member2", RandomString() + "xuehua2@163.com", team2);
-            var member3 = new Member("Team Member3", RandomString() + "xuehua3@163.com", team3);
+            var member1 = AddSampleMemberToTeam(team1);
+            var member2 = AddSampleMemberToTeam(team2);
+            var member3 = AddSampleMemberToTeam(team3);
 
-            this._teamService.AddMember(member1);
-            this._teamService.AddMember(member2);
-            this._teamService.AddMember(member3);
+            member1 = team1.GetMember(member1.ID);
+            member3 = team3.GetMember(member3.ID);
 
-            member1 = this._teamService.GetMember(member1.ID);
-            member3 = this._teamService.GetMember(member3.ID);
+            member1.Associate(account);
+            member3.Associate(account);
 
-            member1.SetAssociateAccount(account);
-            member3.SetAssociateAccount(account);
-
-            this._teamService.UpdateMember(member1);
-            this._teamService.UpdateMember(member3);
+            this._teamService.UpdateMember(member1, member1.Email, team1);
+            this._teamService.UpdateMember(member3, member3.Email, team3);
 
             var teams = this._teamService.GetTeamsByAccount(account);
 
