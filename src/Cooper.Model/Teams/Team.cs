@@ -35,6 +35,22 @@ namespace Cooper.Model.Teams
             this.SetName(name);
         }
 
+        /// <summary>根据成员标识获取成员
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Member GetMember(int id)
+        {
+            return _members.SingleOrDefault(x => x.ID == id);
+        }
+        /// <summary>根据项目标识获取项目
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Project GetProject(int id)
+        {
+            return _projects.SingleOrDefault(x => x.ID == id);
+        }
         /// <summary>设置名称
         /// <remarks>
         /// 长度应小于255

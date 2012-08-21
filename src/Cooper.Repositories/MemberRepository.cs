@@ -16,9 +16,13 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("TeamId", team.ID))
                 .List<Member>();
         }
-        public Member FindBy(string email)
+        public Member FindBy(Team team, string email)
         {
-            return this.FindOne(Expression.Eq("Email", email));
+            return this.FindOne(
+                Expression.And(
+                    Expression.Eq("TeamId", team.ID),
+                    Expression.Eq("Email", email))
+                );
         }
     }
 }

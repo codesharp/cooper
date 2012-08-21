@@ -61,7 +61,7 @@ namespace Cooper.Model.Teams
         }
 
         protected Project() { this.CreateTime = DateTime.Now; }
-        public Project(string name, Team team) : this()
+        internal Project(string name, Team team) : this()
         {
             Assert.IsValid(team);
             this.SetName(name);
