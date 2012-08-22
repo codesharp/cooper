@@ -8,18 +8,19 @@
 
 //$scope.teamMode
 function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls, lang, params, account) {
-    debuger.debug('$routeParams', $routeParams);
-    debuger.debug('params', params);
-    var p = $routeParams.teamId ? $routeParams : params;
     //临时处理部分需要直接跳转的地址
     $scope.$on('$locationChangeStart', function (e, url) {
-        debuger.debug(url);
+        debuger.debug('change to ' + url);
         url = url.toLowerCase();
         if (url.indexOf('/account') >= 0)
             location.href = '/account';
         else if (url.indexOf('/per') >= 0)
             location.href = '/per';
     });
+
+    debuger.debug('$routeParams', $routeParams);
+    debuger.debug('params', params);
+    var p = $routeParams.teamId ? $routeParams : params;
     $rootScope.tmp = tmp;
     $rootScope.urls = urls;
     $rootScope.lang = lang;
@@ -46,8 +47,10 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
     // Team/Personal模式
     // *****************************************************
     var url = $location.$$url.toLowerCase();
+    //ie9等不支持html5Mode的浏览器的首次加载修正
+    url = url == '' ? location.href : url;
     $scope.teamMode = url.indexOf('/team') >= 0 || url.indexOf('/t') >= 0;
-    debuger.debug($scope.teamMode);
+    debuger.debug('teamMode', $scope.teamMode);
     // *****************************************************
     // Personal
     // *****************************************************

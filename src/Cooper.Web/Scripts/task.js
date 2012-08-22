@@ -35,7 +35,7 @@ Task.prototype = {
             this._getRowEl('subject').attr('placeholder', '#' + this.id());
     },
     _generateItem: function (d) { return $(render($('#tmp_region tbody').html(), d)); },
-    _generateDetail: function (d) { return $(render($('#tmp_detail').html(), d)); },
+    _generateDetail: function (d) { d.dueTimeId = 'dueTime'; return $(render($('#tmp_detail').html(), d)); },
     _parseDate: function (t) { return typeof (t) == 'string' ? $.datepicker.parseDate('yy-mm-dd', t) : t; },
     _parseDateString: function (t) { return (t.getMonth() + 1) + '-' + t.getDate(); },
     _parseFullDateString: function (t) { return t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate(); },
@@ -223,7 +223,7 @@ Task.prototype = {
         var k = 'assignee';
         this.update(k + 'Id', u ? u['id'] : null); //只更新assigneeId
         this['data'][k] = u; //直接更新assignee对象
-        this._getRowEl(k).html(u ? u['name'] : '')[u ? 'show' : 'hide']();
+        this._getRowEl(k).html(u ? u['name'] : '').css('display', u ? 'block' : 'none');
         this.setDetail_Assignee(u);
     },
     setProjects: function (ps) {

@@ -2,10 +2,12 @@
     Layout = null;
 }
 <!DOCTYPE html>
-<html ng-app="cooper">
+<html xmlns:ng="http://angularjs.org"  ng-app="cooper">
 <head>
     <meta charset="utf-8" />
     <title>{{title}} {{lang.suffix}}</title>
+    <meta name="fragment" content="!" />
+    <base href="/team" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @{ Html.RenderPartial("Style"); }
     <link type="text/css" rel="Stylesheet" href="@Url.Content("~/content/css/task.css")" />

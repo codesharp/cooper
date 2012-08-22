@@ -144,13 +144,14 @@ namespace Cooper.Web.Controllers
         /// </summary>
         /// <param name="teamId">团队标识</param>
         /// <param name="projectId">项目标识，可以为空</param>
+        /// <param name="memberId">成员标识，可以为空</param>
         /// <param name="changes"></param>
         /// <param name="by"></param>
         /// <param name="sorts"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult Sync(string teamId, string projectId, string changes, string by, string sorts)
+        public ActionResult Sync(string teamId, string projectId, string memberId, string changes, string by, string sorts)
         {
             var team = this.GetTeamOfCurrentAccount(teamId);
             var project = string.IsNullOrWhiteSpace(projectId) ? null : this.GetProject(team, projectId);
@@ -163,12 +164,16 @@ namespace Cooper.Web.Controllers
                         t.AddToProject(project);
                     return t;
                 }
-                , () => project == null
+                , () => project == null && string.IsNullOrWhiteSpace(memberId)
                 , o => this.GetSortKey(team, o)
                 , o =>
                 {
-                    project[by] = o;
-                    this._teamService.Update(team);
+                    //若有memberId则认为是查看member视图，此时不对排序数据做保存
+                    if (project != null)
+                    {
+                        project[by] = o;
+                        this._teamService.Update(team);
+                    }
                 }));
         }
         protected override void ApplyUpdate(Task t, ChangeLog c)
@@ -351,7 +356,7 @@ namespace Cooper.Web.Controllers
             }
             else if (member != null)
             {
-                editable = false;
+                //editable = false;
                 tasks = this.Parse(taskByMember(member), team);
                 //HACK:查询member任务时使用member对应账号的排序
                 if (member.AssociatedAccountId.HasValue)
