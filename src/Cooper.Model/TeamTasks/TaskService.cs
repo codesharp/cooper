@@ -38,11 +38,35 @@ namespace Cooper.Model.Teams
         /// <param name="team"></param>
         /// <returns></returns>
         IEnumerable<Task> GetTasksByTeam(Team team);
+        /// <summary>获取指定团队中分配给指定账号的或由该账号创建的任务
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetTasksByTeam(Team team, Account account);
+        /// <summary>获取指定团队中分配给指定账号的或由该账号创建的未完成的任务
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetIncompletedTasksByTeam(Team team, Account account);
         /// <summary>获取指定项目的所有任务
         /// </summary>
         /// <param name="project"></param>
         /// <returns></returns>
         IEnumerable<Task> GetTasksByProject(Project project);
+        /// <summary>获取指定项目中分配给指定账号的或由该账号创建的任务
+        /// </summary>
+        /// <param name="project"></param>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetTasksByProject(Project project, Account account);
+        /// <summary>获取指定项目中分配给指定账号的或由该账号创建的未完成的任务
+        /// </summary>
+        /// <param name="project"></param>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetIncompletedTasksByProject(Project project, Account account);
         /// <summary>获取指定团队成员的所有任务
         /// </summary>
         /// <param name="member"></param>
@@ -55,11 +79,13 @@ namespace Cooper.Model.Teams
     public class TaskService : ITaskService
     {
         private static ITaskRepository _repository;
+        private static ITeamRepository _teamRepository;
         private ILog _log;
 
         static TaskService()
         {
             _repository = RepositoryFactory.GetRepository<ITaskRepository, long, Task>();
+            _teamRepository = RepositoryFactory.GetRepository<ITeamRepository, int, Team>();
         }
         public TaskService(ILoggerFactory factory)
         {
@@ -94,9 +120,31 @@ namespace Cooper.Model.Teams
         {
             return _repository.FindBy(team);
         }
+        IEnumerable<Task> ITaskService.GetTasksByTeam(Team team, Account account)
+        {
+            return _repository.FindBy(team, account);
+        }
+        IEnumerable<Task> ITaskService.GetIncompletedTasksByTeam(Team team, Account account)
+        {
+            return _repository.FindBy(team, account, false);
+        }
         IEnumerable<Task> ITaskService.GetTasksByProject(Project project)
         {
-            return _repository.FindBy(project);
+            var team = _teamRepository.FindBy(project.TeamId);
+            Assert.IsNotNull(team);
+            return _repository.FindBy(team, project);
+        }
+        IEnumerable<Task> ITaskService.GetTasksByProject(Project project, Account account)
+        {
+            var team = _teamRepository.FindBy(project.TeamId);
+            Assert.IsNotNull(team);
+            return _repository.FindBy(team, project, account);
+        }
+        IEnumerable<Task> ITaskService.GetIncompletedTasksByProject(Project project, Account account)
+        {
+            var team = _teamRepository.FindBy(project.TeamId);
+            Assert.IsNotNull(team);
+            return _repository.FindBy(team, project, account, false);
         }
         IEnumerable<Task> ITaskService.GetTasksByTeamMember(Member member)
         {

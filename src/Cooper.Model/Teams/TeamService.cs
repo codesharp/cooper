@@ -131,15 +131,13 @@ namespace Cooper.Model.Teams
             Assert.IsValidKey(name);
             Assert.IsValidKey(email);
             Assert.IsValid(team);
-            var member = new Member(name, email, team);
-            member.Associate(account);
 
             //HACK:由于此时在事务中，并且member可能被更新，此时的查询会导致nh提供事务因此应该先查询再AddMember
             //这样做可以确保数据库所有的Member的Email唯一
             this._locker.Require<Member>();
-            Assert.IsNull(_teamRepository.FindMemberBy(team, member.Email));
+            Assert.IsNull(_teamRepository.FindMemberBy(team, email));
 
-            team.AddMember(member);
+            var member = team.AddMember(name, email, account);
             _teamRepository.Update(team);
 
             return member;
@@ -167,9 +165,10 @@ namespace Cooper.Model.Teams
         {
             Assert.IsValidKey(name);
             Assert.IsValid(team);
-            var project = new Project(name, team);
-            team.AddProject(project);
+
+            var project = team.AddProject(name);
             _teamRepository.Update(team);
+
             return project;
         }
         [Transaction(TransactionMode.Requires)]
@@ -183,7 +182,7 @@ namespace Cooper.Model.Teams
             _teamRepository.Update(team);
 
             //将与该项目相关的所有任务对该项目解除关联
-            var projectTasks = _taskRepository.FindBy(project);
+            var projectTasks = _taskRepository.FindBy(team, project);
             foreach (var task in projectTasks)
             {
                 task.RemoveFromProject(project);

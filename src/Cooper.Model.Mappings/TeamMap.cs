@@ -18,12 +18,12 @@ namespace Cooper.Model.Mappings
                 .KeyColumn("TeamId")
                 .LazyLoad()
                 .Cascade
-                .AllDeleteOrphan();
+                .SaveUpdate();
             HasMany(m => m.Projects)
                 .KeyColumn("TeamId")
                 .LazyLoad()
                 .Cascade
-                .AllDeleteOrphan();
+                .SaveUpdate();
         }
     }
 }

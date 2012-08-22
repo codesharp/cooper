@@ -67,13 +67,29 @@ namespace Cooper.Model.Teams
         }
         /// <summary>往团队中添加一个新成员
         /// </summary>
-        /// <param name="member"></param>
-        internal void AddMember(Member member)
+        /// <param name="name"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        internal Member AddMember(string name, string email)
         {
-            Assert.AreEqual(0, member.ID);
-            Assert.AreEqual(this.ID, member.TeamId);
-            Assert.IsFalse(IsMemberExist(member));
+            return AddMember(name, email, null);
+        }
+        /// <summary>往团队中添加一个新成员
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="email"></param>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        internal Member AddMember(string name, string email, Account account)
+        {
+            Assert.IsFalse(_members.Any(x => x.Email == email));
+            var member = new Member(name, email, this);
+            if (account != null)
+            {
+                member.Associate(account);
+            }
             _members.Add(member);
+            return member;
         }
         /// <summary>从团队中移除一个成员
         /// </summary>
@@ -88,10 +104,11 @@ namespace Cooper.Model.Teams
         /// <summary>往团队中添加一个新项目
         /// </summary>
         /// <param name="name"></param>
-        internal void AddProject(Project project)
+        internal Project AddProject(string name)
         {
-            Assert.AreEqual(this.ID, project.TeamId);
+            var project = new Project(name, this);
             _projects.Add(project);
+            return project;
         }
         /// <summary>从团队中移除一个项目
         /// </summary>
