@@ -38,11 +38,35 @@ namespace Cooper.Model.Teams
         /// <param name="team"></param>
         /// <returns></returns>
         IEnumerable<Task> GetTasksByTeam(Team team);
+        /// <summary>获取指定团队中分配给指定账号的或由该账号创建的任务
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetTasksByTeam(Team team, Account account);
+        /// <summary>获取指定团队中分配给指定账号的或由该账号创建的未完成的任务
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetIncompletedTasksByTeam(Team team, Account account);
         /// <summary>获取指定项目的所有任务
         /// </summary>
         /// <param name="project"></param>
         /// <returns></returns>
         IEnumerable<Task> GetTasksByProject(Project project);
+        /// <summary>获取指定项目中分配给指定账号的或由该账号创建的任务
+        /// </summary>
+        /// <param name="project"></param>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetTasksByProject(Project project, Account account);
+        /// <summary>获取指定项目中分配给指定账号的或由该账号创建的未完成的任务
+        /// </summary>
+        /// <param name="project"></param>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetIncompletedTasksByProject(Project project, Account account);
         /// <summary>获取指定团队成员的所有任务
         /// </summary>
         /// <param name="member"></param>
@@ -94,9 +118,25 @@ namespace Cooper.Model.Teams
         {
             return _repository.FindBy(team);
         }
+        IEnumerable<Task> ITaskService.GetTasksByTeam(Team team, Account account)
+        {
+            return _repository.FindBy(team, account);
+        }
+        IEnumerable<Task> ITaskService.GetIncompletedTasksByTeam(Team team, Account account)
+        {
+            return _repository.FindBy(team, account, false);
+        }
         IEnumerable<Task> ITaskService.GetTasksByProject(Project project)
         {
             return _repository.FindBy(project);
+        }
+        IEnumerable<Task> ITaskService.GetTasksByProject(Project project, Account account)
+        {
+            return _repository.FindBy(project, account);
+        }
+        IEnumerable<Task> ITaskService.GetIncompletedTasksByProject(Project project, Account account)
+        {
+            return _repository.FindBy(project, account, false);
         }
         IEnumerable<Task> ITaskService.GetTasksByTeamMember(Member member)
         {

@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using CodeSharp.Core.Castles;
+using Cooper.Model.Accounts;
 using Cooper.Model.Teams;
 using NHibernate.Criterion;
 
@@ -16,12 +17,56 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("TeamId", team.ID))
                 .List<Task>();
         }
+        public IEnumerable<Task> FindBy(Team team, Account account)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .Add(Expression.Eq("TeamId", team.ID))
+                .Add(Expression.Or(
+                        Expression.Eq("CreatorAccountId", account.ID),
+                        Expression.Eq("AssigneeId", account.ID)))
+                .List<Task>();
+        }
+        public IEnumerable<Task> FindBy(Team team, Account account, bool isCompleted)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .Add(Expression.Eq("TeamId", team.ID))
+                .Add(Expression.Eq("IsCompleted", isCompleted))
+                .Add(Expression.Or(
+                        Expression.Eq("CreatorAccountId", account.ID),
+                        Expression.Eq("AssigneeId", account.ID)))
+                .List<Task>();
+        }
         public IEnumerable<Task> FindBy(Project project)
         {
             return this.GetSession()
                 .CreateCriteria<Task>()
                 .CreateAlias("Projects", "projects")
                 .Add(Expression.Eq("projects.ID", project.ID))
+                .List<Task>();
+        }
+        public IEnumerable<Task> FindBy(Project project, Account account)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .CreateAlias("Projects", "projects")
+                .Add(Expression.Eq("projects.ID", project.ID))
+                .Add(Expression.Or(
+                        Expression.Eq("CreatorAccountId", account.ID),
+                        Expression.Eq("AssigneeId", account.ID)))
+                .List<Task>();
+        }
+        public IEnumerable<Task> FindBy(Project project, Account account, bool isCompleted)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .CreateAlias("Projects", "projects")
+                .Add(Expression.Eq("IsCompleted", isCompleted))
+                .Add(Expression.Eq("projects.ID", project.ID))
+                .Add(Expression.Or(
+                        Expression.Eq("CreatorAccountId", account.ID),
+                        Expression.Eq("AssigneeId", account.ID)))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Member member)
