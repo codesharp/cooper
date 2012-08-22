@@ -79,11 +79,13 @@ namespace Cooper.Model.Teams
     public class TaskService : ITaskService
     {
         private static ITaskRepository _repository;
+        private static ITeamRepository _teamRepository;
         private ILog _log;
 
         static TaskService()
         {
             _repository = RepositoryFactory.GetRepository<ITaskRepository, long, Task>();
+            _teamRepository = RepositoryFactory.GetRepository<ITeamRepository, int, Team>();
         }
         public TaskService(ILoggerFactory factory)
         {
@@ -132,11 +134,15 @@ namespace Cooper.Model.Teams
         }
         IEnumerable<Task> ITaskService.GetTasksByProject(Project project, Account account)
         {
-            return _repository.FindBy(project, account);
+            var team = _teamRepository.FindBy(project.TeamId);
+            Assert.IsNotNull(team);
+            return _repository.FindBy(team, project, account);
         }
         IEnumerable<Task> ITaskService.GetIncompletedTasksByProject(Project project, Account account)
         {
-            return _repository.FindBy(project, account, false);
+            var team = _teamRepository.FindBy(project.TeamId);
+            Assert.IsNotNull(team);
+            return _repository.FindBy(team, project, account, false);
         }
         IEnumerable<Task> ITaskService.GetTasksByTeamMember(Member member)
         {

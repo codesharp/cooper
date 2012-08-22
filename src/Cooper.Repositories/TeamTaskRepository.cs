@@ -1,6 +1,7 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System.Collections.Generic;
+using System.Linq;
 using CodeSharp.Core.Castles;
 using Cooper.Model.Accounts;
 using Cooper.Model.Teams;
@@ -22,9 +23,7 @@ namespace Cooper.Repositories
             return this.GetSession()
                 .CreateCriteria<Task>()
                 .Add(Expression.Eq("TeamId", team.ID))
-                .Add(Expression.Or(
-                        Expression.Eq("CreatorAccountId", account.ID),
-                        Expression.Eq("AssigneeId", account.ID)))
+                .Add(BuildCreatorAndAssigneeCriteria(team, account))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Team team, Account account, bool isCompleted)
@@ -33,9 +32,7 @@ namespace Cooper.Repositories
                 .CreateCriteria<Task>()
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("IsCompleted", isCompleted))
-                .Add(Expression.Or(
-                        Expression.Eq("CreatorAccountId", account.ID),
-                        Expression.Eq("AssigneeId", account.ID)))
+                .Add(BuildCreatorAndAssigneeCriteria(team, account))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Project project)
@@ -46,27 +43,23 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("projects.ID", project.ID))
                 .List<Task>();
         }
-        public IEnumerable<Task> FindBy(Project project, Account account)
+        public IEnumerable<Task> FindBy(Team team, Project project, Account account)
         {
             return this.GetSession()
                 .CreateCriteria<Task>()
                 .CreateAlias("Projects", "projects")
                 .Add(Expression.Eq("projects.ID", project.ID))
-                .Add(Expression.Or(
-                        Expression.Eq("CreatorAccountId", account.ID),
-                        Expression.Eq("AssigneeId", account.ID)))
+                .Add(BuildCreatorAndAssigneeCriteria(team, account))
                 .List<Task>();
         }
-        public IEnumerable<Task> FindBy(Project project, Account account, bool isCompleted)
+        public IEnumerable<Task> FindBy(Team team, Project project, Account account, bool isCompleted)
         {
             return this.GetSession()
                 .CreateCriteria<Task>()
                 .CreateAlias("Projects", "projects")
                 .Add(Expression.Eq("IsCompleted", isCompleted))
                 .Add(Expression.Eq("projects.ID", project.ID))
-                .Add(Expression.Or(
-                        Expression.Eq("CreatorAccountId", account.ID),
-                        Expression.Eq("AssigneeId", account.ID)))
+                .Add(BuildCreatorAndAssigneeCriteria(team, account))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Member member)
@@ -75,6 +68,17 @@ namespace Cooper.Repositories
                 .CreateCriteria<Task>()
                 .Add(Expression.Eq("AssigneeId", member.ID))
                 .List<Task>();
+        }
+
+        private AbstractCriterion BuildCreatorAndAssigneeCriteria(Team team, Account account)
+        {
+            AbstractCriterion criteria = Expression.Eq("CreatorAccountId", account.ID);
+            Member member = team.Members.SingleOrDefault(x => x.AssociatedAccountId != null && x.AssociatedAccountId.Value == account.ID);
+            if (member != null)
+            {
+                criteria = Expression.Or(Expression.Eq("CreatorAccountId", account.ID), Expression.Eq("AssigneeId", member.ID));
+            }
+            return criteria;
         }
     }
 }
