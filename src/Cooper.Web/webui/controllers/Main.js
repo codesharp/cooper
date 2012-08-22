@@ -4,8 +4,10 @@
 /// <reference path="../../Scripts/common.js" />
 /// <reference path="../../Scripts/lang.js" />
 
+"use strict"
+
 //$scope.teamMode
-function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls, lang, params) {
+function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls, lang, params, account) {
     debuger.debug('$routeParams', $routeParams);
     debuger.debug('params', params);
     var p = $routeParams.teamId ? $routeParams : params;
@@ -21,8 +23,6 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
     $rootScope.tmp = tmp;
     $rootScope.urls = urls;
     $rootScope.lang = lang;
-    //TODO:当前用户
-    $rootScope.user = { id: 1, name: 'Xu Huang', email: 'wskyhx@gmail.com' };
 
     // *****************************************************
     // 大小模式
@@ -62,6 +62,7 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         debuger.assert(data);
         $scope.teams = data;
         debuger.debug('teams', $scope.teams);
+
         // *****************************************************
         // 设置rootScope 必须有一个team
         // *****************************************************
@@ -73,12 +74,18 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
                 $location.path(urls.team($scope.teams[0]));
             return;
         }
-        debuger.debug('current projectId=', p.projectId);
+
+        //project
         $rootScope.project = findBy($scope.team.projects, 'id', p.projectId);
-        debuger.debug('current project', $scope.project);
-        debuger.debug('current memberId=', p.memberId);
+        debuger.debug('projectId=', p.projectId);
+        debuger.debug('project', $scope.project);
+        //member
         $rootScope.member = findBy($scope.team.members, 'id', p.memberId);
-        debuger.debug('current member', $scope.member);
+        debuger.debug('memberId=', p.memberId);
+        debuger.debug('member', $scope.member);
+        //currentMember
+
+
         //html.title
         if ($rootScope.project)
             $rootScope.title = $rootScope.project.name;
@@ -121,18 +128,21 @@ function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //team detail
-function TeamDetailCtrl($scope, $http, $element, $location, urls) {
+function TeamDetailCtrl($scope, $http, $element, $location, urls, account) {
     $scope.initTab = function () { $scope.tab = $scope.member ? 'm' : 'p'; }
     $scope.$on('ready_team', $scope.initTab);
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
+    $scope.memberUrl = function (m) { return m.accountId == account.id ? urls.team($scope.team) : urls.member($scope.team, m); }
     $scope.showModify = function () { $scope.tab2 = 's'; $element.find('div.modal').modal('show'); }
     $scope.showMembers = function () { $scope.tab2 = 'm'; $element.find('div.modal').modal('show'); }
-    $scope.removeMember = function (id) {
-        debuger.assert(id != $scope.user.id);
-        $http.post('/team/DeleteMember', { teamId: $scope.team.id, memberId: id }).success(function () {
-            $scope.team.members = $.grep($scope.team.members, function (n) { return n.id != id });
+    $scope.canRemove = function (m) { return m.accountId != account.id; }
+    $scope.removeMember = function (m) {
+        //不能删除当前用户所对应的member
+        debuger.assert($scope.canRemove(m));
+        $http.post('/team/DeleteMember', { teamId: $scope.team.id, memberId: m.id }).success(function () {
+            $scope.team.members = $.grep($scope.team.members, function (n) { return n.id != m.id });
             //若删除的是当前member，跳转到team
-            if ($scope.member && $scope.member.id == id)
+            if ($scope.member && $scope.member.id == m.id)
                 $location.path(urls.team($scope.team));
         });
     }

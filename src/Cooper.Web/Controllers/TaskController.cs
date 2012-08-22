@@ -13,7 +13,7 @@ namespace Cooper.Web.Controllers
 {
     public abstract class TaskController : BaseController
     {
-        protected static readonly Sort[] _empty = new Sort[0];
+        protected static readonly Sort[] _emptySorts = new Sort[0];
         protected static readonly Serializer _serializer = new Serializer();
         protected static readonly string TEMP = "temp_";
         protected static readonly string SORT_PRIORITY = "ByPriority";
@@ -111,7 +111,7 @@ namespace Cooper.Web.Controllers
         {
             return !string.IsNullOrWhiteSpace(a.GetProfile(key))
                 ? _serializer.JsonDeserialize<Sort[]>(a.GetProfile(key))
-                : _empty;
+                : _emptySorts;
         }
         /// <summary>用于接收终端的变更同步数据
         /// </summary>

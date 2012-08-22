@@ -18,7 +18,7 @@
         <div class="tab-pane {{activeClass(tab=='m')}}">
             <ul class="nav nav-list">
                 <li class="nav-header" ng-click="showMembers()"><i class="icon-plus"></i>{{lang.add_member}}</li>
-                <li ng-repeat="m in team.members" class="{{activeClass(m.id==member.id)}}"><a href="{{urls.member(team,m)}}">{{m.name}}</a></li>
+                <li ng-repeat="m in team.members" class="{{activeClass(m.id==member.id)}}"><a href="{{memberUrl(m)}}">{{m.name}}</a></li>
             </ul>
             <br />
         </div>
@@ -61,7 +61,7 @@
                         <li ng-repeat="m in team.members"><a>
                             <code>{{m.email}}</code>
                             {{m.name}}
-                            <button type="button" class="close" onclick="return false;" ng-show="m.id!=user.id" ng-click="removeMember(m.id)">x</button></a>
+                            <button type="button" class="close" onclick="return false;" ng-show="canRemove(m)" ng-click="removeMember(m.id)">x</button></a>
                         </li>
                     </ul>
                     <form name="formTeamMembers" class="form-inline" ng-controller="TeamMembersFormCtrl">

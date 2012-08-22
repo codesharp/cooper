@@ -5,6 +5,8 @@
 /// <reference path="../../Scripts/lang.js" />
 /// <reference path="../controllers/Main.js" />
 
+"use strict"
+
 if (!window.url_root)
     url_root = '';
 if (!window.url_root_webui)
@@ -31,7 +33,10 @@ cooper.value('urls', {
     project: function (t, p) { if (t && p) return url_root + '/t/' + t.id + '/p/' + p.id; }
 });
 
+//当前路由参数
 cooper.value('params', { teamId: currentTeamId, projectId: currentProjectId, memberId: currentMemberId });
+//当前用户
+cooper.value('account', currentAccount);
 
 cooper.config([
     '$routeProvider',

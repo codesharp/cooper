@@ -34,6 +34,7 @@ namespace Cooper.Web.Controllers
 
         public ActionResult Index(string teamId, string projectId, string memberId)
         {
+            ViewBag.Account =
             ViewBag.TeamId = teamId;
             ViewBag.ProjectId = projectId;
             ViewBag.MemberId = memberId;
@@ -48,6 +49,7 @@ namespace Cooper.Web.Controllers
             return this.GetBy(teamId
                 , projectId
                 , memberId
+                , this.GetTasksByAccount
                 , this.GetTasksByMember
                 , this.GetTasksByProject
                 , this.ParseSortsByPriority
@@ -60,6 +62,7 @@ namespace Cooper.Web.Controllers
             return this.GetBy(teamId
                 , projectId
                 , memberId
+                , this.GetIncompletedTasksByAccount
                 , this.GetIncompletedTasksByMember
                 , this.GetIncompletedTasksByProject
                 , this.ParseSortsByPriority
@@ -72,6 +75,7 @@ namespace Cooper.Web.Controllers
             return this.GetBy(teamId
                 , projectId
                 , memberId
+                , this.GetTasksByAccount
                 , this.GetTasksByMember
                 , this.GetTasksByProject
                 , this.ParseSortsByDueTime
@@ -84,6 +88,7 @@ namespace Cooper.Web.Controllers
             return this.GetBy(teamId
                 , projectId
                 , null
+                , this.GetTasksByAccount
                 , this.GetTasksByMember
                 , this.GetTasksByProject
                 , this.ParseSortsByDueTime
@@ -110,7 +115,7 @@ namespace Cooper.Web.Controllers
         [HttpPut]
         public ActionResult UpdateTeam(string id, string name)
         {
-            var t = this.GetTeamByCurrent(id);
+            var t = this.GetTeamOfCurrentAccount(id);
             t.SetName(name);
             this._teamService.Update(t);
             return Json(true);
@@ -147,7 +152,7 @@ namespace Cooper.Web.Controllers
         [ValidateInput(false)]
         public ActionResult Sync(string teamId, string projectId, string changes, string by, string sorts)
         {
-            var team = this.GetTeamByCurrent(teamId);
+            var team = this.GetTeamOfCurrentAccount(teamId);
             var project = string.IsNullOrWhiteSpace(projectId) ? null : this.GetProject(team, projectId);
 
             return Json(this.Sync(changes, by, sorts
@@ -176,7 +181,10 @@ namespace Cooper.Web.Controllers
             switch (c.Name.ToLower())
             {
                 case "assigneeid":
-                    teamTask.AssignTo(this.GetMember(team, c.Value));
+                    if (string.IsNullOrWhiteSpace(c.Value))
+                        teamTask.RemoveAssignee();
+                    else
+                        teamTask.AssignTo(this.GetMember(team, c.Value));
                     break;
                 case "projects":
                     var p = this.GetProject(team, c.Value);
@@ -188,13 +196,10 @@ namespace Cooper.Web.Controllers
             }
         }
 
-        private Teams.Team GetTeamByCurrent(string teamId)
+        private Teams.Team GetTeamOfCurrentAccount(string teamId)
         {
             var t = this.GetTeam(teamId);
-            var a = this.Context.Current;
-            if (!t.Members.Any(o =>
-                o.AssociatedAccountId.HasValue
-                && o.AssociatedAccountId == a.ID))
+            if (!this.IsTeamOfCurrentAccount(t))
                 throw new CooperknownException(this.Lang().you_are_not_the_member_of_team);
             return t;
         }
@@ -230,6 +235,21 @@ namespace Cooper.Web.Controllers
             if (m.TeamId != team.ID)
                 throw new CooperknownException(this.Lang().member_not_match_team);
             return m;
+        }
+        private bool IsTeamOfCurrentAccount(Teams.Team team)
+        {
+            var a = this.Context.Current;
+            return team.Members.Any(o =>
+                o.AssociatedAccountId.HasValue && o.AssociatedAccountId == a.ID);
+        }
+        private IEnumerable<Teams.Task> GetTasksByAccount(Teams.Team team, Account account)
+        {
+            return this._teamTaskService.GetTasksByTeam(team);
+        }
+        private IEnumerable<Teams.Task> GetIncompletedTasksByAccount(Teams.Team team, Account account)
+        {
+            //UNDONE:incompleted查询
+            return this._teamTaskService.GetTasksByTeam(team);
         }
         private IEnumerable<Teams.Task> GetTasksByMember(Teams.Member member)
         {
@@ -272,22 +292,29 @@ namespace Cooper.Web.Controllers
             {
                 id = member.ID.ToString(),
                 name = member.Name,
-                email = member.Email
+                email = member.Email,
+                accountId = member.AssociatedAccountId.HasValue ? member.AssociatedAccountId.Value.ToString() : null
             };
         }
         private TeamTaskInfo[] Parse(IEnumerable<Teams.Task> tasks, Teams.Team team)
         {
+            var a = this.Context.Current;
             Teams.Member m;
+            //TODO:改用automapper做实体映射
             return this.ParseTasks(() => new TeamTaskInfo(), (task, taskInfo) =>
             {
                 var teamTask = task as Teams.Task;
                 var teamTaskInfo = taskInfo as TeamTaskInfo;
-
+                //执行人
                 if (teamTask.AssigneeId.HasValue
                     && (m = team.GetMember(teamTask.AssigneeId.Value)) != null)
                     teamTaskInfo.Assignee = this.Parse(m);
-
+                //项目列表
                 teamTaskInfo.Projects = teamTask.Projects.Select(o => this.Parse(o)).ToArray();
+                //是否可编辑 创建者或被分配者（执行人）
+                teamTaskInfo.Editable = teamTask.CreatorAccountId == a.ID
+                    || (teamTaskInfo.Assignee != null
+                    && teamTaskInfo.Assignee.accountId == a.ID.ToString());
             }, tasks.Select(o => o as Task)
             .ToArray())
             .Select(o => o as TeamTaskInfo)
@@ -297,38 +324,57 @@ namespace Cooper.Web.Controllers
         private ActionResult GetBy(string teamId
             , string projectId
             , string memberId
+            , Func<Teams.Team, Account, IEnumerable<Teams.Task>> taskByAccount//获取用户在指定team任务
             , Func<Teams.Member, IEnumerable<Teams.Task>> taskByMember//获取成员在指定team任务
             , Func<Teams.Project, IEnumerable<Teams.Task>> taskByProject//获取项目内的所有任务
-            , Func<Account, Teams.Team, TaskInfo[], Sort[]> sortByTeam
-            , Func<Teams.Project, TaskInfo[], Sort[]> sortByProject)
+            , Func<Account, Teams.Team, TaskInfo[], Sort[]> sortsOfAccount//获取用户在指定team的排序信息
+            , Func<Teams.Project, TaskInfo[], Sort[]> sortsOfProject)//获取项目的排序信息
         {
-            var account = this.Context.Current;
+            var current = this.Context.Current;
             var team = this.GetTeam(teamId);
             var project = !string.IsNullOrWhiteSpace(projectId)
                 ? this.GetProject(team, projectId)
                 : null;
-            var accountMember = team.Members.FirstOrDefault(o =>
-                o.AssociatedAccountId.HasValue
-                && o.AssociatedAccountId == account.ID);
-            //memberId为空则取当前用户在团队内的member信息
             var member = !string.IsNullOrWhiteSpace(memberId)
                 ? this.GetMember(team, memberId)
-                : accountMember;
-            //当前用户是该团队成员
-            var editable = accountMember != null;
+                : null;
 
-            //TODO:改用automapper做实体映射
-            var tasks = project == null
-                ? this.Parse(taskByMember(member), team)
-                : this.Parse(taskByProject(project), team);
+            TeamTaskInfo[] tasks;
+            Sort[] sorts = null;
+            //当前用户是该团队成员则处于可编辑状态
+            var editable = this.IsTeamOfCurrentAccount(team);
+
+            if (project != null)
+            {
+                tasks = this.Parse(taskByProject(project), team);
+                sorts = sortsOfProject(project, tasks);
+            }
+            else if (member != null)
+            {
+                editable = false;
+                tasks = this.Parse(taskByMember(member), team);
+                //HACK:查询member任务时使用member对应账号的排序
+                if (member.AssociatedAccountId.HasValue)
+                {
+                    //查看指定成员任务时只能编辑属于当前用户的成员
+                    //editable = member.AssociatedAccountId == current.ID;
+                    sorts = sortsOfAccount(this._accountService
+                        .GetAccount(member.AssociatedAccountId.Value), team, tasks);
+                }
+                else
+                    sorts = sortsOfAccount(current, team, tasks);
+            }
+            else
+            {
+                tasks = this.Parse(taskByAccount(team, current), team);
+                sorts = sortsOfAccount(current, team, tasks);
+            }
 
             return Json(new
             {
                 Editable = editable,
                 List = tasks,
-                Sorts = project == null
-                    ? sortByTeam(account, team, tasks)
-                    : sortByProject(project, tasks),
+                Sorts = sorts ?? _emptySorts,
             });
         }
         private Sort[] ParseSortsByPriority(Account account, Teams.Team team, params TaskInfo[] tasks)
@@ -355,7 +401,7 @@ namespace Cooper.Web.Controllers
         {
             return !string.IsNullOrWhiteSpace(p[by])
                 ? _serializer.JsonDeserialize<Sort[]>(p[by])
-                : _empty;
+                : _emptySorts;
         }
         private string GetSortKey(Teams.Team t, string by)
         {
@@ -377,6 +423,7 @@ namespace Cooper.Web.Controllers
         public string id { get; set; }
         public string name { get; set; }
         public string email { get; set; }
+        public string accountId { get; set; }
     }
     public class TeamProjectInfo
     {

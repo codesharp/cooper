@@ -3,6 +3,8 @@
 ///<reference path="task.js" />
 ///<reference path="task_common.js" />
 
+"use strict"
+
 //取代taskpage.js
 function TaskListCtrl($scope, $element, $routeParams) {
     //page内全局元素

@@ -239,7 +239,7 @@ namespace Cooper.Web.Controllers
         {
             return !string.IsNullOrWhiteSpace(a[by])
                 ? _serializer.JsonDeserialize<Sort[]>(a[by])
-                : _empty;
+                : _emptySorts;
         }
         private void Prepare()
         {
