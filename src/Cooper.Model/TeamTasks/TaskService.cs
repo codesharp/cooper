@@ -130,7 +130,9 @@ namespace Cooper.Model.Teams
         }
         IEnumerable<Task> ITaskService.GetTasksByProject(Project project)
         {
-            return _repository.FindBy(project);
+            var team = _teamRepository.FindBy(project.TeamId);
+            Assert.IsNotNull(team);
+            return _repository.FindBy(team, project);
         }
         IEnumerable<Task> ITaskService.GetTasksByProject(Project project, Account account)
         {

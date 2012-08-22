@@ -182,7 +182,7 @@ namespace Cooper.Model.Teams
             _teamRepository.Update(team);
 
             //将与该项目相关的所有任务对该项目解除关联
-            var projectTasks = _taskRepository.FindBy(project);
+            var projectTasks = _taskRepository.FindBy(team, project);
             foreach (var task in projectTasks)
             {
                 task.RemoveFromProject(project);
