@@ -14,5 +14,6 @@ namespace Cooper.Model.Teams
     public interface ITeamRepository : IRepository<int, Team>
     {
         IEnumerable<Team> FindBy(Account account);
+        Member FindMemberBy(Team team, string email);
     }
 }

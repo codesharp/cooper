@@ -78,17 +78,13 @@ namespace Cooper.Model.Teams
     {
         private static ITeamRepository _teamRepository;
         private static ITaskRepository _taskRepository;
-        private static IMemberRepository _memberRepository;
-        private static IProjectRepository _projectRepository;
         private ILockHelper _locker;
         private ILog _log;
 
         static TeamService()
         {
             _teamRepository = RepositoryFactory.GetRepository<ITeamRepository, int, Team>();
-            _memberRepository = RepositoryFactory.GetRepository<IMemberRepository, int, Member>();
             _taskRepository = RepositoryFactory.GetRepository<ITaskRepository, long, Task>();
-            _projectRepository = RepositoryFactory.GetRepository<IProjectRepository, int, Project>();
         }
         public TeamService(ILoggerFactory factory, ILockHelper locker)
         {
@@ -141,7 +137,7 @@ namespace Cooper.Model.Teams
             //HACK:由于此时在事务中，并且member可能被更新，此时的查询会导致nh提供事务因此应该先查询再AddMember
             //这样做可以确保数据库所有的Member的Email唯一
             this._locker.Require<Member>();
-            Assert.IsNull(_memberRepository.FindBy(team, member.Email));
+            Assert.IsNull(_teamRepository.FindMemberBy(team, member.Email));
 
             team.AddMember(member);
             _teamRepository.Update(team);

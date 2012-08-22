@@ -10,13 +10,8 @@ using Cooper.Model.Accounts;
 namespace Cooper.Model.Teams
 {
     /// <summary>团队成员模型
-    /// <remarks>
-    /// 团队成员在目前的Cooper模型中，完全由团队模型管理，团队成员的概念只存在于团队上下文。
-    /// 而目前仍然将团队成员设计为独立聚合根，是因为团队成员会直接和任务关联；
-    /// 考虑到聚合根不能引用其他聚合根内的实体，所以将团队成员设计为聚合根；
-    /// </remarks>
     /// </summary>
-    public class Member : EntityBase<int>, IAggregateRoot
+    public class Member : EntityBase<int>
     {
         /// <summary>获取团队成员显示的名字
         /// </summary>

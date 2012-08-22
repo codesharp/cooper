@@ -67,8 +67,7 @@
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="Lock.cs" />
-    <Compile Include="Projects\IProjectRepository.cs" />
-    <Compile Include="Projects\Project.cs" />
+    <Compile Include="Teams\Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskFolders\ITaskFolderRepository.cs" />
     <Compile Include="TaskFolders\PersonalTaskFolder.cs" />
@@ -81,8 +80,7 @@
     <Compile Include="Accounts\Account.cs" />
     <Compile Include="Tasks\Task.cs" />
     <Compile Include="Tasks\TaskService.cs" />
-    <Compile Include="Members\IMemberRepository.cs" />
-    <Compile Include="Members\Member.cs" />
+    <Compile Include="Teams\Member.cs" />
     <Compile Include="Teams\ITeamRepository.cs" />
     <Compile Include="Teams\TeamService.cs" />
     <Compile Include="Teams\Team.cs" />
