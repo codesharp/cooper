@@ -1,8 +1,9 @@
 ﻿@{ 
     Layout = null;
+    var account = ViewBag.Account as Cooper.Model.Accounts.Account;
 }
 <!DOCTYPE html>
-<html xmlns:ng="http://angularjs.org"  ng-app="cooper">
+<html ng-app="cooper">
 <head>
     <meta charset="utf-8" />
     <title>{{title}} {{lang.suffix}}</title>
@@ -17,16 +18,20 @@
         <div class="row-fluid">
             <!--leftbar-->
             <div class="span2" style="padding: 5px; margin: 0;" ng-show="!mini&&!full">
-                @*<div ng-include="tmp.left"></div>*@
                 @Html.Raw(File.ReadAllText(Server.MapPath("~/webui/left.htm")))
                 <br />
-                @*<div ng-include="tmp.team_list" ng-controller="TeamListCtrl"></div>*@
                 <div ng-controller="TeamListCtrl">@Html.Raw(File.ReadAllText(Server.MapPath("~/webui/team/list.htm")))</div>
                 <br />
-                @*<div ng-include="tmp.team_detail" ng-controller="TeamDetailCtrl" ng-show="team"></div>*@
                 <div ng-controller="TeamDetailCtrl" ng-show="team">@Html.Raw(File.ReadAllText(Server.MapPath("~/webui/team/detail.htm")))</div>
             </div>
-            <ng:view></ng:view>
+            <!--Main-->
+            <div id="main" ng-class="class_tasklist">
+                <ng:view></ng:view>
+            </div>
+            <!--Detail-->
+            <div id="detail_wrapper" ng-class="class_taskdetail">
+                @Html.Raw(File.ReadAllText(Server.MapPath("~/webui/task/detail.htm")))
+            </div>
         </div>
     </div>
 
@@ -39,7 +44,7 @@
         var currentTeamId='@ViewBag.TeamId';
         var currentProjectId = '@ViewBag.ProjectId';
         var currentMemberId = '@ViewBag.MemberId';
-        var currentAccount={ id:1,name:'',email:'' };
+        var currentAccount={ id:@account.ID,name:'@account.Name' };
     </script>
 
     <script type="text/javascript" src="@Url.Content("~/scripts/task.js")"></script>

@@ -34,7 +34,13 @@ cooper.value('urls', {
 });
 
 //当前路由参数
-cooper.value('params', { teamId: currentTeamId, projectId: currentProjectId, memberId: currentMemberId });
+//TODO:调整为解析location.href
+cooper.value('params', {
+    taskFolderId: 0,
+    teamId: currentTeamId,
+    projectId: currentProjectId, 
+    memberId: currentMemberId
+});
 //当前用户
 cooper.value('account', currentAccount);
 
@@ -42,7 +48,7 @@ cooper.config([
     '$routeProvider',
     '$locationProvider',
     function ($routeProvider, $locationProvider) {
-        var url = url_root_webui + '/team/full.htm';
+        var url = url_root_webui + '/task/list.htm';
         $routeProvider.
         when('/t/:teamId', {
             templateUrl: url,

@@ -61,7 +61,7 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
     // *****************************************************
     // Team
     // *****************************************************
-    $http.get('/team/getteams').success(function (data, status, headers, config) {
+    $http.get('/team/getteams?_=' + new Date().getTime()).success(function (data, status, headers, config) {
         debuger.assert(data);
         $scope.teams = data;
         debuger.debug('teams', $scope.teams);
@@ -88,7 +88,6 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         debuger.debug('member', $scope.member);
         //currentMember
 
-
         //html.title
         if ($rootScope.project)
             $rootScope.title = $rootScope.project.name;
@@ -98,7 +97,7 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
             $rootScope.title = $rootScope.team.name;
         $rootScope.title = $rootScope.title == $rootScope.team.name ? $rootScope.title : $rootScope.title + ' - ' + $rootScope.team.name;
         //data ready
-        $scope.$broadcast('ready_team');
+        $rootScope.$broadcast('ready_team');
     });
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

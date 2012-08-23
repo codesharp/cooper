@@ -34,7 +34,7 @@ namespace Cooper.Web.Controllers
 
         public ActionResult Index(string teamId, string projectId, string memberId)
         {
-            ViewBag.Account =
+            ViewBag.Account = this.Context.Current;
             ViewBag.TeamId = teamId;
             ViewBag.ProjectId = projectId;
             ViewBag.MemberId = memberId;

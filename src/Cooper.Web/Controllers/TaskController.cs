@@ -172,7 +172,7 @@ namespace Cooper.Web.Controllers
                 try
                 {
                     //临时记录无需删除
-                    if (c.Type == ChangeType.Delete && c.ID.StartsWith(TEMP))
+                    if (this.IsTaskDelete(c) && c.ID.StartsWith(TEMP))
                         continue;
 
                     Task t;
@@ -193,22 +193,25 @@ namespace Cooper.Web.Controllers
                         continue;
                     }
 
-                    if (c.Type == ChangeType.Update)
+                    if (this.IsTaskDelete(c))
+                        this._taskService.Delete(t);
+                    else
                     {
                         this.ApplyUpdate(t, c);
                         this._taskService.Update(t);
-
-                        if (this._log.IsDebugEnabled)
-                            this._log.DebugFormat("为任务#{0}执行变更{1}|{2}|{3}", t.ID, c.ID, c.Name, c.Value);
                     }
-                    else if (c.Type == ChangeType.Delete)
-                        this._taskService.Delete(t);
+                    if (this._log.IsDebugEnabled)
+                        this._log.DebugFormat("为任务#{0}执行变更{1}|{2}|{3}|{4}", t.ID, c.Type, c.ID, c.Name, c.Value);
                 }
                 catch (Exception e)
                 {
                     this._log.Error(string.Format("执行变更时异常：{0}|{1}|{2}", c.ID, c.Name, c.Value), e);
                 }
             }
+        }
+        private bool IsTaskDelete(ChangeLog c)
+        {
+            return c.Type == ChangeType.Delete && string.IsNullOrWhiteSpace(c.Name);
         }
         private void UpdateSorts(Account account
             , string by
