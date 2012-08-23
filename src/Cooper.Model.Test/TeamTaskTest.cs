@@ -233,5 +233,65 @@ namespace Cooper.Model.Test
             var account2roject2IncompletedTasks = this._teamTaskService.GetIncompletedTasksByProject(project2, account2);
             Assert.AreEqual(0, account2roject2IncompletedTasks.Count());
         }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void RemoveTaskAssigneeTest()
+        {
+            var account = this.CreateAccount();
+            var team = CreateSampleTeam();
+            var member1 = AddSampleMemberToTeam(team);
+            var member2 = AddSampleMemberToTeam(team);
+            var task = new Task(account, team);
+            task.AssignTo(member1);
+            this._teamTaskService.Create(task);
+            this.Evict(task);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNotNull(task.AssigneeId);
+            Assert.AreEqual(member1.ID, task.AssigneeId.Value);
+
+            task.AssignTo(member2);
+            this._teamTaskService.Update(task);
+            this.Evict(task);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNotNull(task.AssigneeId);
+            Assert.AreEqual(member2.ID, task.AssigneeId.Value);
+
+            task.RemoveAssignee();
+            this._teamTaskService.Update(task);
+            this.Evict(task);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNull(task.AssigneeId);
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void RemoveTaskFromProjectTest()
+        {
+            var account = this.CreateAccount();
+            var team = CreateSampleTeam();
+            var project1 = AddSampleProjectToTeam(team);
+            var project2 = AddSampleProjectToTeam(team);
+            var task = new Task(account, team);
+            task.AddToProject(project1);
+            task.AddToProject(project2);
+            this._teamTaskService.Create(task);
+            this.Evict(task);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.AreEqual(2, task.Projects.Count());
+            Assert.IsTrue(task.Projects.Any(x => x.ID == project1.ID));
+            Assert.IsTrue(task.Projects.Any(x => x.ID == project2.ID));
+
+            task.RemoveFromProject(project1);
+            this._teamTaskService.Update(task);
+            this.Evict(task);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.AreEqual(1, task.Projects.Count());
+            Assert.IsTrue(task.Projects.Any(x => x.ID == project2.ID));
+
+            task.RemoveFromProject(project2);
+            this._teamTaskService.Update(task);
+            this.Evict(task);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.AreEqual(0, task.Projects.Count());
+        }
     }
 }

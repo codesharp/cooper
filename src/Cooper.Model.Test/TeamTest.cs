@@ -143,6 +143,37 @@ namespace Cooper.Model.Test
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void ClearTaskAssigneeAfterTeamMemberRemovedTest()
+        {
+            var account = CreateAccount();
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(team);
+            var task = new Task(account, team);
+            task.AssignTo(member);
+            this._teamTaskService.Create(task);
+            this.Evict(member);
+            this.Evict(team);
+            this.Evict(task);
+            team = _teamService.GetTeam(team.ID);
+            member = team.GetMember(member.ID);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNotNull(task);
+            Assert.IsNotNull(task.AssigneeId);
+            Assert.AreEqual(member.ID, task.AssigneeId.Value);
+
+            this._teamService.RemoveMember(member, team);
+            this.Evict(member);
+            this.Evict(team);
+            this.Evict(task);
+            team = _teamService.GetTeam(team.ID);
+            member = team.GetMember(member.ID);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNull(member);
+            Assert.IsNotNull(task);
+            Assert.IsNull(task.AssigneeId);
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void GetTeamMembers()
         {
             var team = CreateSampleTeam();
@@ -232,6 +263,38 @@ namespace Cooper.Model.Test
             project = team.GetProject(project.ID);
 
             Assert.IsNull(project);
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void ClearTaskProjectsAfterTeamMemberRemovedTest()
+        {
+            var account = CreateAccount();
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(team);
+            var project = AddSampleProjectToTeam(team);
+            var task = new Task(account, team);
+            task.AddToProject(project);
+            this._teamTaskService.Create(task);
+            this.Evict(member);
+            this.Evict(team);
+            this.Evict(task);
+            this.Evict(project);
+            team = _teamService.GetTeam(team.ID);
+            member = team.GetMember(member.ID);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNotNull(task);
+            Assert.AreEqual(1, task.Projects.Count());
+
+            this._teamService.RemoveProject(project, team);
+            this.Evict(project);
+            this.Evict(team);
+            this.Evict(task);
+            team = this._teamService.GetTeam(team.ID);
+            project = team.GetProject(project.ID);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNull(project);
+            Assert.IsNotNull(task);
+            Assert.AreEqual(0, task.Projects.Count());
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
