@@ -25,7 +25,15 @@ namespace Cooper.Repositories
                 .CreateCriteria<Member>()
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("Email", email))
-                .List<Member>().FirstOrDefault();
+                .UniqueResult<Member>();
+        }
+        public Member FindMemberBy(Team team, Account account)
+        {
+            return this.GetSession()
+                .CreateCriteria<Member>()
+                .Add(Expression.Eq("TeamId", team.ID))
+                .Add(Expression.Eq("AssociatedAccountId", account.ID))
+                .UniqueResult<Member>();
         }
     }
 }

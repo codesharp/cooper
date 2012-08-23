@@ -347,8 +347,8 @@ namespace Cooper.Model.Test
             member1 = team1.GetMember(member1.ID);
             member3 = team3.GetMember(member3.ID);
 
-            member1.Associate(account);
-            member3.Associate(account);
+            this._teamService.AssociateMemberAccount(member1, account);
+            this._teamService.AssociateMemberAccount(member3, account);
 
             this._teamService.Update(team1);
             this._teamService.Update(team3);
@@ -358,6 +358,42 @@ namespace Cooper.Model.Test
             Assert.AreEqual(2, teams.Count());
             Assert.IsTrue(teams.Any(x => x.ID == team1.ID));
             Assert.IsTrue(teams.Any(x => x.ID == team3.ID));
+        }
+
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void AddTeamMemberWithDuplicateEmailTest()
+        {
+            var team = CreateSampleTeam();
+            var name = RandomString();
+            var email = RandomString();
+            this.AssertParallel(() => this._teamService.AddMember(name, email, team), 100, 1);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddMember(name, email, team));
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void AddTeamMemberWithDuplicateAccountTest()
+        {
+            var account = CreateAccount();
+            var team = CreateSampleTeam();
+            this.AssertParallel(() => this._teamService.AddMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account), 100, 1);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account));
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void AssociateTeamMemberWithDuplicateAccountTest()
+        {
+            var team = CreateSampleTeam();
+
+            var account = CreateAccount();
+            var member = this._teamService.AddMember(RandomString(), RandomString(), team);
+            this.AssertParallel(() => this._teamService.AssociateMemberAccount(member, account), 100, 1);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(member, account));
+
+            account = CreateAccount();
+            var member2 = this._teamService.AddMember(RandomString(), RandomString(), team, account);
+            this.AssertParallel(() => this._teamService.AssociateMemberAccount(member, account), 100, 0);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(member, account));
         }
     }
 }

@@ -69,7 +69,7 @@ namespace Cooper.Model.Teams
         /// <summary>设置关联账号
         /// </summary>
         /// <param name="account"></param>
-        public void Associate(Account account)
+        internal void Associate(Account account)
         {
             if (account != null)
             {
