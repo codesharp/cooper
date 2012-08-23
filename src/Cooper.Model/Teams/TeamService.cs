@@ -47,6 +47,9 @@ namespace Cooper.Model.Teams
         /// <returns></returns>
         Member AddMember(string name, string email, Team team);
         /// <summary>新增一个指定的成员，并自动关联到指定账号
+        /// <remarks>
+        /// 团队内成员的Email和关联账号必须唯一，会做并发控制
+        /// </remarks>
         /// </summary>
         /// <param name="name"></param>
         /// <param name="email"></param>
@@ -59,6 +62,18 @@ namespace Cooper.Model.Teams
         /// <param name="member"></param>
         /// <param name="team"></param>
         void RemoveMember(Member member, Team team);
+        /// <summary>为团队成员设置关联账号
+        /// <remarks>
+        /// 团队内成员的关联账号必须唯一，会做并发控制
+        /// </remarks>
+        /// </summary>
+        /// <param name="member"></param>
+        /// <param name="account"></param>
+        void AssociateMemberAccount(Member member, Account account);
+        /// <summary>为团队成员取消关联账号
+        /// </summary>
+        /// <param name="member"></param>
+        void UnAssociateMemberAccount(Member member);
         /// <summary>往团队新增一个项目
         /// </summary>
         /// <param name="name"></param>
@@ -132,15 +147,49 @@ namespace Cooper.Model.Teams
             Assert.IsValidKey(email);
             Assert.IsValid(team);
 
-            //HACK:由于此时在事务中，并且member可能被更新，此时的查询会导致nh提供事务因此应该先查询再AddMember
-            //这样做可以确保数据库所有的Member的Email唯一
+            //HACK:为了确保新增成员时，团队内成员的Email以及成员关联的账号都唯一，所以这里通过锁来进行同步控制
             this._locker.Require<Member>();
             Assert.IsNull(_teamRepository.FindMemberBy(team, email));
+            if (account != null)
+            {
+                Assert.IsNull(_teamRepository.FindMemberBy(team, account));
+            }
 
             var member = team.AddMember(name, email, account);
             _teamRepository.Update(team);
 
             return member;
+        }
+        [Transaction(TransactionMode.Requires)]
+        void ITeamService.AssociateMemberAccount(Member member, Account account)
+        {
+            Assert.IsValid(member);
+            Assert.IsValid(account);
+
+            var team = _teamRepository.FindBy(member.TeamId);
+            Assert.IsNotNull(team);
+            var memberToAssociateAccount = team.GetMember(member.ID);
+            Assert.IsNotNull(memberToAssociateAccount);
+
+            //HACK:为了确保设置成员的关联账号时，账号必须在团队内唯一，所以这里通过锁来进行同步控制
+            this._locker.Require<Member>();
+            Assert.IsNull(_teamRepository.FindMemberBy(team, account));
+
+            memberToAssociateAccount.Associate(account);
+            _teamRepository.Update(team);
+        }
+        [Transaction(TransactionMode.Requires)]
+        void ITeamService.UnAssociateMemberAccount(Member member)
+        {
+            Assert.IsValid(member);
+
+            var team = _teamRepository.FindBy(member.TeamId);
+            Assert.IsNotNull(team);
+            var memberToUnAssociateAccount = team.GetMember(member.ID);
+            Assert.IsNotNull(memberToUnAssociateAccount);
+
+            memberToUnAssociateAccount.Associate(null);
+            _teamRepository.Update(team);
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.RemoveMember(Member member, Team team)
@@ -153,7 +202,7 @@ namespace Cooper.Model.Teams
             _teamRepository.Update(team);
 
             //将分配给团队成员的所有任务收回
-            var memberTasks = _taskRepository.FindBy(member);
+            var memberTasks = _taskRepository.FindBy(team, member);
             foreach (var task in memberTasks)
             {
                 task.RemoveAssignee();

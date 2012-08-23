@@ -15,5 +15,6 @@ namespace Cooper.Model.Teams
     {
         IEnumerable<Team> FindBy(Account account);
         Member FindMemberBy(Team team, string email);
+        Member FindMemberBy(Team team, Account account);
     }
 }

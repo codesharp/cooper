@@ -143,6 +143,37 @@ namespace Cooper.Model.Test
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void ClearTaskAssigneeAfterTeamMemberRemovedTest()
+        {
+            var account = CreateAccount();
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(team);
+            var task = new Task(account, team);
+            task.AssignTo(member);
+            this._teamTaskService.Create(task);
+            this.Evict(member);
+            this.Evict(team);
+            this.Evict(task);
+            team = _teamService.GetTeam(team.ID);
+            member = team.GetMember(member.ID);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNotNull(task);
+            Assert.IsNotNull(task.AssigneeId);
+            Assert.AreEqual(member.ID, task.AssigneeId.Value);
+
+            this._teamService.RemoveMember(member, team);
+            this.Evict(member);
+            this.Evict(team);
+            this.Evict(task);
+            team = _teamService.GetTeam(team.ID);
+            member = team.GetMember(member.ID);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNull(member);
+            Assert.IsNotNull(task);
+            Assert.IsNull(task.AssigneeId);
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void GetTeamMembers()
         {
             var team = CreateSampleTeam();
@@ -235,6 +266,38 @@ namespace Cooper.Model.Test
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void ClearTaskProjectsAfterTeamMemberRemovedTest()
+        {
+            var account = CreateAccount();
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(team);
+            var project = AddSampleProjectToTeam(team);
+            var task = new Task(account, team);
+            task.AddToProject(project);
+            this._teamTaskService.Create(task);
+            this.Evict(member);
+            this.Evict(team);
+            this.Evict(task);
+            this.Evict(project);
+            team = _teamService.GetTeam(team.ID);
+            member = team.GetMember(member.ID);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNotNull(task);
+            Assert.AreEqual(1, task.Projects.Count());
+
+            this._teamService.RemoveProject(project, team);
+            this.Evict(project);
+            this.Evict(team);
+            this.Evict(task);
+            team = this._teamService.GetTeam(team.ID);
+            project = team.GetProject(project.ID);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNull(project);
+            Assert.IsNotNull(task);
+            Assert.AreEqual(0, task.Projects.Count());
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void GetProjects()
         {
             var team = CreateSampleTeam();
@@ -284,8 +347,8 @@ namespace Cooper.Model.Test
             member1 = team1.GetMember(member1.ID);
             member3 = team3.GetMember(member3.ID);
 
-            member1.Associate(account);
-            member3.Associate(account);
+            this._teamService.AssociateMemberAccount(member1, account);
+            this._teamService.AssociateMemberAccount(member3, account);
 
             this._teamService.Update(team1);
             this._teamService.Update(team3);
@@ -295,6 +358,42 @@ namespace Cooper.Model.Test
             Assert.AreEqual(2, teams.Count());
             Assert.IsTrue(teams.Any(x => x.ID == team1.ID));
             Assert.IsTrue(teams.Any(x => x.ID == team3.ID));
+        }
+
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void AddTeamMemberWithDuplicateEmailTest()
+        {
+            var team = CreateSampleTeam();
+            var name = RandomString();
+            var email = RandomString();
+            this.AssertParallel(() => this._teamService.AddMember(name, email, team), 100, 1);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddMember(name, email, team));
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void AddTeamMemberWithDuplicateAccountTest()
+        {
+            var account = CreateAccount();
+            var team = CreateSampleTeam();
+            this.AssertParallel(() => this._teamService.AddMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account), 100, 1);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account));
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void AssociateTeamMemberWithDuplicateAccountTest()
+        {
+            var team = CreateSampleTeam();
+
+            var account = CreateAccount();
+            var member = this._teamService.AddMember(RandomString(), RandomString(), team);
+            this.AssertParallel(() => this._teamService.AssociateMemberAccount(member, account), 100, 1);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(member, account));
+
+            account = CreateAccount();
+            var member2 = this._teamService.AddMember(RandomString(), RandomString(), team, account);
+            this.AssertParallel(() => this._teamService.AssociateMemberAccount(member, account), 100, 0);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(member, account));
         }
     }
 }
