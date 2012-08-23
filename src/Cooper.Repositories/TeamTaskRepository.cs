@@ -65,10 +65,11 @@ namespace Cooper.Repositories
                 .Add(BuildCreatorAndAssigneeCriteria(team, account))
                 .List<Task>();
         }
-        public IEnumerable<Task> FindBy(Member member)
+        public IEnumerable<Task> FindBy(Team team, Member member)
         {
             return this.GetSession()
                 .CreateCriteria<Task>()
+                .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("AssigneeId", member.ID))
                 .List<Task>();
         }

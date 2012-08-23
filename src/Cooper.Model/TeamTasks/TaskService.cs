@@ -67,7 +67,7 @@ namespace Cooper.Model.Teams
         /// <param name="account"></param>
         /// <returns></returns>
         IEnumerable<Task> GetIncompletedTasksByProject(Project project, Account account);
-        /// <summary>获取指定团队成员的所有任务
+        /// <summary>获取分配给指定团队成员的所有该团队成员所属团队的所有任务
         /// </summary>
         /// <param name="member"></param>
         /// <returns></returns>
@@ -148,7 +148,9 @@ namespace Cooper.Model.Teams
         }
         IEnumerable<Task> ITaskService.GetTasksByTeamMember(Member member)
         {
-            return _repository.FindBy(member);
+            var team = _teamRepository.FindBy(member.TeamId);
+            Assert.IsNotNull(team);
+            return _repository.FindBy(team, member);
         }
         #endregion
     }

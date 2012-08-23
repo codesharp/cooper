@@ -19,6 +19,6 @@ namespace Cooper.Model.Teams
         IEnumerable<Task> FindBy(Team team, Project project);
         IEnumerable<Task> FindBy(Team team, Project project, Account account);
         IEnumerable<Task> FindBy(Team team, Project project, Account account, bool isCompleted);
-        IEnumerable<Task> FindBy(Member member);
+        IEnumerable<Task> FindBy(Team team, Member member);
     }
 }

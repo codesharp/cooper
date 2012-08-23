@@ -153,7 +153,7 @@ namespace Cooper.Model.Teams
             _teamRepository.Update(team);
 
             //将分配给团队成员的所有任务收回
-            var memberTasks = _taskRepository.FindBy(member);
+            var memberTasks = _taskRepository.FindBy(team, member);
             foreach (var task in memberTasks)
             {
                 task.RemoveAssignee();
