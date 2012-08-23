@@ -7,64 +7,71 @@
 
 "use strict"
 
-if (!window.url_root)
-    url_root = '';
-if (!window.url_root_webui)
-    url_root_webui = '/webui';
-
 var cooper = angular.module('cooper', []);
 
-cooper.value('lang', lang);
+(function () {
+    if (!window.url_root)
+        url_root = '';
+    if (!window.url_root_webui)
+        url_root_webui = '/webui';
 
-cooper.value('tmp', {
-    left: url_root_webui + '/left.htm',
-    team_list: url_root_webui + '/team/list.htm',
-    team_detail: url_root_webui + '/team/detail.htm',
-    task_list: url_root_webui + '/task/list.htm',
-    task_detail: url_root_webui + '/task/detail.htm',
-    task_templates: url_root_webui + '/task/templates.htm'
-});
+    cooper.value('lang', lang);
 
-cooper.value('urls', {
-    personal: url_root + '/per',
-    account: url_root + '/account',
-    team: function (t) { if (t) return url_root + '/t/' + t.id; },
-    member: function (t, m) { if (t && m) return url_root + '/t/' + t.id + '/m/' + m.id; },
-    project: function (t, p) { if (t && p) return url_root + '/t/' + t.id + '/p/' + p.id; }
-});
+    cooper.value('tmp', {
+        left: url_root_webui + '/left.htm',
+        team_list: url_root_webui + '/team/list.htm',
+        team_detail: url_root_webui + '/team/detail.htm',
+        task_list: url_root_webui + '/task/list.htm',
+        task_detail: url_root_webui + '/task/detail.htm',
+        task_templates: url_root_webui + '/task/templates.htm'
+    });
 
-//当前路由参数
-//TODO:调整为解析location.href
-cooper.value('params', {
-    taskFolderId: 0,
-    teamId: currentTeamId,
-    projectId: currentProjectId, 
-    memberId: currentMemberId
-});
-//当前用户
-cooper.value('account', currentAccount);
+    var b = $.browser.msie && $.browser.version.indexOf('7.') >= 0;
+    var prefix = false ? '/team#/t/' : '/t/';
+    cooper.value('urls', {
+        personal: url_root + '/per',
+        account: url_root + '/account',
+        team: function (t) { if (t) return url_root + prefix + t.id; },
+        member: function (t, m) { if (t && m) return url_root + prefix + t.id + '/m/' + m.id; },
+        project: function (t, p) { if (t && p) return url_root + prefix + t.id + '/p/' + p.id; }
+    });
 
-cooper.config([
-    '$routeProvider',
-    '$locationProvider',
-    function ($routeProvider, $locationProvider) {
-        var url = url_root_webui + '/task/list.htm';
-        $routeProvider.
-        when('/t/:teamId', {
-            templateUrl: url,
-            controller: MainCtrl
-        }).
-        when('/t/:teamId/p/:projectId', {
-            templateUrl: url,
-            controller: MainCtrl
-        }).
-        when('/t/:teamId/m/:memberId', {
-            templateUrl: url,
-            controller: MainCtrl
-        }).
-        otherwise({
-            controller: MainCtrl
-        });
-        $locationProvider.html5Mode(true);
-    }
-]);
+    //当前路由参数
+    cooper.value('params', {
+        taskFolderId: 0,
+        teamId: currentTeamId,
+        projectId: currentProjectId,
+        memberId: currentMemberId
+    });
+    //当前用户
+    cooper.value('account', currentAccount);
+
+    cooper.config([
+        '$routeProvider',
+        '$locationProvider',
+        function ($routeProvider, $locationProvider) {
+            var url = url_root_webui + '/task/list.htm';
+            $routeProvider.
+            when('/t', {
+                templateUrl: url,
+                controller: MainCtrl
+            }).
+            when('/t/:teamId', {
+                templateUrl: url,
+                controller: MainCtrl
+            }).
+            when('/t/:teamId/p/:projectId', {
+                templateUrl: url,
+                controller: MainCtrl
+            }).
+            when('/t/:teamId/m/:memberId', {
+                templateUrl: url,
+                controller: MainCtrl
+            }).
+            otherwise({
+                redirectTo: '/t'
+            });
+            $locationProvider.html5Mode(true);
+        }
+    ]);
+})();

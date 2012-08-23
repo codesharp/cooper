@@ -6,30 +6,28 @@
 
 "use strict"
 
-//$scope.teamMode
-function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls, lang, params, account) {
-    //临时处理部分需要直接跳转的地址
+function TeamIndexCtrl($scope, $rootScope, urls, lang) {
+    //injections
+    $rootScope.urls = urls;
+    $rootScope.lang = lang;
+    //基本参数
+    $rootScope.teamMode = true;
+    $rootScope.mini = false;
+    $rootScope.full = false;
+    setSize($scope);
+
     $scope.$on('$locationChangeStart', function (e, url) {
         debuger.debug('change to ' + url);
         url = url.toLowerCase();
+        //临时处理部分需要直接跳转的地址
         if (url.indexOf('/account') >= 0)
             location.href = '/account';
         else if (url.indexOf('/per') >= 0)
             location.href = '/per';
     });
-
-    debuger.debug('$routeParams', $routeParams);
-    debuger.debug('params', params);
-    var p = $routeParams.teamId ? $routeParams : params;
-    $rootScope.tmp = tmp;
-    $rootScope.urls = urls;
-    $rootScope.lang = lang;
-
-    // *****************************************************
-    // 大小模式
-    // *****************************************************
-    $scope.mini = false;
-    $scope.full = false;
+}
+// 大小模式
+function setSize($scope) {
     var b = $.browser.msie && $.browser.version.indexOf('7.') >= 0;
     if (!$scope.full && !$scope.mini) {
         $scope.class_tasklist = 'span6';
@@ -43,14 +41,15 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         $scope.class_tasklist = '';
         $scope.class_taskdetail = 'hide';
     }
-    // *****************************************************
-    // Team/Personal模式
-    // *****************************************************
-    var url = $location.$$url.toLowerCase();
-    //ie9等不支持html5Mode的浏览器的首次加载修正
-    url = url == '' ? location.href : url;
-    $scope.teamMode = url.indexOf('/team') >= 0 || url.indexOf('/t') >= 0;
-    debuger.debug('teamMode', $scope.teamMode);
+}
+// *****************************************************
+// Team/Personal模式Controller
+// *****************************************************
+function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls, lang, account) {
+    debuger.debug('$routeParams', $routeParams);
+    debuger.debug($routeParams.teamId);
+    var p = $routeParams; 
+
     // *****************************************************
     // Personal
     // *****************************************************
@@ -63,21 +62,22 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
     // *****************************************************
     $http.get('/team/getteams?_=' + new Date().getTime()).success(function (data, status, headers, config) {
         debuger.assert(data);
-        $scope.teams = data;
+        // *****************************************************
+        // 设置rootScope 
+        // *****************************************************
+        //teams
+        $rootScope.teams = data;
         debuger.debug('teams', $scope.teams);
-
-        // *****************************************************
-        // 设置rootScope 必须有一个team
-        // *****************************************************
+        //team
         debuger.debug('current teamId=', p.teamId);
         $rootScope.team = findBy($scope.teams, 'id', p.teamId);
         debuger.debug('current team', $scope.team);
+        //必须有一个team
         if (!$rootScope.team) {
             if ($scope.teams.length > 0)
                 $location.path(urls.team($scope.teams[0]));
             return;
         }
-
         //project
         $rootScope.project = findBy($scope.team.projects, 'id', p.projectId);
         debuger.debug('projectId=', p.projectId);
@@ -86,8 +86,6 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         $rootScope.member = findBy($scope.team.members, 'id', p.memberId);
         debuger.debug('memberId=', p.memberId);
         debuger.debug('member', $scope.member);
-        //currentMember
-
         //html.title
         if ($rootScope.project)
             $rootScope.title = $rootScope.project.name;
@@ -121,7 +119,7 @@ function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
                 success($form);
                 debuger.debug(data);
                 t.id = eval('(' + data + ')');
-                $scope.teams = $.merge($scope.teams, [t]);
+                //$scope.teams = $.merge($scope.teams, [t]);
                 $scope.hideAddTeam();
                 $location.path(urls.team(t));
             });
@@ -153,7 +151,6 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, account) {
             debuger.debug(data);
             var p = { name: n };
             p.id = eval('(' + data + ')');
-            //$scope.team.projects = $.merge($scope.team.projects, [p]);
             $location.path(urls.project($scope.team, p));
         });
     }

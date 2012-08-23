@@ -185,9 +185,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />
-    <Content Include="Views\Shared\empty.htm" />
     <Content Include="webui\controllers\TaskList.js" />
-    <Content Include="webui\empty.htm" />
     <Content Include="webui\modules\cooper.js" />
     <Content Include="webui\controllers\Main.js" />
     <Content Include="webui\task\detail.htm" />

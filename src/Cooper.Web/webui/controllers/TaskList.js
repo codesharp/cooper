@@ -6,26 +6,29 @@
 "use strict"
 
 //取代taskpage.js
+//page内全局元素
+var $el_wrapper_region = null;
+var $el_wrapper_detail = null;
+var $el_cancel_delete = null;
+
+var cached_tasks = null;
+var cached_sorts = null;
+var changes = []; //用于记录未提交至server的变更
+
+var ui_list_helper, ui_list_helper_priority, ui_list_helper_due;
+var isShowArchive = false; //是否显示归档区域
+
+var currentList = null; //当前任务表标识
+
+var idChanges = {};
+var preSorts = null;
+var timer;
+
+var tryfail = false; //异常流模拟标识
+
 function TaskListCtrl($scope, $element, $routeParams) {
-    //page内全局元素
-    var $el_wrapper_region = null;
-    var $el_wrapper_detail = null;
-    var $el_cancel_delete = null;
 
-    var cached_tasks = null;
-    var cached_sorts = null;
-    var changes = []; //用于记录未提交至server的变更
-
-    var ui_list_helper, ui_list_helper_priority, ui_list_helper_due;
-    var isShowArchive = false; //是否显示归档区域
     var currentMode = byPriority; //当前列表模式，默认使用优先级列表模式
-    var currentList = null; //当前任务表标识
-
-    var timer;
-    var idChanges = {};
-    var preSorts = null;
-
-    var tryfail = false; //异常流模拟标识
 
     ////////////////////////////////////////////////////////////////////////////////////////
     //all=来自server的所有任务数组
@@ -373,11 +376,11 @@ function TaskListCtrl($scope, $element, $routeParams) {
     // *****************************************************
     // taskpage.js main changes here
     // *****************************************************
-    resize(); 
+    resize();
     if ($scope.teamMode) {
         $scope.$on('ready_team', renderTeamTask);
-        if ($scope.team && !window.teamModeflag)
-            renderTeamTask();
-    } else
-        renderPersonalTask();
+        //if ($scope.team && !window.teamModeflag)
+        //    renderTeamTask();
+    }
+    //else renderPersonalTask();
 }
