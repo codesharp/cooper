@@ -649,14 +649,17 @@
     });
     //任务详情页面:“删除”按钮事件响应
     $(document).delegate("#taskDetailPage #deleteTaskButton", "click", function () {
-        deleteTask(pageData.listId, pageData.taskId, function (result) {
-            if (result.status) {
-                history.back();
-            }
-            else {
-                alert(result.message);
-            }
-        });
+        var result = confirm(lang.confirmDeleteTask);
+        if (result) {
+            deleteTask(pageData.listId, pageData.taskId, function (result) {
+                if (result.status) {
+                    history.back();
+                }
+                else {
+                    alert(result.message);
+                }
+            });
+        }
     });
     //任务页面:“刷新”按钮事件响应
     $(document).delegate("#taskPage #refreshTasksButton", "click", function () {
