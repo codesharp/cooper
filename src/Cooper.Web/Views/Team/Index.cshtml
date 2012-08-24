@@ -25,7 +25,7 @@
                 <div ng-controller="TeamDetailCtrl" ng-show="team">@Html.Raw(File.ReadAllText(Server.MapPath("~/webui/team/detail.htm")))</div>
             </div>
             <!--Main-->
-            <div id="main" class="span6" ng-class="class_tasklist" ng-view>
+            <div id="main" ng-class="class_tasklist" ng-view>
             </div>
             <!--Detail-->
             <div id="detail_wrapper" ng-class="class_taskdetail">
