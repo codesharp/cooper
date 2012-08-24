@@ -51,6 +51,7 @@
     <Compile Include="AddressBookMap.cs" />
     <Compile Include="ContactGroupMap.cs" />
     <Compile Include="ContactMap.cs" />
+    <Compile Include="CommentMap.cs" />
     <Compile Include="MemberMap.cs" />
     <Compile Include="ProjectMap.cs" />
     <Compile Include="TeamMap.cs" />

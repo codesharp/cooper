@@ -97,4 +97,14 @@ internal class Assert : NUnit.Framework.Assert
         Assert.IsValidKey(member.Email);
         Assert.Greater(member.TeamId, 0);
     }
+    /// <summary>断言评论是否有效
+    /// </summary>
+    /// <param name="comment"></param>
+    public static void IsValid(Comment comment)
+    {
+        Assert.IsNotNull(comment);
+        Assert.Greater(comment.ID, 0);
+        Assert.IsValid(comment.Creator);
+        Assert.IsNotNullOrWhiteSpace(comment.Body);
+    }
 }

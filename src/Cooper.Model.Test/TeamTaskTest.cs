@@ -271,5 +271,40 @@ namespace Cooper.Model.Test
             task = this._teamTaskService.GetTask(task.ID);
             Assert.AreEqual(0, task.Projects.Count());
         }
+
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void AddRemoveCommentTest()
+        {
+            var account = this.CreateAccount();
+            var team = CreateSampleTeam();
+            var task = new Task(account, team);
+
+            var comment1 = RandomString();
+            var comment2 = RandomString();
+            task.AddComment(account, comment1);
+            task.AddComment(account, comment2);
+
+            this._teamTaskService.Create(task);
+            this.Evict(task);
+            task = this._teamTaskService.GetTask(task.ID);
+
+            Assert.AreEqual(2, task.Comments.Count());
+            Assert.IsTrue(task.Comments.Any(x => x.Body == comment1));
+            Assert.IsTrue(task.Comments.Any(x => x.Body == comment2));
+
+            task.RemoveComment(task.Comments.Single(x => x.Body == comment1));
+            this._teamTaskService.Update(task);
+            this.Evict(task);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.AreEqual(1, task.Comments.Count());
+            Assert.IsTrue(task.Comments.Any(x => x.Body == comment2));
+
+            task.RemoveComment(task.Comments.First());
+            this._teamTaskService.Update(task);
+            this.Evict(task);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.AreEqual(0, task.Comments.Count());
+        }
     }
 }
