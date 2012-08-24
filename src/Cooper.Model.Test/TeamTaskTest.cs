@@ -161,37 +161,38 @@ namespace Cooper.Model.Test
             this._teamTaskService.Create(teamTask2);
             this._teamTaskService.Create(teamTask3);
 
-            var teamTasks = this._teamTaskService.GetTasksByTeam(team);
-            Assert.AreEqual(3, teamTasks.Count());
-            Assert.IsTrue(teamTasks.Any(x => x.ID == teamTask1.ID));
-            Assert.IsTrue(teamTasks.Any(x => x.ID == teamTask2.ID));
-            Assert.IsTrue(teamTasks.Any(x => x.ID == teamTask3.ID));
-
-            var member1Tasks = this._teamTaskService.GetTasksByTeamMember(member1);
+            var member1Tasks = this._teamTaskService.GetTasksByMember(member1);
             Assert.AreEqual(2, member1Tasks.Count());
             Assert.IsTrue(member1Tasks.Any(x => x.ID == teamTask2.ID));
             Assert.IsTrue(member1Tasks.Any(x => x.ID == teamTask3.ID));
 
-            var member2Tasks = this._teamTaskService.GetTasksByTeamMember(member2);
+            var member2Tasks = this._teamTaskService.GetTasksByMember(member2);
             Assert.AreEqual(1, member2Tasks.Count());
             Assert.IsTrue(member2Tasks.Any(x => x.ID == teamTask1.ID));
 
-            var teamTasks1OfCreatorOrAssignee = this._teamTaskService.GetTasksByTeam(team, account1);
+            var incompletedMember1Tasks = this._teamTaskService.GetIncompletedTasksByMember(member1);
+            Assert.AreEqual(1, incompletedMember1Tasks.Count());
+            Assert.IsTrue(incompletedMember1Tasks.Any(x => x.ID == teamTask3.ID));
+
+            var incompletedMember2Tasks = this._teamTaskService.GetIncompletedTasksByMember(member2);
+            Assert.AreEqual(0, incompletedMember2Tasks.Count());
+
+            var teamTasks1OfCreatorOrAssignee = this._teamTaskService.GetTasksByAccount(team, account1);
             Assert.AreEqual(3, teamTasks1OfCreatorOrAssignee.Count());
             Assert.IsTrue(teamTasks1OfCreatorOrAssignee.Any(x => x.ID == teamTask1.ID));
             Assert.IsTrue(teamTasks1OfCreatorOrAssignee.Any(x => x.ID == teamTask2.ID));
             Assert.IsTrue(teamTasks1OfCreatorOrAssignee.Any(x => x.ID == teamTask3.ID));
 
-            var teamTasks2OfCreatorOrAssignee = this._teamTaskService.GetTasksByTeam(team, account2);
+            var teamTasks2OfCreatorOrAssignee = this._teamTaskService.GetTasksByAccount(team, account2);
             Assert.AreEqual(2, teamTasks2OfCreatorOrAssignee.Count());
             Assert.IsTrue(teamTasks2OfCreatorOrAssignee.Any(x => x.ID == teamTask1.ID));
             Assert.IsTrue(teamTasks2OfCreatorOrAssignee.Any(x => x.ID == teamTask2.ID));
 
-            var incompletedTeamTasks1OfCreatorOrAssignee = this._teamTaskService.GetIncompletedTasksByTeam(team, account1);
+            var incompletedTeamTasks1OfCreatorOrAssignee = this._teamTaskService.GetIncompletedTasksByAccount(team, account1);
             Assert.AreEqual(1, incompletedTeamTasks1OfCreatorOrAssignee.Count());
             Assert.IsTrue(incompletedTeamTasks1OfCreatorOrAssignee.Any(x => x.ID == teamTask3.ID));
 
-            var incompletedTeamTasks2OfCreatorOrAssignee = this._teamTaskService.GetIncompletedTasksByTeam(team, account2);
+            var incompletedTeamTasks2OfCreatorOrAssignee = this._teamTaskService.GetIncompletedTasksByAccount(team, account2);
             Assert.AreEqual(0, incompletedTeamTasks2OfCreatorOrAssignee.Count());
 
             var project1Tasks = this._teamTaskService.GetTasksByProject(project1);
@@ -203,35 +204,12 @@ namespace Cooper.Model.Test
             Assert.AreEqual(1, project2Tasks.Count());
             Assert.IsTrue(project2Tasks.Any(x => x.ID == teamTask2.ID));
 
-            var account1Project1Tasks = this._teamTaskService.GetTasksByProject(project1, account1);
-            Assert.AreEqual(2, account1Project1Tasks.Count());
-            Assert.IsTrue(account1Project1Tasks.Any(x => x.ID == teamTask1.ID));
-            Assert.IsTrue(account1Project1Tasks.Any(x => x.ID == teamTask3.ID));
+            var project1IncompletedTasks = this._teamTaskService.GetIncompletedTasksByProject(project1);
+            Assert.AreEqual(1, project1IncompletedTasks.Count());
+            Assert.IsTrue(project1IncompletedTasks.Any(x => x.ID == teamTask3.ID));
 
-            var account1Project2Tasks = this._teamTaskService.GetTasksByProject(project2, account1);
-            Assert.AreEqual(1, account1Project2Tasks.Count());
-            Assert.IsTrue(account1Project2Tasks.Any(x => x.ID == teamTask2.ID));
-
-            var account2Project1Tasks = this._teamTaskService.GetTasksByProject(project1, account2);
-            Assert.AreEqual(1, account2Project1Tasks.Count());
-            Assert.IsTrue(account2Project1Tasks.Any(x => x.ID == teamTask1.ID));
-
-            var account2roject2Tasks = this._teamTaskService.GetTasksByProject(project2, account2);
-            Assert.AreEqual(1, account2roject2Tasks.Count());
-            Assert.IsTrue(account2roject2Tasks.Any(x => x.ID == teamTask2.ID));
-
-            var account1Project1IncompletedTasks = this._teamTaskService.GetIncompletedTasksByProject(project1, account1);
-            Assert.AreEqual(1, account1Project1IncompletedTasks.Count());
-            Assert.IsTrue(account1Project1IncompletedTasks.Any(x => x.ID == teamTask3.ID));
-
-            var account1Project2IncompletedTasks = this._teamTaskService.GetIncompletedTasksByProject(project2, account1);
-            Assert.AreEqual(0, account1Project2IncompletedTasks.Count());
-
-            var account2Project1IncompletedTasks = this._teamTaskService.GetIncompletedTasksByProject(project1, account2);
-            Assert.AreEqual(0, account2Project1IncompletedTasks.Count());
-
-            var account2roject2IncompletedTasks = this._teamTaskService.GetIncompletedTasksByProject(project2, account2);
-            Assert.AreEqual(0, account2roject2IncompletedTasks.Count());
+            var project2IncompletedTasks = this._teamTaskService.GetIncompletedTasksByProject(project2);
+            Assert.AreEqual(0, project2IncompletedTasks.Count());
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]

@@ -29,3 +29,4 @@ lang.getTaskListFailed = '获取任务列表失败';
 lang.noCompletedTaskPromptInfo = '当前您没有已完成的任务';
 lang.noUnCompletedTaskPromptInfo = '当前您没有未完成的任务';
 lang.taskSubjectCannotEmpty = '任务标题不能为空';
+lang.confirmDeleteTask = '确定删除任务吗？';

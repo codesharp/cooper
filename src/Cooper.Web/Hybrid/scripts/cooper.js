@@ -396,21 +396,35 @@
                 return;
             }
 
+            var changeLogs = [];
+
             //根据判断更新相应属性
             if (propertyName == "priority") {
                 task.priority = propertyValue;
-                task.isDirty = true;
+                var changeLog = new ChangeLog();
+                changeLog.ID = task.id;
+                changeLog.Name = "priority";
+                changeLog.Value = task.priority;
+                changeLogs.push(changeLog);
             }
             else if (propertyName == "dueTime") {
                 task.dueTime = propertyValue;
-                task.isDirty = true;
+                var changeLog = new ChangeLog();
+                changeLog.ID = task.id;
+                changeLog.Name = "dueTime";
+                changeLog.Value = task.dueTime;
+                changeLogs.push(changeLog);
             }
             else if (propertyName == "isCompleted") {
                 task.isCompleted = propertyValue;
-                task.isDirty = true;
+                var changeLog = new ChangeLog();
+                changeLog.ID = task.id;
+                changeLog.Name = "isCompleted";
+                changeLog.Value = task.isCompleted;
+                changeLogs.push(changeLog);
             }
 
-            updateTask(pageData.listId, task, getTaskChanges(task), callback);
+            updateTask(pageData.listId, task, changeLogs, callback);
         });
     }
 
@@ -649,14 +663,17 @@
     });
     //任务详情页面:“删除”按钮事件响应
     $(document).delegate("#taskDetailPage #deleteTaskButton", "click", function () {
-        deleteTask(pageData.listId, pageData.taskId, function (result) {
-            if (result.status) {
-                history.back();
-            }
-            else {
-                alert(result.message);
-            }
-        });
+        var result = confirm(lang.confirmDeleteTask);
+        if (result) {
+            deleteTask(pageData.listId, pageData.taskId, function (result) {
+                if (result.status) {
+                    history.back();
+                }
+                else {
+                    alert(result.message);
+                }
+            });
+        }
     });
     //任务页面:“刷新”按钮事件响应
     $(document).delegate("#taskPage #refreshTasksButton", "click", function () {

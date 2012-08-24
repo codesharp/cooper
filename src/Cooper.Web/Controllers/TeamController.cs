@@ -114,7 +114,6 @@ namespace Cooper.Web.Controllers
             this._teamService.Create(t);
 
             //HACK:创建team同时将当前用户加入到该team
-            //UNDONE:从accountconnection中获取email?或者让创建时提交member信息
             var m = this._teamService.AddMember(
                 !string.IsNullOrWhiteSpace(memberName) ? memberName : a.Name
                 , !string.IsNullOrWhiteSpace(memberEmail) ? memberEmail : memberEmail
@@ -286,20 +285,19 @@ namespace Cooper.Web.Controllers
         }
         private IEnumerable<Teams.Task> GetTasksByAccount(Teams.Team team, Account account)
         {
-            return this._teamTaskService.GetTasksByTeam(team);
+            return this._teamTaskService.GetTasksByAccount(team, account);
         }
         private IEnumerable<Teams.Task> GetIncompletedTasksByAccount(Teams.Team team, Account account)
         {
-            return this._teamTaskService.GetIncompletedTasksByTeam(team, account);
+            return this._teamTaskService.GetIncompletedTasksByAccount(team, account);
         }
         private IEnumerable<Teams.Task> GetTasksByMember(Teams.Member member)
         {
-            return this._teamTaskService.GetTasksByTeamMember(member);
+            return this._teamTaskService.GetTasksByMember(member);
         }
         private IEnumerable<Teams.Task> GetIncompletedTasksByMember(Teams.Member member)
         {
-            //UNDONE:incompleted查询
-            return this._teamTaskService.GetTasksByTeamMember(member);
+            return this._teamTaskService.GetIncompletedTasksByMember(member);
         }
         private IEnumerable<Teams.Task> GetTasksByProject(Teams.Project p)
         {
@@ -307,7 +305,7 @@ namespace Cooper.Web.Controllers
         }
         private IEnumerable<Teams.Task> GetIncompletedTasksByProject(Teams.Project p)
         {
-            return this._teamTaskService.GetTasksByProject(p);
+            return this._teamTaskService.GetIncompletedTasksByProject(p);
         }
         private TeamInfo Parse(Teams.Team team)
         {
