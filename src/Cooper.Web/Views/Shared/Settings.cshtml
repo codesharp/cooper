@@ -123,7 +123,8 @@
             Mobile</a> | <a href="@Url.Action("", "Account", null)">Account</a> | <a href="@Url.Action("Logout", "Account", null)">
                 Logout</a> | UI Auto Tests：
         <button type="button" class="btn btn-danger flag_tryfail">TryFail</button>
-        <button type="button" class="btn" onclick="$('#qunit').show();runAll()">Full</button>
+        <button type="button" class="btn" onclick="$('#qunit').show();runAllPersonal()">Personal</button>
+        <button type="button" class="btn" onclick="$('#qunit').show();runAllTeam()">Team</button>
         <button type="button" class="btn btn-primary" onclick="$('#qunit').show();runMouseTests()">Mouse</button>
         <button type="button" class="btn btn-info" onclick="$('#qunit').show();runShortcutsTests()">Shortcuts</button>
         <button type="button" class="btn btn-success" onclick="$('#qunit').show();runDetailTests()">Detail</button>

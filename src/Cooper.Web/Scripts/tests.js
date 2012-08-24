@@ -23,7 +23,7 @@ var $el_cancel_delete = $('#cancel_delete');
 var up = 38;
 var down = 40;
 
-function runAll() {
+function runAllPersonal() {
     test('init', function () {
         ok(taskCount() > 0, 'cached_tasks init');
     });
@@ -32,6 +32,16 @@ function runAll() {
     runShortcutsTests();
     runDetailTests();
     runTaskFolderTests();
+}
+
+function runAllTeam() {
+    test('init', function () {
+        ok(taskCount() > 0, 'cached_tasks init');
+    });
+
+    runMouseTests();
+    runShortcutsTests();
+    runDetailTests();
 }
 
 function runMouseTests() {

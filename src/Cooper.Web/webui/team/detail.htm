@@ -10,14 +10,14 @@
         padding-top: 10px; max-height: 150px; overflow-y: auto; overflow-x: hidden; text-overflow: ellipsis;">
         <div class="tab-pane {{activeClass(tab=='p')}}">
             <ul class="nav nav-list">
-                <li class="nav-header" ng-click="addProject(lang.new_project_name)"><i class="icon-plus"></i>{{lang.add_project}}</li>
-                <li ng-repeat="p in team.projects" class="{{activeClass(p.id==project.id)}}"><a href="{{urls.project(team,p)}}">{{p.name}}</a></li>
+                <li class="nav-header" ng-click="addProject(lang.new_project_name)" style="cursor:pointer"><i class="icon-plus"></i>{{lang.add_project}}</li>
+                <li ng-repeat="p in team.projects" class="{{activeClass(p.id==project.id)}}"><a href="{{urls.project(team,p)}}" contenteditable>{{p.name}}</a></li>
             </ul>
             <br />
         </div>
         <div class="tab-pane {{activeClass(tab=='m')}}">
             <ul class="nav nav-list">
-                <li class="nav-header" ng-click="showMembers()"><i class="icon-plus"></i>{{lang.add_member}}</li>
+                <li class="nav-header" ng-click="showMembers()" style="cursor:pointer"><i class="icon-plus"></i>{{lang.add_member}}</li>
                 <li ng-repeat="m in team.members" class="{{activeClass(m.id==member.id)}}"><a href="{{memberUrl(m)}}">{{m.name}}</a></li>
             </ul>
             <br />
