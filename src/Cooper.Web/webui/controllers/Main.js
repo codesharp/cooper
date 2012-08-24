@@ -61,6 +61,7 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
     // Team
     // *****************************************************
     $http.get('/team/getteams?_=' + new Date().getTime()).success(function (data, status, headers, config) {
+        $('div#cover').fadeOut();
         debuger.assert(data);
         // *****************************************************
         // 设置rootScope 
@@ -76,6 +77,8 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         if (!$rootScope.team) {
             if ($scope.teams.length > 0)
                 $location.path(urls.team($scope.teams[0]));
+            else
+                $rootScope.$broadcast('no_team');
             return;
         }
         //project
@@ -102,15 +105,16 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
 //team list
 function TeamListCtrl($scope, $rootScope, $http, $element) {
     $scope.showAddTeam = function () { $element.find('div.modal').modal('show'); }
-    $scope.hideAddTeam = function () { $element.find('div.modal').modal('hide'); }
+    $scope.hideAddTeam = function () { $element.find('input').val(''); $element.find('div.modal').modal('hide'); }
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
-    $scope.$on('ready_team', function () {
-        if ($scope.teams.length == 0)
-            $scope.showAddTeam();
-    });
+    $scope.$on('no_team', function () { $scope.showAddTeam(); });
 }
-function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
+function TeamAddFormCtrl($scope, $element, $http, $location, urls, account) {
     var $form = $element;
+    //默认使用当前用户的账号信息填充member
+    $scope.memberName = account.name;
+    $scope.memberEmail = account.email;
+    $scope.errorClass = function (b) { return $scope.teamAddForm.$dirty && b ? 'error' : ''; }
     $scope.addTeam = function () {
         var t = {};
         $.each($form.serializeArray(), function (i, n) { t[n.name] = n.value; });
@@ -128,7 +132,7 @@ function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //team detail
-function TeamDetailCtrl($scope, $http, $element, $location, urls, account) {
+function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account) {
     $scope.initTab = function () { $scope.tab = $scope.member ? 'm' : 'p'; }
     $scope.$on('ready_team', $scope.initTab);
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
@@ -139,6 +143,9 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, account) {
     $scope.removeMember = function (m) {
         //不能删除当前用户所对应的member
         debuger.assert($scope.canRemove(m));
+
+        if (!confirm(lang.confirm_delete_member)) return;
+
         $http.post('/team/DeleteMember', { teamId: $scope.team.id, memberId: m.id }).success(function () {
             $scope.team.members = $.grep($scope.team.members, function (n) { return n.id != m.id });
             //若删除的是当前member，跳转到team
@@ -158,7 +165,7 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, account) {
 function TeamSettingsFormCtrl($scope, $element, $http) {
     var $form = $element;
     var prev_name = $scope.team ? $scope.team.name : '';
-
+    
     $scope.updateTeam = function () {
         $.each($form.serializeArray(), function (i, n) { $scope.team[n.name] = n.value; });
         if ($scope.teamSettingsForm.$valid) {
@@ -173,10 +180,11 @@ function TeamSettingsFormCtrl($scope, $element, $http) {
 }
 function TeamMembersFormCtrl($scope, $element, $http) {
     var $form = $element;
+    $scope.errorClass = function (b) { return $scope.teamMembersForm.$dirty && b ? 'error' : ''; }
     $scope.addMember = function () {
         var m = {};
         $.each($form.serializeArray(), function (i, n) { m[n.name] = n.value; });
-        if ($scope.formTeamMembers.$valid) {
+        if ($scope.teamMembersForm.$valid) {
             //email/member不能重复
             $scope.duplicate = findBy($scope.team.members, 'email', m.email) ? true : false;
             if ($scope.duplicate) return;

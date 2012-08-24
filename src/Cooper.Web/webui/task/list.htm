@@ -140,7 +140,7 @@
                         <a href="javascript:;" class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret">
                         </span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="javascript:share(this)"><i class="icon-share"></i>{{lang.share_to}}</a></li>
+                            <li><a href="javascript:;" onclick="share(this)"><i class="icon-share"></i>{{lang.share_to}}</a></li>
                         </ul>
                     </div>
                     <div style="clear: both; height: 5px">
@@ -239,10 +239,10 @@
             </div>
         </div>
         <div id="tmp_detail_batch">
-            <div class="region_detail" id="Div1">
+            <div class="region_detail" id="">
                 <div class="btn-toolbar">
                     <div class="btn-group pull-left">
-                        <button id="Button1" class="btn_complete btn">
+                        <button id="isCompleted" class="btn_complete btn">
                             <i class="icon-check"></i>{{lang.complete}}
                         </button>
                     </div>
@@ -259,7 +259,7 @@
                 <table class="detail">
                     <tbody>
                         <tr>
-                            <td colspan="2" id="Td1">
+                            <td colspan="2" id="subject">
                             </td>
                         </tr>
                         <tr>
@@ -267,7 +267,7 @@
                                 {{lang.priority}}
                             </td>
                             <td class="detail-content">
-                                <div id="Div2" class="btn-group" data-toggle="buttons-radio" title="{{lang.priority_title}}">
+                                <div id="priority" class="btn-group" data-toggle="buttons-radio" title="{{lang.priority_title}}">
                                     <button class="btn" title="" priority="0">
                                         <i class="icon-time" priority="0"></i>
                                     </button>
@@ -285,7 +285,7 @@
                                 {{lang.dueTime}}
                             </td>
                             <td class="detail-content">
-                                <input id="Text1" type="text" class="input-small" value="" />
+                                <input id="{dueTimeBatchId}" type="text" class="input-small" value="" />
                                 <i class="icon-bell"></i>
                             </td>
                         </tr>
@@ -294,8 +294,7 @@
             </div>
         </div>
         <ul id="tmp_taskFolder_item">
-            <li><a href="javascript:;" class="flag_changeFolder" id="A1"><i class="icon-list"></i>
-                <span>{name}</span></a></li>
+            <li><a href="javascript:;" class="flag_changeFolder" id="{id}"><i class="icon-list"></i><span>{name}</span></a></li>
         </ul>
     </div>
 </div>

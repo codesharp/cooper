@@ -100,6 +100,9 @@ UI_List_Common.prototype._bindTeam = function () {
             var $p = $(this).parent();
             $p.find('#assignee,#assignee_btn').show();
             $p.find('#assignee_input').hide().data('typeahead').hide();
+            //清空时移除assignee
+            if ($(this).val() == '')
+                task.setAssignee(null);
         });
         $projects_input.unbind('blur').blur(function () {
             var $p = $(this).parent();
@@ -123,7 +126,8 @@ UI_List_Common.prototype._bindTeam = function () {
 
         while (item = items.shift()) {
             var n = item['name'];
-            item = item['id'] + '#' + n;
+            //下拉格式：name(email)
+            item = item['id'] + '#' + n + '(' + item['email'] + ')';
             if (!n.toLowerCase().indexOf(this.query.toLowerCase())) beginswith.push(item)
             else if (~n.indexOf(this.query)) caseSensitive.push(item)
             else caseInsensitive.push(item)
@@ -136,10 +140,13 @@ UI_List_Common.prototype._bindTeam = function () {
         var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
         return item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
             return '<strong>' + match + '</strong>'
-        })
+        });
     }
     function getItem(val) {
         var a = val.split('#');
-        return { 'id': a[0], 'name': a[1] };
+        return {
+            'id': a[0],
+            'name': a[1].split('(')[0]//name(email)
+        };
     }
 }

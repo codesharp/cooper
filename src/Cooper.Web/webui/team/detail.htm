@@ -48,7 +48,7 @@
                     <form name="teamSettingsForm" class="form-inline" ng-controller="TeamSettingsFormCtrl">
                         <div class="well">
                             {{lang.team_name}}
-                            <input name="name" type="text" ng-model="team.name"  required/>
+                            <input name="name" type="text"  maxlength="50" ng-model="team.name"  required/>
                             <button ng-click="updateTeam()" class="btn">{{lang.submit}}</button>
                         </div>
                         <div class="alert alert-success hide"><i class="icon-ok"></i> {{lang.deal_success}}</div>
@@ -61,13 +61,13 @@
                         <li ng-repeat="m in team.members"><a href="javascript:;">
                             <code>{{m.email}}</code>
                             {{m.name}}
-                            <button type="button" class="close" onclick="return false;" ng-show="canRemove(m)" ng-click="removeMember(m.id)">x</button></a>
+                            <button type="button" class="close" onclick="return false;" ng-show="canRemove(m)" ng-click="removeMember(m)">x</button></a>
                         </li>
                     </ul>
-                    <form name="formTeamMembers" class="form-inline" ng-controller="TeamMembersFormCtrl">
+                    <form name="teamMembersForm" class="form-inline" ng-controller="TeamMembersFormCtrl">
                     <div class="well">
-                        <input name="email" type="email" class="input-medium" placeholder="{{lang.email}}" ng-model="email" required />
-                        <input name="name" type="text" class="input-medium" placeholder="{{lang.nick}}" ng-model="name" required />
+                        <span class="control-group" ng-class="errorClass(teamMembersForm.email.$invalid)"><input name="email" type="email" maxlength="255" class="input-medium" placeholder="{{lang.email}}" ng-model="email" required /></span>
+                        <span class="control-group" ng-class="errorClass(teamMembersForm.name.$invalid)"><input name="name" type="text" maxlength="50" class="input-medium" placeholder="{{lang.nick}}" ng-model="name" required /></span>
                         <button ng-click="addMember()" class="btn">{{lang.send_invite}}</button>
                     </div>
                     <div class="alert alert-success hide"><i class="icon-ok"></i> {{lang.deal_success}}</div>

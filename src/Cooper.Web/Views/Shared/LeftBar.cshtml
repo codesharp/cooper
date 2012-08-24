@@ -15,7 +15,7 @@
             </a>
         </li>
         <li @Html.Raw(isAccount)><a href="@Url.Action("Connection", "Account", null)"><i class="icon-user"></i> @this.Lang().my_profile</a></li>
-        <li><a href="@Url.Content("~/team#/t")"><i class="icon-th-large"></i> @this.Lang().myteam New!</a></li>
+        <li><a href="@Url.Content("~/team#/t/0")"><i class="icon-th-large"></i> @this.Lang().myteam New!</a></li>
         @Html.Raw(this.Lang().recent_changes)
     </ul>
     <br />

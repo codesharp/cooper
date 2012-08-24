@@ -5,7 +5,8 @@
         {{t.name}}</a></li>
 </ul>
 <ul class="nav nav-list">
-    <li class="nav-header"><a href="javascript:;" ng-click="showAddTeam()"><i class="icon-plus"></i>{{lang.add_team}}</a></li>
+    <li class="nav-header"><a href="javascript:;" ng-click="showAddTeam()"><i class="icon-plus">
+    </i>{{lang.add_team}}</a></li>
 </ul>
 <div class="modal hide">
     <div class="modal-header">
@@ -16,16 +17,36 @@
         </h3>
     </div>
     <div class="modal-body">
-        <form name="teamAddForm" class="form-inline" ng-controller="TeamAddFormCtrl">
-        <div class="alert alert-info" ng-show="!$scope.teams||($scope.teams && $scope.teams.length == 0)">
-            <i class="icon-exclamation-sign"></i>
-            {{lang.dot_not_have_any_teams}}
+        <form name="teamAddForm" class="form-horizontal" ng-controller="TeamAddFormCtrl">
+        <div class="alert alert-info" ng-show="!teams||teams.length == 0">
+            <i class="icon-exclamation-sign"></i>{{lang.dot_not_have_any_teams}}
         </div>
-        <div class="well">
-            {{lang.team_name}}
-            <input name="name" type="text" ng-model="name" required />
-            <button ng-click="addTeam()" class="btn">
-                {{lang.submit}}</button>
+        <div class="">
+            <div class="control-group" ng-class="errorClass(teamAddForm.name.$invalid)">
+                <label class="control-label" for="name">
+                    {{lang.team_name}}</label>
+                <div class="controls">
+                    <input id="name" name="name" type="text" ng-model="name" maxlength="255" required />
+                </div>
+            </div>
+            <div class="control-group" ng-class="errorClass(teamAddForm.memberName.$invalid)">
+                <label class="control-label" for="memberName">
+                    {{lang.member_name}}</label>
+                <div class="controls">
+                    <input name="memberName" type="text" maxlength="50" ng-model="memberName" required />
+                </div>
+            </div>
+            <div class="control-group" ng-class="errorClass(teamAddForm.memberEmail.$invalid)">
+                <label class="control-label" for="memberEmail">
+                    {{lang.member_email}}</label>
+                <div class="controls">
+                    <input name="memberEmail" type="email" maxlength="255" ng-model="memberEmail" required />
+                </div>
+            </div>
+            <div class="form-actions">
+                <button ng-click="addTeam()" class="btn btn-primary">
+                    {{lang.submit}}</button>
+            </div>
         </div>
         <div class="alert alert-success hide">
             <i class="icon-ok"></i>{{lang.deal_success}}</div>
