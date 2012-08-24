@@ -11,13 +11,6 @@ namespace Cooper.Repositories
 {
     public class TeamTaskRepository : NHibernateRepositoryBase<long, Task>, ITaskRepository
     {
-        public IEnumerable<Task> FindBy(Team team)
-        {
-            return this.GetSession()
-                .CreateCriteria<Task>()
-                .Add(Expression.Eq("TeamId", team.ID))
-                .List<Task>();
-        }
         public IEnumerable<Task> FindBy(Team team, Account account)
         {
             return this.GetSession()
@@ -44,17 +37,7 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("projects.ID", project.ID))
                 .List<Task>();
         }
-        public IEnumerable<Task> FindBy(Team team, Project project, Account account)
-        {
-            return this.GetSession()
-                .CreateCriteria<Task>()
-                .CreateAlias("Projects", "projects")
-                .Add(Expression.Eq("TeamId", team.ID))
-                .Add(Expression.Eq("projects.ID", project.ID))
-                .Add(BuildCreatorAndAssigneeCriteria(team, account))
-                .List<Task>();
-        }
-        public IEnumerable<Task> FindBy(Team team, Project project, Account account, bool isCompleted)
+        public IEnumerable<Task> FindBy(Team team, Project project, bool isCompleted)
         {
             return this.GetSession()
                 .CreateCriteria<Task>()
@@ -62,7 +45,6 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("IsCompleted", isCompleted))
                 .Add(Expression.Eq("projects.ID", project.ID))
-                .Add(BuildCreatorAndAssigneeCriteria(team, account))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Team team, Member member)
@@ -71,6 +53,15 @@ namespace Cooper.Repositories
                 .CreateCriteria<Task>()
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("AssigneeId", member.ID))
+                .List<Task>();
+        }
+        public IEnumerable<Task> FindBy(Team team, Member member, bool isCompleted)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .Add(Expression.Eq("TeamId", team.ID))
+                .Add(Expression.Eq("AssigneeId", member.ID))
+                .Add(Expression.Eq("IsCompleted", isCompleted))
                 .List<Task>();
         }
 
