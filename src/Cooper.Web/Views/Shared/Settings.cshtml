@@ -85,6 +85,8 @@
     var url_taskFolder_create = '@Url.Action("CreateTaskFolder", "Personal", null)';
     var url_taskFolder_delete = '@Url.Action("DeleteTaskFolder", "Personal", null)';
 
+    var url_project_delete = '@Url.Action("DeleteProject", "Team", null)';
+
     var url_feedback = '@Url.Action("Feedback", "Home", null)';
     //简易feedback
     function feedback() {
@@ -105,7 +107,7 @@
 {
     <script type="text/javascript">
         $(function () {
-            $(document.body).prepend($('#devbar').show());
+            //$(document.body).prepend($('#devbar').show());
         });
     </script>
     <div id="devbar" class="alert alert-danger hide" style="margin: 10px">

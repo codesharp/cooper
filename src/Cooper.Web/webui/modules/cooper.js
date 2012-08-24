@@ -69,7 +69,7 @@ var cooper = angular.module('cooper', []);
                 controller: MainCtrl
             }).
             otherwise({
-                redirectTo: '/t'
+                redirectTo: '/t/0'
             });
             $locationProvider.html5Mode(true);
         }

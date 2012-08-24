@@ -26,7 +26,7 @@ var timer;
 
 var tryfail = false; //异常流模拟标识
 
-function TaskListCtrl($scope, $element, $routeParams) {
+function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
 
     var currentMode = byPriority; //当前列表模式，默认使用优先级列表模式
 
@@ -122,7 +122,15 @@ function TaskListCtrl($scope, $element, $routeParams) {
         currentMode();
     }
     function doRemoveProject() {
-        alert('todo');
+        if (!confirm(lang.confirm_delete_project)) return;
+
+        $.post(url_project_delete, getPostData(), function () {
+            endRequest();
+            debuger.info('remove project#' + $scope.project.id);
+            debuger.debug($location);
+            //由于scope范围差异需要强制触发$scope变更来触发locationchange
+            $scope.$apply(function () { $location.path(urls.team($scope.team)); });
+        });
     }
     ////////////////////////////////////////////////////////////////////////////////////////
     //切换tab时将总是从server读取最新数据以及正确的索引信息

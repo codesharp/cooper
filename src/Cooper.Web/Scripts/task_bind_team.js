@@ -123,7 +123,7 @@ UI_List_Common.prototype._bindTeam = function () {
 
         while (item = items.shift()) {
             var n = item['name'];
-            item = item['id'] + '#' + n;
+            item = item['id'] + '#' + n + '(' + item['email'] + ')';
             if (!n.toLowerCase().indexOf(this.query.toLowerCase())) beginswith.push(item)
             else if (~n.indexOf(this.query)) caseSensitive.push(item)
             else caseInsensitive.push(item)
@@ -140,6 +140,6 @@ UI_List_Common.prototype._bindTeam = function () {
     }
     function getItem(val) {
         var a = val.split('#');
-        return { 'id': a[0], 'name': a[1] };
+        return { 'id': a[0], 'name': a[1].split('(')[0] };
     }
 }

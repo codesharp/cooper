@@ -126,6 +126,14 @@ namespace Cooper.Web.Controllers
             return Json(this._teamService.AddProject(name, this.GetTeam(teamId)).ID);
         }
         [HttpPost]
+        public ActionResult DeleteProject(string teamId, string projectId)
+        {
+            var t = this.GetTeam(teamId);
+            var p = this.GetProject(t, projectId);
+            this._teamService.RemoveProject(p, t);
+            return Json(true);
+        }
+        [HttpPost]
         public ActionResult CreateMember(string teamId, string name, string email)
         {
             return Json(this._teamService.AddMember(name, email, this.GetTeam(teamId)).ID);
@@ -168,7 +176,7 @@ namespace Cooper.Web.Controllers
                 , o => this.GetSortKey(team, o)
                 , o =>
                 {
-                    //若有memberId则认为是查看member视图，此时不对排序数据做保存
+                    //HACK:若有memberId则认为是查看member视图，此时不对排序数据做保存
                     if (project != null)
                     {
                         project[by] = o;
@@ -253,8 +261,7 @@ namespace Cooper.Web.Controllers
         }
         private IEnumerable<Teams.Task> GetIncompletedTasksByAccount(Teams.Team team, Account account)
         {
-            //UNDONE:incompleted查询
-            return this._teamTaskService.GetTasksByTeam(team);
+            return this._teamTaskService.GetIncompletedTasksByTeam(team, account);
         }
         private IEnumerable<Teams.Task> GetTasksByMember(Teams.Member member)
         {

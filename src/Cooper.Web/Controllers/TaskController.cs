@@ -200,8 +200,8 @@ namespace Cooper.Web.Controllers
                         this.ApplyUpdate(t, c);
                         this._taskService.Update(t);
                     }
-                    if (this._log.IsDebugEnabled)
-                        this._log.DebugFormat("为任务#{0}执行变更{1}|{2}|{3}|{4}", t.ID, c.Type, c.ID, c.Name, c.Value);
+                    if (this._log.IsInfoEnabled)
+                        this._log.InfoFormat("为任务#{0}执行变更{1}|{2}|{3}|{4}", t.ID, c.Type, c.ID, c.Name, c.Value);
                 }
                 catch (Exception e)
                 {

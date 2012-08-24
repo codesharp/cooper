@@ -25,12 +25,37 @@
                 <div ng-controller="TeamDetailCtrl" ng-show="team">@Html.Raw(File.ReadAllText(Server.MapPath("~/webui/team/detail.htm")))</div>
             </div>
             <!--Main-->
-            <div id="main" ng-class="class_tasklist" ng-view>
+            <div id="main" class="span6" ng-class="class_tasklist" ng-view>
             </div>
             <!--Detail-->
             <div id="detail_wrapper" ng-class="class_taskdetail">
                 @Html.Raw(File.ReadAllText(Server.MapPath("~/webui/task/detail.htm")))
             </div>
+        </div>
+        <div class="modal-backdrop in" style="background:#ebebeb url('../Hybrid/images/bg-line.png') repeat;">
+            <div class="progress progress-striped active" style="width:400px; margin:auto; margin-top:200px;">
+                <div class="bar" style="width: 100%;">@this.Lang().loading</div>
+            </div>
+        </div>
+    </div>
+    
+    <!--share box-->
+    <div class="modal hide" id="shareModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                ×</button>
+            <h3>
+                @this.Lang().share_to</h3>
+        </div>
+        <div class="modal-body">
+            <form class="well form-search well">
+                <div class="control-group">
+                    <textarea id="share_title" style="width:80%; height:150px"></textarea>
+                </div>
+                <div class="control-group">
+                    @{ Html.RenderPartial("ShareToRegion"); }
+                </div>
+            </form>
         </div>
     </div>
 
@@ -55,7 +80,7 @@
     <script type="text/javascript" src="@Url.Content("~/scripts/task_priority.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/scripts/task_due.js")"></script>
 
-    <script src="http://bestiejs.github.com/json3/lib/json3.min.js"></script>
+    <script src="@Url.Content("~/content/js/json3.min.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/content/angular/angular-1.0.1.min.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/webui/modules/cooper.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/webui/controllers/Main.js")" type="text/javascript"></script>

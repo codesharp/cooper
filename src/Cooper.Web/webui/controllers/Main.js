@@ -61,6 +61,7 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
     // Team
     // *****************************************************
     $http.get('/team/getteams?_=' + new Date().getTime()).success(function (data, status, headers, config) {
+        $('div.modal-backdrop').fadeOut(1000);
         debuger.assert(data);
         // *****************************************************
         // 设置rootScope 
