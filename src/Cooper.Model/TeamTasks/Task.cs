@@ -13,6 +13,7 @@ namespace Cooper.Model.Teams
     public class Task : Cooper.Model.Tasks.Task
     {
         private IList<Project> _projects = new List<Project>();
+        private IList<Comment> _comments = new List<Comment>();
 
         /// <summary>获取所属团队的标识
         /// </summary>
@@ -29,6 +30,9 @@ namespace Cooper.Model.Teams
         /// </remarks>
         /// </summary>
         public IEnumerable<Project> Projects { get { return _projects; } }
+        /// <summary>获取当前团队任务的所有评论
+        /// </summary>
+        public IEnumerable<Comment> Comments { get { return _comments; } }
 
         protected Task() : base()
         { }
@@ -80,6 +84,36 @@ namespace Cooper.Model.Teams
             if (projectToRemove != null)
             {
                 _projects.Remove(projectToRemove);
+            }
+        }
+        /// <summary>根据评论标识获取评论
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Comment GetComment(int id)
+        {
+            return _comments.SingleOrDefault(x => x.ID == id);
+        }
+        /// <summary>添加评论
+        /// </summary>
+        /// <param name="creator"></param>
+        /// <param name="body"></param>
+        public void AddComment(Account creator, string body)
+        {
+            Assert.IsValid(creator);
+            Assert.IsNotNullOrWhiteSpace(body);
+            _comments.Add(new Comment(creator, body));
+        }
+        /// <summary>移除评论
+        /// </summary>
+        /// <param name="comment"></param>
+        public void RemoveComment(Comment comment)
+        {
+            Assert.IsValid(comment);
+            var commentToRemove = _comments.SingleOrDefault(x => x.ID == comment.ID);
+            if (commentToRemove != null)
+            {
+                _comments.Remove(commentToRemove);
             }
         }
     }

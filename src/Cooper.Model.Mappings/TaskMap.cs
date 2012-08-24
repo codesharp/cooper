@@ -37,6 +37,11 @@ namespace Cooper.Model.Mappings
             EntityName("TeamTask");
             Map(m => m.TeamId);
             Map(m => m.AssigneeId);
+            HasMany(m => m.Comments)
+                .KeyColumn("TaskId")
+                .LazyLoad()
+                .Cascade
+                .SaveUpdate();
             HasManyToMany(m => m.Projects)
                 .Table("Cooper_TaskProjectRelationship")
                 .ParentKeyColumn("TaskId")

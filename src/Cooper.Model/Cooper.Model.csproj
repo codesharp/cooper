@@ -84,6 +84,7 @@
     <Compile Include="Teams\ITeamRepository.cs" />
     <Compile Include="Teams\TeamService.cs" />
     <Compile Include="Teams\Team.cs" />
+    <Compile Include="TeamTasks\Comment.cs" />
     <Compile Include="TeamTasks\ITaskRepository.cs" />
     <Compile Include="TeamTasks\Task.cs" />
     <Compile Include="TeamTasks\TaskService.cs" />
