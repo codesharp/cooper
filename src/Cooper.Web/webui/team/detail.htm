@@ -64,10 +64,10 @@
                             <button type="button" class="close" onclick="return false;" ng-show="canRemove(m)" ng-click="removeMember(m)">x</button></a>
                         </li>
                     </ul>
-                    <form name="formTeamMembers" class="form-inline" ng-controller="TeamMembersFormCtrl">
+                    <form name="teamMembersForm" class="form-inline" ng-controller="TeamMembersFormCtrl">
                     <div class="well">
-                        <input name="email" type="email" class="input-medium" placeholder="{{lang.email}}" ng-model="email" required />
-                        <input name="name" type="text" class="input-medium" placeholder="{{lang.nick}}" ng-model="name" required />
+                        <span class="control-group" ng-class="errorClass(teamMembersForm.email.$invalid)"><input name="email" type="email" class="input-medium" placeholder="{{lang.email}}" ng-model="email" required /></span>
+                        <span class="control-group" ng-class="errorClass(teamMembersForm.name.$invalid)"><input name="name" type="text" class="input-medium" placeholder="{{lang.nick}}" ng-model="name" required /></span>
                         <button ng-click="addMember()" class="btn">{{lang.send_invite}}</button>
                     </div>
                     <div class="alert alert-success hide"><i class="icon-ok"></i> {{lang.deal_success}}</div>

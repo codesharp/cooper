@@ -17,11 +17,11 @@
     </div>
     <div class="modal-body">
         <form name="teamAddForm" class="form-inline" ng-controller="TeamAddFormCtrl">
-        <div class="alert alert-info" ng-show="$scope.teams.length == 0">
+        <div class="alert alert-info" ng-show="!teams||teams.length == 0">
             <i class="icon-exclamation-sign"></i>
             {{lang.dot_not_have_any_teams}}
         </div>
-        <div class="well">
+        <div class="well control-group" ng-class="errorClass(teamAddForm.$invalid)">
             {{lang.team_name}}
             <input name="name" type="text" ng-model="name" required />
             <button ng-click="addTeam()" class="btn">

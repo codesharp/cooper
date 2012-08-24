@@ -77,6 +77,8 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         if (!$rootScope.team) {
             if ($scope.teams.length > 0)
                 $location.path(urls.team($scope.teams[0]));
+            else
+                $rootScope.$broadcast('no_team');
             return;
         }
         //project
@@ -103,15 +105,13 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
 //team list
 function TeamListCtrl($scope, $rootScope, $http, $element) {
     $scope.showAddTeam = function () { $element.find('div.modal').modal('show'); }
-    $scope.hideAddTeam = function () { $element.find('div.modal').modal('hide'); }
+    $scope.hideAddTeam = function () { $element.find('input').val(''); $element.find('div.modal').modal('hide'); }
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
-    $scope.$on('ready_team', function () {
-        if ($scope.teams.length == 0)
-            $scope.showAddTeam();
-    });
+    $scope.$on('no_team', function () { $scope.showAddTeam(); });
 }
 function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
     var $form = $element;
+    $scope.errorClass = function (b) { return $scope.teamAddForm.$dirty && b ? 'error' : ''; }
     $scope.addTeam = function () {
         var t = {};
         $.each($form.serializeArray(), function (i, n) { t[n.name] = n.value; });
@@ -162,7 +162,7 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account)
 function TeamSettingsFormCtrl($scope, $element, $http) {
     var $form = $element;
     var prev_name = $scope.team ? $scope.team.name : '';
-
+    
     $scope.updateTeam = function () {
         $.each($form.serializeArray(), function (i, n) { $scope.team[n.name] = n.value; });
         if ($scope.teamSettingsForm.$valid) {
@@ -177,10 +177,11 @@ function TeamSettingsFormCtrl($scope, $element, $http) {
 }
 function TeamMembersFormCtrl($scope, $element, $http) {
     var $form = $element;
+    $scope.errorClass = function (b) { return $scope.teamMembersForm.$dirty && b ? 'error' : ''; }
     $scope.addMember = function () {
         var m = {};
         $.each($form.serializeArray(), function (i, n) { m[n.name] = n.value; });
-        if ($scope.formTeamMembers.$valid) {
+        if ($scope.teamMembersForm.$valid) {
             //email/member不能重复
             $scope.duplicate = findBy($scope.team.members, 'email', m.email) ? true : false;
             if ($scope.duplicate) return;
