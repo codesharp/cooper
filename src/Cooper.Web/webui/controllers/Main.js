@@ -61,7 +61,7 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
     // Team
     // *****************************************************
     $http.get('/team/getteams?_=' + new Date().getTime()).success(function (data, status, headers, config) {
-        $('div.modal-backdrop').fadeOut(1000);
+        $('div#cover').fadeOut(1000);
         debuger.assert(data);
         // *****************************************************
         // 设置rootScope 
@@ -129,7 +129,7 @@ function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //team detail
-function TeamDetailCtrl($scope, $http, $element, $location, urls, account) {
+function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account) {
     $scope.initTab = function () { $scope.tab = $scope.member ? 'm' : 'p'; }
     $scope.$on('ready_team', $scope.initTab);
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
@@ -140,6 +140,9 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, account) {
     $scope.removeMember = function (m) {
         //不能删除当前用户所对应的member
         debuger.assert($scope.canRemove(m));
+
+        if (!confirm(lang.confirm_delete_member)) return;
+
         $http.post('/team/DeleteMember', { teamId: $scope.team.id, memberId: m.id }).success(function () {
             $scope.team.members = $.grep($scope.team.members, function (n) { return n.id != m.id });
             //若删除的是当前member，跳转到team

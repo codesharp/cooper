@@ -163,6 +163,7 @@ namespace Cooper.Web.Controllers
         {
             var team = this.GetTeamOfCurrentAccount(teamId);
             var project = string.IsNullOrWhiteSpace(projectId) ? null : this.GetProject(team, projectId);
+            var member = string.IsNullOrWhiteSpace(memberId) ? null : this.GetMember(team, memberId);
 
             return Json(this.Sync(changes, by, sorts
                 , () =>
@@ -170,6 +171,8 @@ namespace Cooper.Web.Controllers
                     var t = new Teams.Task(this.Context.Current, team);
                     if (project != null)
                         t.AddToProject(project);
+                    if (member != null)
+                        t.AssignTo(member);
                     return t;
                 }
                 , () => project == null && string.IsNullOrWhiteSpace(memberId)

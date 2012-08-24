@@ -100,6 +100,9 @@ UI_List_Common.prototype._bindTeam = function () {
             var $p = $(this).parent();
             $p.find('#assignee,#assignee_btn').show();
             $p.find('#assignee_input').hide().data('typeahead').hide();
+            //清空时移除assignee
+            if ($(this).val() == '')
+                task.setAssignee(null);
         });
         $projects_input.unbind('blur').blur(function () {
             var $p = $(this).parent();
@@ -136,7 +139,7 @@ UI_List_Common.prototype._bindTeam = function () {
         var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
         return item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
             return '<strong>' + match + '</strong>'
-        })
+        });
     }
     function getItem(val) {
         var a = val.split('#');

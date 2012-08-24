@@ -61,7 +61,7 @@
                         <li ng-repeat="m in team.members"><a href="javascript:;">
                             <code>{{m.email}}</code>
                             {{m.name}}
-                            <button type="button" class="close" onclick="return false;" ng-show="canRemove(m)" ng-click="removeMember(m.id)">x</button></a>
+                            <button type="button" class="close" onclick="return false;" ng-show="canRemove(m)" ng-click="removeMember(m)">x</button></a>
                         </li>
                     </ul>
                     <form name="formTeamMembers" class="form-inline" ng-controller="TeamMembersFormCtrl">
