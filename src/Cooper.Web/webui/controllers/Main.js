@@ -109,8 +109,11 @@ function TeamListCtrl($scope, $rootScope, $http, $element) {
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
     $scope.$on('no_team', function () { $scope.showAddTeam(); });
 }
-function TeamAddFormCtrl($scope, $element, $http, $location, urls) {
+function TeamAddFormCtrl($scope, $element, $http, $location, urls, account) {
     var $form = $element;
+    //默认使用当前用户的账号信息填充member
+    $scope.memberName = account.name;
+    $scope.memberEmail = account.email;
     $scope.errorClass = function (b) { return $scope.teamAddForm.$dirty && b ? 'error' : ''; }
     $scope.addTeam = function () {
         var t = {};

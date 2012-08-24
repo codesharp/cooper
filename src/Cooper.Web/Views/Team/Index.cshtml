@@ -1,6 +1,6 @@
 ﻿@{ 
     Layout = null;
-    var account = ViewBag.Account as Cooper.Model.Accounts.Account;
+    var account = ViewBag.Account;
 }
 <!DOCTYPE html>
 <html class="ng-app:cooper" id="ng-app" ng-app="cooper">
@@ -68,7 +68,7 @@
         var currentTeamId='@ViewBag.TeamId';
         var currentProjectId = '@ViewBag.ProjectId';
         var currentMemberId = '@ViewBag.MemberId';
-        var currentAccount={ id:@account.ID,name:'@account.Name' };
+        var currentAccount={ id:@account.ID,name:'@account.Name',email:'@account.Email' };
     </script>
 
     <script type="text/javascript" src="@Url.Content("~/scripts/task.js")"></script>

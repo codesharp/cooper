@@ -15,8 +15,11 @@ namespace Cooper.Web.Controllers
     {
         private Teams.ITeamService _teamService;
         private Teams.ITaskService _teamTaskService;
+        protected IAccountConnectionService _accountConnectionService;
+
         public TeamController(ILoggerFactory factory
             , IAccountService accountService
+            , IAccountConnectionService accountConnectionService
             , ITaskService taskService
             , ITaskFolderService taskFolderService
             , IFetchTaskHelper fetchTaskHelper
@@ -28,13 +31,14 @@ namespace Cooper.Web.Controllers
             , taskFolderService
             , fetchTaskHelper)
         {
+            this._accountConnectionService = accountConnectionService;
             this._teamService = teamService;
             this._teamTaskService = teamTaskService;
         }
 
         public ActionResult Index(string teamId, string projectId, string memberId)
         {
-            ViewBag.Account = this.Context.Current;
+            ViewBag.Account = this.Parse(this.Context.Current);
             ViewBag.TeamId = teamId;
             ViewBag.ProjectId = projectId;
             ViewBag.MemberId = memberId;
@@ -103,13 +107,18 @@ namespace Cooper.Web.Controllers
             return Json(this._teamService.GetTeamsByAccount(this.Context.Current).Select(o => this.Parse(o)), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
-        public ActionResult CreateTeam(string name)
+        public ActionResult CreateTeam(string name, string memberName, string memberEmail)
         {
+            var a = this.Context.Current;
             var t = new Teams.Team(name);
             this._teamService.Create(t);
+
             //HACK:创建team同时将当前用户加入到该team
             //UNDONE:从accountconnection中获取email?或者让创建时提交member信息
-            var m = this._teamService.AddMember(this.Context.Current.Name, "wskyhx@gmail.com", t, this.Context.Current);
+            var m = this._teamService.AddMember(
+                !string.IsNullOrWhiteSpace(memberName) ? memberName : a.Name
+                , !string.IsNullOrWhiteSpace(memberEmail) ? memberEmail : memberEmail
+                , t, a);
             return Json(t.ID);
         }
         [HttpPut]
@@ -210,6 +219,23 @@ namespace Cooper.Web.Controllers
                         teamTask.RemoveFromProject(p);
                     break;
             }
+        }
+
+        /// <summary>转换客户端在团队模块中使用的账号信息，可重载定制Name和Email，默认取Google连接信息
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        protected virtual AccountInfo Parse(Account a)
+        {
+            var google = this._accountConnectionService
+                .GetConnections(a)
+                .FirstOrDefault(o => o is GoogleConnection) as GoogleConnection;
+            return new AccountInfo()
+            {
+                ID = a.ID.ToString(),
+                Name = a.Name,
+                Email = google != null ? google.Name : string.Empty
+            };
         }
 
         private Teams.Team GetTeamOfCurrentAccount(string teamId)
@@ -425,6 +451,12 @@ namespace Cooper.Web.Controllers
     }
 
     #region 以下是面向终端的Team相关数据模型设计
+    public class AccountInfo
+    {
+        public string ID { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+    }
     public class TeamInfo
     {
         public string id { get; set; }

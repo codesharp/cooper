@@ -37,6 +37,8 @@ lang.delete_project = '删除该项目';
 lang.dot_not_have_any_teams = '您尚未拥有任何团队信息，请先创建';
 lang.confirm_delete_project = '确定要删除当前项目？设置了该项目的任务将会移除此项目设置';
 lang.confirm_delete_member = '确定要将该成员从团队中移除？已经分配给该成员的任务将被收回';
+lang.member_name = '您在团队中的昵称：';
+lang.member_email = '您在团队中的邮箱：';
 
 lang.my_task = '个人任务';
 lang.my_profile = '我的设置';
