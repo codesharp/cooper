@@ -147,7 +147,7 @@ UI_List_Common.prototype._bind = function () {
         this.$wrapper_detail.change(function (e) {
             var $el = $(e.target);
             //dueTime调整 需处理批量场景
-            if ($el.is('#dueTime')) {
+            if ($el.is('#dueTime') || $el.is('#' + base.batch_id_dueTime)) {
                 var ids = $el.parents('.region_detail');
                 if (ids.length == 0) return;
                 ids = ids.eq(0).attr('id').split(',');

@@ -21,6 +21,7 @@ UI_List_Common.prototype = {
     deletes_timer2: null, //删除恢复期间的定时器
     detail_timer: null, //详情区域渲染延时timer
     detail_timer_enable: true, //为unittest而设计的属性
+    batch_id_dueTime: 'dueTime_batch',
     //常用任务属性
     today: '0',
     upcoming: '1',
@@ -86,8 +87,10 @@ UI_List_Common.prototype = {
     _renderBatchDetail: function ($rows) {
         if (this.detail_timer)
             clearTimeout(this.detail_timer);
+
         if (!this.$batchDetail)
-            this.$batchDetail = $($('#tmp_detail_batch').html());
+            //由于datepicker不支持id重复
+            this.$batchDetail = $(render($('#tmp_detail_batch').html(), { 'dueTimeBatchId': this.batch_id_dueTime }));
         var base = this;
         var fn = function () {
             var ids = [$rows.length];
@@ -125,10 +128,9 @@ UI_List_Common.prototype = {
                 base.$batchDetail.find('#priority button').removeClass('active');
 
             base.$wrapper_detail.empty().append(base.$batchDetail);
-
             //datepicker重复初始化问题 应先append再初始化
             if (base.modeArgs.editable)
-                base.$batchDetail.find('#dueTime').removeClass('hasDatepicker').datepicker();
+                base.$batchDetail.find('#' + base.batch_id_dueTime).removeClass('hasDatepicker').datepicker();
         }
         if (this.detail_timer_enable)
             this.detail_timer = setTimeout(fn, 100); //增加timer延迟优化性能
