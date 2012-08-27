@@ -48,7 +48,7 @@ function setSize($scope) {
 function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls, lang, account) {
     debuger.debug('$routeParams', $routeParams);
     debuger.debug($routeParams.teamId);
-    var p = $routeParams; 
+    var p = $routeParams;
 
     // *****************************************************
     // Personal
@@ -89,6 +89,9 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         $rootScope.member = findBy($scope.team.members, 'id', p.memberId);
         debuger.debug('memberId=', p.memberId);
         debuger.debug('member', $scope.member);
+        //currentMember
+        $rootScope.currentMember = findBy($scope.team.members, 'accountId', account.id);
+        debuger.debug('currentMember=', $rootScope.currentMember);
         //html.title
         if ($rootScope.project)
             $rootScope.title = $rootScope.project.name;
@@ -135,6 +138,8 @@ function TeamAddFormCtrl($scope, $element, $http, $location, urls, account) {
 function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account) {
     $scope.initTab = function () { $scope.tab = $scope.member ? 'm' : 'p'; }
     $scope.$on('ready_team', $scope.initTab);
+    //TODO:处理权限显示
+
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
     $scope.memberUrl = function (m) { return m.accountId == account.id ? urls.team($scope.team) : urls.member($scope.team, m); }
     $scope.showModify = function () { $scope.tab2 = 's'; $element.find('div.modal').modal('show'); }
@@ -161,11 +166,36 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account)
             $location.path(urls.project($scope.team, p));
         });
     }
+    //处理project名称变更
+    //TODO:迁移到task sync之外的同步设计中
+    var timer;
+    $element.bind('keyup', function (e) {
+        var $e = $(e.target);
+        if (!$e.attr('contenteditable') || !$scope.project)
+            return;
+        if (!$scope.currentMember) {
+            $e.html($scope.project.name);
+            return;
+        }
+        var name = $e.text();
+        if (name == '') {
+            //$e.html($scope.project.name);
+            return;
+        }
+        if (timer)
+            clearTimeout(timer);
+        timer = setTimeout(function () {
+            $http.put('/team/UpdateProject', { teamId: $scope.team.id, projectId: $scope.project.id, name: name }).success(function (data) {
+                debuger.debug('project update=' + data);
+                $scope.project.name = name;
+            });
+        }, 1000);
+    });
 }
 function TeamSettingsFormCtrl($scope, $element, $http) {
     var $form = $element;
     var prev_name = $scope.team ? $scope.team.name : '';
-    
+
     $scope.updateTeam = function () {
         $.each($form.serializeArray(), function (i, n) { $scope.team[n.name] = n.value; });
         if ($scope.teamSettingsForm.$valid) {
@@ -198,6 +228,18 @@ function TeamMembersFormCtrl($scope, $element, $http) {
             }).error(function () { error($form); });
         }
     }
+}
+function TeamMemberProfileFormCtrl($scope, $element, $http) {
+    $scope.errorClass = function (b) { return $scope.teamMemberProfileForm.$dirty && b ? 'error' : ''; }
+    $scope.updateMemberProfile = function () {
+        alert('todo');
+    }
+    $scope.reset = function () {
+        if (!$scope.currentMember) return;
+        $scope.memberName = $scope.currentMember.name;
+        $scope.memberEmail = $scope.currentMember.email;
+    }
+    $scope.$on('ready_team', $scope.reset);
 }
 function error($e) {
     $e.find('div.alert-success').hide();

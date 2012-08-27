@@ -36,7 +36,7 @@ var cooper = angular.module('cooper', []);
         project: function (t, p) { if (t && p) return url_root + prefix + t.id + '/p/' + p.id; }
     });
 
-    //当前路由参数
+    //当前路由参数[obsolete]
     cooper.value('params', {
         taskFolderId: 0,
         teamId: currentTeamId,
