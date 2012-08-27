@@ -337,11 +337,13 @@
     <None Include="README.md" />
     <Content Include="Views\Shared\ShareToRegion.cshtml" />
     <Content Include="Views\Home\Issues.cshtml" />
-    <Content Include="Views\Shared\Scripts_Task.cshtml" />
+    <Content Include="Views\Shared\Scripts_Team.cshtml" />
     <Content Include="Views\Shared\Scripts.cshtml" />
     <Content Include="Views\Shared\Style.cshtml" />
     <Content Include="Views\Team\Index.cshtml" />
     <Content Include="Views\Shared\TemplateRegion.cshtml" />
+    <Content Include="Views\Shared\Scripts_Personal.cshtml" />
+    <Content Include="Views\Shared\Scripts_Task.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

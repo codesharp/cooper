@@ -71,20 +71,7 @@
         var currentAccount={ id:@account.ID,name:'@account.Name',email:'@account.Email' };
     </script>
 
-    <script type="text/javascript" src="@Url.Content("~/scripts/task.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_common.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_row.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_bind.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_bind_shortcuts.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_bind_team.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_priority.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/task_due.js")"></script>
-
-    <script src="@Url.Content("~/content/js/json3.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/content/angular/angular-1.0.1.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/webui/modules/cooper.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/webui/controllers/Main.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/webui/controllers/TaskList.js")" type="text/javascript"></script>
+    @{ Html.RenderPartial("Scripts_Team"); }
 
     <script type="text/javascript">
         function resize() {

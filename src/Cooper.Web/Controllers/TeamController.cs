@@ -133,6 +133,15 @@ namespace Cooper.Web.Controllers
         {
             return Json(this._teamService.AddProject(name, this.GetTeam(teamId)).ID);
         }
+        [HttpPut]
+        public ActionResult UpdateProject(string teamId, string projectId, string name)
+        {
+            var t = this.GetTeam(teamId);
+            var p = this.GetProject(t, projectId);
+            p.SetName(name);
+            this._teamService.Update(t);
+            return Json(true);
+        }
         [HttpPost]
         public ActionResult DeleteProject(string teamId, string projectId)
         {

@@ -127,7 +127,7 @@ UI_List_Common.prototype._bindTeam = function () {
         while (item = items.shift()) {
             var n = item['name'];
             //下拉格式：name(email)
-            item = item['id'] + '#' + n + '(' + item['email'] + ')';
+            item = item['id'] + '#' + n + (item['email'] ? '(' + item['email'] + ')' : '');            
             if (!n.toLowerCase().indexOf(this.query.toLowerCase())) beginswith.push(item)
             else if (~n.indexOf(this.query)) caseSensitive.push(item)
             else caseInsensitive.push(item)

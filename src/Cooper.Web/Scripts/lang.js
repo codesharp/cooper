@@ -39,6 +39,8 @@ lang.confirm_delete_project = '确定要删除当前项目？设置了该项目�
 lang.confirm_delete_member = '确定要将该成员从团队中移除？已经分配给该成员的任务将被收回';
 lang.member_name = '您在团队中的昵称：';
 lang.member_email = '您在团队中的邮箱：';
+lang.member_profile = '个人设置';
+lang.cancel = '取消';
 
 lang.my_task = '个人任务';
 lang.my_profile = '我的设置';
