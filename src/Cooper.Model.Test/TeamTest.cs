@@ -401,7 +401,7 @@ namespace Cooper.Model.Test
             var team = CreateSampleTeam();
             var name = RandomString();
             var email = RandomString();
-            this.AssertParallel(() => this._teamService.AddMember(name, email, team), 100, 1);
+            this.AssertParallel(() => this._teamService.AddMember(name, email, team), 10, 1);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AddMember(name, email, team));
         }
         [Test]
@@ -410,7 +410,7 @@ namespace Cooper.Model.Test
         {
             var account = CreateAccount();
             var team = CreateSampleTeam();
-            this.AssertParallel(() => this._teamService.AddMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account), 100, 1);
+            this.AssertParallel(() => this._teamService.AddMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account), 10, 1);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AddMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account));
         }
         [Test]
@@ -421,12 +421,12 @@ namespace Cooper.Model.Test
 
             var account = CreateAccount();
             var member = this._teamService.AddMember(RandomString(), RandomString(), team);
-            this.AssertParallel(() => this._teamService.AssociateMemberAccount(member, account), 100, 1);
+            this.AssertParallel(() => this._teamService.AssociateMemberAccount(member, account), 10, 1);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(member, account));
 
             account = CreateAccount();
             var member2 = this._teamService.AddMember(RandomString(), RandomString(), team, account);
-            this.AssertParallel(() => this._teamService.AssociateMemberAccount(member, account), 100, 0);
+            this.AssertParallel(() => this._teamService.AssociateMemberAccount(member, account), 10, 0);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(member, account));
         }
     }

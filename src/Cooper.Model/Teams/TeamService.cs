@@ -184,16 +184,31 @@ namespace Cooper.Model.Teams
                 Assert.IsValid(associateAccount);
             }
 
+            //HACK:发现在测试
+            //TeamTest.AddTeamMemberWithDuplicateEmailTest
+            //TeamTest.AddTeamMemberWithDuplicateAccountTest
+            //TeamTest.AssociateTeamMemberWithDuplicateAccountTest
+            //这三个并发测试的时候，如果这三个测试用例中的任何一个和TeamTest中的其他任何一个测试用例搭配，
+            //并且将并发测试用例放后面，然后再TeamTest这个类的级别“Run Test”，会出现以下异常：
+            //Illegal attempt to associate a collection with two open sessions
+            //经过分析，原因是当前的AddMember方法接收的team参数是在外面的session创建的
+            //然后在AddMember时，通过LazyLoad加载team.Members集合时，就会抛出上面的异常；
+            //奇怪的是，这种异常只有在通过AssertParallel进行并发测试的时候才会出现，单个顺序的方式调用AddMember方法都不会出现该问题；
+            //目前为了解决该问题又不影响功能，采用方法内部再获取属于当前Session的Team对象，然后通过获取到的team对象来AddMember；
+            //其实通过测试发现，获取到的对象与外面传入的team对象的引用地址不同，也说明不是从同一个Session拿出来的；
+            //最后，对于这个问题，还需要仔细分析，肯定还有更合理的解决方法
+            var teamToAddMember = _teamRepository.FindBy(team.ID);
+
             //HACK:为了确保新增成员时，团队内成员的Email以及成员关联的账号都唯一，所以这里通过锁来进行同步控制
             this._locker.Require<Member>();
-            Assert.IsNull(_teamRepository.FindMemberBy(team, email));
+            Assert.IsNull(_teamRepository.FindMemberBy(teamToAddMember, email));
             if (associateAccount != null)
             {
-                Assert.IsNull(_teamRepository.FindMemberBy(team, associateAccount));
+                Assert.IsNull(_teamRepository.FindMemberBy(teamToAddMember, associateAccount));
             }
 
-            var member = team.AddMember(name, email, memberType, associateAccount);
-            _teamRepository.Update(team);
+            var member = teamToAddMember.AddMember(name, email, memberType, associateAccount);
+            _teamRepository.Update(teamToAddMember);
 
             return member;
         }
