@@ -89,7 +89,7 @@ UI_List_Common.prototype = {
             clearTimeout(this.detail_timer);
 
         if (!this.$batchDetail)
-            //由于datepicker不支持id重复
+        //由于datepicker不支持id重复
             this.$batchDetail = $(render($('#tmp_detail_batch').html(), { 'dueTimeBatchId': this.batch_id_dueTime }));
         var base = this;
         var fn = function () {
@@ -166,7 +166,8 @@ UI_List_Common.prototype = {
         //键盘快捷键绑定
         this._bindShortcuts();
         //团队功能绑定
-        this._bindTeam();
+        if (this._bindTeam)
+            this._bindTeam();
         //允许额外的实现
         if (this.onPrepareBinds)
             this.onPrepareBinds();

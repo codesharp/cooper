@@ -88,6 +88,8 @@ debuger.isErrorEnable = debuger.enable && true;
         <include name="${build.absolutepath}\cooper_web\content\jquery\jquery-ui-1.8.22.custom.min.js" />
         <include name="${build.absolutepath}\cooper_web\content\jquery\jquery.json-2.3.min.js" />
         <include name="${build.absolutepath}\cooper_web\content\bootstrap\js\bootstrap.min.js" />
+        <include name="${build.absolutepath}\cooper_web\content\js\json3.min.js" />
+        <include name="${build.absolutepath}\cooper_web\content\angular\angular-1.0.1.min.js" />
       </sourceFiles>
     </javaScriptCompressor>
     <!--base-->
@@ -100,9 +102,17 @@ debuger.isErrorEnable = debuger.enable && true;
         <include name="${build.absolutepath}\cooper_web\scripts\account.js" />
       </sourceFiles>
     </javaScriptCompressor>
-    <!--taskui-->
+    <!--change refer via md5-->
+    <echo file="${build.absolutepath}\cooper_web\views\shared\scripts.cshtml"></echo>
+    <property name="tofile" value="scripts" />
+    <property name="js" value="third" />
+    <call target="md5_js"></call>
+    <property name="js" value="base" />
+    <call target="md5_js"></call>
+
+    <!--personal-->
     <javaScriptCompressor deleteSourceFiles="True"
-                          outputFile="${build.absolutepath}\cooper_web\scripts\taskui.js"
+                          outputFile="${build.absolutepath}\cooper_web\scripts\personal.js"
                           compressionType="Standard"
                           obfuscateJavaScript="True"
                           preserveAllSemicolons="False"
@@ -117,23 +127,47 @@ debuger.isErrorEnable = debuger.enable && true;
         <include name="${build.absolutepath}\cooper_web\scripts\task_row.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_bind.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_bind_shortcuts.js" />
-        <include name="${build.absolutepath}\cooper_web\scripts\task_bind_team.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_priority.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_due.js" />
+        <!--personal-->
         <include name="${build.absolutepath}\cooper_web\scripts\taskpage.js" />
       </sourceFiles>
     </javaScriptCompressor>
-    <!--change refer via md5-->
-    <echo file="${build.absolutepath}\cooper_web\views\shared\scripts.cshtml"></echo>
-    <property name="tofile" value="scripts" />
-    <property name="js" value="third" />
+    <echo file="${build.absolutepath}\cooper_web\views\shared\scripts_personal.cshtml"></echo>
+    <property name="tofile" value="scripts_personal" />
+    <property name="js" value="personal" />
     <call target="md5_js"></call>
-    <property name="js" value="base" />
-    <call target="md5_js"></call>
-    <!--change refer via md5-->
-    <echo file="${build.absolutepath}\cooper_web\views\shared\scripts_task.cshtml"></echo>
-    <property name="tofile" value="scripts_task" />
-    <property name="js" value="taskui" />
+    
+    <!--team-->
+    <javaScriptCompressor deleteSourceFiles="True"
+                          outputFile="${build.absolutepath}\cooper_web\scripts\team.js"
+                          compressionType="Standard"
+                          obfuscateJavaScript="True"
+                          preserveAllSemicolons="False"
+                          disableOptimizations="False"
+                          encodingType="UTF8"
+                          lineBreakPosition="-1"
+                          loggingType="Info"
+                          isEvalIgnored="false">
+      <sourceFiles>
+        <include name="${build.absolutepath}\cooper_web\scripts\task.js" />
+        <include name="${build.absolutepath}\cooper_web\scripts\task_common.js" />
+        <include name="${build.absolutepath}\cooper_web\scripts\task_row.js" />
+        <include name="${build.absolutepath}\cooper_web\scripts\task_bind.js" />
+        <include name="${build.absolutepath}\cooper_web\scripts\task_bind_shortcuts.js" />
+        <include name="${build.absolutepath}\cooper_web\scripts\task_priority.js" />
+        <include name="${build.absolutepath}\cooper_web\scripts\task_due.js" />
+        <!--team-->
+        <include name="${build.absolutepath}\cooper_web\scripts\task_bind_team.js" />
+        <!--controllers&modules-->
+        <include name="${build.absolutepath}\cooper_web\webui\modules\cooper.js" />
+        <include name="${build.absolutepath}\cooper_web\webui\controllers\Main.js" />
+        <include name="${build.absolutepath}\cooper_web\webui\controllers\TaskList.js" />
+      </sourceFiles>
+    </javaScriptCompressor>
+    <echo file="${build.absolutepath}\cooper_web\views\shared\scripts_team.cshtml"></echo>
+    <property name="tofile" value="scripts_team" />
+    <property name="js" value="team" />
     <call target="md5_js"></call>
 
     <!--hybrid-->
