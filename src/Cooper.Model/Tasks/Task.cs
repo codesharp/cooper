@@ -1,21 +1,13 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
-using System.Collections.Generic;
 using CodeSharp.Core.DomainBase;
-using Cooper.Model.Accounts;
 
 namespace Cooper.Model.Tasks
 {
-    /// <summary>任务核心模型
-    /// <remarks>
-    /// Task被设计为协同体系内最小工作单位
-    /// 仅描述自身基本属性和行为
-    /// 由账号创建
-    /// 一个时刻只能被分配给一个联系人
-    /// </remarks>
+    /// <summary>任务核心模型，仅描述任务自身基本属性和行为
     /// </summary>
-    public class Task : EntityBase<long>, IAggregateRoot
+    public abstract class Task : EntityBase<long>, IAggregateRoot
     {
         /// <summary>获取标题/主题
         /// </summary>
@@ -32,7 +24,6 @@ namespace Cooper.Model.Tasks
         /// <summary>获取是否完成
         /// </summary>
         public virtual bool IsCompleted { get; private set; }
-
         /// <summary>获取创建时间
         /// </summary>
         public virtual DateTime CreateTime { get; private set; }
@@ -40,21 +31,7 @@ namespace Cooper.Model.Tasks
         /// </summary>
         public virtual DateTime LastUpdateTime { get; private set; }
 
-        /// <summary>获取创建者账号标识
-        /// </summary>
-        public virtual int CreatorAccountId { get; private set; }
-
-        /// <summary>获取任务所在的任务目录标识
-        /// </summary>
-        public int? TaskFolderId { get; private set; }
-
         protected Task() { this.CreateTime = this.LastUpdateTime = DateTime.Now; }
-        public Task(Account creator)
-            : this()
-        {
-            Assert.IsValid(creator);
-            this.CreatorAccountId = creator.ID;
-        }
 
         //HACK:核心模型严格约束，避免未知重构问题
 
@@ -122,21 +99,8 @@ namespace Cooper.Model.Tasks
         {
             this.LastUpdateTime = lastUpdateTime;
         }
-        /// <summary>设置任务所在的任务目录
-        /// </summary>
-        /// <param name="folder"></param>
-        public void SetTaskFolder(TaskFolder folder)
-        {
-            Assert.IsValid(folder);
-            if (this.TaskFolderId == folder.ID) 
-                return;
-            if (folder is PersonalTaskFolder)
-                Assert.AreEqual(this.CreatorAccountId, (folder as PersonalTaskFolder).OwnerAccountId);
-            this.TaskFolderId = folder.ID;
-            this.MakeChange();
-        }
 
-        private void MakeChange()
+        protected void MakeChange()
         {
             this.LastUpdateTime = DateTime.Now;
         }

@@ -24,6 +24,7 @@ namespace Cooper.Model.Test
         protected ILog _log;
         protected Castle.Facilities.NHibernateIntegration.ISessionManager _sessionManager;
         protected Cooper.Model.Tasks.ITaskService _taskService;
+        protected Cooper.Model.Tasks.IPersonalTaskService _personalTaskService;
         protected IAccountService _accountService;
         protected IAccountConnectionService _accountConnectionService;
         protected IAccountHelper _accountHelper;
@@ -71,6 +72,7 @@ namespace Cooper.Model.Test
             this._contactGroupService = DependencyResolver.Resolve<IContactGroupService>();
             this._contactService = DependencyResolver.Resolve<IContactService>();
             this._teamService = DependencyResolver.Resolve<ITeamService>();
+            this._personalTaskService = DependencyResolver.Resolve<Cooper.Model.Tasks.IPersonalTaskService>();
             this._teamTaskService = DependencyResolver.Resolve<Cooper.Model.Teams.ITaskService>();
         }
 

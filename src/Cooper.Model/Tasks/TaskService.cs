@@ -1,18 +1,13 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CodeSharp.Core.RepositoryFramework;
 using Castle.Services.Transaction;
-using Cooper.Model.Accounts;
-using CodeSharp.Core.Services;
 using CodeSharp.Core;
+using CodeSharp.Core.RepositoryFramework;
+using CodeSharp.Core.Services;
 
 namespace Cooper.Model.Tasks
 {
-    /// <summary>任务服务定义
+    /// <summary>任务核心模型领域服务定义
     /// </summary>
     public interface ITaskService
     {
@@ -33,40 +28,8 @@ namespace Cooper.Model.Tasks
         /// <param name="id"></param>
         /// <returns></returns>
         Task GetTask(long id);
-        /// <summary>获取指定账号的所有任务
-        /// </summary>
-        /// <param name="account"></param>
-        /// <returns></returns>
-        IEnumerable<Task> GetTasks(Account account);
-        /// <summary>获取指定账号的所有不属于任何任务表的任务
-        /// </summary>
-        /// <param name="account"></param>
-        /// <returns></returns>
-        IEnumerable<Task> GetTasksNotBelongAnyFolder(Account account);
-        /// <summary>获取指定账号指定任务表的所有任务
-        /// </summary>
-        /// <param name="account"></param>
-        /// <param name="folder"></param>
-        /// <returns></returns>
-        IEnumerable<Task> GetTasks(Account account, TaskFolder folder);
-        /// <summary>获取指定账号的所有未完成任务
-        /// </summary>
-        /// <param name="account"></param>
-        /// <returns></returns>
-        IEnumerable<Task> GetIncompletedTasks(Account account);
-        /// <summary>获取指定账号的所有未完成且不属于任何任务表的任务
-        /// </summary>
-        /// <param name="account"></param>
-        /// <returns></returns>
-        IEnumerable<Task> GetIncompletedTasksAndNotBelongAnyFolder(Account account);
-        /// <summary>获取指定账号指定任务表的所有未完成任务
-        /// </summary>
-        /// <param name="account"></param>
-        /// <param name="folder"></param>
-        /// <returns></returns>
-        IEnumerable<Task> GetIncompletedTasks(Account account, TaskFolder folder);
     }
-    /// <summary>任务DomainService
+    /// <summary>任务核心模型领域服务
     /// </summary>
     [Transactional]
     public class TaskService : ITaskService
@@ -88,7 +51,9 @@ namespace Cooper.Model.Tasks
         {
             _repository.Add(task);
             if (this._log.IsInfoEnabled)
-                this._log.InfoFormat("新增任务#{0}|{1}|{2}", task.ID, task.Subject, task.CreatorAccountId);
+            {
+                this._log.InfoFormat("新增任务#{0}|{1}", task.ID, task.Subject);
+            }
         }
         [Transaction(TransactionMode.Requires)]
         void ITaskService.Update(Task task)
@@ -100,35 +65,13 @@ namespace Cooper.Model.Tasks
         {
             _repository.Remove(task);
             if (this._log.IsInfoEnabled)
+            {
                 this._log.InfoFormat("删除任务#{0}", task.ID);
+            }
         }
         Task ITaskService.GetTask(long id)
         {
             return _repository.FindBy(id);
-        }
-        IEnumerable<Task> ITaskService.GetTasks(Account account)
-        {
-            return _repository.FindBy(account);
-        }
-        IEnumerable<Task> ITaskService.GetTasksNotBelongAnyFolder(Account account)
-        {
-            return _repository.FindBy(account, null);
-        }
-        IEnumerable<Task> ITaskService.GetTasks(Account account, TaskFolder folder)
-        {
-            return _repository.FindBy(account, folder);
-        }
-        IEnumerable<Task> ITaskService.GetIncompletedTasks(Account account)
-        {
-            return _repository.FindBy(account, false);
-        }
-        IEnumerable<Task> ITaskService.GetIncompletedTasksAndNotBelongAnyFolder(Account account)
-        {
-            return _repository.FindBy(account, false, null);
-        }
-        IEnumerable<Task> ITaskService.GetIncompletedTasks(Account account, TaskFolder folder)
-        {
-            return _repository.FindBy(account, false, folder);
         }
         #endregion
     }

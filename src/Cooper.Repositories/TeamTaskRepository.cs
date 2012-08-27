@@ -20,20 +20,30 @@ namespace Cooper.Repositories
         }
         public IEnumerable<Task> FindBy(Team team, Account account)
         {
-            return this.GetSession()
-                .CreateCriteria<Task>()
-                .Add(Expression.Eq("TeamId", team.ID))
-                .Add(BuildCreatorAndAssigneeCriteria(team, account))
-                .List<Task>();
+            var criteria = BuildCreatorAndAssigneeCriteria(team, account);
+            if (criteria != null)
+            {
+                return this.GetSession()
+                    .CreateCriteria<Task>()
+                    .Add(Expression.Eq("TeamId", team.ID))
+                    .Add(criteria)
+                    .List<Task>();
+            }
+            return new List<Task>();
         }
         public IEnumerable<Task> FindBy(Team team, Account account, bool isCompleted)
         {
-            return this.GetSession()
-                .CreateCriteria<Task>()
-                .Add(Expression.Eq("TeamId", team.ID))
-                .Add(Expression.Eq("IsCompleted", isCompleted))
-                .Add(BuildCreatorAndAssigneeCriteria(team, account))
-                .List<Task>();
+            var criteria = BuildCreatorAndAssigneeCriteria(team, account);
+            if (criteria != null)
+            {
+                return this.GetSession()
+                    .CreateCriteria<Task>()
+                    .Add(Expression.Eq("TeamId", team.ID))
+                    .Add(Expression.Eq("IsCompleted", isCompleted))
+                    .Add(criteria)
+                    .List<Task>();
+            }
+            return new List<Task>();
         }
         public IEnumerable<Task> FindBy(Team team, Project project)
         {
@@ -74,11 +84,11 @@ namespace Cooper.Repositories
 
         private AbstractCriterion BuildCreatorAndAssigneeCriteria(Team team, Account account)
         {
-            AbstractCriterion criteria = Expression.Eq("CreatorAccountId", account.ID);
+            AbstractCriterion criteria = null;
             Member member = team.Members.SingleOrDefault(x => x.AssociatedAccountId != null && x.AssociatedAccountId.Value == account.ID);
             if (member != null)
             {
-                criteria = Expression.Or(Expression.Eq("CreatorAccountId", account.ID), Expression.Eq("AssigneeId", member.ID));
+                criteria = Expression.Or(Expression.Eq("CreatorMemberId", member.ID), Expression.Eq("AssigneeId", member.ID));
             }
             return criteria;
         }

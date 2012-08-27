@@ -53,6 +53,7 @@
     <Compile Include="AddressBookRepository.cs" />
     <Compile Include="ContactGroupRepository.cs" />
     <Compile Include="ContactRepository.cs" />
+    <Compile Include="PersonalTaskRepository.cs" />
     <Compile Include="TeamTaskRepository.cs" />
     <Compile Include="TeamRepository.cs" />
     <Compile Include="TasklistRepository.cs" />

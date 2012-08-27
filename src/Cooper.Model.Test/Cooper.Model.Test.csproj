@@ -87,11 +87,12 @@
     <Compile Include="AddressBookTest.cs" />
     <Compile Include="ContactTest.cs" />
     <Compile Include="ContactGroupTest.cs" />
+    <Compile Include="TaskTest.cs" />
     <Compile Include="TeamTaskTest.cs" />
     <Compile Include="TeamTest.cs" />
     <Compile Include="TaskFolderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TaskTest.cs" />
+    <Compile Include="PersonalTaskTest.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>

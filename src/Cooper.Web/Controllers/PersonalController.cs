@@ -17,8 +17,11 @@ namespace Cooper.Web.Controllers
     public class PersonalController : TaskController
     {
         private IAccountConnectionService _accountConnectionService;
+        private IPersonalTaskService _personalTaskService;
+
         public PersonalController(ILoggerFactory factory
             , ITaskService taskService
+            , IPersonalTaskService personalTaskService
             , ITaskFolderService taskFolderService
             , IFetchTaskHelper fetchTaskHelper
             , IAccountService accountService
@@ -29,6 +32,7 @@ namespace Cooper.Web.Controllers
             , taskFolderService
             , fetchTaskHelper)
         {
+            this._personalTaskService = personalTaskService;
             this._accountConnectionService = accountConnectionService;
         }
 
@@ -57,8 +61,8 @@ namespace Cooper.Web.Controllers
         public ActionResult GetByPriority(string tasklistId, string taskFolderId)
         {
             return this.GetBy(taskFolderId ?? tasklistId
-                , this._taskService.GetTasksNotBelongAnyFolder
-                , this._taskService.GetTasks
+                , this._personalTaskService.GetTasksNotBelongAnyFolder
+                , this._personalTaskService.GetTasks
                 , this.ParseSortsByPriority
                 , this.ParseSortsByPriority);
         }
@@ -67,8 +71,8 @@ namespace Cooper.Web.Controllers
         public ActionResult GetIncompletedByPriority(string tasklistId, string taskFolderId)
         {
             return this.GetBy(taskFolderId ?? tasklistId
-                , this._taskService.GetIncompletedTasksAndNotBelongAnyFolder
-                , this._taskService.GetIncompletedTasks
+                , this._personalTaskService.GetIncompletedTasksAndNotBelongAnyFolder
+                , this._personalTaskService.GetIncompletedTasks
                 , this.ParseSortsByPriority
                 , this.ParseSortsByPriority);
         }
@@ -77,8 +81,8 @@ namespace Cooper.Web.Controllers
         public ActionResult GetByDueTime(string tasklistId, string taskFolderId)
         {
             return this.GetBy(taskFolderId ?? tasklistId
-                , this._taskService.GetTasksNotBelongAnyFolder
-                , this._taskService.GetTasks
+                , this._personalTaskService.GetTasksNotBelongAnyFolder
+                , this._personalTaskService.GetTasks
                 , this.ParseSortsByDueTime
                 , this.ParseSortsByDueTime);
         }
@@ -165,7 +169,7 @@ namespace Cooper.Web.Controllers
             return Json(this.Sync(changes, by, sorts
                 , () =>
                 {
-                    var o = new Task(this.Context.Current);
+                    var o = new PersonalTask(this.Context.Current);
                     if (folder != null)
                         o.SetTaskFolder(folder);
                     return o;
@@ -180,7 +184,7 @@ namespace Cooper.Web.Controllers
             base.ApplyUpdate(t, c);
             //目前暂不支持修改folder
             if (c.Name.Equals("taskfolderid", StringComparison.InvariantCultureIgnoreCase))
-                t.SetTaskFolder(this.GetTaskFolder(c.Value));
+                (t as PersonalTask).SetTaskFolder(this.GetTaskFolder(c.Value));
         }
 
         private ActionResult GetBy(string folderId

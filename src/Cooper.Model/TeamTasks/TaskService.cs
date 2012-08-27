@@ -91,7 +91,7 @@ namespace Cooper.Model.Teams
         {
             _repository.Add(task);
             if (this._log.IsInfoEnabled)
-                this._log.InfoFormat("新增团队任务#{0}|{1}|{2}", task.ID, task.Subject, task.CreatorAccountId);
+                this._log.InfoFormat("新增团队任务#{0}|{1}|{2}", task.ID, task.Subject, task.CreatorMemberId);
         }
         [Transaction(TransactionMode.Requires)]
         void ITaskService.Update(Task task)

@@ -67,6 +67,9 @@
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="Lock.cs" />
+    <Compile Include="PersonalTasks\PersonalTask.cs" />
+    <Compile Include="PersonalTasks\IPersonalTaskRepository.cs" />
+    <Compile Include="PersonalTasks\PersonalTaskService.cs" />
     <Compile Include="Teams\Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskFolders\ITaskFolderRepository.cs" />

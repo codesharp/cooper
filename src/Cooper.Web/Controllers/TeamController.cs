@@ -185,7 +185,7 @@ namespace Cooper.Web.Controllers
             return Json(this.Sync(changes, by, sorts
                 , () =>
                 {
-                    var t = new Teams.Task(this.Context.Current, team);
+                    var t = new Teams.Task(GetMemberByAccount(this.Context.Current, team), team);
                     if (project != null)
                         t.AddToProject(project);
                     if (member != null)
@@ -360,7 +360,7 @@ namespace Cooper.Web.Controllers
                 //项目列表
                 teamTaskInfo.Projects = teamTask.Projects.Select(o => this.Parse(o)).ToArray();
                 //是否可编辑 创建者或被分配者（执行人）
-                teamTaskInfo.Editable = teamTask.CreatorAccountId == a.ID
+                teamTaskInfo.Editable = GetAccountByMember(team, teamTask.CreatorMemberId).ID == a.ID
                     || (teamTaskInfo.Assignee != null
                     && teamTaskInfo.Assignee.accountId == a.ID.ToString());
             }, tasks.Select(o => o as Task)
@@ -454,6 +454,21 @@ namespace Cooper.Web.Controllers
         private string GetSortKey(Teams.Team t, string by)
         {
             return by + "_" + t.ID;
+        }
+        private Teams.Member GetMemberByAccount(Account account, Teams.Team team)
+        {
+            var member = team.Members.SingleOrDefault(x => x.AssociatedAccountId != null && x.AssociatedAccountId.Value == account.ID);
+            Assert.IsNotNull(member);
+            return member;
+        }
+        private Account GetAccountByMember(Teams.Team team, int memberId)
+        {
+            var member = team.GetMember(memberId);
+            Assert.IsNotNull(member);
+            Assert.IsNotNull(member.AssociatedAccountId);
+            var account = _accountService.GetAccount(member.AssociatedAccountId.Value);
+            Assert.IsNotNull(account);
+            return account;
         }
     }
 

@@ -18,6 +18,9 @@ namespace Cooper.Model.Teams
         /// <summary>获取所属团队的标识
         /// </summary>
         public int TeamId { get; private set; }
+        /// <summary>获取创建该团队任务的Member的标识
+        /// </summary>
+        public int CreatorMemberId { get; private set; }
         /// <summary>获取当前任务分配给的团队成员的标识
         /// <remarks>
         /// 团队任务是面向团队成员进行分配，而不是直接分配到账号
@@ -36,10 +39,11 @@ namespace Cooper.Model.Teams
 
         protected Task() : base()
         { }
-        public Task(Account creator, Team team) : base(creator)
+        public Task(Member creator, Team team) : base()
         {
             Assert.IsValid(creator);
             Assert.IsValid(team);
+            this.CreatorMemberId = creator.ID;
             this.TeamId = team.ID;
         }
 
