@@ -111,8 +111,7 @@ debuger.isErrorEnable = debuger.enable && true;
     <call target="md5_js"></call>
 
     <!--personal-->
-    <javaScriptCompressor deleteSourceFiles="True"
-                          outputFile="${build.absolutepath}\cooper_web\scripts\personal.js"
+    <javaScriptCompressor outputFile="${build.absolutepath}\cooper_web\scripts\personal.js"
                           compressionType="Standard"
                           obfuscateJavaScript="True"
                           preserveAllSemicolons="False"
@@ -140,7 +139,7 @@ debuger.isErrorEnable = debuger.enable && true;
     
     <!--team-->
     <javaScriptCompressor deleteSourceFiles="True"
-                          outputFile="${build.absolutepath}\cooper_web\scripts\team.js"
+                          outputFile="${build.absolutepath}\cooper_web\scripts\taskui.js"
                           compressionType="Standard"
                           obfuscateJavaScript="True"
                           preserveAllSemicolons="False"
@@ -159,6 +158,20 @@ debuger.isErrorEnable = debuger.enable && true;
         <include name="${build.absolutepath}\cooper_web\scripts\task_due.js" />
         <!--team-->
         <include name="${build.absolutepath}\cooper_web\scripts\task_bind_team.js" />
+      </sourceFiles>
+    </javaScriptCompressor>
+    <javaScriptCompressor deleteSourceFiles="True"
+                          outputFile="${build.absolutepath}\cooper_web\scripts\team.js"
+                          compressionType="Standard"
+                          obfuscateJavaScript="False"
+                          preserveAllSemicolons="False"
+                          disableOptimizations="False"
+                          encodingType="UTF8"
+                          lineBreakPosition="-1"
+                          loggingType="Info"
+                          isEvalIgnored="false">
+      <sourceFiles>
+        <include name="${build.absolutepath}\cooper_web\scripts\taskui.js" />
         <!--controllers&modules-->
         <include name="${build.absolutepath}\cooper_web\webui\modules\cooper.js" />
         <include name="${build.absolutepath}\cooper_web\webui\controllers\Main.js" />
