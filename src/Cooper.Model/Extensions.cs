@@ -12,7 +12,14 @@ using Cooper.Model.Teams;
 //提供一些辅助
 internal static class Extensions
 {
-
+    public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+    {
+        Assert.IsNotNull(source);
+        foreach (var item in source)
+        {
+            action(item);
+        }
+    }
 }
 //扩展断言
 internal class Assert : NUnit.Framework.Assert
@@ -104,7 +111,6 @@ internal class Assert : NUnit.Framework.Assert
     {
         Assert.IsNotNull(comment);
         Assert.Greater(comment.ID, 0);
-        Assert.IsValid(comment.Creator);
         Assert.IsNotNullOrWhiteSpace(comment.Body);
     }
 }

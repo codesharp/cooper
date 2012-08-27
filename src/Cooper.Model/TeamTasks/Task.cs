@@ -98,9 +98,10 @@ namespace Cooper.Model.Teams
         /// </summary>
         /// <param name="creator"></param>
         /// <param name="body"></param>
-        public void AddComment(Account creator, string body)
+        public void AddComment(Member creator, string body)
         {
             Assert.IsValid(creator);
+            Assert.AreEqual(this.TeamId, creator.TeamId);
             Assert.IsNotNullOrWhiteSpace(body);
             _comments.Add(new Comment(creator, body));
         }

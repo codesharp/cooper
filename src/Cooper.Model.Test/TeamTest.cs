@@ -298,6 +298,40 @@ namespace Cooper.Model.Test
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void ClearCommentCreatorsAfterTeamMemberRemovedTest()
+        {
+            var account = CreateAccount();
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(team);
+            var task = new Task(account, team);
+            var comment = RandomString();
+            task.AddComment(member, comment);
+            this._teamTaskService.Create(task);
+
+            this.Evict(member);
+            this.Evict(team);
+            this.Evict(task);
+            this.Evict(comment);
+
+            team = _teamService.GetTeam(team.ID);
+            member = team.GetMember(member.ID);
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNotNull(task);
+            Assert.AreEqual(1, task.Comments.Count());
+            Assert.IsTrue(task.Comments.Any(x => x.Body == comment && x.Creator.ID == member.ID));
+
+            this._teamService.RemoveMember(member, team);
+
+            this.Evict(task);
+            this.Evict(comment);
+
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNotNull(task);
+            Assert.AreEqual(1, task.Comments.Count());
+            Assert.IsTrue(task.Comments.Any(x => x.Body == comment && x.Creator == null));
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void GetProjects()
         {
             var team = CreateSampleTeam();

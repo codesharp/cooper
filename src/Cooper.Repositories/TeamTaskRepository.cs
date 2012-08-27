@@ -11,6 +11,13 @@ namespace Cooper.Repositories
 {
     public class TeamTaskRepository : NHibernateRepositoryBase<long, Task>, ITaskRepository
     {
+        public IEnumerable<Task> FindBy(Team team)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .Add(Expression.Eq("TeamId", team.ID))
+                .List<Task>();
+        }
         public IEnumerable<Task> FindBy(Team team, Account account)
         {
             return this.GetSession()

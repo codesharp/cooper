@@ -1,17 +1,15 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 using CodeSharp.Core.DomainBase;
 using Cooper.Model.Accounts;
 
 namespace Cooper.Model.Teams
 {
-    /// <summary>团队成员模型
+    /// <summary>团队成员抽象模型
     /// </summary>
-    public class Member : EntityBase<int>
+    public abstract class Member : EntityBase<int>
     {
         /// <summary>获取团队成员显示的名字
         /// </summary>
@@ -81,5 +79,47 @@ namespace Cooper.Model.Teams
                 this.AssociatedAccountId = null;
             }
         }
+    }
+
+    /// <summary>拥有所有操作权限的团队成员模型
+    /// </summary>
+    public class FullMember : Member
+    {
+        protected FullMember() : base()
+        { }
+        internal FullMember(string name, string email, Team team) : base(name, email, team)
+        {
+        }
+    }
+    /// <summary>团队宾客，也是团队成员，但只拥有查看操作或评论团队任务的操作
+    /// </summary>
+    public class GuestMember : Member
+    {
+        protected GuestMember() : base()
+        { }
+        internal GuestMember(string name, string email, Team team)
+            : base(name, email, team)
+        {
+        }
+    }
+
+    /// <summary>团队成员类型枚举，通过成员类型来划分成员权限
+    /// </summary>
+    public enum MemberType
+    {
+        /// <summary>团队普通成员
+        /// <remarks>
+        /// 团队普通成员相当于团队管理员，拥有团队所有操作权限
+        /// </remarks>
+        /// </summary>
+        [Description("普通成员")]
+        FullMember,
+        /// <summary>团队宾客成员
+        /// <remarks>
+        /// 团队宾客成员只拥有查看操作或评论团队任务的操作
+        /// </remarks>
+        /// </summary>
+        [Description("宾客成员")]
+        GuestMember
     }
 }

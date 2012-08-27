@@ -13,6 +13,7 @@ namespace Cooper.Model.Teams
     /// </summary>
     public interface ITaskRepository : IRepository<long, Task>
     {
+        IEnumerable<Task> FindBy(Team team);
         IEnumerable<Task> FindBy(Team team, Account account);
         IEnumerable<Task> FindBy(Team team, Account account, bool isCompleted);
         IEnumerable<Task> FindBy(Team team, Project project);

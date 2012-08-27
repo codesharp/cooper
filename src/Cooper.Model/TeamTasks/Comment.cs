@@ -16,9 +16,9 @@ namespace Cooper.Model.Teams
     /// </summary>
     public class Comment : EntityBase<long>
     {
-        /// <summary>获取评论作者的账号
+        /// <summary>获取创建该评论的团队成员
         /// </summary>
-        public Account Creator { get; private set; }
+        public Member Creator { get; private set; }
         /// <summary>获取评论内容
         /// </summary>
         public string Body { get; private set; }
@@ -27,11 +27,23 @@ namespace Cooper.Model.Teams
         public DateTime CreateTime { get; private set; }
 
         protected Comment() { this.CreateTime = DateTime.Now; }
-        public Comment(Account creator, string body) : this()
+        public Comment(Member creator, string body) : this()
         {
+            Assert.IsNotNullOrWhiteSpace(body);
             Assert.IsValid(creator);
-            this.Creator = creator;
             this.Body = body;
+            this.Creator = creator;
+        }
+
+        /// <summary>
+        /// 将Comment的创建者清空
+        /// <remarks>
+        /// 当团队成员被从团队中删除时，需要将该团队成员的Comments的Creator信息清空，表示该Comment的作者已经不存在
+        /// </remarks>
+        /// </summary>
+        internal void SetCreatorAsNull()
+        {
+            this.Creator = null;
         }
     }
 }

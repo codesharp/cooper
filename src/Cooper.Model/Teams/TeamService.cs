@@ -54,9 +54,32 @@ namespace Cooper.Model.Teams
         /// <param name="name"></param>
         /// <param name="email"></param>
         /// <param name="team"></param>
-        /// <param name="account"></param>
+        /// <param name="associateAccount"></param>
         /// <returns></returns>
-        Member AddMember(string name, string email, Team team, Account account);
+        Member AddMember(string name, string email, Team team, Account associateAccount);
+        /// <summary>新增一个指定的成员，并指定成员类型
+        /// <remarks>
+        /// 团队内成员的Email和关联账号必须唯一，会做并发控制
+        /// </remarks>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="email"></param>
+        /// <param name="team"></param>
+        /// <param name="memberType"></param>
+        /// <returns></returns>
+        Member AddMember(string name, string email, Team team, MemberType memberType);
+        /// <summary>新增一个指定的成员，并指定成员类型和自动关联到指定账号
+        /// <remarks>
+        /// 团队内成员的Email和关联账号必须唯一，会做并发控制
+        /// </remarks>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="email"></param>
+        /// <param name="team"></param>
+        /// <param name="memberType"></param>
+        /// <param name="associateAccount"></param>
+        /// <returns></returns>
+        Member AddMember(string name, string email, Team team, MemberType memberType, Account associateAccount);
         /// <summary>将一个指定的团队成员从团队移除
         /// </summary>
         /// <param name="member"></param>
@@ -141,21 +164,35 @@ namespace Cooper.Model.Teams
             return (this as ITeamService).AddMember(name, email, team, null);
         }
         [Transaction(TransactionMode.Requires)]
-        Member ITeamService.AddMember(string name, string email, Team team, Account account)
+        Member ITeamService.AddMember(string name, string email, Team team, Account associateAccount)
+        {
+            return (this as ITeamService).AddMember(name, email, team, MemberType.FullMember, associateAccount);
+        }
+        [Transaction(TransactionMode.Requires)]
+        Member ITeamService.AddMember(string name, string email, Team team, MemberType memberType)
+        {
+            return (this as ITeamService).AddMember(name, email, team, memberType, null);
+        }
+        [Transaction(TransactionMode.Requires)]
+        Member ITeamService.AddMember(string name, string email, Team team, MemberType memberType, Account associateAccount)
         {
             Assert.IsValidKey(name);
             Assert.IsValidKey(email);
             Assert.IsValid(team);
+            if (associateAccount != null)
+            {
+                Assert.IsValid(associateAccount);
+            }
 
             //HACK:为了确保新增成员时，团队内成员的Email以及成员关联的账号都唯一，所以这里通过锁来进行同步控制
             this._locker.Require<Member>();
             Assert.IsNull(_teamRepository.FindMemberBy(team, email));
-            if (account != null)
+            if (associateAccount != null)
             {
-                Assert.IsNull(_teamRepository.FindMemberBy(team, account));
+                Assert.IsNull(_teamRepository.FindMemberBy(team, associateAccount));
             }
 
-            var member = team.AddMember(name, email, account);
+            var member = team.AddMember(name, email, memberType, associateAccount);
             _teamRepository.Update(team);
 
             return member;
@@ -200,6 +237,16 @@ namespace Cooper.Model.Teams
             //将团队成员从团队中移除
             team.RemoveMember(member);
             _teamRepository.Update(team);
+
+            //将团队内由该成员发表的所有评论的作者信息清空
+            var teamTasks = _taskRepository.FindBy(team);
+            foreach (var task in teamTasks)
+            {
+                task.Comments
+                    .Where(x => x.Creator != null && x.Creator.ID == member.ID)
+                    .ForEach(comment => comment.SetCreatorAsNull());
+                _taskRepository.Update(task);
+            }
 
             //将分配给团队成员的所有任务收回
             var memberTasks = _taskRepository.FindBy(team, member);

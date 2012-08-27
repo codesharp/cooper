@@ -271,7 +271,6 @@ namespace Cooper.Model.Test
             task = this._teamTaskService.GetTask(task.ID);
             Assert.AreEqual(0, task.Projects.Count());
         }
-
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void AddRemoveCommentTest()
@@ -279,11 +278,14 @@ namespace Cooper.Model.Test
             var account = this.CreateAccount();
             var team = CreateSampleTeam();
             var task = new Task(account, team);
+            var memberName = RandomString();
+            var memberEmail = RandomString();
+            var member = this._teamService.AddMember(memberName, memberEmail, team);
 
             var comment1 = RandomString();
             var comment2 = RandomString();
-            task.AddComment(account, comment1);
-            task.AddComment(account, comment2);
+            task.AddComment(member, comment1);
+            task.AddComment(member, comment2);
 
             this._teamTaskService.Create(task);
             this.Evict(task);
