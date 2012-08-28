@@ -92,11 +92,11 @@ namespace Cooper.Model.Teams
         /// </summary>
         /// <param name="member"></param>
         /// <param name="account"></param>
-        void AssociateMemberAccount(Member member, Account account);
+        void AssociateMemberAccount(Team team, Member member, Account account);
         /// <summary>为团队成员取消关联账号
         /// </summary>
         /// <param name="member"></param>
-        void UnAssociateMemberAccount(Member member);
+        void UnassociateMemberAccount(Team team, Member member);
         /// <summary>获取与指定邮箱相符的所有还未与Account建立关联的团队成员
         /// </summary>
         /// <param name="email"></param>
@@ -203,13 +203,11 @@ namespace Cooper.Model.Teams
             return member;
         }
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.AssociateMemberAccount(Member member, Account account)
+        void ITeamService.AssociateMemberAccount(Team team, Member member, Account account)
         {
+            Assert.IsValid(team);
             Assert.IsValid(member);
             Assert.IsValid(account);
-
-            var team = _teamRepository.FindBy(member.TeamId);
-            Assert.IsNotNull(team);
             var memberToAssociateAccount = team.GetMember(member.ID);
             Assert.IsNotNull(memberToAssociateAccount);
 
@@ -219,19 +217,34 @@ namespace Cooper.Model.Teams
 
             memberToAssociateAccount.Associate(account);
             _teamRepository.Update(team);
+
+            _log.InfoFormat("将团队【id:{0},name:{1}】中的成员【id:{2},name:{3},email:{4}】与账号【id:{5},name:{6}】建立了关联",
+                team.ID,
+                team.Name,
+                member.ID,
+                member.Name,
+                member.Email,
+                account.ID,
+                account.Name);
         }
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.UnAssociateMemberAccount(Member member)
+        void ITeamService.UnassociateMemberAccount(Team team, Member member)
         {
+            Assert.IsValid(team);
             Assert.IsValid(member);
 
-            var team = _teamRepository.FindBy(member.TeamId);
-            Assert.IsNotNull(team);
             var memberToUnAssociateAccount = team.GetMember(member.ID);
             Assert.IsNotNull(memberToUnAssociateAccount);
 
             memberToUnAssociateAccount.Associate(null);
             _teamRepository.Update(team);
+
+            _log.InfoFormat("团队【id:{0},name:{1}】中的成员【id:{2},name:{3},email:{4}】的账号关联信息被取消",
+                team.ID,
+                team.Name,
+                member.ID,
+                member.Name,
+                member.Email);
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.RemoveMember(Member member, Team team)
@@ -263,6 +276,7 @@ namespace Cooper.Model.Teams
         }
         IEnumerable<Member> ITeamService.GetUnassociatedMembers(string email)
         {
+            Assert.IsNotNullOrWhiteSpace(email);
             return _teamRepository.FindUnassociatedMembersBy(email);
         }
         [Transaction(TransactionMode.Requires)]

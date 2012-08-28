@@ -43,6 +43,14 @@ namespace Cooper.Model.Teams
         {
             return _members.SingleOrDefault(x => x.ID == id);
         }
+        /// <summary>根据成员标识获取成员
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public Member GetMember(string email)
+        {
+            return _members.SingleOrDefault(x => x.Email == email);
+        }
         /// <summary>根据项目标识获取项目
         /// </summary>
         /// <param name="id"></param>
