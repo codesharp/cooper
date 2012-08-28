@@ -73,6 +73,8 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         debuger.debug('current teamId=', p.teamId);
         $rootScope.team = findBy($scope.teams, 'id', p.teamId);
         debuger.debug('current team', $scope.team);
+        //TODO:为支持陌生人访问，在没有在team列表中获取到team时，单独获取p.teamId信息
+
         //必须有一个team
         if (!$rootScope.team) {
             if ($scope.teams.length > 0)
