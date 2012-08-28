@@ -97,6 +97,11 @@ namespace Cooper.Model.Teams
         /// </summary>
         /// <param name="member"></param>
         void UnAssociateMemberAccount(Member member);
+        /// <summary>获取与指定邮箱相符的所有还未与Account建立关联的团队成员
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        IEnumerable<Member> GetUnassociatedMembers(string email);
         /// <summary>往团队新增一个项目
         /// </summary>
         /// <param name="name"></param>
@@ -255,6 +260,10 @@ namespace Cooper.Model.Teams
                 task.RemoveAssignee();
                 _taskRepository.Update(task);
             }
+        }
+        IEnumerable<Member> ITeamService.GetUnassociatedMembers(string email)
+        {
+            return _teamRepository.FindUnassociatedMembersBy(email);
         }
         [Transaction(TransactionMode.Requires)]
         Project ITeamService.AddProject(string name, Team team)
