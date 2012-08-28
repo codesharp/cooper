@@ -375,18 +375,9 @@ namespace Cooper.Model.Test
             var team2 = CreateSampleTeam();
             var team3 = CreateSampleTeam();
 
-            var member1 = AddSampleMemberToTeam(team1);
+            var member1 = AddSampleMemberToTeam(account, team1);
             var member2 = AddSampleMemberToTeam(team2);
-            var member3 = AddSampleMemberToTeam(team3);
-
-            member1 = team1.GetMember(member1.ID);
-            member3 = team3.GetMember(member3.ID);
-
-            this._teamService.AssociateMemberAccount(team1, member1, account);
-            this._teamService.AssociateMemberAccount(team3, member3, account);
-
-            this._teamService.Update(team1);
-            this._teamService.Update(team3);
+            var member3 = AddSampleMemberToTeam(account, team3);
 
             var teams = this._teamService.GetTeamsByAccount(account);
 
@@ -398,18 +389,16 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void GetUnassociatedMembersTest()
         {
+            var account = CreateAccount();
             var team1 = CreateSampleTeam();
             var team2 = CreateSampleTeam();
             var team3 = CreateSampleTeam();
 
             var memberName = RandomString();
             var memberEmail = RandomString();
-            var member1 = this._teamService.AddMember(memberName, memberEmail, team1);
+            var member1 = this._teamService.AddMember(memberName, memberEmail, team1, account);
             var member2 = this._teamService.AddMember(memberName, memberEmail, team2);
             var member3 = this._teamService.AddMember(memberName, memberEmail, team3);
-
-            var account = CreateAccount();
-            this._teamService.AssociateMemberAccount(team1, member1, account);
 
             var members = _teamService.GetUnassociatedMembers(memberEmail);
 

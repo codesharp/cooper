@@ -85,18 +85,18 @@ namespace Cooper.Model.Teams
         /// <param name="member"></param>
         /// <param name="team"></param>
         void RemoveMember(Member member, Team team);
-        /// <summary>为团队成员设置关联账号
-        /// <remarks>
-        /// 团队内成员的关联账号必须唯一，会做并发控制
-        /// </remarks>
-        /// </summary>
-        /// <param name="member"></param>
-        /// <param name="account"></param>
-        void AssociateMemberAccount(Team team, Member member, Account account);
-        /// <summary>为团队成员取消关联账号
-        /// </summary>
-        /// <param name="member"></param>
-        void UnassociateMemberAccount(Team team, Member member);
+        ///// <summary>为团队成员设置关联账号
+        ///// <remarks>
+        ///// 团队内成员的关联账号必须唯一，会做并发控制
+        ///// </remarks>
+        ///// </summary>
+        ///// <param name="member"></param>
+        ///// <param name="account"></param>
+        //void AssociateMemberAccount(Team team, Member member, Account account);
+        ///// <summary>为团队成员取消关联账号
+        ///// </summary>
+        ///// <param name="member"></param>
+        //void UnassociateMemberAccount(Team team, Member member);
         /// <summary>获取与指定邮箱相符的所有还未与Account建立关联的团队成员
         /// </summary>
         /// <param name="email"></param>
@@ -202,34 +202,35 @@ namespace Cooper.Model.Teams
 
             return member;
         }
-        [Transaction(TransactionMode.Requires)]
-        void ITeamService.AssociateMemberAccount(Team team, Member member, Account account)
-        {
-            Assert.IsValid(team);
-            Assert.IsValid(member);
-            Assert.IsValid(account);
-            var memberToAssociateAccount = team.GetMember(member.ID);
-            Assert.IsNotNull(memberToAssociateAccount);
+        //暂时不提同Member创建后为其手动添加与账号关联的功能
+        //[Transaction(TransactionMode.Requires)]
+        //void ITeamService.AssociateMemberAccount(Team team, Member member, Account account)
+        //{
+        //    Assert.IsValid(team);
+        //    Assert.IsValid(member);
+        //    Assert.IsValid(account);
+        //    var memberToAssociateAccount = team.GetMember(member.ID);
+        //    Assert.IsNotNull(memberToAssociateAccount);
 
-            //HACK:为了确保设置成员的关联账号时，账号必须在团队内唯一，所以这里通过锁来进行同步控制
-            this._locker.Require<Member>();
-            Assert.IsNull(_teamRepository.FindMemberBy(team, account));
+        //    //HACK:为了确保设置成员的关联账号时，账号必须在团队内唯一，所以这里通过锁来进行同步控制
+        //    this._locker.Require<Member>();
+        //    Assert.IsNull(_teamRepository.FindMemberBy(team, account));
 
-            memberToAssociateAccount.Associate(account);
-            _teamRepository.Update(team);
-        }
-        [Transaction(TransactionMode.Requires)]
-        void ITeamService.UnassociateMemberAccount(Team team, Member member)
-        {
-            Assert.IsValid(team);
-            Assert.IsValid(member);
+        //    memberToAssociateAccount.Associate(account);
+        //    _teamRepository.Update(team);
+        //}
+        //[Transaction(TransactionMode.Requires)]
+        //void ITeamService.UnassociateMemberAccount(Team team, Member member)
+        //{
+        //    Assert.IsValid(team);
+        //    Assert.IsValid(member);
 
-            var memberToUnAssociateAccount = team.GetMember(member.ID);
-            Assert.IsNotNull(memberToUnAssociateAccount);
+        //    var memberToUnAssociateAccount = team.GetMember(member.ID);
+        //    Assert.IsNotNull(memberToUnAssociateAccount);
 
-            memberToUnAssociateAccount.Associate(null);
-            _teamRepository.Update(team);
-        }
+        //    memberToUnAssociateAccount.Associate(null);
+        //    _teamRepository.Update(team);
+        //}
         [Transaction(TransactionMode.Requires)]
         void ITeamService.RemoveMember(Member member, Team team)
         {
