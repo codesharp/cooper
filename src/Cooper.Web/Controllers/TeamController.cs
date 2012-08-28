@@ -38,10 +38,12 @@ namespace Cooper.Web.Controllers
 
         public ActionResult Index(string teamId, string projectId, string memberId)
         {
-            ViewBag.Account = this.Parse(this.Context.Current);
+            var a = this.Parse(this.Context.Current);
+            ViewBag.Account = a;
             ViewBag.TeamId = teamId;
             ViewBag.ProjectId = projectId;
             ViewBag.MemberId = memberId;
+            ViewBag.UnconfirmedMembers = this._teamService.GetUnassociatedMembers(a.Email);
             return View();
         }
 
