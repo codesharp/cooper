@@ -387,7 +387,7 @@ namespace Cooper.Model.Test
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void GetUnassociatedMembersTest()
+        public void GetUnassociatedTeamsTest()
         {
             var account = CreateAccount();
             var team1 = CreateSampleTeam();
@@ -400,11 +400,11 @@ namespace Cooper.Model.Test
             var member2 = this._teamService.AddMember(memberName, memberEmail, team2);
             var member3 = this._teamService.AddMember(memberName, memberEmail, team3);
 
-            var members = _teamService.GetUnassociatedMembers(memberEmail);
+            var teams = _teamService.GetUnassociatedTeams(memberEmail);
 
-            Assert.AreEqual(2, members.Count());
-            Assert.IsTrue(members.Any(x => x.ID == member2.ID));
-            Assert.IsTrue(members.Any(x => x.ID == member3.ID));
+            Assert.AreEqual(2, teams.Count());
+            Assert.IsTrue(teams.Any(x => x.ID == team2.ID));
+            Assert.IsTrue(teams.Any(x => x.ID == team3.ID));
         }
 
         //TODO,UNDONE

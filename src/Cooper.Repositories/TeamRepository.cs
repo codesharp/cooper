@@ -35,14 +35,14 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("AssociatedAccountId", account.ID))
                 .UniqueResult<Member>();
         }
-        public IEnumerable<Member> FindUnassociatedMembersBy(string email)
+        public IEnumerable<Team> FindUnassociatedTeamsBy(string email)
         {
             return this.GetSession()
-                .CreateCriteria<Member>()
-                .Add(Expression.IsNotNull("TeamId"))
-                .Add(Expression.IsNull("AssociatedAccountId"))
-                .Add(Expression.Eq("Email", email))
-                .List<Member>();
+                .CreateCriteria<Team>()
+                .CreateAlias("Members", "members")
+                .Add(Expression.IsNull("members.AssociatedAccountId"))
+                .Add(Expression.Eq("members.Email", email))
+                .List<Team>();
         }
     }
 }

@@ -97,11 +97,11 @@ namespace Cooper.Model.Teams
         /// </summary>
         /// <param name="member"></param>
         void UnassociateMemberAccount(Team team, Member member);
-        /// <summary>获取与指定邮箱相符的所有还未与Account建立关联的团队成员
+        /// <summary>获取与指定邮箱相符的所有还未与Account建立关联的团队成员所属的团队
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
-        IEnumerable<Member> GetUnassociatedMembers(string email);
+        IEnumerable<Team> GetUnassociatedTeams(string email);
         /// <summary>往团队新增一个项目
         /// </summary>
         /// <param name="name"></param>
@@ -274,10 +274,10 @@ namespace Cooper.Model.Teams
                 _taskRepository.Update(task);
             }
         }
-        IEnumerable<Member> ITeamService.GetUnassociatedMembers(string email)
+        IEnumerable<Team> ITeamService.GetUnassociatedTeams(string email)
         {
             Assert.IsNotNullOrWhiteSpace(email);
-            return _teamRepository.FindUnassociatedMembersBy(email);
+            return _teamRepository.FindUnassociatedTeamsBy(email);
         }
         [Transaction(TransactionMode.Requires)]
         Project ITeamService.AddProject(string name, Team team)
