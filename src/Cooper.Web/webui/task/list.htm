@@ -229,6 +229,22 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="split"></div>
+                <!--comment-->
+                <table ng-show="team!=null" class="comment">
+                    <tbody id="comments">
+                    </tbody>
+                    <tfoot ng-show="currentMember">
+                        <tr>
+                            <td class="comment-icon"></td>
+                            <td class="comment-content">
+                                <textarea id="comment_input"></textarea>
+                                <br />
+                                <button id="comment_btn" type="button" class="btn"><i class="icon-pencil"></i> {{lang.comment}}</button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
         </div>
         <div id="loading">

@@ -5,7 +5,7 @@ div#cancel_delete {
 	position: absolute;
 	margin: 10px 0 0 130px;
 	display: none;
-	z-index:999;
+	z-index: 999;
 }
 div#cancel_delete a {
 	cursor: pointer;
@@ -153,9 +153,8 @@ div#detail_wrapper {
 	overflow: hidden;
 	color: #808080;
 	border-right: 2px #05C solid;
-	padding:0 3px;
-	text-align:right;
-	/*text-overflow: ellipsis;*/
+	padding: 0 3px;
+	text-align: right; /*text-overflow: ellipsis;*/
 }
 .todolist .row_task .cell_string {
 	z-index: 60;
@@ -230,7 +229,7 @@ div#detail_wrapper {
 }
 .detail .detail-content {
 	color: #808080;
-	line-height:30px;
+	line-height: 30px;
 }
 /***************************************************************************************/
 .feed {
@@ -242,22 +241,21 @@ div#detail_wrapper {
 }
 /***************************************************************************************/
 .comment {
+	margin-top: 20px;
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	width: 90%;
 }
 .comment li {
 	clear: both;
 }
 .comment .comment-icon {
-	float: left;
-	position: relative;
-	padding-top: 3px;
+	padding-top: 5px;
+	vertical-align: top;
+	width: 20px;
 }
 .comment .comment-content {
-	float: left;
-	position: relative;
-	margin-left: 10px;
 	line-height: 20px;
 }
 .comment .comment-content .comment-creator {
@@ -269,4 +267,11 @@ div#detail_wrapper {
 	color: #808080;
 	font-size: 11px;
 	padding-bottom: 15px;
+}
+.comment textarea {
+	width: 100%;
+}
+.split {
+	border-top: 1px #ddd solid;
+	height: 20px;
 }

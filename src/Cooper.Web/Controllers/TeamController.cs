@@ -226,6 +226,11 @@ namespace Cooper.Web.Controllers
                     else if (c.Type == ChangeType.Delete)
                         teamTask.RemoveFromProject(p);
                     break;
+                case "comments":
+                    if (c.Type == ChangeType.Insert)
+                        teamTask.AddComment(this.GetCurrentMember(team), c.Value);
+                    //HACK:目前暂不支持删除评论
+                    break;
             }
         }
 
@@ -286,6 +291,15 @@ namespace Cooper.Web.Controllers
                 throw new CooperknownException(this.Lang().member_not_match_team);
             return m;
         }
+        //获取当前用户对应的成员信息
+        private Teams.Member GetCurrentMember(Teams.Team team)
+        {
+            var m = team.Members.FirstOrDefault(o =>
+                o.AssociatedAccountId.HasValue && o.AssociatedAccountId.Value == this.Context.Current.ID);
+            if (m == null)
+                throw new CooperknownException(this.Lang().you_are_not_the_member_of_team);
+            return m;
+        }
         private bool IsTeamOfCurrentAccount(Teams.Team team)
         {
             var a = this.Context.Current;
@@ -344,6 +358,15 @@ namespace Cooper.Web.Controllers
                 accountId = member.AssociatedAccountId.HasValue ? member.AssociatedAccountId.Value.ToString() : null
             };
         }
+        private TeamTaskCommentInfo Parse(Teams.Comment comment)
+        {
+            return new TeamTaskCommentInfo()
+            {
+                body = comment.Body,
+                creator = this.Parse(comment.Creator),
+                createTime = comment.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")
+            };
+        }
         private TeamTaskInfo[] Parse(IEnumerable<Teams.Task> tasks, Teams.Team team)
         {
             var a = this.Context.Current;
@@ -360,9 +383,11 @@ namespace Cooper.Web.Controllers
                 //项目列表
                 teamTaskInfo.Projects = teamTask.Projects.Select(o => this.Parse(o)).ToArray();
                 //是否可编辑 创建者或被分配者（执行人）
-                teamTaskInfo.Editable = GetAccountByMember(team, teamTask.CreatorMemberId).ID == a.ID
+                teamTaskInfo.Editable = this.GetAccountByMember(team, teamTask.CreatorMemberId).ID == a.ID
                     || (teamTaskInfo.Assignee != null
                     && teamTaskInfo.Assignee.accountId == a.ID.ToString());
+                //评论
+                teamTaskInfo.Comments = teamTask.Comments.Select(o => this.Parse(o)).ToArray();
             }, tasks.Select(o => o as Task)
             .ToArray())
             .Select(o => o as TeamTaskInfo)
@@ -503,7 +528,18 @@ namespace Cooper.Web.Controllers
     {
         public TeamMemberInfo Assignee { get; set; }
         public TeamProjectInfo[] Projects { get; set; }
+        public TeamTaskCommentInfo[] Comments { get; set; }
         public TeamTaskInfo() : base() { }
+    }
+    /// <summary>团队任务评论信息
+    /// </summary>
+    public class TeamTaskCommentInfo
+    {
+        public TeamMemberInfo creator { get; set; }
+        public string body { get; set; }
+        /// <summary>格式yyyy-MM-dd HH:mm:ss
+        /// </summary>
+        public string createTime { get; set; }
     }
     #endregion
 }
