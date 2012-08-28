@@ -15,7 +15,7 @@ namespace Cooper.Model.Mappings
             Map(m => m.AccountId);
             Map(m => m.CreateTime);
             Map(m => m.Token).Length(1000);
-            DiscriminateSubClassesOnColumn("ConnectionType");
+            DiscriminateSubClassesOnColumn("ConnectionType").Length(255);
         }
     }
     public class GoogleConnectionMap : SubclassMap<GoogleConnection>

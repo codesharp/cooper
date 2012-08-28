@@ -53,13 +53,17 @@ namespace Cooper.Model.Teams
         {
             Assert.IsValid(member);
             Assert.AreEqual(this.TeamId, member.TeamId);
+            if (this.AssigneeId != null && this.AssigneeId.Value == member.ID) return;
             this.AssigneeId = member.ID;
+            this.MakeChange();
         }
         /// <summary>移除当前任务的Assignee
         /// </summary>
         public void RemoveAssignee()
         {
+            if (this.AssigneeId == null) return;
             this.AssigneeId = null;
+            this.MakeChange();
         }
         /// <summary>将任务添加到指定项目
         /// <remarks>
@@ -73,6 +77,7 @@ namespace Cooper.Model.Teams
             if (!_projects.Any(x => x.ID == project.ID))
             {
                 _projects.Add(project);
+                this.MakeChange();
             }
         }
         /// <summary>将任务从指定项目移除
@@ -88,6 +93,7 @@ namespace Cooper.Model.Teams
             if (projectToRemove != null)
             {
                 _projects.Remove(projectToRemove);
+                this.MakeChange();
             }
         }
         /// <summary>根据评论标识获取评论
@@ -108,6 +114,7 @@ namespace Cooper.Model.Teams
             Assert.AreEqual(this.TeamId, creator.TeamId);
             Assert.IsNotNullOrWhiteSpace(body);
             _comments.Add(new Comment(creator, body));
+            this.MakeChange();
         }
         /// <summary>移除评论
         /// </summary>
@@ -119,6 +126,7 @@ namespace Cooper.Model.Teams
             if (commentToRemove != null)
             {
                 _comments.Remove(commentToRemove);
+                this.MakeChange();
             }
         }
     }

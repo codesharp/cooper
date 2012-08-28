@@ -17,7 +17,7 @@ namespace Cooper.Model.Mappings
             Map(m => m.Email).Length(255);
             Map(m => m.CreateTime);
             Map(m => m.AssociatedAccountId);
-            DiscriminateSubClassesOnColumn("MemberType");
+            DiscriminateSubClassesOnColumn("MemberType").Length(255);
         }
     }
     public class FullMemberMap : SubclassMap<FullMember>

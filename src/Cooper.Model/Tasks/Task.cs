@@ -58,7 +58,7 @@ namespace Cooper.Model.Tasks
         public virtual void SetSubject(string subject)
         {
             if (subject != null)
-                Assert.LessOrEqual(subject.Length, 500);
+                Assert.LessOrEqual(subject.Length, 255);
             if (this.Subject == subject) return;
             this.Subject = subject;
             this.MakeChange();
@@ -70,7 +70,7 @@ namespace Cooper.Model.Tasks
         public virtual void SetBody(string body)
         {
             if (body != null)
-                Assert.LessOrEqual(body.Length, 5000);
+                Assert.LessOrEqual(body.Length, 1000);
             if (this.Body == body) return;
             this.Body = body;
             this.MakeChange();
