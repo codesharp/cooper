@@ -394,6 +394,29 @@ namespace Cooper.Model.Test
             Assert.IsTrue(teams.Any(x => x.ID == team1.ID));
             Assert.IsTrue(teams.Any(x => x.ID == team3.ID));
         }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void GetUnassociatedMembersTest()
+        {
+            var team1 = CreateSampleTeam();
+            var team2 = CreateSampleTeam();
+            var team3 = CreateSampleTeam();
+
+            var memberName = RandomString();
+            var memberEmail = RandomString();
+            var member1 = this._teamService.AddMember(memberName, memberEmail, team1);
+            var member2 = this._teamService.AddMember(memberName, memberEmail, team2);
+            var member3 = this._teamService.AddMember(memberName, memberEmail, team3);
+
+            var account = CreateAccount();
+            this._teamService.AssociateMemberAccount(member1, account);
+
+            var members = _teamService.GetUnassociatedMembers(memberEmail);
+
+            Assert.AreEqual(2, members.Count());
+            Assert.IsTrue(members.Any(x => x.ID == member2.ID));
+            Assert.IsTrue(members.Any(x => x.ID == member3.ID));
+        }
 
         //TODO,UNDONE
         //发现在测试
