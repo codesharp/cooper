@@ -1,5 +1,8 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
+//moment组件语言设置
+//moment.lang('zh-cn');
+
 //简易提供文案
 var lang = {};
 lang.work_in_cooper = 'WORK IN COOPER';
@@ -41,6 +44,9 @@ lang.member_name = '您在团队中的昵称：';
 lang.member_email = '您在团队中的邮箱：';
 lang.member_profile = '个人设置';
 lang.cancel = '取消';
+lang.comment = '评论';
+lang.comment_must_more_than_5 = '评论字数至少5个字符';
+lang.comment_must_less_than_500 = '评论字数不能超过500';
 
 lang.my_task = '个人任务';
 lang.my_profile = '我的设置';

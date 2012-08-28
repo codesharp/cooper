@@ -89,6 +89,7 @@ debuger.isErrorEnable = debuger.enable && true;
         <include name="${build.absolutepath}\cooper_web\content\jquery\jquery.json-2.3.min.js" />
         <include name="${build.absolutepath}\cooper_web\content\bootstrap\js\bootstrap.min.js" />
         <include name="${build.absolutepath}\cooper_web\content\js\json3.min.js" />
+        <include name="${build.absolutepath}\cooper_web\content\js\moment.min.js" />
         <include name="${build.absolutepath}\cooper_web\content\angular\angular-1.0.1.min.js" />
       </sourceFiles>
     </javaScriptCompressor>
@@ -185,14 +186,6 @@ debuger.isErrorEnable = debuger.enable && true;
 
     <!--hybrid-->
   </target>
-  
-  <target name="test_model">
-    <exec program="${msbuild}"
-          commandline="${msbuild.params} ${msbuild.params.output}\cooper_model_test"
-          workingdir="${dir}\src\Cooper.Model.Test" />
-    <exec program="${nunit}" commandline="Cooper.Model.Test.dll" workingdir="${build.absolutepath}\cooper_model_test"/>
-    <!--/exclude=concurrent-->
-  </target>
 
   <target name="md5_js">
     <checksum algorithm="MD5" fileext="MD5">
@@ -210,4 +203,14 @@ debuger.isErrorEnable = debuger.enable && true;
       ]]>
     </echo>
   </target>
+  
+  <target name="test_model">
+    <exec program="${msbuild}"
+          commandline="${msbuild.params} ${msbuild.params.output}\cooper_model_test"
+          workingdir="${dir}\src\Cooper.Model.Test" />
+    <exec program="${nunit}" commandline="Cooper.Model.Test.dll" workingdir="${build.absolutepath}\cooper_model_test"/>
+    <!--/exclude=concurrent-->
+  </target>
+
+  
 </project>

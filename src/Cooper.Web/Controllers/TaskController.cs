@@ -65,6 +65,7 @@ namespace Cooper.Web.Controllers
                 t.ID = o.ID.ToString();
                 t.Subject = o.Subject;
                 t.Body = o.Body;
+                //HACK:DueTime格式化按Date.ToString("yyyy-MM-dd")精度到天
                 t.DueTime = o.DueTime.HasValue ? o.DueTime.Value.Date.ToString("yyyy-MM-dd") : null;
                 t.Priority = (int)o.Priority;
                 t.IsCompleted = o.IsCompleted;

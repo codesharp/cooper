@@ -55,11 +55,29 @@ UI_List_Common.prototype._bindTeam = function () {
                 + '">x</a></span> ');
         });
     }
+    Task.prototype.render_detail_comments = function ($c, cs) {
+        $c.empty();
+        $.each(cs, function (i, n) {
+            $c.append('\
+                <tr>\
+                    <td class="comment-icon"><i class="icon-comment"></i></td>\
+                    <td class="comment-content">\
+                        <span class="comment-creator">' + (n['creator'] ? n['creator']['name'] : '') + '</span>\
+                        <span class="comment-text">' + n['body'].replace(/\n/g,'<br/>') + '</span>\
+                        <div class="comment-time">' + moment(n['createTime'], "YYYY-MM-DD HH:mm:ss").fromNow() + '</div>\
+                    </td>\
+                </tr>\ '
+            );
+        });
+    }
     Task.prototype.bind_detail_team = function ($el_detail, task) {
         var $assignee = $el_detail.find('#assignee');
         var $assignee_input = $el_detail.find('#assignee_input');
         var $projects = $el_detail.find('#projects');
         var $projects_input = $el_detail.find('#projects_input');
+        var $comments = $el_detail.find('#comments');
+        var $comment_btn = $el_detail.find('#comment_btn');
+        var $comment_input = $el_detail.find('#comment_input');
 
         //var ids = getIds($el_detail);
         //if (!ids) return;
@@ -109,6 +127,16 @@ UI_List_Common.prototype._bindTeam = function () {
             $p.find('#projects_btn').show();
             $p.find('#projects_input').hide().data('typeahead').hide();
         });
+
+        //评论
+        $comment_btn.unbind('click').click(function () {
+            var body = $.trim($comment_input.val());
+            if (body == '') return;
+            if (body.length < 5) return alert(lang.comment_must_more_than_5);
+            if (body.length > 500) return alert(lang.comment_must_less_than_500);
+            task.addComment(body);
+            $comment_input.val('');
+        });
     }
 
     function getIds($el) {
@@ -127,7 +155,7 @@ UI_List_Common.prototype._bindTeam = function () {
         while (item = items.shift()) {
             var n = item['name'];
             //下拉格式：name(email)
-            item = item['id'] + '#' + n + (item['email'] ? '(' + item['email'] + ')' : '');            
+            item = item['id'] + '#' + n + (item['email'] ? '(' + item['email'] + ')' : '');
             if (!n.toLowerCase().indexOf(this.query.toLowerCase())) beginswith.push(item)
             else if (~n.indexOf(this.query)) caseSensitive.push(item)
             else caseInsensitive.push(item)

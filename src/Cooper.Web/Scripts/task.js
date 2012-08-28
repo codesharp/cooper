@@ -23,15 +23,25 @@ Task.prototype = {
             'isCompleted': t['IsCompleted'] != undefined ? t['IsCompleted'] : false,
             'tags': [],
             //team模块相关
+            //TODO:移植到扩展模块？
             'assignee': t['Assignee'] != undefined ? { 'id': t['Assignee']['ID'] || t['Assignee']['id'], 'name': t['Assignee']['Name'] || t['Assignee']['name']} : null,
             'assigneeId': t['Assignee'] ? t['Assignee']['ID'] || t['Assignee']['id'] : null,
-            'projects': t['Projects'] ? $.map(t['Projects'], function (n) { return { 'id': n['ID'] || n['id'], 'name': n['Name'] || n['name'] }; }) : []
+            'projects': t['Projects'] ? $.map(t['Projects'], function (n) { return { 'id': n['ID'] || n['id'], 'name': n['Name'] || n['name'] }; }) : [],
+            'comments': t['Comments'] ? $.map(t['Comments'], this._mapComment) : []
         }
         this.$el_row = this._generateItem(this['data']);
         this.$el_detail = null;
 
         if (debuger.isDebugEnable)
             this._getRowEl('subject').attr('placeholder', '#' + this.id());
+    },
+    _mapComment: function (n) {
+        return {
+            'id': n['ID'] || n['id'],
+            'body': n['Body'] || n['body'],
+            'createTime': n['CreateTime'] || n['createTime'],
+            'creator': n['Creator'] || n['creator']//TODO:调整到_mapMember?或只提供creatorid
+        };
     },
     _generateItem: function (d) { return $(render($('#tmp_region tbody').html(), d)); },
     _generateDetail: function (d) { d.dueTimeId = 'dueTime'; return $(render($('#tmp_detail').html(), d)); },
@@ -99,6 +109,7 @@ Task.prototype = {
         this.setDetail_Body(this.body());
         this.setDetail_Assignee(this.assignee());
         this.setDetail_Projects(this.projects());
+        this.setDetail_Comments(this.comments());
         //设置url快捷链接区域 临时方案
         var $urls = this.$el_detail.find('#urls');
         $urls.find('ul').empty();
@@ -162,6 +173,7 @@ Task.prototype = {
     body: function () { return this.get('body'); },
     assignee: function () { return this.get('assignee'); },
     projects: function () { return this.get('projects'); },
+    comments: function () { return this.get('comments'); },
     ///////////////////////////////////////////////////////////////////////////////
     //属性以及ui设置
     setId: function (i) {
@@ -239,6 +251,18 @@ Task.prototype = {
         this._addDeleteChange('projects', p);
         this.setProjects($.grep(this.projects(), function (n, i) { return n['id'] != p; }));
     },
+    setComments: function (cs) {
+        if (!cs) return;
+        this['data']['comments'] = cs; //直接更新comments数组
+        this.setDetail_Comments(cs);
+    },
+    addComment: function (body) {
+        this._addInsertChange('comments', body);
+        this.setComments($.merge(this.comments(), [{
+            body: body,
+            createTime: moment().format('YYYY-MM-DD HH:mm:ss')
+        }]));
+    },
     ///////////////////////////////////////////////////////////////////////////////
     //detail设置
     setDetail_Id: function (i) {
@@ -289,6 +313,11 @@ Task.prototype = {
         if (!this.$el_detail || !ps) return;
         if (this.render_detail_projects)
             this.render_detail_projects(this._getDetailEl('projects'), ps);
+    },
+    setDetail_Comments: function (cs) {
+        if (!this.$el_detail || !cs) return;
+        if (this.render_detail_comments)
+            this.render_detail_comments(this._getDetailEl('comments'), cs);
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////
