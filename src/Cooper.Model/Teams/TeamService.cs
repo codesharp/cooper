@@ -263,7 +263,7 @@ namespace Cooper.Model.Teams
         }
         IEnumerable<Member> ITeamService.GetUnassociatedMembers(string email)
         {
-            Assert.IsValidKey(email);
+            Assert.IsNotNullOrWhiteSpace(email);
             return _teamRepository.FindUnassociatedMembersBy(email);
         }
         [Transaction(TransactionMode.Requires)]
