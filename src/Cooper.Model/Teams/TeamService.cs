@@ -92,11 +92,11 @@ namespace Cooper.Model.Teams
         /// </summary>
         /// <param name="member"></param>
         /// <param name="account"></param>
-        void AssociateMemberAccount(Member member, Account account);
+        void AssociateMemberAccount(Team team, Member member, Account account);
         /// <summary>为团队成员取消关联账号
         /// </summary>
         /// <param name="member"></param>
-        void UnassociateMemberAccount(Member member);
+        void UnassociateMemberAccount(Team team, Member member);
         /// <summary>获取与指定邮箱相符的所有还未与Account建立关联的团队成员
         /// </summary>
         /// <param name="email"></param>
@@ -203,13 +203,11 @@ namespace Cooper.Model.Teams
             return member;
         }
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.AssociateMemberAccount(Member member, Account account)
+        void ITeamService.AssociateMemberAccount(Team team, Member member, Account account)
         {
+            Assert.IsValid(team);
             Assert.IsValid(member);
             Assert.IsValid(account);
-
-            var team = _teamRepository.FindBy(member.TeamId);
-            Assert.IsNotNull(team);
             var memberToAssociateAccount = team.GetMember(member.ID);
             Assert.IsNotNull(memberToAssociateAccount);
 
@@ -221,12 +219,11 @@ namespace Cooper.Model.Teams
             _teamRepository.Update(team);
         }
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.UnassociateMemberAccount(Member member)
+        void ITeamService.UnassociateMemberAccount(Team team, Member member)
         {
+            Assert.IsValid(team);
             Assert.IsValid(member);
 
-            var team = _teamRepository.FindBy(member.TeamId);
-            Assert.IsNotNull(team);
             var memberToUnAssociateAccount = team.GetMember(member.ID);
             Assert.IsNotNull(memberToUnAssociateAccount);
 

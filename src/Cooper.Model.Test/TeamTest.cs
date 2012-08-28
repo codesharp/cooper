@@ -382,8 +382,8 @@ namespace Cooper.Model.Test
             member1 = team1.GetMember(member1.ID);
             member3 = team3.GetMember(member3.ID);
 
-            this._teamService.AssociateMemberAccount(member1, account);
-            this._teamService.AssociateMemberAccount(member3, account);
+            this._teamService.AssociateMemberAccount(team1, member1, account);
+            this._teamService.AssociateMemberAccount(team3, member3, account);
 
             this._teamService.Update(team1);
             this._teamService.Update(team3);
@@ -409,7 +409,7 @@ namespace Cooper.Model.Test
             var member3 = this._teamService.AddMember(memberName, memberEmail, team3);
 
             var account = CreateAccount();
-            this._teamService.AssociateMemberAccount(member1, account);
+            this._teamService.AssociateMemberAccount(team1, member1, account);
 
             var members = _teamService.GetUnassociatedMembers(memberEmail);
 
