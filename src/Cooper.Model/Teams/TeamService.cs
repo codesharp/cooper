@@ -96,7 +96,7 @@ namespace Cooper.Model.Teams
         /// <summary>为团队成员取消关联账号
         /// </summary>
         /// <param name="member"></param>
-        void UnAssociateMemberAccount(Member member);
+        void UnassociateMemberAccount(Member member);
         /// <summary>获取与指定邮箱相符的所有还未与Account建立关联的团队成员
         /// </summary>
         /// <param name="email"></param>
@@ -221,7 +221,7 @@ namespace Cooper.Model.Teams
             _teamRepository.Update(team);
         }
         [Transaction(TransactionMode.Requires)]
-        void ITeamService.UnAssociateMemberAccount(Member member)
+        void ITeamService.UnassociateMemberAccount(Member member)
         {
             Assert.IsValid(member);
 
@@ -263,6 +263,7 @@ namespace Cooper.Model.Teams
         }
         IEnumerable<Member> ITeamService.GetUnassociatedMembers(string email)
         {
+            Assert.IsValidKey(email);
             return _teamRepository.FindUnassociatedMembersBy(email);
         }
         [Transaction(TransactionMode.Requires)]
