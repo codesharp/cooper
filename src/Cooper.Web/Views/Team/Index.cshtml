@@ -1,7 +1,6 @@
 ﻿@{ 
     Layout = null;
     var account = ViewBag.Account;
-    var unconfirmedMembers = ViewBag.UnconfirmedMembers as IEnumerable<Cooper.Model.Teams.Member>;
 }
 <!DOCTYPE html>
 <html class="ng-app:cooper" id="ng-app" ng-app="cooper">
@@ -70,54 +69,6 @@
         var currentAccount={ id:@account.ID,name:'@account.Name',email:'@account.Email' };
     </script>
     @{ Html.RenderPartial("Scripts_Team"); }
-    @if (unconfirmedMembers != null)
-    {
-        //临时实现
-        <div class="modal hide" id="confirmModal">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">
-                    ×</button>
-                <h3>
-                    @this.Lang().confirm_unconfirmed_members</h3>
-            </div>
-            <div class="modal-body">
-                <ul class="nav nav-tabs nav-stacked">
-                    @foreach (var m in unconfirmedMembers)
-                    {
-                        <li><a href="javascript:;">
-                            <label>
-                                <input type="checkbox" value="@m.TeamId" onclick="toggle(this,@m.ID)" />
-                                <code>@m.Email</code> @m.Name
-                            </label>
-                        </a></li>
-                    }
-                </ul>
-                <button type="button" class="btn btn-primary" onclick="confirm()">@this.Lang().confirm_member</button>
-            </div>
-        </div>
-        if (unconfirmedMembers.Count() > 0)
-        {
-        <script type="text/javascript">
-            var ids = [];
-            var toggle = function (e, i) {
-                if ($(e).attr('checked'))
-                    ids = $.merge(ids, [i]);
-                else
-                    ids = $.grep(ids, function (n) { return n != i });
-            }
-            var confirm = function () {
-                if (ids.length == 0) return;
-                $.post('/team/ConfirmMembers', { ids: ids.join(',') }, function () { });
-            }
-            $(function () {
-                $('#confirmModal').modal('show').find('input[type="checkbox"]').each(function () {
-                    $(this).click();
-                    toggle(this, $(this).val());
-                });
-            });
-        </script>
-        }
-    }
     <script type="text/javascript">
         function resize() {
             $('.todolist_wrapper').height($(window).height() - 170);
