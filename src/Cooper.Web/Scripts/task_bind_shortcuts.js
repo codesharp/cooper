@@ -139,8 +139,10 @@ UI_List_Common.prototype._bindShortcuts = function () {
         if ($focus == null) return;
 
         var $actives = base.getActives();
-        //过滤不在合法区域的行以及非编辑状态的任务
-        var $actives2 = $actives.filter(function () { return base._isRowOfValidRegion($(this)) && base.getTask($(this)).editable; });
+        //过滤不在合法区域的行
+        var $actives2 = $actives.filter(function () { return base._isRowOfValidRegion($(this)) });
+        //以及非编辑状态的任务
+        var $actives3 = $actives2.filter(function () { return base.getTask($(this)).editable; });
 
         ////////////////////////////////////////////////////////////////////////////////////////
         //新建Enter
@@ -151,7 +153,7 @@ UI_List_Common.prototype._bindShortcuts = function () {
         ////////////////////////////////////////////////////////////////////////////////////////
         //完成Ctrl+Enter
         if (ctrl && enter) {
-            var $rows = base.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion ? $actives : $actives2;
+            var $rows = base.modeArgs.shortcuts_canSetCompleted_RowOfInValidRegion ? $actives : $actives3;
             if ($rows.length == 0) return;
             var i = base.getTask($rows.first()).isCompleted();
             $rows.each(function () {
@@ -160,8 +162,8 @@ UI_List_Common.prototype._bindShortcuts = function () {
                 task.setCompleted(!task.isCompleted());
             });
             //批量详情处理
-            if (base._isBatchDetailValid())
-                base._renderBatchDetail($rows);
+            if ($actives.length > 1)
+                base._renderBatchDetail($actives);
             return;
         }
     });

@@ -99,6 +99,7 @@ UI_List_Common.prototype = {
                 var id = base.getTaskId($(n));
                 ids[i] = id;
                 var task = base.getTaskById(id);
+                if (task.editable) editable = true;
                 if (i == 0) {
                     isCompleted = task.isCompleted();
                     priority = task.priority();
@@ -106,7 +107,6 @@ UI_List_Common.prototype = {
                 }
                 if (isCompleted != task.isCompleted()) { isCompleted = null }
                 if (priority != task.priority()) { priority = null }
-                if (task.editable) editable = true;
             });
             //批量id设置
             base.$batchDetail.attr('id', ids.join(','));
@@ -142,7 +142,7 @@ UI_List_Common.prototype = {
         else
             fn();
     },
-    _isBatchDetailValid: function () { return this.$batchDetail && this.$batchDetail.css('display') == 'block'; },
+    //_isBatchDetailValid: function () { return this.$batchDetail && this.$batchDetail.css('display') == 'block'; },
     ////////////////////////////////////////////////////////////////////////////////////////
     //批量对wrapper中的当前region执行flush操作
     _flushSorts: function () {
