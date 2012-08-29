@@ -19,6 +19,13 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("members.AssociatedAccountId", account.ID))
                 .List<Team>();
         }
+        public IEnumerable<Team> FindBy(string name)
+        {
+            return this.GetSession()
+                .CreateCriteria<Team>()
+                .Add(Expression.Eq("Name", name))
+                .List<Team>();
+        }
         public Member FindMemberBy(Team team, string email)
         {
             return this.GetSession()
