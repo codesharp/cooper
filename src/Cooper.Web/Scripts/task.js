@@ -82,6 +82,8 @@ Task.prototype = {
             this.changes = {};
         //只记录最后一次
         this.changes[k] = c;
+        //统一增加时间戳
+        this.changes[k]['CreateTime'] = new Date().toUTCString();
         debuger.info('new changelog for ' + k + ' of task#' + this.id(), this.changes[k]);
     },
     ///////////////////////////////////////////////////////////////////////////////

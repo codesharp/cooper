@@ -194,6 +194,14 @@ namespace Cooper.Web.Controllers
                         continue;
                     }
 
+                    //UNDONE:根据最后更新时间判断变更记录有效性，时间间隔过长的变更会被丢弃?
+                    //由于LastUpdateTime粒度过大，不适合这种细粒度变更比对，需要引入Merge机制来处理文本更新合并问题
+                    DateTime createTime;
+                    if (DateTime.TryParse(c.CreateTime, out createTime))
+                        if (t.LastUpdateTime - createTime > TimeSpan.FromMinutes(5))
+                            if (this._log.IsInfoEnabled)
+                                this._log.InfoFormat("变更创建时间{0}与任务最后更新时间{1}的隔间过长", c.CreateTime, t.LastUpdateTime);
+                    
                     if (this.IsTaskDelete(c))
                         this._taskService.Delete(t);
                     else
@@ -202,7 +210,7 @@ namespace Cooper.Web.Controllers
                         this._taskService.Update(t);
                     }
                     if (this._log.IsInfoEnabled)
-                        this._log.InfoFormat("为任务#{0}执行变更{1}|{2}|{3}|{4}", t.ID, c.Type, c.ID, c.Name, c.Value);
+                        this._log.InfoFormat("为任务#{0}执行变更{1}|{2}|{3}|{4}|{5}", t.ID, c.Type, c.ID, c.Name, c.Value, c.CreateTime);
                 }
                 catch (Exception e)
                 {
@@ -334,6 +342,9 @@ namespace Cooper.Web.Controllers
         /// <summary>变更后属性的值
         /// </summary>
         public string Value { get; set; }
+        /// <summary>变更记录 UTC字符串，如 Tue, 28 Aug 2012 07:17:42 GMT
+        /// </summary>
+        public string CreateTime { get; set; }
     }
     /// <summary>描述数据变更类型
     /// </summary>

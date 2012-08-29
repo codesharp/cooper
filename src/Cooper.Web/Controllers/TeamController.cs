@@ -38,10 +38,12 @@ namespace Cooper.Web.Controllers
 
         public ActionResult Index(string teamId, string projectId, string memberId)
         {
-            ViewBag.Account = this.Parse(this.Context.Current);
+            var a = this.Parse(this.Context.Current);
+            ViewBag.Account = a;
             ViewBag.TeamId = teamId;
             ViewBag.ProjectId = projectId;
             ViewBag.MemberId = memberId;
+            ViewBag.UnconfirmedMembers = this._teamService.GetUnassociatedMembers(a.Email);
             return View();
         }
 
@@ -153,7 +155,14 @@ namespace Cooper.Web.Controllers
         [HttpPost]
         public ActionResult CreateMember(string teamId, string name, string email)
         {
-            return Json(this._teamService.AddMember(name, email, this.GetTeam(teamId)).ID);
+            //HACK:创建Member时自动根据Email获取账号进行关联
+            var c = this.GetDefaulConnectionByEmail(email);
+            var a = c != null
+                ? this._accountService.GetAccount(c.AccountId)
+                : null;
+            return Json(a != null
+                ? this._teamService.AddMember(name, email, this.GetTeam(teamId), a).ID
+                : this._teamService.AddMember(name, email, this.GetTeam(teamId)).ID);
         }
         [HttpPost]//[HttpDelete]//需要路由支持 team/{teamId}/member/{memberId}
         public ActionResult DeleteMember(string teamId, string memberId)
@@ -234,6 +243,14 @@ namespace Cooper.Web.Controllers
             }
         }
 
+        /// <summary>根据email获取默认账号连接，默认取Google连接
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        protected virtual AccountConnection GetDefaulConnectionByEmail(string email)
+        {
+            return this._accountConnectionService.GetConnection<GoogleConnection>(email);
+        }
         /// <summary>转换客户端在团队模块中使用的账号信息，可重载定制Name和Email，默认取Google连接信息
         /// </summary>
         /// <param name="a"></param>
