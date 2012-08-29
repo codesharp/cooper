@@ -184,6 +184,7 @@
     <Content Include="Content\js\handlebars-1.0.0.beta.6.js" />
     <Content Include="Content\js\json3.min.js" />
     <Content Include="Content\js\moment.min.js" />
+    <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />

@@ -166,13 +166,20 @@ namespace Cooper.Web.Controllers
             //Fetch模式不支持同步变更
             Assert.IsFalse(this._fetchTaskHelper.IsFetchTaskFolder(taskFolderId ?? tasklistId));
             var folder = this.GetTaskFolder(taskFolderId ?? tasklistId);
+            var a = this.Context.Current;
             return Json(this.Sync(changes, by, sorts
                 , () =>
                 {
-                    var o = new PersonalTask(this.Context.Current);
+                    var o = new PersonalTask(a);
                     if (folder != null)
                         o.SetTaskFolder(folder);
                     return o;
+                }
+                , o =>
+                {
+                    var task = o as PersonalTask;
+                    //只有创建者才能更新个人任务
+                    Assert.AreEqual(task.CreatorAccountId, a.ID);
                 }
                 , () => folder == null
                 , o => o

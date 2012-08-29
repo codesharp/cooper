@@ -127,6 +127,7 @@ namespace Cooper.Web.Controllers
             , string by
             , string sorts
             , Func<Task> ifNew
+            , Action<Task> verify
             , Func<bool> isPersonalSorts
             , Func<string, string> getSortKey
             , Action<string> saveSorts)
@@ -138,7 +139,7 @@ namespace Cooper.Web.Controllers
             var list = _serializer.JsonDeserialize<ChangeLog[]>(changes);
             var idChanges = new Dictionary<string, string>();//old,new
             //同步变更
-            this.ApplyChanges(account, list, idChanges, ifNew);
+            this.ApplyChanges(account, list, idChanges, ifNew, verify);
             //同步排序数据
             this.UpdateSorts(account, by, sorts, idChanges, isPersonalSorts, getSortKey, saveSorts);
             //返回修正记录
@@ -166,7 +167,8 @@ namespace Cooper.Web.Controllers
         private void ApplyChanges(Account account
             , ChangeLog[] list
             , IDictionary<string, string> idChanges
-            , Func<Task> ifNew)
+            , Func<Task> ifNew
+            , Action<Task> verify)
         {
             foreach (var c in list)
             {
@@ -193,6 +195,9 @@ namespace Cooper.Web.Controllers
                         this._log.WarnFormat("执行变更时出现不存在的任务#{0}", c.ID);
                         continue;
                     }
+
+                    //执行变更权限验证
+                    verify(t);
 
                     //UNDONE:根据最后更新时间判断变更记录有效性，时间间隔过长的变更会被丢弃?
                     //由于LastUpdateTime粒度过大，不适合这种细粒度变更比对，需要引入Merge机制来处理文本更新合并问题
