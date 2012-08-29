@@ -119,9 +119,12 @@
             <code>Hi! #@HttpContext.Current.User.Identity.Name</code>
         }
         <code><a href="@Url.Action("Issues", "Home", null)" target="_blank" title="缺陷跟踪">BugTrace</a></code>
-        | <a href="@Url.Action("Index", "Per", null)">TaskPage</a> | <a href="@Url.Action("Mobile", "Per", null)">
-            Mobile</a> | <a href="@Url.Action("", "Account", null)">Account</a> | <a href="@Url.Action("Logout", "Account", null)">
-                Logout</a> | UI Auto Tests：
+        <code><a href="@Url.Content("~/Trace.axd")" target="_blank" title="AspNetTraceView">WebTrace</a></code>
+        <a href="@Url.Action("Index", "Per", null)">TaskPage</a> | 
+        <a href="@Url.Action("Mobile", "Per", null)">Mobile</a> | 
+        <a href="@Url.Action("", "Account", null)">Account</a> | 
+        <a href="@Url.Action("Logout", "Account", null)">Logout</a> | 
+        UI Auto Tests：
         <button type="button" class="btn btn-danger flag_tryfail">TryFail</button>
         <button type="button" class="btn" onclick="$('#qunit').show();runAllPersonal()">Personal</button>
         <button type="button" class="btn" onclick="$('#qunit').show();runAllTeam()">Team</button>

@@ -272,8 +272,9 @@ namespace Cooper.Web.Controllers
             this._accountConnectionService.Update(c);
             //用于指示UI启动同步
             ViewBag.ConnectionId = c.ID;
-            //HACK:自动关联一切可以关联的信息
-            this.AssociateEverything(c);
+            //HACK:账号创建时自动关联一切可以关联的信息
+            if (flag)
+                this.AssociateEverything(c);
         }
         protected void Connect<T>(string name, string token) where T : AccountConnection
         {
@@ -289,7 +290,7 @@ namespace Cooper.Web.Controllers
                 this._accountConnectionService.Create(c = new GoogleConnection(name, token, a));
             else if (typeof(T) == typeof(GitHubConnection))
                 this._accountConnectionService.Create(c = new GitHubConnection(name, token, a));
-            //HACK:自动关联一切可以关联的信息
+            //HACK:连接账号时自动关联一切可以关联的信息
             this.AssociateEverything(c);
         }
         protected void SetConnectionUrls(string state)
@@ -301,16 +302,30 @@ namespace Cooper.Web.Controllers
         {
             return View((string.IsNullOrWhiteSpace(state) ? "Login" : state) + "Success");
         }
-        /// <summary>关联一切可以关联的信息，目前包括TeamMember
+        /// <summary>关联一切可以关联的信息，子类可在合适的时机调用此方法，目前包括TeamMember
         /// </summary>
         /// <param name="c"></param>
         protected void AssociateEverything(AccountConnection c)
         {
+            if (c == null) return;
             var a = this._accountService.GetAccount(c.AccountId);
             var email = this.ParseEmail(c);
+
             //HACK:根据email建立关联TeamMember和Account关联
             if (!string.IsNullOrWhiteSpace(email))
-                this._teamService.GetUnassociatedMembers(email).ToList().ForEach(o => this._teamService.AssociateMemberAccount(o, a));
+                this._teamService.GetUnassociatedTeams(email).ToList().ForEach(o =>
+                {
+                    try { this._teamService.AssociateMemberAccount(o, o.GetMember(email), a); }
+                    catch (Exception e)
+                    {
+                        this._log.Error(string.Format("为账号#{0}邮箱{1}与团队#{2}|{3}创建关联时异常"
+                            , c.AccountId
+                            , email
+                            , o.ID
+                            , o.Name)
+                            , e);
+                    }
+                });
             //其他...
         }
         /// <summary>根据账号连接获取Email信息，默认处理Google账号
