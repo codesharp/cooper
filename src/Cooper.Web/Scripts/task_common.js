@@ -94,7 +94,7 @@ UI_List_Common.prototype = {
         var base = this;
         var fn = function () {
             var ids = [$rows.length];
-            var isCompleted, priority;
+            var editable, isCompleted, priority;
             $rows.each(function (i, n) {
                 var id = base.getTaskId($(n));
                 ids[i] = id;
@@ -106,6 +106,7 @@ UI_List_Common.prototype = {
                 }
                 if (isCompleted != task.isCompleted()) { isCompleted = null }
                 if (priority != task.priority()) { priority = null }
+                if (task.editable) editable = true;
             });
             //批量id设置
             base.$batchDetail.attr('id', ids.join(','));
@@ -128,9 +129,13 @@ UI_List_Common.prototype = {
                 base.$batchDetail.find('#priority button').removeClass('active');
 
             base.$wrapper_detail.empty().append(base.$batchDetail);
+            //批量编辑状态
+            base.$batchDetail.find('#isCompleted').attr('disabled', !editable);
+            base.$batchDetail.find('#priority button').attr('disabled', !editable);
+            base.$batchDetail.find('#' + base.batch_id_dueTime).attr('disabled', !editable);
             //datepicker重复初始化问题 应先append再初始化
-            if (base.modeArgs.editable)
-                base.$batchDetail.find('#' + base.batch_id_dueTime).removeClass('hasDatepicker').datepicker();
+            if (editable)
+                base.$batchDetail.find('#' + base.batch_id_dueTime).val('').removeClass('hasDatepicker').datepicker();
         }
         if (this.detail_timer_enable)
             this.detail_timer = setTimeout(fn, 100); //增加timer延迟优化性能
@@ -177,8 +182,7 @@ UI_List_Common.prototype = {
         $row.parents('tbody').eq(0).show();
     },
     _setEditable: function ($el) {
-        $el.find('input').attr('readonly', !this.modeArgs.editable);
-        $el.find('textarea').attr('readonly', !this.modeArgs.editable);
+        //TODO:task管理自身的可编辑性，此处只负责处理列表的可编辑性，如：排序
     },
     _appendTaskToRow: function ($row, t, a) {
         var active = a == undefined ? this.getTask($row) : a;
@@ -210,17 +214,15 @@ UI_List_Common.prototype = {
     //删除
     deleteTask: function (b) {
         var $actives = this.getActives();
-        var l = $actives.length;
-        if (l == 0)
-            return;
+        if ($actives.length == 0) return;
         var base = this;
-
         //先清空上一次的删除缓冲
-        this.continueDelete();
-        this.deletes = [];
+        base.continueDelete();
+        base.deletes = [];
         //批量删除
         $actives.each(function () {
             var active = base.getTask($(this));
+            if (!active.editable) return;
             var id = active.id();
             base.setTask(id, null);
             //追加删除变更
@@ -228,22 +230,26 @@ UI_List_Common.prototype = {
             active.el().remove();
         });
 
+        var l = this.deletes.length;
+        if (l == 0)
+            return l;
         if (b) {
             this.continueDelete();
-            return;
-        }
-        //给予一定时间的撤销机会 
-        //注意：由于定时原因，会导致重新加载操作时删除记录未被提交
-        var i = 10;
-        this.$cancel_delete.show().find('span').eq(0).html(l);
-        this.deletes_timer = setTimeout(function () { base.continueDelete(); }, i * 1000);
-        //优化体验 给出倒计时
-        clearInterval(this.deletes_timer2);
-        var $temp = this.$cancel_delete.show().find('span').eq(1).html(i);
-        this.deletes_timer2 = setInterval(function () { if (i-- > 0) $temp.html(i) }, 1000);
+        } else {
+            //给予一定时间的撤销机会 
+            //注意：由于定时原因，会导致重新加载操作时删除记录未被提交
+            var i = 10;
+            this.$cancel_delete.show().find('span').eq(0).html(l);
+            this.deletes_timer = setTimeout(function () { base.continueDelete(); }, i * 1000);
+            //优化体验 给出倒计时
+            clearInterval(this.deletes_timer2);
+            var $temp = this.$cancel_delete.show().find('span').eq(1).html(i);
+            this.deletes_timer2 = setInterval(function () { if (i-- > 0) $temp.html(i) }, 1000);
 
-        this._flushSorts();
-        this.$wrapper_detail.empty();
+            this._flushSorts();
+            this.$wrapper_detail.empty();
+        }
+        return l;
     },
     cancelDelete: function () {
         debuger.info('cancel deletes', this.deletes);

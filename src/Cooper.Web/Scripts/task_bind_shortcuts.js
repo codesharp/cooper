@@ -48,9 +48,6 @@ UI_List_Common.prototype._bindShortcuts = function () {
             //修正编辑状态
             base._setEditable(base.$wrapper_detail);
         }
-        ////////////////////////////////////////////////////////////////////////////////////////
-        //非编辑模式则忽略快捷键
-        if (!base.modeArgs.editable) return;
         //仅当有焦点行时才有效的行为
         if ($focus == null) return;
         ////////////////////////////////////////////////////////////////////////////////////////
@@ -77,17 +74,18 @@ UI_List_Common.prototype._bindShortcuts = function () {
                 prev.setSubject(prev.subject() + txt, true);
                 b = true; //合并操作不需要出现撤销删除
             }
-            base.deleteTask(b);
-            if ($p != null)
-                base._fireRowClick($p);
-            else if ($n != null)
-                base._fireRowClick($n);
+            if (base.deleteTask(b) != 0) {
+                if ($p != null)
+                    base._fireRowClick($p);
+                else if ($n != null)
+                    base._fireRowClick($n);
+            }
             return false;
         }
         ////////////////////////////////////////////////////////////////////////////////////////
         //上下移动Ctrl+↓ 需处理跨空region的移动
         if (ctrl) {
-            if (!base.modeArgs.shortcuts_move) return;
+            if (!base.modeArgs.editable || !base.modeArgs.shortcuts_move) return;
             if (up) {
                 var $prev = base._findAnyPrev($actives2.first());
                 if (!$prev) return;
@@ -138,15 +136,15 @@ UI_List_Common.prototype._bindShortcuts = function () {
             return;
 
         var $focus = base.$focusRow;
-        var $actives = base.getActives();
-        //过滤不在合法区域的行
-        var $actives2 = $actives.filter(function () { return base._isRowOfValidRegion($(this)); });
-
-        if (!base.modeArgs.editable) return;
         if ($focus == null) return;
+
+        var $actives = base.getActives();
+        //过滤不在合法区域的行以及非编辑状态的任务
+        var $actives2 = $actives.filter(function () { return base._isRowOfValidRegion($(this)) && base.getTask($(this)).editable; });
+
         ////////////////////////////////////////////////////////////////////////////////////////
         //新建Enter
-        if (!ctrl && enter) {
+        if (!ctrl && enter && base.modeArgs.editable) {
             base.appendTask();
             return;
         }

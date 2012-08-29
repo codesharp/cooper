@@ -69,17 +69,18 @@ Task.prototype = {
             str[i] = a[i][n];
         return str.join(s);
     },
-    _addDeleteChange: function (k, i) {
-        this._addChange(k + i, { 'Name': k, 'Value': i, 'Type': 1 });
+    _addDeleteChange: function (k, i, b) {
+        this._addChange(k + i, { 'Name': k, 'Value': i, 'Type': 1 }, b);
     },
-    _addInsertChange: function (k, i) {
-        this._addChange(k + i, { 'Name': k, 'Value': i, 'Type': 2 });
+    _addInsertChange: function (k, i, b) {
+        this._addChange(k + i, { 'Name': k, 'Value': i, 'Type': 2 }, b);
     },
-    _addChange: function (k, c) {
+    _addChange: function (k, c, b) {
         c['ID'] = this.id();
         //变更列表，用于提交到server
         if (!this.changes)
             this.changes = {};
+        if (!this.editable && !b) return;
         //只记录最后一次
         this.changes[k] = c;
         //统一增加时间戳
@@ -92,17 +93,16 @@ Task.prototype = {
         this.setPriority(this.priority());
         this.setDueTime(this.due());
         this.setAssignee(this.assignee());
+        this.setEditable(this.editable);
     },
     renderDetail: function () {
         if (!this.$el_detail)
             this.$el_detail = this._generateDetail(this['data']);
-        if (this.editable) {
-            //部分事件如blur无法全局因此在此执行一些额外的rebind
-            if (this.bind_detail)
-                this.bind_detail(this.$el_detail, this);
-            if (this.bind_detail_team)
-                this.bind_detail_team(this.$el_detail, this);
-        }
+        //部分事件如blur无法全局因此在此执行一些额外的rebind
+        if (this.bind_detail)
+            this.bind_detail(this.$el_detail, this);
+        if (this.bind_detail_team)
+            this.bind_detail_team(this.$el_detail, this);
         //设置值
         this.setDetail_Completed(this.isCompleted());
         this.setDetail_Subject(this.subject());
@@ -112,6 +112,7 @@ Task.prototype = {
         this.setDetail_Assignee(this.assignee());
         this.setDetail_Projects(this.projects());
         this.setDetail_Comments(this.comments());
+        this.setDetail_Editable(this.editable);
         //设置url快捷链接区域 临时方案
         var $urls = this.$el_detail.find('#urls');
         $urls.find('ul').empty();
@@ -144,7 +145,6 @@ Task.prototype = {
     },
     get: function (k) { return this['data'][k]; },
     update: function (k, v) {
-        if (!this.editable) return;
         if (this['data'][k] == v) return false;
         this['data'][k] = v;
         this._addChange(k, { 'Name': k, 'Value': v });
@@ -232,6 +232,12 @@ Task.prototype = {
         this._setClass($e, today >= date, 'cell_duetime_expired');
         this.setDetail_DueTime(t);
     },
+    setEditable: function (b) {
+        this.editable = b;
+        //使用keyup来屏蔽变更
+        //this._getRowEl('subject').attr('readonly', !this.editable);
+        this.setDetail_Editable(b);
+    },
     setAssignee: function (u) {
         var k = 'assignee';
         this.update(k + 'Id', u ? u['id'] : null); //只更新assigneeId
@@ -259,7 +265,7 @@ Task.prototype = {
         this.setDetail_Comments(cs);
     },
     addComment: function (body) {
-        this._addInsertChange('comments', body);
+        this._addInsertChange('comments', body, true);
         this.setComments($.merge(this.comments(), [{
             body: body,
             createTime: moment().format('YYYY-MM-DD HH:mm:ss')
@@ -320,6 +326,17 @@ Task.prototype = {
         if (!this.$el_detail || !cs) return;
         if (this.render_detail_comments)
             this.render_detail_comments(this._getDetailEl('comments'), cs);
+    },
+    setDetail_Editable: function (b) {
+        if (!this.$el_detail) return;
+        this._getDetailEl('subject').attr('disabled', !this.editable);
+        this._getDetailEl('body').attr('disabled', !this.editable);
+        this._getDetailEl('dueTime').attr('disabled', !this.editable);
+        this._getDetailEl('priority').find('button').attr('disabled', !this.editable);
+        this._getDetailEl('assignee_btn')[this.editable ? 'show' : 'hide']();
+        this._getDetailEl('projects').find('.flag_removeProject')[this.editable ? 'show' : 'hide']();
+        this._getDetailEl('projects_btn')[this.editable ? 'show' : 'hide']();
+        this._getDetailEl('assignee_btn')[this.editable ? 'show' : 'hide']();
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////
