@@ -2,6 +2,7 @@
 
 ///<reference path="lang.js" />
 ///<reference path="common.js" />
+///<reference path="../Content/js/moment.min.js" />
 
 var identity = 0;
 //描述任务缓存项
@@ -18,13 +19,15 @@ Task.prototype = {
             'id': t['ID'] != undefined ? t['ID'].toString() : 'temp_' + (++identity) + '_' + new Date().getTime(), //可自动构建临时id 总是以string使用
             'subject': t['Subject'] != undefined ? t['Subject'] : '',
             'body': t['Body'] != undefined ? t['Body'] : '',
+            'createTime': t['CreateTime'] || t['createTime'],
             'priority': t['Priority'] != undefined ? t['Priority'] : 0, //0=today 1=upcoming 2=later priority 总是以string使用
             'dueTime': t['DueTime'] != undefined && t['DueTime'] != null && t['DueTime'] != '' ? this._parseDate(t['DueTime']) : null,
             'isCompleted': t['IsCompleted'] != undefined ? t['IsCompleted'] : false,
             'tags': [],
             //team模块相关
             //TODO:移植到扩展模块？
-            'assignee': t['Assignee'] != undefined ? { 'id': t['Assignee']['ID'] || t['Assignee']['id'], 'name': t['Assignee']['Name'] || t['Assignee']['name']} : null,
+            'creator': t['Creator'] != undefined ? this._mapMember(t['Creator']) : null,
+            'assignee': t['Assignee'] != undefined ? this._mapMember(t['Assignee']) : null,
             'assigneeId': t['Assignee'] ? t['Assignee']['ID'] || t['Assignee']['id'] : null,
             'projects': t['Projects'] ? $.map(t['Projects'], function (n) { return { 'id': n['ID'] || n['id'], 'name': n['Name'] || n['name'] }; }) : [],
             'comments': t['Comments'] ? $.map(t['Comments'], this._mapComment) : []
@@ -34,6 +37,13 @@ Task.prototype = {
 
         if (debuger.isDebugEnable)
             this._getRowEl('subject').attr('placeholder', '#' + this.id());
+    },
+    _mapMember: function (n) {
+        return {
+            'id': n['ID'] || n['id'],
+            'name': n['Name'] || n['name'],
+            'email': n['Email'] || n['email']
+        };
     },
     _mapComment: function (n) {
         return {
@@ -109,6 +119,7 @@ Task.prototype = {
         this.setDetail_Priority(this.priority());
         this.setDetail_DueTime(this.due());
         this.setDetail_Body(this.body());
+        this.setDetail_Creator(this.creator());
         this.setDetail_Assignee(this.assignee());
         this.setDetail_Projects(this.projects());
         this.setDetail_Comments(this.comments());
@@ -173,6 +184,8 @@ Task.prototype = {
     due: function () { return this.get('dueTime'); },
     subject: function () { return this.get('subject'); },
     body: function () { return this.get('body'); },
+    createTime: function () { return this.get('createTime'); },
+    creator: function () { return this.get('creator'); },
     assignee: function () { return this.get('assignee'); },
     projects: function () { return this.get('projects'); },
     comments: function () { return this.get('comments'); },
@@ -312,6 +325,13 @@ Task.prototype = {
         if (!this.$el_detail) return;
         if (t != null)
             this._getDetailEl('dueTime').val(this._parseFullDateString(t));
+    },
+    setDetail_Creator: function (u) {
+        if (!this.$el_detail) return;
+        this._getDetailEl('creator').html(u ? '<i class="icon-info-sign"></i> '
+            + u['name']
+            + lang.create_task + ' - '
+            + moment(this.createTime(), 'YYYY-MM-DD HH:mm:ss').fromNow() : '');
     },
     setDetail_Assignee: function (u) {
         if (!this.$el_detail) return;

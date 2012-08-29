@@ -65,6 +65,8 @@ namespace Cooper.Web.Controllers
                 t.ID = o.ID.ToString();
                 t.Subject = o.Subject;
                 t.Body = o.Body;
+                //UNDONE:UTC时间按当前时区格式化
+                t.CreateTime = o.CreateTime.ToString("yyyy-MM-dd HH:mm:ss");
                 //HACK:DueTime格式化按Date.ToString("yyyy-MM-dd")精度到天
                 t.DueTime = o.DueTime.HasValue ? o.DueTime.Value.Date.ToString("yyyy-MM-dd") : null;
                 t.Priority = (int)o.Priority;
@@ -304,6 +306,9 @@ namespace Cooper.Web.Controllers
     /// </summary>
     public class TaskInfo
     {
+        /// <summary>创建时间
+        /// </summary>
+        public string CreateTime { get; set; }
         /// <summary>标识，临时标识用temp_前缀
         /// </summary>
         public string ID { get; set; }

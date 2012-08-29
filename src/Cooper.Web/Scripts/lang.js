@@ -48,6 +48,7 @@ lang.cancel = '取消';
 lang.comment = '评论';
 lang.comment_must_more_than_5 = '评论字数至少5个字符';
 lang.comment_must_less_than_500 = '评论字数不能超过500';
+lang.create_task = '创建了任务';
 
 lang.my_task = '个人任务';
 lang.my_profile = '我的设置';

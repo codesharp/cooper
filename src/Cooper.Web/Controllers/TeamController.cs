@@ -437,6 +437,9 @@ namespace Cooper.Web.Controllers
             {
                 var teamTask = task as Teams.Task;
                 var teamTaskInfo = taskInfo as TeamTaskInfo;
+                //创建人
+                if ((m = team.GetMember(teamTask.CreatorMemberId)) != null)
+                    teamTaskInfo.Creator = this.Parse(m);
                 //执行人
                 if (teamTask.AssigneeId.HasValue
                     && (m = team.GetMember(teamTask.AssigneeId.Value)) != null)
@@ -583,6 +586,7 @@ namespace Cooper.Web.Controllers
     }
     public class TeamTaskInfo : TaskInfo
     {
+        public TeamMemberInfo Creator { get; set; }
         public TeamMemberInfo Assignee { get; set; }
         public TeamProjectInfo[] Projects { get; set; }
         public TeamTaskCommentInfo[] Comments { get; set; }
