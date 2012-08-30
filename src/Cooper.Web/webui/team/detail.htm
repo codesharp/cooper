@@ -69,8 +69,8 @@
                     </ul>
                     <form name="teamMembersForm" class="form-inline" ng-controller="TeamMembersFormCtrl">
                     <div class="well">
-                        <span class="control-group" ng-class="errorClass(teamMembersForm.email.$invalid)"><input name="email" type="email" maxlength="255" class="input-medium" placeholder="{{lang.email}}" ng-model="email" required /></span>
-                        <span class="control-group" ng-class="errorClass(teamMembersForm.name.$invalid)"><input name="name" type="text" maxlength="50" class="input-medium" placeholder="{{lang.nick}}" ng-model="name" required /></span>
+                        <span class="control-group input-prepend" ng-class="errorClass(teamMembersForm.email.$invalid)"><span class="add-on">{{lang.email}}</span><input name="email" type="email" maxlength="255" class="input-medium" placeholder="{{lang.email}}" ng-model="email" required /></span>
+                        <span class="control-group input-prepend" ng-class="errorClass(teamMembersForm.name.$invalid)"><span class="add-on">{{lang.nick}}</span><input name="name" type="text" maxlength="50" class="input-medium" placeholder="{{lang.nick}}" ng-model="name" required /></span>
                         <button ng-click="addMember()" class="btn">{{lang.send_invite}}</button>
                     </div>
                     <div class="alert alert-success hide"><i class="icon-ok"></i> {{lang.deal_success}}</div>
