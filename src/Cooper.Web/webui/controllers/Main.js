@@ -190,7 +190,7 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account,
                 debuger.debug('project update=' + data);
                 $scope.project.name = name;
             });
-        }, 1000);
+        }, 500);
     });
 }
 function TeamSettingsFormCtrl($scope, $element, $http) {
