@@ -119,6 +119,10 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
     }
     //team
     function team() {
+        //TODO:由于切换team时controller重新执行且且ie下html已经重绘导致sorts比对错误而造成意外的同步，故在此重新预设
+        //需要完全重构此controller的全局逻辑
+        preSorts = $.toJSON(getSorts());
+        debuger.debug('reset preSorts for team', preSorts);
         currentMode();
     }
     function doRemoveProject() {
@@ -244,8 +248,10 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
         //排序索引
         var sorts = $.toJSON(getSorts());
         var isSortsChange = sorts != preSorts;
-        if (isSortsChange)
-            debuger.info('sync sorts to server', sorts);
+        if (isSortsChange) {
+            debuger.info('sorts change from', preSorts);
+            debuger.info('sorts change to', sorts);
+        }
         if (changes.length > 0)
             debuger.info('sync changes to server', changes);
         //没有任何变更
@@ -350,7 +356,7 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
         });
     }
     function renderPersonalTask() { render(); folder(0); }
-    function renderTeamTask() { window.teamModeflag = true; render(); team(); }
+    function renderTeamTask() { render(); team(); }
     function render() {
         $el_wrapper_region = $('#todolist_wrapper');
         $el_wrapper_detail = $('#detail_wrapper');
@@ -387,8 +393,6 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
     resize();
     if ($scope.teamMode) {
         $scope.$on('ready_team', renderTeamTask);
-        //if ($scope.team && !window.teamModeflag)
-        //    renderTeamTask();
     }
     //else renderPersonalTask();
 }
