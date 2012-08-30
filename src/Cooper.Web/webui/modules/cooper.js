@@ -27,6 +27,8 @@ var cooper = angular.module('cooper', []);
     });
 
     var b = $.browser.msie && $.browser.version.indexOf('7.') >= 0;
+    cooper.value('ie7',b);
+
     var prefix = false ? '/team#/t/' : '/t/';
     cooper.value('urls', {
         personal: url_root + '/per',

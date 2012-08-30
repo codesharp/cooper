@@ -137,11 +137,10 @@ function TeamAddFormCtrl($scope, $element, $http, $location, urls, account) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //team detail
-function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account) {
+function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account, ie7) {
+    $scope.ie7 = ie7;
     $scope.initTab = function () { $scope.tab = $scope.member ? 'm' : 'p'; }
     $scope.$on('ready_team', $scope.initTab);
-    //TODO:处理权限显示
-
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
     $scope.memberUrl = function (m) { return m.accountId == account.id ? urls.team($scope.team) : urls.member($scope.team, m); }
     $scope.showModify = function () { $scope.tab2 = 's'; $element.find('div.modal').modal('show'); }
