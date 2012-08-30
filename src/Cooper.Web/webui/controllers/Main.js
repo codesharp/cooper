@@ -231,9 +231,23 @@ function TeamMembersFormCtrl($scope, $element, $http) {
     }
 }
 function TeamMemberProfileFormCtrl($scope, $element, $http) {
+    var $form = $element;
     $scope.errorClass = function (b) { return $scope.teamMemberProfileForm.$dirty && b ? 'error' : ''; }
     $scope.updateMemberProfile = function () {
-        alert('todo');
+        if ($scope.teamMemberProfileForm.$valid) {
+            if ($scope.currentMember.name == $scope.memberName) {
+                success($form);
+                return;
+            }
+            $http.put('/team/UpdateMember', {
+                teamId: $scope.team.id,
+                memberId: $scope.currentMember.id,
+                name: $scope.memberName
+            }).success(function (data, status, headers, config) {
+                $scope.currentMember.name = $scope.memberName;
+                success($form);
+            }).error(function () { error($form); });
+        }
     }
     $scope.reset = function () {
         if (!$scope.currentMember) return;

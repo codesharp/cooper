@@ -44,7 +44,7 @@
             <ul class="nav nav-tabs">
                 <li class="{{activeClass(tab2=='s')}}" ng-click="tab2='s'"><a data-toggle="tab" href="javascript:;"><i class="icon-cog"></i> {{lang.settings}}</a></li>
                 <li class="{{activeClass(tab2=='m')}}" ng-click="tab2='m'"><a data-toggle="tab" href="javascript:;"><i class="icon-user"></i> {{lang.members}}</a></li>
-                <!--<li class="{{activeClass(tab2=='p')}}" ng-click="tab2='p'"><a data-toggle="tab" href="javascript:;"><i class="icon-info-sign"></i> {{lang.member_profile}}</a></li>-->
+                <li class="{{activeClass(tab2=='p')}}" ng-click="tab2='p'"><a data-toggle="tab" href="javascript:;"><i class="icon-info-sign"></i> {{lang.member_profile}}</a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane {{activeClass(tab2=='s')}}">
@@ -87,17 +87,19 @@
                             <input name="memberName" type="text" maxlength="50" ng-model="memberName" required />
                         </div>
                     </div>
-                    <div class="control-group" ng-class="errorClass(teamMemberProfileForm.memberEmail.$invalid)">
+                    <!--<div class="control-group" ng-class="errorClass(teamMemberProfileForm.memberEmail.$invalid)">
                         <label class="control-label" for="memberEmail">
                             {{lang.member_email}}</label>
                         <div class="controls">
                             <input name="memberEmail" type="email" maxlength="255" ng-model="memberEmail" required />
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form-actions">
                         <button ng-click="updateMemberProfile()" class="btn btn-primary">{{lang.submit}}</button>
                         <button ng-click="reset()" class="btn">{{lang.cancel}}</button>
                     </div>
+                    <div class="alert alert-success hide"><i class="icon-ok"></i> {{lang.deal_success}}</div>
+                    <div class="alert alert-error hide"><i class="icon-exclamation-sign"></i> {{lang.sorry_error_occur_retry_later}}</div>
                     </form>
                 </div><!--member profile-->
             </div>
