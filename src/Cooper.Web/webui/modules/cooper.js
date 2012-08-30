@@ -35,7 +35,7 @@ var cooper = angular.module('cooper', []);
         personal: url_root + '/per',
         account: url_root + '/account',
         
-        // /team#/t/1
+        // /team#/t/1 or /t/1
         team: function (t) { if (t) return url_root + prefix + t.id; },
         // /t/1
         teamPath: function (t) { if (t) return url_root + prefixPath + t.id; },
