@@ -19,7 +19,7 @@ lang.remove_from_project = '移除该项目';
 
 lang.my_task = '个人任务';
 lang.my_profile = '我的设置';
-lang.my_team = '我的团队';
+lang.my_team = '我的团队(BETA)';
 lang.add_team = '新建团队';
 lang.add_project = '新建项目';
 lang.add_member = '添加成员';

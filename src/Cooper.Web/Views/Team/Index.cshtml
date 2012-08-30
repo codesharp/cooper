@@ -32,6 +32,10 @@
                 <div ng-controller="TeamListCtrl">@Html.Raw(File.ReadAllText(Server.MapPath("~/webui/team/list.htm")))</div>
                 <br />
                 <div ng-controller="TeamDetailCtrl" ng-show="team">@Html.Raw(File.ReadAllText(Server.MapPath("~/webui/team/detail.htm")))</div>
+                <br />
+                <div class="alert alert-success">
+                    团队协同功能BETA版发布，<a href="javascript:;" onclick="feedback()">意见反馈</a>
+                </div>
             </div>
             <!--Main-->
             <div id="main" ng-class="class_tasklist" ng-view>
