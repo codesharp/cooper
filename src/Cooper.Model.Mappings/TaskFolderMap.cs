@@ -18,7 +18,7 @@ namespace Cooper.Model.Mappings
             Id(m => m.ID);
             Map(m => m.CreateTime);
             Map(m => m.Name).Length(50);
-            Map(Reveal.Member<TaskFolder>("_extensions")).Column("Extensions").Length(255);
+            Map(Reveal.Member<TaskFolder>("_extensions")).Column("Extensions").Length(4000);
             DiscriminateSubClassesOnColumn("ListType");
         }
     }
