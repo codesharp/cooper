@@ -282,7 +282,7 @@ namespace Cooper.Model.Test
             var task = new Task(creatorMember, team);
             var memberName = RandomString();
             var memberEmail = RandomString();
-            var member = this._teamService.AddMember(memberName, memberEmail, team);
+            var member = this._teamService.AddFullMember(memberName, memberEmail, team);
 
             var comment1 = RandomString();
             var comment2 = RandomString();

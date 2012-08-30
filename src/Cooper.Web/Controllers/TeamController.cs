@@ -115,7 +115,7 @@ namespace Cooper.Web.Controllers
             this._teamService.Create(t);
 
             //HACK:创建team同时将当前用户加入到该team
-            var m = this._teamService.AddMember(
+            var m = this._teamService.AddFullMember(
                 !string.IsNullOrWhiteSpace(memberName) ? memberName : a.Name
                 , !string.IsNullOrWhiteSpace(memberEmail) ? memberEmail : memberEmail
                 , t, a);
@@ -160,8 +160,8 @@ namespace Cooper.Web.Controllers
                 ? this._accountService.GetAccount(c.AccountId)
                 : null;
             return Json(a != null
-                ? this._teamService.AddMember(name, email, this.GetTeamOfFullMember(teamId), a).ID
-                : this._teamService.AddMember(name, email, this.GetTeamOfFullMember(teamId)).ID);
+                ? this._teamService.AddFullMember(name, email, this.GetTeamOfFullMember(teamId), a).ID
+                : this._teamService.AddFullMember(name, email, this.GetTeamOfFullMember(teamId)).ID);
         }
         [HttpPost]//[HttpDelete]//需要路由支持 team/{teamId}/member/{memberId}
         public ActionResult DeleteMember(string teamId, string memberId)

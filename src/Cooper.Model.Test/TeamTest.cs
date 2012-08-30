@@ -74,7 +74,7 @@ namespace Cooper.Model.Test
         public void AddTeamMember()
         {
             var team = CreateSampleTeam();
-            var member = this._teamService.AddMember(RandomString(), RandomString(), team);
+            var member = this._teamService.AddFullMember(RandomString(), RandomString(), team);
 
             Assert.Greater(member.ID, 0);
             Assert.AreEqual(team.ID, member.TeamId);
@@ -396,9 +396,9 @@ namespace Cooper.Model.Test
 
             var memberName = RandomString();
             var memberEmail = RandomString();
-            var member1 = this._teamService.AddMember(memberName, memberEmail, team1, account);
-            var member2 = this._teamService.AddMember(memberName, memberEmail, team2);
-            var member3 = this._teamService.AddMember(memberName, memberEmail, team3);
+            var member1 = this._teamService.AddFullMember(memberName, memberEmail, team1, account);
+            var member2 = this._teamService.AddFullMember(memberName, memberEmail, team2);
+            var member3 = this._teamService.AddFullMember(memberName, memberEmail, team3);
 
             var teams = _teamService.GetUnassociatedTeams(memberEmail);
 
@@ -424,40 +424,46 @@ namespace Cooper.Model.Test
         //同坐采用上面的做法后，发现还是会导致其他问题，就是AddMember之后，team对象中的Members集合不会变，因为我们更新的是AddMember
         //内部自己取出来的Team，这个问题可能会导致调用者的逻辑受到影响，所以目前找不到解决方法，故暂时将以下三个测试用例注释掉
 
-        //[Test]
-        //[Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        //public void AddTeamMemberWithDuplicateEmailTest()
-        //{
-        //    var team = CreateSampleTeam();
-        //    var name = RandomString();
-        //    var email = RandomString();
-        //    this.AssertParallel(() => this._teamService.AddMember(name, email, team), 4, 1);
-        //    Assert.Catch(typeof(AssertionException), () => this._teamService.AddMember(name, email, team));
-        //}
-        //[Test]
-        //[Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        //public void AddTeamMemberWithDuplicateAccountTest()
-        //{
-        //    var account = CreateAccount();
-        //    var team = CreateSampleTeam();
-        //    this.AssertParallel(() => this._teamService.AddMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account), 4, 1);
-        //    Assert.Catch(typeof(AssertionException), () => this._teamService.AddMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account));
-        //}
-        //[Test]
-        //[Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        //public void AssociateTeamMemberWithDuplicateAccountTest()
-        //{
-        //    var team = CreateSampleTeam();
+        //NOTE：为了确保以下三个用于测试并发的单元测试能够通过，并且因为原因上面也基本分析过了，所以在进行并发测试前先让team对象脱离NHibernate Session，
+        //这样可以解决测试用例失败的问题，但理论上还是希望能够不脱离Session，NHibernate也不会抛错。
 
-        //    var account = CreateAccount();
-        //    var member = this._teamService.AddMember(RandomString(), RandomString(), team);
-        //    this.AssertParallel(() => this._teamService.AssociateMemberAccount(member, account), 4, 1);
-        //    Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(member, account));
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void AddTeamMemberWithDuplicateEmailTest()
+        {
+            var team = CreateSampleTeam();
+            var name = RandomString();
+            var email = RandomString();
+            this.Evict(team);
+            this.AssertParallel(() => this._teamService.AddFullMember(name, email, team), 4, 1);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(name, email, team));
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void AddTeamMemberWithDuplicateAccountTest()
+        {
+            var account = CreateAccount();
+            var team = CreateSampleTeam();
+            this.Evict(team);
+            this.AssertParallel(() => this._teamService.AddFullMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account), 4, 1);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account));
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void AssociateTeamMemberWithDuplicateAccountTest()
+        {
+            var team = CreateSampleTeam();
+            var account = CreateAccount();
+            var member = this._teamService.AddFullMember(RandomString(), RandomString(), team);
+            this.Evict(team);
+            this.AssertParallel(() => this._teamService.AssociateMemberAccount(team, member, account), 4, 1);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(team, member, account));
 
-        //    account = CreateAccount();
-        //    var member2 = this._teamService.AddMember(RandomString(), RandomString(), team, account);
-        //    this.AssertParallel(() => this._teamService.AssociateMemberAccount(member, account), 4, 0);
-        //    Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(member, account));
-        //}
+            account = CreateAccount();
+            var member2 = this._teamService.AddFullMember(RandomString(), RandomString(), team, account);
+            this.Evict(team);
+            this.AssertParallel(() => this._teamService.AssociateMemberAccount(team, member, account), 4, 0);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(team, member, account));
+        }
     }
 }
