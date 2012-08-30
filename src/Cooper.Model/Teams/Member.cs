@@ -1,7 +1,6 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
-using System.ComponentModel;
 using CodeSharp.Core.DomainBase;
 using Cooper.Model.Accounts;
 
@@ -30,10 +29,23 @@ namespace Cooper.Model.Teams
         protected Member() { this.CreateTime = DateTime.Now; }
         internal Member(string name, string email, Team team) : this()
         {
+            Assert.IsValidKey(name);
+            Assert.IsValidKey(email);
             Assert.IsValid(team);
             this.SetName(name);
             this.SetEmail(email);
             this.TeamId = team.ID;
+        }
+        internal Member(string name, string email, Team team, Account associatedAccount) : this()
+        {
+            Assert.IsValidKey(name);
+            Assert.IsValidKey(email);
+            Assert.IsValid(team);
+            Assert.IsValid(associatedAccount);
+            this.SetName(name);
+            this.SetEmail(email);
+            this.TeamId = team.ID;
+            this.Associate(associatedAccount);
         }
 
         /// <summary>设置名称
@@ -90,6 +102,9 @@ namespace Cooper.Model.Teams
         internal FullMember(string name, string email, Team team) : base(name, email, team)
         {
         }
+        internal FullMember(string name, string email, Team team, Account associatedAccount) : base(name, email, team, associatedAccount)
+        {
+        }
     }
     /// <summary>团队宾客，也是团队成员，但只拥有查看操作或评论团队任务的操作
     /// </summary>
@@ -97,29 +112,11 @@ namespace Cooper.Model.Teams
     {
         protected GuestMember() : base()
         { }
-        internal GuestMember(string name, string email, Team team)
-            : base(name, email, team)
+        internal GuestMember(string name, string email, Team team) : base(name, email, team)
         {
         }
-    }
-
-    /// <summary>团队成员类型枚举，通过成员类型来划分成员权限
-    /// </summary>
-    public enum MemberType
-    {
-        /// <summary>团队普通成员
-        /// <remarks>
-        /// 团队普通成员相当于团队管理员，拥有团队所有操作权限
-        /// </remarks>
-        /// </summary>
-        [Description("普通成员")]
-        FullMember,
-        /// <summary>团队宾客成员
-        /// <remarks>
-        /// 团队宾客成员只拥有查看操作或评论团队任务的操作
-        /// </remarks>
-        /// </summary>
-        [Description("宾客成员")]
-        GuestMember
+        internal GuestMember(string name, string email, Team team, Account associatedAccount) : base(name, email, team, associatedAccount)
+        {
+        }
     }
 }

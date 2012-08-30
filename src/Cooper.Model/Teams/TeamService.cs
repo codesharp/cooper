@@ -39,14 +39,17 @@ namespace Cooper.Model.Teams
         /// <returns></returns>
         IEnumerable<Team> GetTeamsByAccount(Account account);
 
-        /// <summary>将一个指定的团队成员添加到团队
+        /// <summary>向团队添加一个FullMember
+        /// <remarks>
+        /// 团队内成员的Email和关联账号必须唯一，会做并发控制
+        /// </remarks>
         /// </summary>
         /// <param name="name"></param>
         /// <param name="email"></param>
         /// <param name="team"></param>
         /// <returns></returns>
-        Member AddMember(string name, string email, Team team);
-        /// <summary>新增一个指定的成员，并自动关联到指定账号
+        FullMember AddFullMember(string name, string email, Team team);
+        /// <summary>向团队添加一个FullMember，并自动关联到指定账号
         /// <remarks>
         /// 团队内成员的Email和关联账号必须唯一，会做并发控制
         /// </remarks>
@@ -56,8 +59,8 @@ namespace Cooper.Model.Teams
         /// <param name="team"></param>
         /// <param name="associateAccount"></param>
         /// <returns></returns>
-        Member AddMember(string name, string email, Team team, Account associateAccount);
-        /// <summary>新增一个指定的成员，并指定成员类型
+        FullMember AddFullMember(string name, string email, Team team, Account associateAccount);
+        /// <summary>向团队添加一个GuestMember
         /// <remarks>
         /// 团队内成员的Email和关联账号必须唯一，会做并发控制
         /// </remarks>
@@ -65,10 +68,9 @@ namespace Cooper.Model.Teams
         /// <param name="name"></param>
         /// <param name="email"></param>
         /// <param name="team"></param>
-        /// <param name="memberType"></param>
         /// <returns></returns>
-        Member AddMember(string name, string email, Team team, MemberType memberType);
-        /// <summary>新增一个指定的成员，并指定成员类型和自动关联到指定账号
+        GuestMember AddGuestMember(string name, string email, Team team);
+        /// <summary>向团队添加一个GuestMember，并自动关联到指定账号
         /// <remarks>
         /// 团队内成员的Email和关联账号必须唯一，会做并发控制
         /// </remarks>
@@ -76,10 +78,9 @@ namespace Cooper.Model.Teams
         /// <param name="name"></param>
         /// <param name="email"></param>
         /// <param name="team"></param>
-        /// <param name="memberType"></param>
         /// <param name="associateAccount"></param>
         /// <returns></returns>
-        Member AddMember(string name, string email, Team team, MemberType memberType, Account associateAccount);
+        GuestMember AddGuestMember(string name, string email, Team team, Account associateAccount);
         /// <summary>将一个指定的团队成员从团队移除
         /// </summary>
         /// <param name="member"></param>
@@ -164,43 +165,24 @@ namespace Cooper.Model.Teams
             return _teamRepository.FindBy(account);
         }
         [Transaction(TransactionMode.Requires)]
-        Member ITeamService.AddMember(string name, string email, Team team)
+        FullMember ITeamService.AddFullMember(string name, string email, Team team)
         {
-            return (this as ITeamService).AddMember(name, email, team, null);
+            return (this as ITeamService).AddFullMember(name, email, team, null);
         }
         [Transaction(TransactionMode.Requires)]
-        Member ITeamService.AddMember(string name, string email, Team team, Account associateAccount)
+        FullMember ITeamService.AddFullMember(string name, string email, Team team, Account associateAccount)
         {
-            return (this as ITeamService).AddMember(name, email, team, MemberType.FullMember, associateAccount);
+            return AddMemberToTeam(new FullMember(name, email, team), team, associateAccount) as FullMember;
         }
         [Transaction(TransactionMode.Requires)]
-        Member ITeamService.AddMember(string name, string email, Team team, MemberType memberType)
+        GuestMember ITeamService.AddGuestMember(string name, string email, Team team)
         {
-            return (this as ITeamService).AddMember(name, email, team, memberType, null);
+            return (this as ITeamService).AddGuestMember(name, email, team, null);
         }
         [Transaction(TransactionMode.Requires)]
-        Member ITeamService.AddMember(string name, string email, Team team, MemberType memberType, Account associateAccount)
+        GuestMember ITeamService.AddGuestMember(string name, string email, Team team, Account associateAccount)
         {
-            Assert.IsValidKey(name);
-            Assert.IsValidKey(email);
-            Assert.IsValid(team);
-            if (associateAccount != null)
-            {
-                Assert.IsValid(associateAccount);
-            }
-
-            //HACK:为了确保新增成员时，团队内成员的Email以及成员关联的账号都唯一，所以这里通过锁来进行同步控制
-            this._locker.Require<Member>();
-            Assert.IsNull(_teamRepository.FindMemberBy(team, email));
-            if (associateAccount != null)
-            {
-                Assert.IsNull(_teamRepository.FindMemberBy(team, associateAccount));
-            }
-
-            var member = team.AddMember(name, email, memberType, associateAccount);
-            _teamRepository.Update(team);
-
-            return member;
+            return AddMemberToTeam(new GuestMember(name, email, team), team, associateAccount) as GuestMember;
         }
         [Transaction(TransactionMode.Requires)]
         void ITeamService.AssociateMemberAccount(Team team, Member member, Account account)
@@ -309,5 +291,29 @@ namespace Cooper.Model.Teams
             }
         }
         #endregion
+
+        [Transaction(TransactionMode.Requires)]
+        protected virtual Member AddMemberToTeam(Member member, Team team, Account associatedAccount)
+        {
+            Assert.IsNotNull(member);
+            Assert.IsValidKey(member.Email);
+            Assert.IsValidKey(member.Name);
+            Assert.IsValid(team);
+            Assert.AreEqual(team.ID, member.TeamId);
+
+            //HACK:为了确保新增成员时，团队内成员的Email以及成员关联的账号都唯一，所以这里通过锁来进行同步控制
+            this._locker.Require<Member>();
+            Assert.IsNull(_teamRepository.FindMemberBy(team, member.Email));
+            if (associatedAccount != null)
+            {
+                Assert.IsNull(_teamRepository.FindMemberBy(team, associatedAccount));
+                member.Associate(associatedAccount);
+            }
+
+            team.AddMember(member);
+            _teamRepository.Update(team);
+
+            return member;
+        }
     }
 }

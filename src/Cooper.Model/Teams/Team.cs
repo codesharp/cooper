@@ -75,31 +75,17 @@ namespace Cooper.Model.Teams
         }
         /// <summary>往团队中添加一个新成员
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="email"></param>
-        /// <param name="account"></param>
+        /// <param name="member"></param>
         /// <returns></returns>
-        internal Member AddMember(string name, string email, MemberType memberType, Account account)
+        internal void AddMember(Member member)
         {
-            Assert.IsFalse(_members.Any(x => x.Email == email));
-
-            Member member = null;
-            if (memberType == MemberType.GuestMember)
-            {
-                member = new GuestMember(name, email, this);
-            }
-            else if (memberType == MemberType.FullMember)
-            {
-                member = new FullMember(name, email, this);
-            }
             Assert.IsNotNull(member);
+            Assert.IsValidKey(member.Email);
+            Assert.IsValidKey(member.Name);
+            Assert.AreEqual(this.ID, member.TeamId);
+            Assert.IsFalse(_members.Any(x => x.Email == member.Email));
 
-            if (account != null)
-            {
-                member.Associate(account);
-            }
             _members.Add(member);
-            return member;
         }
         /// <summary>从团队中移除一个成员
         /// </summary>
