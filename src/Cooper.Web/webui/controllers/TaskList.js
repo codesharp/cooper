@@ -133,7 +133,7 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
             debuger.info('remove project#' + $scope.project.id);
             debuger.debug($location);
             //由于scope范围差异需要强制触发$scope变更来触发locationchange
-            $scope.$apply(function () { $location.path(urls.team($scope.team)); });
+            $scope.$apply(function () { $location.path(urls.teamPath($scope.team)); });
         });
     }
     ////////////////////////////////////////////////////////////////////////////////////////

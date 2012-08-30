@@ -78,7 +78,7 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         //必须有一个team
         if (!$rootScope.team) {
             if ($scope.teams.length > 0)
-                $location.path(urls.team($scope.teams[0]));
+                $location.path(urls.teamPath($scope.teams[0]));
             else
                 $rootScope.$broadcast('no_team');
             return;
@@ -130,7 +130,7 @@ function TeamAddFormCtrl($scope, $element, $http, $location, urls, account) {
                 t.id = eval('(' + data + ')');
                 //$scope.teams = $.merge($scope.teams, [t]);
                 $scope.hideAddTeam();
-                $location.path(urls.team(t));
+                $location.path(urls.teamPath(t));
             });
         }
     }
@@ -156,7 +156,7 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account,
             $scope.team.members = $.grep($scope.team.members, function (n) { return n.id != m.id });
             //若删除的是当前member，跳转到team
             if ($scope.member && $scope.member.id == m.id)
-                $location.path(urls.team($scope.team));
+                $location.path(urls.teamPath($scope.team));
         });
     }
     $scope.addProject = function (n) {
@@ -164,7 +164,7 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account,
             debuger.debug(data);
             var p = { name: n };
             p.id = eval('(' + data + ')');
-            $location.path(urls.project($scope.team, p));
+            $location.path(urls.projectPath($scope.team, p));
         });
     }
     //处理project名称变更
