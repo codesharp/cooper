@@ -1,12 +1,21 @@
 ﻿@{ 
     Layout = null;
     var account = ViewBag.Account;
+    var ie7 = Convert.ToBoolean(ViewBag.IsIE7);//用于解决少量无法在js中处理的兼容问题
 }
 <!DOCTYPE html>
 <html class="ng-app:cooper" id="ng-app" ng-app="cooper">
 <head>
     <meta charset="utf-8" />
+    @if (ie7)
+    {
+    <title>@this.Lang().myteam @this.Suffix()</title>
+    }
+    else
+    { 
     <title>{{title}} {{lang.suffix}}</title>
+    }
+
     <meta name="fragment" content="!" />
     <base href="/team" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
