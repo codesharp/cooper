@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using System.Text.RegularExpressions;
 using Cooper.Model.Accounts;
 using Cooper.Model.Tasks;
 using Cooper.Model.Teams;
+using NUnit.Framework;
 
 //提供一些辅助
 internal static class Extensions
@@ -40,6 +41,11 @@ internal class Assert : NUnit.Framework.Assert
     {
         Assert.IsNotNullOrWhiteSpace(input);
         Assert.LessOrEqual(input.Length, 255);
+    }
+    public static void IsValidEmail(string input)
+    {
+        var regex = new Regex(@"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
+        Assert.IsTrue(regex.IsMatch(input));
     }
     /// <summary>断言账号是否有效
     /// </summary>

@@ -74,7 +74,7 @@ namespace Cooper.Model.Test
         public void AddTeamMember()
         {
             var team = CreateSampleTeam();
-            var member = this._teamService.AddFullMember(RandomString(), RandomString(), team);
+            var member = this._teamService.AddFullMember(RandomString(), RandomEmailString(), team);
 
             Assert.Greater(member.ID, 0);
             Assert.AreEqual(team.ID, member.TeamId);
@@ -395,7 +395,7 @@ namespace Cooper.Model.Test
             var team3 = CreateSampleTeam();
 
             var memberName = RandomString();
-            var memberEmail = RandomString();
+            var memberEmail = RandomEmailString();
             var member1 = this._teamService.AddFullMember(memberName, memberEmail, team1, account);
             var member2 = this._teamService.AddFullMember(memberName, memberEmail, team2);
             var member3 = this._teamService.AddFullMember(memberName, memberEmail, team3);
@@ -433,7 +433,7 @@ namespace Cooper.Model.Test
         {
             var team = CreateSampleTeam();
             var name = RandomString();
-            var email = RandomString();
+            var email = RandomEmailString();
             this.Evict(team);
             this.AssertParallel(() => this._teamService.AddFullMember(name, email, team), 4, 1);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(name, email, team));
@@ -445,8 +445,8 @@ namespace Cooper.Model.Test
             var account = CreateAccount();
             var team = CreateSampleTeam();
             this.Evict(team);
-            this.AssertParallel(() => this._teamService.AddFullMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account), 4, 1);
-            Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), team, account));
+            this.AssertParallel(() => this._teamService.AddFullMember(Guid.NewGuid().ToString(), RandomEmailString(), team, account), 4, 1);
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(Guid.NewGuid().ToString(), RandomEmailString(), team, account));
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
@@ -454,16 +454,44 @@ namespace Cooper.Model.Test
         {
             var team = CreateSampleTeam();
             var account = CreateAccount();
-            var member = this._teamService.AddFullMember(RandomString(), RandomString(), team);
+            var member = this._teamService.AddFullMember(RandomString(), RandomEmailString(), team);
             this.Evict(team);
             this.AssertParallel(() => this._teamService.AssociateMemberAccount(team, member, account), 4, 1);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(team, member, account));
 
             account = CreateAccount();
-            var member2 = this._teamService.AddFullMember(RandomString(), RandomString(), team, account);
+            var member2 = this._teamService.AddFullMember(RandomString(), RandomEmailString(), team, account);
             this.Evict(team);
             this.AssertParallel(() => this._teamService.AssociateMemberAccount(team, member, account), 4, 0);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(team, member, account));
+        }
+
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void MemebrEmailTest()
+        {
+            var team = CreateSampleTeam();
+            var email = RandomString();
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(RandomString(), email, team));
+            email = RandomString() + "@";
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(RandomString(), email, team));
+            email = RandomString() + "@1";
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(RandomString(), email, team));
+            email = RandomString() + "@1.";
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(RandomString(), email, team));
+            email = "@" + RandomString();
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(RandomString(), email, team));
+            email = "@" + RandomString() + ".";
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(RandomString(), email, team));
+            email = "@" + RandomString() + ".1";
+            Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(RandomString(), email, team));
+
+            email = "1@" + RandomString() + ".1";
+            var member = this._teamService.AddFullMember(RandomString(), email, team);
+            Assert.IsTrue(member.ID > 0);
+            email = "abc@" + RandomString() + ".123";
+            member = this._teamService.AddFullMember(RandomString(), email, team);
+            Assert.IsTrue(member.ID > 0);
         }
     }
 }

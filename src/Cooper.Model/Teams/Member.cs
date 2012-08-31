@@ -31,6 +31,7 @@ namespace Cooper.Model.Teams
         {
             Assert.IsValidKey(name);
             Assert.IsValidKey(email);
+            Assert.IsValidEmail(email);
             Assert.IsValid(team);
             this.SetName(name);
             this.SetEmail(email);
@@ -40,6 +41,7 @@ namespace Cooper.Model.Teams
         {
             Assert.IsValidKey(name);
             Assert.IsValidKey(email);
+            Assert.IsValidEmail(email);
             Assert.IsValid(team);
             Assert.IsValid(associatedAccount);
             this.SetName(name);
@@ -70,6 +72,7 @@ namespace Cooper.Model.Teams
         internal void SetEmail(string email)
         {
             Assert.IsValidKey(email);
+            Assert.IsValidEmail(email);
 
             if (this.Email != email)
             {

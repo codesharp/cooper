@@ -99,6 +99,10 @@ namespace Cooper.Model.Test
         {
             return "Cooper_" + DateTime.Now.ToString("yyyyMMddHHmmss") + DateTime.Now.Ticks + _rd.Next(100);
         }
+        protected string RandomEmailString()
+        {
+            return string.Format("{0}@123.com", RandomString());
+        }
         protected void AssertParallel(Action func, int total, int expected)
         {
             var flag = 0;
@@ -137,11 +141,11 @@ namespace Cooper.Model.Test
         }
         protected Member AddSampleMemberToTeam(Team team)
         {
-            return this._teamService.AddFullMember(RandomString(), RandomString(), team);
+            return this._teamService.AddFullMember(RandomString(), RandomEmailString(), team);
         }
         protected Member AddSampleMemberToTeam(Account associatedAccount, Team team)
         {
-            return this._teamService.AddFullMember(RandomString(), RandomString(), team, associatedAccount);
+            return this._teamService.AddFullMember(RandomString(), RandomEmailString(), team, associatedAccount);
         }
         protected Project AddSampleProjectToTeam(Team team)
         {
