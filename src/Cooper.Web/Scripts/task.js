@@ -248,7 +248,10 @@ Task.prototype = {
     setEditable: function (b) {
         this.editable = b;
         //使用keyup来屏蔽变更
-        //this._getRowEl('subject').attr('readonly', !this.editable);
+        //设置readonly会导致del事件无法在list区域处理的问题
+        if (!this.editable)
+            this._getRowEl('subject').css('cursor', 'not-allowed');
+        //.attr('readonly', !this.editable);
         this.setDetail_Editable(b);
     },
     setAssignee: function (u) {

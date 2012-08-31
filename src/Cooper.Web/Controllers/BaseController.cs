@@ -14,6 +14,7 @@ namespace Cooper.Web.Controllers
     public class BaseController : Controller
     {
         private ILog _log;
+        protected bool IsIE7 { get; private set; }
         /// <summary>获取当前上下文
         /// <remarks>由于通用依赖而简化注入</remarks>
         /// </summary>
@@ -38,12 +39,14 @@ namespace Cooper.Web.Controllers
             //浏览器支持判断
             if (r.HttpMethod.Equals("get", StringComparison.InvariantCultureIgnoreCase))
             {
-                if (r.Browser.MajorVersion == 6
-                    && r.Browser.Browser.Equals("ie", StringComparison.InvariantCultureIgnoreCase))
+                var ie = r.Browser.Browser.Equals("ie", StringComparison.InvariantCultureIgnoreCase);
+                if (r.Browser.MajorVersion == 6 && ie)
                 {
                     filterContext.Result = this.NotSupport();
                     return;
                 }
+                this.IsIE7 = ie && r.Browser.MajorVersion == 7;
+                ViewBag.IsIE7 = this.IsIE7;
             }
 
             base.OnActionExecuting(filterContext);

@@ -7,6 +7,14 @@
 //wrapper主体事件绑定，处理全局事件
 UI_List_Common.prototype._bind = function () {
     var base = this;
+
+    // *****************************************************
+    // 部分全局绑定
+    // *****************************************************
+    $(document).keyup(function (e) {
+        var backspace = e.keyCode == 8;
+        if (backspace) return false;
+    });
     // *****************************************************
     // 列表区域
     // task.editable决定部分编辑功能启用与否，其余则主要在task.js中自行控制

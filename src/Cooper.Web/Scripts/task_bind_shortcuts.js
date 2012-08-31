@@ -106,6 +106,9 @@ UI_List_Common.prototype._bindShortcuts = function () {
             base.focusRow($focus);
             //由于顺序变更需要刷新排序等
             base._flushSorts();
+            //取消事件冒泡避免滚动条意外滚动
+            e.preventDefault();
+            e.stopPropagation();
             return;
         }
         ////////////////////////////////////////////////////////////////////////////////////////

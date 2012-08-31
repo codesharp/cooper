@@ -27,8 +27,10 @@ UI_List_Due.prototype.renderByDueTime = function (b) {
     var idx = this.byDueTime.indexs();
     for (var i = 0; i < idx.length; i++) {
         for (var j = idx.length - 1; j > 0; j--) {
-            var r = this.getTaskById(idx[j]).due().getTime();
-            var l = this.getTaskById(idx[j - 1]).due().getTime();
+            var d = this.getTaskById(idx[j]).due();
+            var r = d ? d.getTime() : 9346303971569;
+            d = this.getTaskById(idx[j - 1]).due();
+            var l = d ? d.getTime() : 9346303971569;
             if (r < l) {
                 var temp = idx[j - 1];
                 idx[j - 1] = idx[j];

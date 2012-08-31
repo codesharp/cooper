@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -162,6 +164,16 @@ namespace Cooper.Web.Controllers
             return Json(a != null
                 ? this._teamService.AddFullMember(name, email, this.GetTeamOfFullMember(teamId), a).ID
                 : this._teamService.AddFullMember(name, email, this.GetTeamOfFullMember(teamId)).ID);
+        }
+        [HttpPut]
+        public ActionResult UpdateMember(string teamId, string memberId, string name, string email)
+        {
+            var t = this.GetTeamOfFullMember(teamId);
+            var m = this.GetCurrentMember(t);//UNDONE:只允许修改自己的？
+            m.SetName(name);
+            //UNDONE:还未支持修改Member的Email
+            this._teamService.Update(t);
+            return Json(true);
         }
         [HttpPost]//[HttpDelete]//需要路由支持 team/{teamId}/member/{memberId}
         public ActionResult DeleteMember(string teamId, string memberId)

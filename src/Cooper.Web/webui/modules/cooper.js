@@ -27,13 +27,24 @@ var cooper = angular.module('cooper', []);
     });
 
     var b = $.browser.msie && $.browser.version.indexOf('7.') >= 0;
-    var prefix = false ? '/team#/t/' : '/t/';
+    cooper.value('ie7',b);
+    var prefix = b ? '/team#/t/' : '/t/';
+    var prefixPath =  '/t/';
+
     cooper.value('urls', {
         personal: url_root + '/per',
         account: url_root + '/account',
+        
+        // /team#/t/1 or /t/1
         team: function (t) { if (t) return url_root + prefix + t.id; },
+        // /t/1
+        teamPath: function (t) { if (t) return url_root + prefixPath + t.id; },
+
         member: function (t, m) { if (t && m) return url_root + prefix + t.id + '/m/' + m.id; },
-        project: function (t, p) { if (t && p) return url_root + prefix + t.id + '/p/' + p.id; }
+        memberPath: function (t, m) { if (t && m) return url_root + prefixPath + t.id + '/m/' + m.id; },
+        
+        project: function (t, p) { if (t && p) return url_root + prefix + t.id + '/p/' + p.id; },
+        projectPath: function (t, p) { if (t && p) return url_root + prefixPath + t.id + '/p/' + p.id; }
     });
 
     //当前路由参数[obsolete]

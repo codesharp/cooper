@@ -78,7 +78,7 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         //必须有一个team
         if (!$rootScope.team) {
             if ($scope.teams.length > 0)
-                $location.path(urls.team($scope.teams[0]));
+                $location.path(urls.teamPath($scope.teams[0]));
             else
                 $rootScope.$broadcast('no_team');
             return;
@@ -130,18 +130,17 @@ function TeamAddFormCtrl($scope, $element, $http, $location, urls, account) {
                 t.id = eval('(' + data + ')');
                 //$scope.teams = $.merge($scope.teams, [t]);
                 $scope.hideAddTeam();
-                $location.path(urls.team(t));
+                $location.path(urls.teamPath(t));
             });
         }
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //team detail
-function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account) {
+function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account, ie7) {
+    $scope.ie7 = ie7;
     $scope.initTab = function () { $scope.tab = $scope.member ? 'm' : 'p'; }
     $scope.$on('ready_team', $scope.initTab);
-    //TODO:处理权限显示
-
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
     $scope.memberUrl = function (m) { return m.accountId == account.id ? urls.team($scope.team) : urls.member($scope.team, m); }
     $scope.showModify = function () { $scope.tab2 = 's'; $element.find('div.modal').modal('show'); }
@@ -157,7 +156,7 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account)
             $scope.team.members = $.grep($scope.team.members, function (n) { return n.id != m.id });
             //若删除的是当前member，跳转到team
             if ($scope.member && $scope.member.id == m.id)
-                $location.path(urls.team($scope.team));
+                $location.path(urls.teamPath($scope.team));
         });
     }
     $scope.addProject = function (n) {
@@ -165,7 +164,7 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account)
             debuger.debug(data);
             var p = { name: n };
             p.id = eval('(' + data + ')');
-            $location.path(urls.project($scope.team, p));
+            $location.path(urls.projectPath($scope.team, p));
         });
     }
     //处理project名称变更
@@ -191,7 +190,7 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account)
                 debuger.debug('project update=' + data);
                 $scope.project.name = name;
             });
-        }, 1000);
+        }, 500);
     });
 }
 function TeamSettingsFormCtrl($scope, $element, $http) {
@@ -232,9 +231,23 @@ function TeamMembersFormCtrl($scope, $element, $http) {
     }
 }
 function TeamMemberProfileFormCtrl($scope, $element, $http) {
+    var $form = $element;
     $scope.errorClass = function (b) { return $scope.teamMemberProfileForm.$dirty && b ? 'error' : ''; }
     $scope.updateMemberProfile = function () {
-        alert('todo');
+        if ($scope.teamMemberProfileForm.$valid) {
+            if ($scope.currentMember.name == $scope.memberName) {
+                success($form);
+                return;
+            }
+            $http.put('/team/UpdateMember', {
+                teamId: $scope.team.id,
+                memberId: $scope.currentMember.id,
+                name: $scope.memberName
+            }).success(function (data, status, headers, config) {
+                $scope.currentMember.name = $scope.memberName;
+                success($form);
+            }).error(function () { error($form); });
+        }
     }
     $scope.reset = function () {
         if (!$scope.currentMember) return;
