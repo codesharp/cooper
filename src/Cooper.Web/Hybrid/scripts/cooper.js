@@ -390,42 +390,44 @@
     }
     //更新一个Task的单个属性，任务详情页面会用到此函数
     function updateTaskProperty(taskId, propertyName, propertyValue, callback) {
-        loadTask(taskId, function (task) {
-            //如果不存在则直接退出
-            if (task == null) {
-                return;
-            }
+        if (isCurrentTaskListEditable == true) {
+            loadTask(taskId, function (task) {
+                //如果不存在则直接退出
+                if (task == null) {
+                    return;
+                }
 
-            var changeLogs = [];
+                var changeLogs = [];
 
-            //根据判断更新相应属性
-            if (propertyName == "priority") {
-                task.priority = propertyValue;
-                var changeLog = new ChangeLog();
-                changeLog.ID = task.id;
-                changeLog.Name = "priority";
-                changeLog.Value = task.priority;
-                changeLogs.push(changeLog);
-            }
-            else if (propertyName == "dueTime") {
-                task.dueTime = propertyValue;
-                var changeLog = new ChangeLog();
-                changeLog.ID = task.id;
-                changeLog.Name = "dueTime";
-                changeLog.Value = task.dueTime;
-                changeLogs.push(changeLog);
-            }
-            else if (propertyName == "isCompleted") {
-                task.isCompleted = propertyValue;
-                var changeLog = new ChangeLog();
-                changeLog.ID = task.id;
-                changeLog.Name = "isCompleted";
-                changeLog.Value = task.isCompleted;
-                changeLogs.push(changeLog);
-            }
+                //根据判断更新相应属性
+                if (propertyName == "priority") {
+                    task.priority = propertyValue;
+                    var changeLog = new ChangeLog();
+                    changeLog.ID = task.id;
+                    changeLog.Name = "priority";
+                    changeLog.Value = task.priority;
+                    changeLogs.push(changeLog);
+                }
+                else if (propertyName == "dueTime") {
+                    task.dueTime = propertyValue;
+                    var changeLog = new ChangeLog();
+                    changeLog.ID = task.id;
+                    changeLog.Name = "dueTime";
+                    changeLog.Value = task.dueTime;
+                    changeLogs.push(changeLog);
+                }
+                else if (propertyName == "isCompleted") {
+                    task.isCompleted = propertyValue;
+                    var changeLog = new ChangeLog();
+                    changeLog.ID = task.id;
+                    changeLog.Name = "isCompleted";
+                    changeLog.Value = task.isCompleted;
+                    changeLogs.push(changeLog);
+                }
 
-            updateTask(pageData.listId, task, changeLogs, callback);
-        });
+                updateTask(pageData.listId, task, changeLogs, callback);
+            });
+        }
     }
 
     //显示指定页面
@@ -492,7 +494,7 @@
             alert(lang.passwordCannotEmpty);
             return;
         }
-		showLoading("登录中...");
+        showLoading("登录中...");
         login(userName, password, "normal", function (result) {
             if (!result.status) {
                 alert(result.message);
@@ -501,17 +503,17 @@
                 if (isMobileDevice()) {
                     syncTaskLists(null, function (result) {
                         if (result.status) {
-							hideLoading();
+                            hideLoading();
                             showPage("taskListPage");
                         }
                         else {
-							hideLoading();
+                            hideLoading();
                             alert(result.message);
                         }
                     });
                 }
                 else {
-					hideLoading();
+                    hideLoading();
                     $.cookie('cooper_web_loginUser', userName);
                     showPage("taskListPage");
                 }
@@ -533,14 +535,14 @@
     });
     //Setting中的更换账号页面:“注销”按钮事件响应
     $(document).delegate("#setCurrentAccountPage #logoutButton", "click", function () {
-		showLoading("注销中...");
+        showLoading("注销中...");
         logout(function (result) {
             if (!result.status) {
-				hideLoading();
+                hideLoading();
                 alert(result.message);
             }
             else {
-				hideLoading();
+                hideLoading();
                 $('#backToLoginPageButton').click();
             }
         });
@@ -678,32 +680,32 @@
     //任务页面:“刷新”按钮事件响应
     $(document).delegate("#taskPage #refreshTasksButton", "click", function () {
         if (isMobileDevice()) {
-			if (isCurrentTaskListEditable == false) {
-				loadAndShowTasks(pageData.listId, pageData.isCompleted);
-			}
-			else if (isCurrentTaskListEditable == true) {
-				showLoading();
-				syncTaskLists(pageData.listId, function (result) {
-					if (result.status) {
-						getTasksByPriority(pageData.listId, pageData.isCompleted, function (result) {
-							if (result.status) {
-								tasksInCurrentList = result.data.tasks;
-								isCurrentTaskListEditable = result.data.isListEditable;
-								showTasks(pageData.listId, result.data.tasks, pageData.isCompleted);
-								hideLoading();
-							}
-							else {
-								hideLoading();
-								alert(result.message);
-							}
-						});
-					}
-					else {
-						hideLoading();
-						alert(result.message);
-					}
-				});
-			}
+            if (isCurrentTaskListEditable == false) {
+                loadAndShowTasks(pageData.listId, pageData.isCompleted);
+            }
+            else if (isCurrentTaskListEditable == true) {
+                showLoading();
+                syncTaskLists(pageData.listId, function (result) {
+                    if (result.status) {
+                        getTasksByPriority(pageData.listId, pageData.isCompleted, function (result) {
+                            if (result.status) {
+                                tasksInCurrentList = result.data.tasks;
+                                isCurrentTaskListEditable = result.data.isListEditable;
+                                showTasks(pageData.listId, result.data.tasks, pageData.isCompleted);
+                                hideLoading();
+                            }
+                            else {
+                                hideLoading();
+                                alert(result.message);
+                            }
+                        });
+                    }
+                    else {
+                        hideLoading();
+                        alert(result.message);
+                    }
+                });
+            }
         }
         else {
             loadAndShowTasks(pageData.listId, pageData.isCompleted);
