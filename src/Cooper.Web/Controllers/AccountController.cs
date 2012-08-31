@@ -273,8 +273,9 @@ namespace Cooper.Web.Controllers
             //用于指示UI启动同步
             ViewBag.ConnectionId = c.ID;
             //HACK:账号创建时自动关联一切可以关联的信息
-            if (flag)
-                this.AssociateEverything(c);
+            //if (flag)
+            //UNDONE:由于导入程序未自动创建关联，目前在登录时总是创建关联
+            this.AssociateEverything(c);
         }
         protected void Connect<T>(string name, string token) where T : AccountConnection
         {
