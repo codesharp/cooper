@@ -281,6 +281,19 @@ namespace Cooper.Web.Controllers
                 .FirstOrDefault(o => o is GoogleConnection) as GoogleConnection;
             return google != null ? google.Name : null;
         }
+        /// <summary>转换客户端在团队模块中使用的账号信息，可重载定制Name和Email，默认取Google连接信息
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        protected virtual AccountInfo Parse(Account a)
+        {
+            return new AccountInfo()
+            {
+                ID = a.ID.ToString(),
+                Name = a.Name,
+                Email = this.GetDefaultEmail(a) ?? string.Empty
+            };
+        }
 
         //获取当前用户所在的team
         private Teams.Team GetTeamOfCurrentAccount(string teamId)
@@ -466,19 +479,6 @@ namespace Cooper.Web.Controllers
             .ToArray())
             .Select(o => o as TeamTaskInfo)
             .ToArray();
-        }
-        /// <summary>转换客户端在团队模块中使用的账号信息，可重载定制Name和Email，默认取Google连接信息
-        /// </summary>
-        /// <param name="a"></param>
-        /// <returns></returns>
-        private AccountInfo Parse(Account a)
-        {
-            return new AccountInfo()
-            {
-                ID = a.ID.ToString(),
-                Name = a.Name,
-                Email = this.GetDefaultEmail(a) ?? string.Empty
-            };
         }
 
         private ActionResult GetBy(string teamId
