@@ -1,16 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Model", "src\Cooper.Model\Cooper.Model.csproj", "{3B0D9250-5A81-455E-8AC1-700840DB909F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Model.Mappings", "src\Cooper.Model.Mappings\Cooper.Model.Mappings.csproj", "{D77B5EDE-FB5E-476E-9B3B-6F3940A5EB08}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Model.Test", "src\Cooper.Model.Test\Cooper.Model.Test.csproj", "{AA6477A2-12C1-4681-9F69-10E8A0DD4A4B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Repositories", "src\Cooper.Repositories\Cooper.Repositories.csproj", "{B11C1DA3-29C6-4312-8790-17DB4F900C51}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Web", "src\Cooper.Web\Cooper.Web.csproj", "{FE0C4AD4-24AC-4579-B0F5-A5E1A06C966A}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{D84281D3-91DC-44BA-AD42-851DEFE42BF2}"
 	ProjectSection(SolutionItems) = preProject
 		scripts\cooper_sqlazure.sql = scripts\cooper_sqlazure.sql
@@ -20,6 +10,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{D842
 		nuget.install.bat = nuget.install.bat
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Model", "src\Cooper.Model\Cooper.Model.csproj", "{3B0D9250-5A81-455E-8AC1-700840DB909F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Model.Mappings", "src\Cooper.Model.Mappings\Cooper.Model.Mappings.csproj", "{D77B5EDE-FB5E-476E-9B3B-6F3940A5EB08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Model.Test", "src\Cooper.Model.Test\Cooper.Model.Test.csproj", "{AA6477A2-12C1-4681-9F69-10E8A0DD4A4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Repositories", "src\Cooper.Repositories\Cooper.Repositories.csproj", "{B11C1DA3-29C6-4312-8790-17DB4F900C51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Web", "src\Cooper.Web\Cooper.Web.csproj", "{FE0C4AD4-24AC-4579-B0F5-A5E1A06C966A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigFiles", "src\ConfigFiles\ConfigFiles.csproj", "{0D3B0610-7FC5-43E6-8B51-DDCFFF7DF855}"
 EndProject

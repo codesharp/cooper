@@ -69,11 +69,6 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SqlServerCe, Version=3.5.1.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\System.Data.SqlServerCe.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -96,9 +91,6 @@
     <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="db.sdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="ConfigFiles\facilities.config">
       <SubType>Designer</SubType>
     </EmbeddedResource>
