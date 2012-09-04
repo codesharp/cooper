@@ -85,7 +85,7 @@ namespace Cooper.Repositories
         private AbstractCriterion BuildCreatorAndAssigneeCriteria(Team team, Account account)
         {
             AbstractCriterion criteria = null;
-            Member member = team.Members.SingleOrDefault(x => x.AssociatedAccountId != null && x.AssociatedAccountId.Value == account.ID);
+			var member = team.GetMember(account);
             if (member != null)
             {
                 criteria = Expression.Or(Expression.Eq("CreatorMemberId", member.ID), Expression.Eq("AssigneeId", member.ID));
