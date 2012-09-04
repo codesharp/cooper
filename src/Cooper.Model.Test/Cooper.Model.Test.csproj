@@ -98,7 +98,9 @@
     <EmbeddedResource Include="ConfigFiles\properties.config">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="app.config" />
+    <Content Include="app.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

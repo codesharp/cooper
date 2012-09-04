@@ -4,17 +4,21 @@ OpenSource Task-based Multiplayer Online Collaboration System.
 
 ## ICON
 
-![cooper](http://www.icodesharp.com/cooper.png)
+![logo](https://cooper.apphb.com/favicon.ico)
 
 ## Showcase
 
 [Demo On Appharbor](https://cooper.apphb.com)
 
-[Service On Azure](https://cooper.websites.com)
+[Demo On Azure](https://cooper.websites.com)
+
+[Public Service Coming soon](https://incooper.net)
 
 ======
 
 ## Build
+
+Depends on git@github.com:codesharp/work-tool.git for building tools.
 
 ```shell
 runfirst
