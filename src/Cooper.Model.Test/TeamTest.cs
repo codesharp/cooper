@@ -283,7 +283,7 @@ namespace Cooper.Model.Test
             member = team.GetMember(member.ID);
             task = this._teamTaskService.GetTask(task.ID);
             Assert.IsNotNull(task);
-            Assert.AreEqual(1, task.Projects.Count());
+            Assert.AreEqual(1, task.ProjectIds.Count());
 
             this._teamService.RemoveProject(project, team);
             this.Evict(project);
@@ -294,7 +294,7 @@ namespace Cooper.Model.Test
             task = this._teamTaskService.GetTask(task.ID);
             Assert.IsNull(project);
             Assert.IsNotNull(task);
-            Assert.AreEqual(0, task.Projects.Count());
+            Assert.AreEqual(0, task.ProjectIds.Count());
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]

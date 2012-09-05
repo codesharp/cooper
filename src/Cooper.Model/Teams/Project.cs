@@ -59,4 +59,17 @@ namespace Cooper.Model.Teams
             this.IsPublic = isPublic;
         }
     }
+    /// <summary>值对象，显示定义Project实体的唯一标识
+    /// <remarks>
+    /// Team聚合根之外的其他聚合根如果要关联Project，则可以关联此值对象；
+    /// 如果直接关联Project实体，会导致Project实体被其他外部聚合根持有引用，
+    /// 这可能会导致Project在Team聚合之外被意外修改。因此，如果外部聚合根只关联Project的ID，
+    /// 就不会有这个问题，也就没有违反DDD的原则了。
+    /// </remarks>
+    /// </summary>
+    public class ProjectId : EntityBase<int>
+    {
+        protected ProjectId() { }
+        public ProjectId(int id) { this.ID = id; }
+    }
 }

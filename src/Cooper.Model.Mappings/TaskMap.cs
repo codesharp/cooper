@@ -51,7 +51,7 @@ namespace Cooper.Model.Mappings
                 .LazyLoad()
                 .Cascade
                 .SaveUpdate();
-            HasManyToMany(m => m.Projects)
+            HasManyToMany(m => m.ProjectIds)
                 .Table("Cooper_TaskProjectRelationship")
                 .ParentKeyColumn("TaskId")
                 .ChildKeyColumn("ProjectId")

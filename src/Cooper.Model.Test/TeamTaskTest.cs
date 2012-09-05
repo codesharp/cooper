@@ -27,10 +27,10 @@ namespace Cooper.Model.Test
             Assert.AreNotEqual(DateTime.MinValue, task.LastUpdateTime);
 
             Assert.AreEqual(member.ID, task.CreatorMemberId);
-            Assert.AreEqual(project.ID, task.Projects.First().ID);
+            Assert.AreEqual(project.ID, task.ProjectIds.First().ID);
             Assert.AreEqual(team.ID, task.TeamId);
-            Assert.AreEqual(1, task.Projects.Count());
-            Assert.AreEqual(project.ID, task.Projects.First().ID);
+            Assert.AreEqual(1, task.ProjectIds.Count());
+            Assert.AreEqual(project.ID, task.ProjectIds.First().ID);
 
             this._teamTaskService.Create(task);
             Assert.Greater(task.ID, 0);
@@ -48,8 +48,8 @@ namespace Cooper.Model.Test
 
             Assert.AreEqual(task.TeamId, task2.TeamId);
             Assert.AreEqual(task.AssigneeId.Value, task2.AssigneeId.Value);
-            Assert.AreEqual(task.Projects.Count(), task2.Projects.Count());
-            Assert.AreEqual(task.Projects.First().ID, task2.Projects.First().ID);
+            Assert.AreEqual(task.ProjectIds.Count(), task2.ProjectIds.Count());
+            Assert.AreEqual(task.ProjectIds.First().ID, task2.ProjectIds.First().ID);
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
@@ -74,7 +74,7 @@ namespace Cooper.Model.Test
             task2.RemoveFromProject(project);
 
             Assert.AreEqual(member2.ID, task2.AssigneeId.Value);
-            Assert.AreEqual(0, task2.Projects.Count());
+            Assert.AreEqual(0, task2.ProjectIds.Count());
 
             this._teamTaskService.Update(task2);
             this.Evict(task2);
@@ -89,7 +89,7 @@ namespace Cooper.Model.Test
 
             Assert.AreEqual(task2.TeamId, task3.TeamId);
             Assert.AreEqual(task2.AssigneeId.Value, task3.AssigneeId.Value);
-            Assert.AreEqual(task2.Projects.Count(), task3.Projects.Count());
+            Assert.AreEqual(task2.ProjectIds.Count(), task3.ProjectIds.Count());
 
             this.Evict(task3);
 
@@ -255,22 +255,22 @@ namespace Cooper.Model.Test
             this._teamTaskService.Create(task);
             this.Evict(task);
             task = this._teamTaskService.GetTask(task.ID);
-            Assert.AreEqual(2, task.Projects.Count());
-            Assert.IsTrue(task.Projects.Any(x => x.ID == project1.ID));
-            Assert.IsTrue(task.Projects.Any(x => x.ID == project2.ID));
+            Assert.AreEqual(2, task.ProjectIds.Count());
+            Assert.IsTrue(task.ProjectIds.Any(x => x.ID == project1.ID));
+            Assert.IsTrue(task.ProjectIds.Any(x => x.ID == project2.ID));
 
             task.RemoveFromProject(project1);
             this._teamTaskService.Update(task);
             this.Evict(task);
             task = this._teamTaskService.GetTask(task.ID);
-            Assert.AreEqual(1, task.Projects.Count());
-            Assert.IsTrue(task.Projects.Any(x => x.ID == project2.ID));
+            Assert.AreEqual(1, task.ProjectIds.Count());
+            Assert.IsTrue(task.ProjectIds.Any(x => x.ID == project2.ID));
 
             task.RemoveFromProject(project2);
             this._teamTaskService.Update(task);
             this.Evict(task);
             task = this._teamTaskService.GetTask(task.ID);
-            Assert.AreEqual(0, task.Projects.Count());
+            Assert.AreEqual(0, task.ProjectIds.Count());
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]

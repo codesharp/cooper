@@ -19,4 +19,12 @@ namespace Cooper.Model.Mappings
             Map(m => m.CreateTime);
         }
     }
+    public class ProjectIdMap : ClassMap<ProjectId>
+    {
+        public ProjectIdMap()
+        {
+            Table("Cooper_Project");
+            Id(m => m.ID);
+        }
+    }
 }

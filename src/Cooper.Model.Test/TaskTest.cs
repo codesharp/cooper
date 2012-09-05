@@ -115,7 +115,7 @@ namespace Cooper.Model.Test
             task2.RemoveFromProject(project);
 
             Assert.AreEqual(member2.ID, task2.AssigneeId.Value);
-            Assert.AreEqual(0, task2.Projects.Count());
+            Assert.AreEqual(0, task2.ProjectIds.Count());
 
             this._taskService.Update(task2);
             this.Evict(task2);
@@ -130,7 +130,7 @@ namespace Cooper.Model.Test
 
             Assert.AreEqual(task2.TeamId, task3.TeamId);
             Assert.AreEqual(task2.AssigneeId.Value, task3.AssigneeId.Value);
-            Assert.AreEqual(task2.Projects.Count(), task3.Projects.Count());
+            Assert.AreEqual(task2.ProjectIds.Count(), task3.ProjectIds.Count());
 
             this.Evict(task3);
 

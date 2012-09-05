@@ -470,7 +470,7 @@ namespace Cooper.Web.Controllers
                     && (m = team.GetMember(teamTask.AssigneeId.Value)) != null)
                     teamTaskInfo.Assignee = this.Parse(m);
                 //项目列表
-                teamTaskInfo.Projects = teamTask.Projects.Select(o => this.Parse(o)).ToArray();
+                teamTaskInfo.Projects = teamTask.ProjectIds.Select(o => this.Parse(team.GetProject(o.ID))).ToArray();
                 //是否可编辑 创建者或被分配者（执行人）
                 teamTaskInfo.Editable = this.IsCreator(team, teamTask, a) || this.IsAssignee(teamTaskInfo, a);
                 //评论

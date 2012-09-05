@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CodeSharp.Core.DomainBase;
 using Cooper.Model.Accounts;
 
 namespace Cooper.Model.Teams
@@ -12,7 +13,7 @@ namespace Cooper.Model.Teams
     /// </summary>
     public class Task : Cooper.Model.Tasks.Task
     {
-        private IList<Project> _projects = new List<Project>();
+        private IList<ProjectId> _projectIds = new List<ProjectId>();
         private IList<Comment> _comments = new List<Comment>();
 
         /// <summary>获取所属团队的标识
@@ -27,12 +28,12 @@ namespace Cooper.Model.Teams
         /// </remarks>
         /// </summary>
         public int? AssigneeId { get; private set; }
-        /// <summary>获取当前团队任务所属的项目
+        /// <summary>获取当前团队任务所关联的项目的标识
         /// <remarks>
-        /// 一个团队任务可以属于多个项目
+        /// 一个团队任务可以和多个项目关联
         /// </remarks>
         /// </summary>
-        public IEnumerable<Project> Projects { get { return _projects; } }
+        public IEnumerable<ProjectId> ProjectIds { get { return _projectIds; } }
         /// <summary>获取当前团队任务的所有评论
         /// </summary>
         public IEnumerable<Comment> Comments { get { return _comments; } }
@@ -74,9 +75,9 @@ namespace Cooper.Model.Teams
         {
             Assert.IsValid(project);
             Assert.AreEqual(this.TeamId, project.TeamId);
-            if (!_projects.Any(x => x.ID == project.ID))
+            if (!_projectIds.Any(x => x.ID == project.ID))
             {
-                _projects.Add(project);
+                _projectIds.Add(new ProjectId(project.ID));
                 this.MakeChange();
             }
         }
@@ -89,10 +90,10 @@ namespace Cooper.Model.Teams
         {
             Assert.IsValid(project);
             Assert.AreEqual(this.TeamId, project.TeamId);
-            var projectToRemove = _projects.SingleOrDefault(x => x.ID == project.ID);
+            var projectToRemove = _projectIds.SingleOrDefault(x => x.ID == project.ID);
             if (projectToRemove != null)
             {
-                _projects.Remove(projectToRemove);
+                _projectIds.Remove(projectToRemove);
                 this.MakeChange();
             }
         }
