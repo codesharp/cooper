@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
-<project name="Cooper" default="rebuild">
+<project name="Cooper" default="clean">
   <!--<loadtasks assembly="..\work-tool\nant\extensions\common\2.0\yui\Yahoo.Yui.Compressor.Build.Nant.dll" verbose="true" />-->
-  
+  <property name="runtime" value="dotnet" dynamic="true"/>
   <property name="args0" value="" dynamic="true"/>
   <property name="args1" value="" dynamic="true"/>
   <property name="project.config" value="${args0}" dynamic="true" />
   <!--path-->
   <property name="dir" value="."/>
-  <property name="dir.tools" value="..\work-tool"/>
-  <property name="build.base" value="build\${project.config}"/>
+  <property name="dir.tools" value="../work-tool"/>
+  <property name="build.base" value="build/${project.config}"/>
   <property name="build.absolutepath" value="${path::get-full-path(build.base)}" />
   <property name="xpath.flag" value="/configuration/appSettings/add[@key='EnvironmentVersionFlag']/@value"/>
   <property name="xpath.flag_refresh" value="/configuration/appSettings/add[@key='AutoRefreshSettingsFlag']/@value"/>
@@ -26,15 +26,17 @@
   <if test="${project.config=='Release'}">
     <property name="msbuild.config" value="Release"/>
   </if>
-  <property name="msbuild.params"
-            value="/t:rebuild 
-            /p:Configuration=${msbuild.config} 
-            /t:ResolveReferences" />
+  <property name="msbuild.params" value="/t:rebuild /p:Configuration=${msbuild.config}" />
   <property name="msbuild.params.weboutput" value="/t:_CopyWebApplication /p:WebProjectOutputDir=${build.absolutepath}" />
   <property name="msbuild.params.mvcoutput" value="/t:_CopyWebApplication /p:mvcbuildviews=true /p:WebProjectOutputDir=${build.absolutepath}" />
   <property name="msbuild.params.output" value="/p:OutputPath=${build.absolutepath}" />
+    <!--xbuild for mono-->
+  <if test="${runtime=='mono'}">
+    <!--windows use xbuild.bat-->
+    <property name="msbuild" value="xbuild"/>
+  </if>
   <!--NUnit-->
-  <property name="nunit" value="${path::get-full-path(dir.tools)}\nunit\nunit-console.exe" />
+  <property name="nunit" value="${path::get-full-path(dir.tools)}/nunit/nunit-console.exe" />
   
   <!--clean-->
   <target name="clean" description="clean build folder">
@@ -205,10 +207,18 @@ debuger.isErrorEnable = debuger.enable && true;
   </target>
   
   <target name="test_model">
-    <exec program="${msbuild}"
-          commandline="Cooper.Model.Test.csproj ${msbuild.params} ${msbuild.params.output}\cooper_model_test"
-          workingdir="${dir}\src\Cooper.Model.Test" />
-    <exec program="${nunit}" commandline="Cooper.Model.Test.dll" workingdir="${build.absolutepath}\cooper_model_test"/>
+    <if test="${runtime=='dotnet'}">
+      <exec program="${msbuild}"
+            commandline="Cooper.Model.Test.csproj ${msbuild.params} ${msbuild.params.output}\cooper_model_test"
+            workingdir="${dir}\src\Cooper.Model.Test" />
+      <exec program="${nunit}" commandline="Cooper.Model.Test.dll" workingdir="${build.absolutepath}\cooper_model_test"/>
+    </if>
+    <if test="${runtime=='mono'}">
+      <exec program="${msbuild}"
+            commandline="Cooper.Model.Test-mono.csproj ${msbuild.params} ${msbuild.params.output}/cooper_model_test_mono"
+            workingdir="${dir}\src\Cooper.Model.Test" />
+      <exec program="mono" commandline="${nunit} Cooper.Model.Test.dll" workingdir="${build.absolutepath}\cooper_model_test_mono"/>
+    </if>
     <!--/exclude=concurrent-->
   </target>
 
