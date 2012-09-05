@@ -52,9 +52,7 @@
   
   <target name="web">
     <exec program="${msbuild}"
-          commandline="${msbuild.params} 
-          ${msbuild.params.mvcoutput}\cooper_web
-          ${msbuild.params.output}\cooper_web\bin"
+          commandline="${msbuild.params} ${msbuild.params.mvcoutput}/cooper_web ${msbuild.params.output}/cooper_web/bin"
           workingdir="${dir}\src\Cooper.Web" />
     <xmlpoke file="${build.absolutepath}\cooper_web\web.config"
              xpath="${xpath.flag}"
