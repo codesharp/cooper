@@ -17,4 +17,9 @@ obj
 *.vsmdi
 TestResult.xml
 
+#mono 
+test-results
+*.userprefs
+.DS_Store
+
 #objc

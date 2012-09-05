@@ -51,6 +51,14 @@ namespace Cooper.Model.Teams
         {
             return _members.SingleOrDefault(x => x.Email == email);
         }
+		/// <summary>根据账号获取成员
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+		public Member GetMember (Account account)
+		{
+			return this._members.SingleOrDefault (x => x.AssociatedAccountId != null && x.AssociatedAccountId.Value == account.ID);
+		}
         /// <summary>根据项目标识获取项目
         /// </summary>
         /// <param name="id"></param>
