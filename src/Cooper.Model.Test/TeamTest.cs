@@ -455,11 +455,13 @@ namespace Cooper.Model.Test
             var team = CreateSampleTeam();
             var account = CreateAccount();
             var member = this._teamService.AddFullMember(RandomString(), RandomEmailString(), team);
+            this.Evict(team);
             this.AssertParallel(() => this._teamService.AssociateMemberAccount(team, member, account), 4, 1);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(team, member, account));
 
             account = CreateAccount();
             var member2 = this._teamService.AddFullMember(RandomString(), RandomEmailString(), team, account);
+            this.Evict(team);
             this.AssertParallel(() => this._teamService.AssociateMemberAccount(team, member2, account), 4, 0);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(team, member2, account));
         }
