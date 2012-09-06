@@ -407,7 +407,7 @@ namespace Cooper.Model.Test
             Assert.IsTrue(teams.Any(x => x.ID == team3.ID));
         }
 
-        //TODO,UNDONE
+        //NOTE:
         //发现在测试
         //TeamTest.AddTeamMemberWithDuplicateEmailTest
         //TeamTest.AddTeamMemberWithDuplicateAccountTest
@@ -427,6 +427,11 @@ namespace Cooper.Model.Test
         //NOTE：为了确保以下三个用于测试并发的单元测试能够通过，并且因为原因上面也基本分析过了，所以在进行并发测试前先让team对象脱离NHibernate Session，
         //这样可以解决测试用例失败的问题，但理论上还是希望能够不脱离Session，NHibernate也不会抛错。
 
+        //最新进展：因为实际使用场景都是先取出Team，然后对其进行操作，实际使用场景都不会强制Evict的。
+        //所以，修改并发测试用例，每次并发都先取出Team，然后再对其进行更新操作;同时，去掉强制Evict的逻辑；
+        //经过这样的修改后，发现测试用例都能正常通过。
+        //看来之前的写法“通过先取出来，然后被多个并发线程同时使用”的测试方式也许本身就存在场景不合理性，因为实际情况不会这样。
+
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void AddTeamMemberWithDuplicateEmailTest()
@@ -434,8 +439,11 @@ namespace Cooper.Model.Test
             var team = CreateSampleTeam();
             var name = RandomString();
             var email = RandomEmailString();
-            this.Evict(team);
-            this.AssertParallel(() => this._teamService.AddFullMember(name, email, team), 4, 1);
+            this.AssertParallel(() =>
+                {
+                    team = this._teamService.GetTeam(team.ID);
+                    this._teamService.AddFullMember(name, email, team);
+                }, 4, 1);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(name, email, team));
         }
         [Test]
@@ -444,8 +452,11 @@ namespace Cooper.Model.Test
         {
             var account = CreateAccount();
             var team = CreateSampleTeam();
-            this.Evict(team);
-            this.AssertParallel(() => this._teamService.AddFullMember(Guid.NewGuid().ToString(), RandomEmailString(), team, account), 4, 1);
+            this.AssertParallel(() =>
+                {
+                    team = this._teamService.GetTeam(team.ID);
+                    this._teamService.AddFullMember(Guid.NewGuid().ToString(), RandomEmailString(), team, account);
+                }, 4, 1);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AddFullMember(Guid.NewGuid().ToString(), RandomEmailString(), team, account));
         }
         [Test]
@@ -455,14 +466,21 @@ namespace Cooper.Model.Test
             var team = CreateSampleTeam();
             var account = CreateAccount();
             var member = this._teamService.AddFullMember(RandomString(), RandomEmailString(), team);
-            this.Evict(team);
-            this.AssertParallel(() => this._teamService.AssociateMemberAccount(team, member, account), 4, 1);
+            this.AssertParallel(() =>
+                {
+                    team = this._teamService.GetTeam(team.ID);
+                    this._teamService.AssociateMemberAccount(team, member, account);
+                }, 4, 1);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(team, member, account));
 
             account = CreateAccount();
+            team = this._teamService.GetTeam(team.ID);
             var member2 = this._teamService.AddFullMember(RandomString(), RandomEmailString(), team, account);
-            this.Evict(team);
-            this.AssertParallel(() => this._teamService.AssociateMemberAccount(team, member2, account), 4, 0);
+            this.AssertParallel(() =>
+                {
+                    team = this._teamService.GetTeam(team.ID);
+                    this._teamService.AssociateMemberAccount(team, member2, account);
+                }, 4, 0);
             Assert.Catch(typeof(AssertionException), () => this._teamService.AssociateMemberAccount(team, member2, account));
         }
 
