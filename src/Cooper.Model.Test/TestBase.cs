@@ -56,8 +56,10 @@ namespace Cooper.Model.Test
             }
             catch (Exception e)
             {
-                if (!e.Message.Contains("不可重复初始化配置"))
+                if (!e.Message.Contains("不可重复初始化配置")){
                     Console.WriteLine(e.Message);
+                    throw e;
+                }
             }
 
             this._log = DependencyResolver.Resolve<ILoggerFactory>().Create(this.GetType());

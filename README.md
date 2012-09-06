@@ -20,12 +20,22 @@ OpenSource Task-based Multiplayer Online Collaboration System.
 
 Depends on git@github.com:codesharp/work-tool.git for building tools.
 
+.NET
 ```shell
-runfirst
 build nuget
 build test_model Debug
 build web [Debug/Test/Release]
 ```
+
+MONO (build via xbuild)
+```shell
+sh build.sh nuget
+or
+sh nuget.insatll.sh
+sh build.sh test_model Debug
+sh build.sh web [Debug/Test/Release]
+```
+
 
 ## Style Reference
 

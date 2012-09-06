@@ -33,7 +33,7 @@ Global
 		{D77B5EDE-FB5E-476E-9B3B-6F3940A5EB08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = src\Cooper.Model\Cooper.Model.csproj
+		StartupItem = src\Cooper.Model.Test\Cooper.Model.Test-mono.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
