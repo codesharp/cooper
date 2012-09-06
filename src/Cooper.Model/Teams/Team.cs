@@ -55,7 +55,7 @@ namespace Cooper.Model.Teams
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-		public Member GetMember (Account account)
+		public Member GetMember(Account account)
 		{
 			return this._members.SingleOrDefault (x => x.AssociatedAccountId != null && x.AssociatedAccountId.Value == account.ID);
 		}

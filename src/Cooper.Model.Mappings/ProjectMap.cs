@@ -24,7 +24,7 @@ namespace Cooper.Model.Mappings
         public ProjectIdMap()
         {
             Table("Cooper_Project");
-            Id(m => m.ID);
+            Id(m => m.ID).GeneratedBy.Assigned();
         }
     }
 }
