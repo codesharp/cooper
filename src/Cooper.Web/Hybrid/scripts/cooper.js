@@ -16,6 +16,8 @@
     var tasksInCurrentList = null;
     //表示当前任务列表是否可编辑
     var isCurrentTaskListEditable = null;
+    //表示任务列表页面显示时是否需要进行任务同步
+    var autoSyncTask = false;
 
     //获取当前任务列表内的所有任务，存放在本地内存
     function loadTasksInCurrentList(listId, callback) {
@@ -123,6 +125,68 @@
                 alert(result.message);
             }
         });
+    }
+    //同步并刷新所有任务列表
+    function syncAndRefreshTaskLists() {
+        if (isMobileDevice()) {
+            showLoading("正在进行数据同步，请稍后...");
+            syncTaskLists(null, function (result) {
+                if (result.status) {
+                    getTasklists(function (result) {
+                        if (result.status) {
+                            showTaskLists(result.data.taskLists);
+                            taskLists = result.data.taskLists;
+                            hideLoading();
+                        }
+                        else {
+                            hideLoading();
+                            alert(result.message);
+                        }
+                    });
+                }
+                else {
+                    hideLoading();
+                    alert(result.message);
+                }
+            });
+        }
+        else {
+            loadAndShowTaskLists();
+        }
+    }
+    //同步并刷新单个任务列表中的任务
+    function syncAndRefreshTasks() {
+        if (isMobileDevice()) {
+            if (isCurrentTaskListEditable == false) {
+                loadAndShowTasks(pageData.listId, pageData.isCompleted);
+            }
+            else if (isCurrentTaskListEditable == true) {
+                showLoading("正在进行数据同步，请稍后...");
+                syncTaskLists(pageData.listId, function (result) {
+                    if (result.status) {
+                        getTasksByPriority(pageData.listId, pageData.isCompleted, function (result) {
+                            if (result.status) {
+                                tasksInCurrentList = result.data.tasks;
+                                isCurrentTaskListEditable = result.data.isListEditable;
+                                showTasks(pageData.listId, result.data.tasks, pageData.isCompleted);
+                                hideLoading();
+                            }
+                            else {
+                                hideLoading();
+                                alert(result.message);
+                            }
+                        });
+                    }
+                    else {
+                        hideLoading();
+                        alert(result.message);
+                    }
+                });
+            }
+        }
+        else {
+            loadAndShowTasks(pageData.listId, pageData.isCompleted);
+        }
     }
     //在任务页面显示当前的任务表的名称
     function showTaskListName(listId) {
@@ -477,6 +541,10 @@
         }
         return false;
     }
+    //外部调用该函数设置需要自动同步任务数据
+    function setAutoSyncTaskFlag() {
+        autoSyncTask = true;
+    }
 
     //----------------------------------------------------------------
     //按钮事件响应绑定
@@ -567,31 +635,7 @@
     });
     //任务列表页面:“刷新”按钮事件响应
     $(document).delegate("#taskListPage #refreshTaskListsButton", "click", function () {
-        if (isMobileDevice()) {
-            showLoading();
-            syncTaskLists(null, function (result) {
-                if (result.status) {
-                    getTasklists(function (result) {
-                        if (result.status) {
-                            showTaskLists(result.data.taskLists);
-                            taskLists = result.data.taskLists;
-                            hideLoading();
-                        }
-                        else {
-                            hideLoading();
-                            alert(result.message);
-                        }
-                    });
-                }
-                else {
-                    hideLoading();
-                    alert(result.message);
-                }
-            });
-        }
-        else {
-            loadAndShowTaskLists();
-        }
+        syncAndRefreshTaskLists();
     });
     //任务编辑页面:“确定”按钮事件响应
     $(document).delegate("#taskEditPage #saveTaskButton", "click", function () {
@@ -679,37 +723,7 @@
     });
     //任务页面:“刷新”按钮事件响应
     $(document).delegate("#taskPage #refreshTasksButton", "click", function () {
-        if (isMobileDevice()) {
-            if (isCurrentTaskListEditable == false) {
-                loadAndShowTasks(pageData.listId, pageData.isCompleted);
-            }
-            else if (isCurrentTaskListEditable == true) {
-                showLoading();
-                syncTaskLists(pageData.listId, function (result) {
-                    if (result.status) {
-                        getTasksByPriority(pageData.listId, pageData.isCompleted, function (result) {
-                            if (result.status) {
-                                tasksInCurrentList = result.data.tasks;
-                                isCurrentTaskListEditable = result.data.isListEditable;
-                                showTasks(pageData.listId, result.data.tasks, pageData.isCompleted);
-                                hideLoading();
-                            }
-                            else {
-                                hideLoading();
-                                alert(result.message);
-                            }
-                        });
-                    }
-                    else {
-                        hideLoading();
-                        alert(result.message);
-                    }
-                });
-            }
-        }
-        else {
-            loadAndShowTasks(pageData.listId, pageData.isCompleted);
-        }
+        syncAndRefreshTasks();
     });
     //任务页面:“个人任务”Tab事件响应
     $(document).delegate("#taskPage #showAllTasksButton", "click", function () {
@@ -778,7 +792,13 @@
         clearTaskListPage();
     });
     $(document).delegate("#taskListPage", "pageshow", function (e, data) {
-        loadAndShowTaskLists();
+        if (autoSyncTask == true) {
+            autoSyncTask = false;
+            syncAndRefreshTaskLists();
+        }
+        else {
+            loadAndShowTaskLists();
+        }
     });
     $(document).delegate("#addTaskListPage", "pagebeforeshow", function (e, data) {
         $("#tasklistName").val("");
@@ -850,4 +870,6 @@
             $('#backToLoginPageButton').hide();
         }
     });
+
+    window.setAutoSyncTaskFlag = setAutoSyncTaskFlag;
 })();

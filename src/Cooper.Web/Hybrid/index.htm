@@ -32,29 +32,8 @@
                 getCurrentUser(function (result) {
                     if (result.status) {
                         if (result.data.username != null && result.data.username != "") {
-                            getNetworkStatus(function(result) {
-                                if(result.status) {
-                                    if(result.data) {
-										showLoading("加载中...");
-                                        syncTaskLists(null, function (result) {
-                                            if (result.status) {
-												hideLoading();
-                                                $.mobile.changePage('#taskListPage');
-                                            }
-                                            else {
-												hideLoading();
-                                                alert(result.message);
-                                            }
-                                        });
-                                    }
-                                    else {
-                                        $.mobile.changePage('#taskListPage');
-                                    }
-                                }
-                                else {
-                                    alert(result.message);
-                                }
-                            });
+                            setAutoSyncTaskFlag();
+                            $.mobile.changePage('#taskListPage');
                         }
                     }
                     else {
@@ -63,21 +42,6 @@
                 });
             });
         });
-		//显示Loading效果
-		function showLoading(loadingMessage) {
-			$.mobile.loadingMessageTextVisible = true;
-			if (loadingMessage == undefined || loadingMessage == null) {
-				$.mobile.loadingMessage = "页面加载中...";
-			}
-			else {
-				$.mobile.loadingMessage = loadingMessage;
-			}
-			$.mobile.showPageLoadingMsg();
-		}
-		//隐藏Loading效果
-		function hideLoading() {
-			$.mobile.hidePageLoadingMsg();
-		}
     </script>
 
     <style type="text/css">
