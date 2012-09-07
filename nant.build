@@ -54,6 +54,16 @@
     <exec program="${msbuild}"
           commandline="${msbuild.params} ${msbuild.params.mvcoutput}/cooper_web ${msbuild.params.output}/cooper_web/bin"
           workingdir="${dir}\src\Cooper.Web" />
+    <if test="${runtime=='mono'}">
+      <!--<exec program="/Applications/MonoDevelop.app/Contents/MacOS/mdtool"
+            commandline="build -p:Cooper.Web.csproj"
+            workingdir="${dir}\src\Cooper.Web" />-->
+      <delete>
+        <fileset>
+          <include name="${build.absolutepath}/cooper_web/Microsoft.Web.Infrastructure.dll" />
+        </fileset>
+      </delete>
+    </if>
     <xmlpoke file="${build.absolutepath}\cooper_web\web.config"
              xpath="${xpath.flag}"
              value="${project.config}" />
