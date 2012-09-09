@@ -6,6 +6,34 @@ OpenSource Task-based Multiplayer Online Collaboration System.
 
 ![logo](https://cooper.apphb.com/favicon.ico)
 
+```shell
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooo/-.`   ``.:+ooooooosssoooooooooo
+ooooooooooooooo+:`            ./oooossoooooooooooo
+oooooooooooooo+.              ./ooo/-/oooooooooooo
+ooooooooooooo+.            `:+ooo/.   ./oooooooooo
+oooooooooo:`  .::`       .:oooo+-      `/ooooooooo
+ooooooooo:   .+ooo/-`  .:oooo+-`        -ooooooooo
+ooooooooo-`````-/ooo+/:+oooo/`````````` -ooooooooo
+ooooooo/.````````./+++++++/-`````````````./ooooooo
+oooooo+``.........`.:/++/:...............``+oooooo
+oooooo+...............-:-..................+oooooo
+ooooooo+-................................-+ooooooo
+oooooooooo++++++++++++++++++++++++++++++oooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooo
+```
+
 ## Showcase
 
 [Demo On Appharbor](https://cooper.apphb.com)
