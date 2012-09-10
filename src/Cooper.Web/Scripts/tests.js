@@ -190,7 +190,8 @@ function runShortcutsTests() {
     test('enter', function () {
         var c = taskCount();
         focusRow(0);
-        var e = jQuery.Event('keyup'); e.keyCode = 13;
+        //不适用keyup
+        var e = jQuery.Event('keydown'); e.keyCode = 13;
         $el_wrapper_region.trigger(e);
         assertAppend(c);
     });
