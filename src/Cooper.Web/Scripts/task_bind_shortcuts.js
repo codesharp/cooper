@@ -30,9 +30,9 @@ UI_List_Common.prototype._bindShortcuts = function () {
         var backspace = e.keyCode == 8;
 
         //集中忽略非快捷键处理
-        //TODO:此处集中忽略导致系统快捷键功能失效
-        if (!ctrl && !shift && !up && !down && !enter && !backspace)
-            return;
+        //此处集中忽略导致系统快捷键功能失效
+        //if (!ctrl && !shift && !up && !down && !enter && !backspace)
+        //return;
 
         var $focus = base.$focusRow;
         var $actives = base.getActives();
@@ -114,17 +114,21 @@ UI_List_Common.prototype._bindShortcuts = function () {
                 else if (base._isValidRegion($next))
                     $next.prepend($actives2);
             }
-            //移动过程中会丢失焦点，在此修正
-            base.focusRow($focus);
-            //由于顺序变更需要刷新排序等
-            base._flushSorts();
-            //取消事件冒泡避免滚动条意外滚动
-            e.preventDefault();
-            e.stopPropagation();
+            //避免阻断其他快捷键
+            //issue:https://github.com/codesharp/cooper/issues/87
+            if (up || down) {
+                //移动过程中会丢失焦点，在此修正
+                base.focusRow($focus);
+                //由于顺序变更需要刷新排序等
+                base._flushSorts();
+                //取消事件冒泡避免滚动条意外滚动
+                e.preventDefault();
+                e.stopPropagation();
+            }
             return;
         }
-        ////////////////////////////////////////////////////////////////////////////////////////
-        //批量选择Shift+↓
+            ////////////////////////////////////////////////////////////////////////////////////////
+            //批量选择Shift+↓
         else if (shift) {
             var $prev = base._findFocusPrev();
             var $next = base._findFocusNext();
