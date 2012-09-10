@@ -246,7 +246,8 @@ Task.prototype = {
         //优化用户化文本显示
         $e.html(today == date ? lang.today : this._parseDateString(t));
         //过期标记
-        this._setClass($e, today >= date, 'cell_duetime_expired');
+        this._setClass($e, !this.isCompleted() && today >= date, 'cell_duetime_expired');
+        this._setClass($e, this.isCompleted(), 'cell_duetime_completed');
         this.setDetail_DueTime(t);
     },
     setEditable: function (b) {

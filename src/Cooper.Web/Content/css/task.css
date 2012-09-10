@@ -192,6 +192,9 @@ div#detail_wrapper {
 .todolist .row_task .cell_duetime_expired {
 	color: red;
 }
+.todolist .row_task .cell_duetime_completed {
+	color: #9a9a9a;
+}
 .todolist .row_task .cell_label {
 	font-weight: normal;
 }
