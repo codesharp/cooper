@@ -78,7 +78,7 @@ UI_List_Common.prototype._bind = function () {
             //呈现详情
             if ($avtives.length == 1)
                 base._renderDetail($focus);
-            //批量详情
+                //批量详情
             else if ($avtives.length > 1)
                 base._renderBatchDetail($avtives);
             debuger.profileEnd('row_task_click');
@@ -115,7 +115,7 @@ UI_List_Common.prototype._bind = function () {
         var $el = $(e.target);
         var isSubject = $el.is('#subject');
         var isBody = $el.is('#body');
-        if (!isSubject && !isBody) return;
+        //if (!isSubject && !isBody) return;
         var task = base.getTaskById($el.parents('.region_detail').eq(0).attr('id'));
         if (isSubject)
             task.setSubject($el.val(), true);
@@ -142,7 +142,7 @@ UI_List_Common.prototype._bind = function () {
             return;
         }
         //是否完成 需处理批量场景
-        if ($el.is('#isCompleted') || ($el = $el.parent()).is('#isCompleted')) {
+        if ($el.is('#isCompleted') || ($el.parent().is('#isCompleted') && ($el = $el.parent()))) {
             var isCompleted = !$el.hasClass('active');
             for (var i = 0; i < ids.length; i++) {
                 var task = base.getTaskById(ids[i]);
@@ -156,8 +156,26 @@ UI_List_Common.prototype._bind = function () {
             //批量情况的修正
             if (ids.length > 1)
                 $el
-                        [isCompleted ? 'addClass' : 'removeClass']('active')
-                        [isCompleted ? 'addClass' : 'removeClass']('btn-success');
+                    [isCompleted ? 'addClass' : 'removeClass']('active')
+                    [isCompleted ? 'addClass' : 'removeClass']('btn-success');
+            return;
+        }
+        //标签处理
+        //project设置
+        if ($el.is('#tags_btn') || $el.parent().is('#tags_btn')) {
+            $el = $el.parent();
+            var $p = $el.parent();
+            $p.find('#tags_btn').hide();
+            $p.find('#tags_input').val('').show().focus();
+            return;
+        }
+        //移除tag
+        if ($el.hasClass('flag_removeTag')) {
+            var tag = $el.attr('val');
+            debuger.debug('remove tag "' + tag + '"');
+            for (var i = 0; i < ids.length; i++) {
+                base.getTaskById(ids[i]).removeTag(tag);
+            }
             return;
         }
     });
@@ -180,16 +198,71 @@ UI_List_Common.prototype._bind = function () {
                 task.setDueTime(t); //TODO:调整格式yy-mm-dd
             }
             if (ids.length > 0)
-            //额外逻辑
+                //额外逻辑
                 if (base.onDueTimeBatchChange)
                     base.onDueTimeBatchChange(tasks, t);
         }
     });
+    //部分task呈现行为
+    Task.prototype.render_detail_tags = function ($e, tags) {
+        $e.empty();
+        $.each(tags, function (i, n) {
+            $e.append('<span>'
+                + n
+                + ' <a class="flag_removeTag" val="'
+                + n
+                + '" title="'
+                + lang.remove_tag_from_task
+                + '">x</a></span> ');
+        });
+    }
     //部分事件无法全局绑定
     Task.prototype.bind_detail = function ($el_detail, task) {
         //datepicker重复初始化问题
         $el_detail.find('#dueTime').removeClass('hasDatepicker');
         if (task.editable)
             $el_detail.find('#dueTime').datepicker();
+
+        //TODO:将此类封装为组件
+        var $tags = $el_detail.find('#tags');
+        var $tags_input = $el_detail.find('#tags_input');
+        var $tags_btn = $el_detail.find('#tags_btn');
+        $tags_input.typeahead({
+            source: base.getTags(),
+            matcher: matcher,
+            sorter: sorter,
+            updater: function (val) {
+                debuger.debug('add-tags-val', val);
+                task.addTag(val);
+                $tags_input.blur();
+                return val;
+            }
+        });
+        $tags_input.unbind('blur').blur(function () {
+            var $p = $(this).parent();
+            setTimeout(function () {
+                $tags_btn.show();
+                $tags_input.hide().data('typeahead').hide();
+            }, 10);
+        });
+    }
+
+    function matcher(item) {
+        var q = this.query;
+        var r = ~item.toLowerCase().indexOf(this.query.toLowerCase());
+        if (!r)
+            this.source = $.merge($.grep(this.source, function (n) { return n != q }), [q]);
+        return r;
+    }
+    //HACK:重载sorter使其支持搜索时新增
+    //依赖于bootstrap当前实现
+    function sorter(items) {
+        var that = this;
+        //重新match
+        var all = $.grep(this.source, function (item) {
+            return that.matcher(item)
+        })
+        //HACK:重新sorter
+        return $.fn.typeahead.Constructor.prototype.sorter.apply(this, [all]);
     }
 }

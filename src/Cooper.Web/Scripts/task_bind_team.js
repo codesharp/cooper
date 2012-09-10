@@ -115,16 +115,21 @@ UI_List_Common.prototype._bindTeam = function () {
         //blur事件无法全局绑定，但逻辑仍保持在此
         $assignee_input.unbind('blur').blur(function () {
             var $p = $(this).parent();
-            $p.find('#assignee,#assignee_btn').show();
-            $p.find('#assignee_input').hide().data('typeahead').hide();
+            setTimeout(function () {
+                $p.find('#assignee,#assignee_btn').show();
+                $p.find('#assignee_input').hide().data('typeahead').hide();
+            }, 10);
             //清空时移除assignee
             if ($(this).val() == '')
                 task.setAssignee(null);
         });
         $projects_input.unbind('blur').blur(function () {
             var $p = $(this).parent();
-            $p.find('#projects_btn').show();
-            $p.find('#projects_input').hide().data('typeahead').hide();
+            //为了让typehead click有效
+            setTimeout(function () {
+                $p.find('#projects_btn').show();
+                $p.find('#projects_input').hide().data('typeahead').hide();
+            }, 10);
         });
 
         //评论

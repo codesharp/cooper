@@ -23,7 +23,7 @@ Task.prototype = {
             'priority': t['Priority'] != undefined ? t['Priority'] : 0, //0=today 1=upcoming 2=later priority 总是以string使用
             'dueTime': t['DueTime'] != undefined && t['DueTime'] != null && t['DueTime'] != '' ? this._parseDate(t['DueTime']) : null,
             'isCompleted': t['IsCompleted'] != undefined ? t['IsCompleted'] : false,
-            'tags': [],
+            'tags': t['Tags'] || t['tags'] || [],
             //team模块相关
             //TODO:移植到扩展模块？
             'creator': t['Creator'] != undefined ? this._mapMember(t['Creator']) : null,
@@ -85,6 +85,7 @@ Task.prototype = {
     _addInsertChange: function (k, i, b) {
         this._addChange(k + i, { 'Name': k, 'Value': i, 'Type': 2 }, b);
     },
+    //b=是否忽略可编辑性判断，部分变更允许对非可编辑状态的任务进行，如comment
     _addChange: function (k, c, b) {
         c['ID'] = this.id();
         //变更列表，用于提交到server
@@ -103,6 +104,7 @@ Task.prototype = {
         this.setPriority(this.priority());
         this.setDueTime(this.due());
         this.setAssignee(this.assignee());
+        this.setTags(this.tags());
         this.setEditable(this.editable);
     },
     renderDetail: function () {
@@ -124,6 +126,7 @@ Task.prototype = {
         this.setDetail_Projects(this.projects());
         this.setDetail_Comments(this.comments());
         this.setDetail_Editable(this.editable);
+        this.setDetail_Tags(this.tags());
         //设置url快捷链接区域 临时方案
         var $urls = this.$el_detail.find('#urls');
         $urls.find('ul').empty();
@@ -189,6 +192,7 @@ Task.prototype = {
     assignee: function () { return this.get('assignee'); },
     projects: function () { return this.get('projects'); },
     comments: function () { return this.get('comments'); },
+    tags: function () { return this.get('tags'); },
     ///////////////////////////////////////////////////////////////////////////////
     //属性以及ui设置
     setId: function (i) {
@@ -287,6 +291,30 @@ Task.prototype = {
             createTime: moment().format('YYYY-MM-DD HH:mm:ss')
         }]));
     },
+    setTags: function (tags) {
+        if (!tags) return;
+        var k = 'tags';
+        this['data'][k] = tags; //直接更新tags数组
+        //TODO:重构tags
+        //渲染row_task
+        this._getRowEl(k)[tags.length != 0 ? 'show' : 'hide']().empty();
+        var color = ['label-info', 'label-warning', 'label-important', 'label-success', 'label-inverse', 'label'];
+        for (var i = 0; i < tags.length; i++)
+            this._getRowEl(k).append('<span class="label '
+                + color[i % color.length] + '">'
+                + tags[i] + '</span> ');
+        //渲染详情
+        this.setDetail_Tags(tags);
+    },
+    addTag: function (t) {
+        if ($.trim(t) == '') return;
+        this._addInsertChange('tags', t);
+        this.setTags($.merge($.grep(this.tags(), function (n, i) { return n.toLowerCase() != t.toLowerCase(); }), [t]));
+    },
+    removeTag: function (t) {
+        this._addDeleteChange('tags', t);
+        this.setTags($.grep(this.tags(), function (n, i) { return n.toLowerCase() != t.toLowerCase(); }));
+    },
     ///////////////////////////////////////////////////////////////////////////////
     //detail设置
     setDetail_Id: function (i) {
@@ -360,6 +388,11 @@ Task.prototype = {
         this._getDetailEl('projects').find('.flag_removeProject')[this.editable ? 'show' : 'hide']();
         this._getDetailEl('projects_btn')[this.editable ? 'show' : 'hide']();
         this._getDetailEl('assignee_btn')[this.editable ? 'show' : 'hide']();
+    },
+    setDetail_Tags: function (tags) {
+        if (!this.$el_detail || !tags) return;
+        if (this.render_detail_tags)
+            this.render_detail_tags(this._getDetailEl('tags'), tags);
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////

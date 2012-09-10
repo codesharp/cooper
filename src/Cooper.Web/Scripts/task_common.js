@@ -49,6 +49,9 @@ UI_List_Common.prototype = {
     getTaskById: null,
     getSortByKey: null,
     setTask: null,
+    //TODO:从server获取tag列表
+    //至少需要一个
+    getTags: function () { return ['']; },
     getProjects: null,
     getTeamMembers: null,
     getTask: function ($r) { return this.getTaskById(this.getTaskId($r)); },
@@ -89,7 +92,7 @@ UI_List_Common.prototype = {
             clearTimeout(this.detail_timer);
 
         if (!this.$batchDetail)
-        //由于datepicker不支持id重复
+            //由于datepicker不支持id重复
             this.$batchDetail = $(render($('#tmp_detail_batch').html(), { 'dueTimeBatchId': this.batch_id_dueTime }));
         var base = this;
         var fn = function () {
@@ -226,7 +229,7 @@ UI_List_Common.prototype = {
             var id = active.id();
             base.setTask(id, null);
             //追加删除变更
-            base.deletes = $.merge(base.deletes, [{ 'Type': 1, 'ID': id}]);
+            base.deletes = $.merge(base.deletes, [{ 'Type': 1, 'ID': id }]);
             active.el().remove();
         });
 
