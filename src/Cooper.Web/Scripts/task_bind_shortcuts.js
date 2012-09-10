@@ -127,8 +127,8 @@ UI_List_Common.prototype._bindShortcuts = function () {
             }
             return;
         }
-            ////////////////////////////////////////////////////////////////////////////////////////
-            //批量选择Shift+↓
+        ////////////////////////////////////////////////////////////////////////////////////////
+        //批量选择Shift+↓
         else if (shift) {
             var $prev = base._findFocusPrev();
             var $next = base._findFocusNext();

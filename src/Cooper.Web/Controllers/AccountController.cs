@@ -179,7 +179,7 @@ namespace Cooper.Web.Controllers
                     this._accountService.Create(a = new Account(userName));
 
             //TODO:目前正式环境不提供注册，之后将改为MD5
-            if (a.CheckPassword(password) || !release)
+            if ((a != null && a.CheckPassword(password)) || !release)
                 this.SetLogin(a.ID);
             else
                 throw new CooperknownException(this.Lang().username_or_password_was_wrong);
