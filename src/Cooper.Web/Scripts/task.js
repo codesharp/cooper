@@ -300,10 +300,10 @@ Task.prototype = {
         //渲染row_task
         this._getRowEl(k)[tags.length != 0 ? 'show' : 'hide']().empty();
         var color = ['label-info', 'label-warning', 'label-important', 'label-success', 'label-inverse', 'label'];
-        for (var i = 0; i < tags.length; i++)
-            this._getRowEl(k).append('<span class="label '
-                + color[i % color.length] + '">'
-                + tags[i] + '</span> ');
+        for (var i = 0; i < tags.length; i++) {
+            var $i = $('<span class="label ' + color[i % color.length] + '"></span> ');
+            this._getRowEl(k).append($i.text(tags[i])).append('&nbsp;');
+        }
         //渲染详情
         this.setDetail_Tags(tags);
     },

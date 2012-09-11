@@ -3,6 +3,7 @@
 ///<reference path="task.js" />
 ///<reference path="task_common.js" />
 ///<reference path="task_row.js" />
+///<reference path="task_bind.js" />
 
 //team模块相关功能事件绑定
 UI_List_Common.prototype._bindTeam = function () {
@@ -11,49 +12,13 @@ UI_List_Common.prototype._bindTeam = function () {
     ////////////////////////////////////////////////////////////////////////////////////////
     //详情区域
     ////////////////////////////////////////////////////////////////////////////////////////
-    this.$wrapper_detail.click(function (e) {
+    /*this.$wrapper_detail.click(function (e) {
         var $el = $(e.target);
         var ids = getIds($el);
         if (!ids) return;
-
-        //assignee设置
-        if ($el.is('#assignee_btn') || $el.parent().is('#assignee_btn')) {
-            $el = $el.parent();
-            var $p = $el.parent();
-            $p.find('#assignee,#assignee_btn').hide();
-            $p.find('#assignee_input').val($('#assignee', $p).html()).show().focus();
-            return;
-        }
-        //project设置
-        if ($el.is('#projects_btn') || $el.parent().is('#projects_btn')) {
-            $el = $el.parent();
-            var $p = $el.parent();
-            $p.find('#projects_btn').hide();
-            $p.find('#projects_input').val('').show().focus();
-            return;
-        }
-        if ($el.hasClass('flag_removeProject')) {
-            var projectId = $el.attr('id');
-            debuger.debug('remove project#' + projectId, ids);
-            for (var i = 0; i < ids.length; i++) {
-                base.getTaskById(ids[i]).removeProject(projectId);
-            }
-        }
-    });
+    });*/
 
     //与team相关功能的UI行为在此设置，以便于阅读
-    Task.prototype.render_detail_projects = function ($p, ps) {
-        $p.empty();
-        $.each(ps, function (i, n) {
-            $p.append('<span>'
-                + n['name']
-                + ' <a class="flag_removeProject" id="'
-                + n['id']
-                + '" title="'
-                + lang.remove_from_project
-                + '">x</a></span> ');
-        });
-    }
     Task.prototype.render_detail_comments = function ($c, cs) {
         $c.empty();
         $.each(cs, function (i, n) {
@@ -70,69 +35,65 @@ UI_List_Common.prototype._bindTeam = function () {
         });
     }
     Task.prototype.bind_detail_team = function ($el_detail, task) {
+        //执行人设置区域初始化
         var $assignee = $el_detail.find('#assignee');
         var $assignee_input = $el_detail.find('#assignee_input');
-        var $projects = $el_detail.find('#projects');
-        var $projects_input = $el_detail.find('#projects_input');
-        var $comments = $el_detail.find('#comments');
-        var $comment_btn = $el_detail.find('#comment_btn');
-        var $comment_input = $el_detail.find('#comment_input');
-
-        //var ids = getIds($el_detail);
-        //if (!ids) return;
-        //TODO:支持批量设置
-
-        //typeahead组件初始化
-        $assignee_input.typeahead({
-            source: base.getTeamMembers(),
-            sorter: sorter,
-            matcher: matcher,
-            highlighter: highlighter,
-            updater: function (val) {
+        var $assignee_btn = $el_detail.find('#assignee_btn');
+        base.detail_array_control_bind(task,
+            null,
+            null,
+            true,
+            $assignee,
+            $assignee_input,
+            $assignee_btn,
+            base.getTeamMembers(),
+            matcher,
+            sorter,
+            function (val) {
                 debuger.debug('updater-assignee-val', val);
                 var item = getItem(val);
                 debuger.debug('updater-assignee-item', item);
                 task.setAssignee(item);
                 $assignee_input.blur();
                 return item['name'];
+            },
+            highlighter,
+            function () {
+                //blur事件内容清空时移除assignee
+                if ($assignee_input.val() == '')
+                    task.setAssignee(null);
             }
-        });
-        $projects_input.typeahead({
-            source: base.getProjects(),
-            sorter: sorter,
-            matcher: matcher,
-            highlighter: highlighter,
-            updater: function (val) {
+        );
+
+        //项目设置区域初始化
+        var $projects = $el_detail.find('#projects');
+        var $projects_btn = $el_detail.find('#projects_btn');
+        var $projects_input = $el_detail.find('#projects_input');
+        base.detail_array_control_bind(task,
+            'render_detail_projects',
+            'removeProject',
+            false,
+            $projects,
+            $projects_input,
+            $projects_btn,
+            base.getProjects(),
+            matcher,
+            sorter,
+            function (val) {
                 debuger.debug('updater-projects-val', val);
                 var item = getItem(val);
                 debuger.debug('updater-projects-item', item);
                 task.addProject(item);
                 $projects_input.blur();
                 return item['name'];
-            }
-        });
+            },
+            highlighter
+        );
 
-        //blur事件无法全局绑定，但逻辑仍保持在此
-        $assignee_input.unbind('blur').blur(function () {
-            var $p = $(this).parent();
-            setTimeout(function () {
-                $p.find('#assignee,#assignee_btn').show();
-                $p.find('#assignee_input').hide().data('typeahead').hide();
-            }, 10);
-            //清空时移除assignee
-            if ($(this).val() == '')
-                task.setAssignee(null);
-        });
-        $projects_input.unbind('blur').blur(function () {
-            var $p = $(this).parent();
-            //为了让typehead click有效
-            setTimeout(function () {
-                $p.find('#projects_btn').show();
-                $p.find('#projects_input').hide().data('typeahead').hide();
-            }, 10);
-        });
-
-        //评论
+        //评论区域
+        var $comments = $el_detail.find('#comments');
+        var $comment_btn = $el_detail.find('#comment_btn');
+        var $comment_input = $el_detail.find('#comment_input');
         $comment_btn.unbind('click').click(function () {
             var body = $.trim($comment_input.val());
             if (body == '') return;
@@ -140,7 +101,7 @@ UI_List_Common.prototype._bindTeam = function () {
             if (body.length > 500) return alert(lang.comment_must_less_than_500);
             task.addComment(body);
             $comment_input.val('');
-        });
+        });        
     }
 
     function getIds($el) {

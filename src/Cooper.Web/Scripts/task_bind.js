@@ -160,24 +160,6 @@ UI_List_Common.prototype._bind = function () {
                     [isCompleted ? 'addClass' : 'removeClass']('btn-success');
             return;
         }
-        //标签处理
-        //project设置
-        if ($el.is('#tags_btn') || $el.parent().is('#tags_btn')) {
-            $el = $el.parent();
-            var $p = $el.parent();
-            $p.find('#tags_btn').hide();
-            $p.find('#tags_input').val('').show().focus();
-            return;
-        }
-        //移除tag
-        if ($el.hasClass('flag_removeTag')) {
-            var tag = $el.attr('val');
-            debuger.debug('remove tag "' + tag + '"');
-            for (var i = 0; i < ids.length; i++) {
-                base.getTaskById(ids[i]).removeTag(tag);
-            }
-            return;
-        }
     });
     this.$wrapper_detail.change(function (e) {
         var $el = $(e.target);
@@ -203,66 +185,117 @@ UI_List_Common.prototype._bind = function () {
                     base.onDueTimeBatchChange(tasks, t);
         }
     });
-    //部分task呈现行为
-    Task.prototype.render_detail_tags = function ($e, tags) {
-        $e.empty();
-        $.each(tags, function (i, n) {
-            $e.append('<span>'
-                + n
-                + ' <a class="flag_removeTag" val="'
-                + n
-                + '" title="'
-                + lang.remove_tag_from_task
-                + '">x</a></span> ');
-        });
-    }
-    //部分事件无法全局绑定
+
+    //部分Task事件，不适合全局绑定
     Task.prototype.bind_detail = function ($el_detail, task) {
         //datepicker重复初始化问题
         $el_detail.find('#dueTime').removeClass('hasDatepicker');
         if (task.editable)
             $el_detail.find('#dueTime').datepicker();
 
-        //TODO:将此类封装为组件
+        //标签设置区域初始化
         var $tags = $el_detail.find('#tags');
         var $tags_input = $el_detail.find('#tags_input');
         var $tags_btn = $el_detail.find('#tags_btn');
-        $tags_input.typeahead({
-            source: base.getTags(),
-            matcher: matcher,
-            sorter: sorter,
-            updater: function (val) {
+        base.detail_array_control_bind(task,
+            'render_detail_tags',
+            'removeTag',
+            false,
+            $tags,
+            $tags_input,
+            $tags_btn,
+            base.getTags(),
+            function (item) {
+                var q = this.query;
+                var r = ~item.toLowerCase().indexOf(this.query.toLowerCase());
+                //支持在搜索到不存在项时自动插入新项
+                if (!r)
+                    this.source = $.merge($.grep(this.source, function (n) { return n != q }), [q]);
+                return r;
+            },
+            function (items) {
+                var that = this;
+                //重新match
+                var all = $.grep(this.source, function (item) {
+                    return that.matcher(item)
+                })
+                //HACK:重载sorter使其支持搜索时新增
+                //依赖于bootstrap当前实现
+                return $.fn.typeahead.Constructor.prototype.sorter.apply(this, [all]);
+            },
+            function updater(val) {
                 debuger.debug('add-tags-val', val);
                 task.addTag(val);
                 $tags_input.blur();
                 return val;
             }
+        );
+    }
+}
+//类似标签设置区域控件行为绑定，仅仅是简易复用，未控件化
+//包括：数组显示，文本渲染，typeahead等
+UI_List_Common.prototype.detail_array_control_bind = function (task,
+    fn_render,
+    fn_remove,
+    single,//是否只允许单独项
+    $text, $input, $btn,
+    source, matcher, sorter, updater, highlighter,
+    blur) {
+    //设置指定区域的渲染方式
+    if (fn_render) {
+        task[fn_render] = function ($e, data) {
+            $e.empty();
+            $.each(data, function (i, n) {
+                var $i = $('<span></span>');
+                $i.text((n['name'] || n));
+                $i.append('&nbsp;<a class="flag_remove" id="'
+                    + (n['id'] || n)
+                    + '" title="'
+                    + lang.remove_from_task
+                    + '">x</a>');
+                $e.append($i).append('&nbsp;');
+            });
+        }
+    }
+    //显示编辑区域
+    $btn.unbind('click').click(function () {
+        $btn.hide();
+        if (single)
+            $text.hide();
+        $input.val(single ? $text.html() : '').show().focus();
+    });
+    //删除项
+    if (fn_remove) {
+        $text.unbind('click').click(function (e) {
+            var $el = $(e.target);
+            if ($el.hasClass('flag_remove')) {
+                var i = $el.attr('id');
+                //TODO:获取详情区域容器
+                //TODO:支持批量设置
+                /*for (var i = 0; i < ids.length; i++) {
+                    base.getTaskById(ids[i]).removeTag(tag);
+                }*/
+                task[fn_remove](i);
+            }
         });
-        $tags_input.unbind('blur').blur(function () {
-            var $p = $(this).parent();
-            setTimeout(function () {
-                $tags_btn.show();
-                $tags_input.hide().data('typeahead').hide();
-            }, 10);
-        });
     }
-
-    function matcher(item) {
-        var q = this.query;
-        var r = ~item.toLowerCase().indexOf(this.query.toLowerCase());
-        if (!r)
-            this.source = $.merge($.grep(this.source, function (n) { return n != q }), [q]);
-        return r;
-    }
-    //HACK:重载sorter使其支持搜索时新增
-    //依赖于bootstrap当前实现
-    function sorter(items) {
-        var that = this;
-        //重新match
-        var all = $.grep(this.source, function (item) {
-            return that.matcher(item)
-        })
-        //HACK:重新sorter
-        return $.fn.typeahead.Constructor.prototype.sorter.apply(this, [all]);
-    }
+    //搜索
+    var option = {
+        source: source,
+        matcher: matcher,
+        sorter: sorter,
+        updater: updater
+    };
+    if (highlighter)
+        option.highlighter = highlighter;
+    $input.typeahead(option);
+    $input.unbind('blur').blur(function () {
+        setTimeout(function () {
+            $text.show();
+            $btn.show();
+            $input.hide().data('typeahead').hide();
+        }, 100);//为了让typehead click有效 时间间隔至少100ms以上
+        if (blur)
+            blur();
+    });
 }
