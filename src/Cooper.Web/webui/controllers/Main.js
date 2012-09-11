@@ -94,11 +94,16 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         //currentMember
         $rootScope.currentMember = findBy($scope.team.members, 'accountId', account.id);
         debuger.debug('currentMember=', $rootScope.currentMember);
+        //tag
+        $rootScope.team.tags = ['cooper', 'ntfe', 'nsf'];//TODO:team.tags
+        $rootScope.tag = p.tag;
         //html.title
         if ($rootScope.project)
             $rootScope.title = $rootScope.project.name;
         else if ($rootScope.member)
             $rootScope.title = $rootScope.member.name;
+        else if($rootScope.tag)
+            $rootScope.title = $rootScope.tag;
         else if ($rootScope.team)
             $rootScope.title = $rootScope.team.name;
         $rootScope.title = $rootScope.title == $rootScope.team.name ? $rootScope.title : $rootScope.title + ' - ' + $rootScope.team.name;
@@ -139,7 +144,14 @@ function TeamAddFormCtrl($scope, $element, $http, $location, urls, account) {
 //team detail
 function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account, ie7) {
     $scope.ie7 = ie7;
-    $scope.initTab = function () { $scope.tab = $scope.member ? 'm' : 'p'; }
+    $scope.initTab = function () {
+        if ($scope.member)
+            $scope.tab = 'm'
+        else if ($scope.tag)
+            $scope.tab = 't';
+        else
+            $scope.tab = 'p';
+    }
     $scope.$on('ready_team', $scope.initTab);
     $scope.activeClass = function (b) { return b ? 'active' : ''; }
     $scope.memberUrl = function (m) { return m.accountId == account.id ? urls.team($scope.team) : urls.member($scope.team, m); }

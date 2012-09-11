@@ -3,7 +3,7 @@
 </ul>
 <ul ng-show="currentMember" class="nav nav-tabs nav-stacked" style="margin-bottom:5px">
     <li class="{{activeClass(!project&&!member)}}"><a href="{{urls.team(team)}}"><i class="icon-inbox"></i> {{lang.my_team_task}}</a></li>
-    <li><a href="javascript:;" title="{{lang.comming_soon}}"><i class="icon-envelope"></i> {{lang.inbox}}</a></li>
+    <li><a href="javascript:;" title="{{lang.comming_soon}}"><i class="icon-envelope"></i> {{lang.inbox}}</a></li>    
 </ul>
 <div class="tabbable tabs-below">
     <div class="tab-content" style="background-color: #fff; border: 1px #ddd solid; border-bottom: 0;
@@ -24,11 +24,19 @@
             </ul>
             <br />
         </div>
+        <div class="tab-pane {{activeClass(tab=='t')}}">
+            <ul class="nav nav-list">
+                <li class="nav-header">{{lang.tags}}</li>
+                <li ng-repeat="t in team.tags" class="{{activeClass(t==tag)}}"><a href="{{urls.tag(team,t)}}">{{t}}</a></li>
+            </ul>
+            <br />
+        </div>
     </div>
     <ul class="nav nav-tabs" style="background-color: transparent">
         <li class="{{activeClass(tab=='p')}}" ng-click="tab='p'"><a data-toggle="tab" href="javascript:;"><i class="icon-flag"></i></a></li>
         <li class="{{activeClass(tab=='m')}}" ng-click="tab='m'"><a data-toggle="tab" href="javascript:;"><i class="icon-user"></i></a></li>
-        <li ng-click="showModify()" ng-show="currentMember"><a href="javascript:;"><i class="icon-cog"></i></a></li>
+        <li class="{{activeClass(tab=='t')}}" ng-click="tab='t'"><a data-toggle="tab" href="javascript:;"><i class="icon-tags"></i></a></li>
+        <li ng-click="showModify()" ng-show="currentMember"><a href="javascript:;" style="padding-right:0px"><i class="icon-cog"></i></a></li>
     </ul>
 </div><!--Team Detail Block-->
 <div class="modal hide">

@@ -309,6 +309,8 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
             d.projectId = $scope.project.id;
         if ($scope.member)
             d.memberId = $scope.member.id;
+        if ($scope.tag)
+            d.tag = $scope.tag;
         return d;
     }
     function endRequest() {
@@ -379,6 +381,13 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
         // *****************************************************
         UI_List_Common.prototype.getProjects = function () { return $scope.team.projects; }
         UI_List_Common.prototype.getTeamMembers = function () { return $scope.team.members; }
+        UI_List_Common.prototype.getTags = function () { return $scope.team.tags; }
+        UI_List_Common.prototype.addTag = function (t) {
+            //对rootscope变更
+            $scope.$apply(function () {
+                $scope.team.tags = $.merge($.grep($scope.team.tags, function (n) { return n.toLowerCase() != t.toLowerCase(); }), [t]);
+            });
+        }
 
         ui_list_helper_priority = create_UI_List_Priority();
         ui_list_helper_due = create_UI_List_Due();

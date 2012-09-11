@@ -197,6 +197,7 @@ UI_List_Common.prototype._bind = function () {
         var $tags = $el_detail.find('#tags');
         var $tags_input = $el_detail.find('#tags_input');
         var $tags_btn = $el_detail.find('#tags_btn');
+        var tags = base.getTags();
         base.detail_array_control_bind(task,
             'render_detail_tags',
             'removeTag',
@@ -204,7 +205,7 @@ UI_List_Common.prototype._bind = function () {
             $tags,
             $tags_input,
             $tags_btn,
-            base.getTags(),
+            tags.length > 0 ? tags : [''],//至少需要一个以供搜索时能够有机会新增
             function (item) {
                 var q = this.query;
                 var r = ~item.toLowerCase().indexOf(this.query.toLowerCase());
@@ -223,9 +224,11 @@ UI_List_Common.prototype._bind = function () {
                 //依赖于bootstrap当前实现
                 return $.fn.typeahead.Constructor.prototype.sorter.apply(this, [all]);
             },
-            function updater(val) {
+            function (val) {
                 debuger.debug('add-tags-val', val);
                 task.addTag(val);
+                //同时添加进全局
+                base.addTag(val);
                 $tags_input.blur();
                 return val;
             }

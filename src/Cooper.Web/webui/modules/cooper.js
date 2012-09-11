@@ -44,16 +44,19 @@ var cooper = angular.module('cooper', []);
         memberPath: function (t, m) { if (t && m) return url_root + prefixPath + t.id + '/m/' + m.id; },
         
         project: function (t, p) { if (t && p) return url_root + prefix + t.id + '/p/' + p.id; },
-        projectPath: function (t, p) { if (t && p) return url_root + prefixPath + t.id + '/p/' + p.id; }
+        projectPath: function (t, p) { if (t && p) return url_root + prefixPath + t.id + '/p/' + p.id; },
+
+        tag: function (t, tag) { if (t && tag) return url_root + prefix + t.id + '/tag/' + tag; },
+        tagPath: function (t, tag) { if (t && tag) return url_root + prefixPath + t.id + '/tag/' + escape(tag); }
     });
 
     //当前路由参数[obsolete]
-    cooper.value('params', {
+    /*cooper.value('params', {
         taskFolderId: 0,
         teamId: currentTeamId,
         projectId: currentProjectId,
         memberId: currentMemberId
-    });
+    });*/
     //当前用户
     cooper.value('account', currentAccount);
 
@@ -76,6 +79,10 @@ var cooper = angular.module('cooper', []);
                 controller: MainCtrl
             }).
             when('/t/:teamId/m/:memberId', {
+                templateUrl: url,
+                controller: MainCtrl
+            }).
+            when('/t/:teamId/tag/:tag', {
                 templateUrl: url,
                 controller: MainCtrl
             }).

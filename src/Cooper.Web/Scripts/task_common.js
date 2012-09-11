@@ -49,8 +49,7 @@ UI_List_Common.prototype = {
     getTaskById: null,
     getSortByKey: null,
     setTask: null,
-    //TODO:从server获取tag列表
-    //至少需要一个
+    addTag: function (t) { },
     getTags: function () { return ['']; },
     getProjects: null,
     getTeamMembers: null,
