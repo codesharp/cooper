@@ -65,6 +65,17 @@ namespace Cooper.Model.Teams
         /// <param name="member"></param>
         /// <returns></returns>
         IEnumerable<Task> GetIncompletedTasksByMember(Member member);
+        /// <summary>新增团队任务Tag
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        Tag AddTaskTag(Task task, string name);
+        /// <summary>移除一个团队任务Tag
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="tag"></param>
+        void RemoveTaskTag(Task task, Tag tag);
     }
     /// <summary>团队任务领域服务
     /// </summary>
@@ -140,6 +151,20 @@ namespace Cooper.Model.Teams
             var team = _teamRepository.FindBy(member.TeamId);
             Assert.IsNotNull(team);
             return _repository.FindBy(team, member, false);
+        }
+        [Transaction(TransactionMode.Requires)]
+        Tag ITaskService.AddTaskTag(Task task, string name)
+        {
+            var tag = new Tag(name, task);
+            task.AddTag(tag);
+            _repository.Update(task);
+            return tag;
+        }
+        [Transaction(TransactionMode.Requires)]
+        void ITaskService.RemoveTaskTag(Task task, Tag tag)
+        {
+            task.RemoveTag(tag);
+            _repository.Update(task);
         }
         #endregion
     }

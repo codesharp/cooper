@@ -62,6 +62,17 @@ namespace Cooper.Model.Tasks
         /// <param name="folder"></param>
         /// <returns></returns>
         IEnumerable<PersonalTask> GetIncompletedTasks(Account account, TaskFolder folder);
+        /// <summary>新增个人任务Tag
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        PersonalTaskTag AddTaskTag(PersonalTask task, string name);
+        /// <summary>移除一个个人任务Tag
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="tag"></param>
+        void RemoveTaskTag(PersonalTask task, Tag tag);
     }
     /// <summary>个人任务服务
     /// </summary>
@@ -126,6 +137,20 @@ namespace Cooper.Model.Tasks
         IEnumerable<PersonalTask> IPersonalTaskService.GetIncompletedTasks(Account account, TaskFolder folder)
         {
             return _repository.FindBy(account, false, folder);
+        }
+        [Transaction(TransactionMode.Requires)]
+        PersonalTaskTag IPersonalTaskService.AddTaskTag(PersonalTask task, string name)
+        {
+            var tag = new PersonalTaskTag(name, task);
+            task.AddTag(tag);
+            _repository.Update(task);
+            return tag;
+        }
+        [Transaction(TransactionMode.Requires)]
+        void IPersonalTaskService.RemoveTaskTag(PersonalTask task, Tag tag)
+        {
+            task.RemoveTag(tag);
+            _repository.Update(task);
         }
         #endregion
     }

@@ -1,6 +1,8 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using CodeSharp.Core.DomainBase;
 
 namespace Cooper.Model.Tasks
@@ -9,6 +11,8 @@ namespace Cooper.Model.Tasks
     /// </summary>
     public abstract class Task : EntityBase<long>, IAggregateRoot
     {
+        private IList<Tag> _tags = new List<Tag>();
+
         /// <summary>获取标题/主题
         /// </summary>
         public virtual string Subject { get; private set; }
@@ -24,6 +28,9 @@ namespace Cooper.Model.Tasks
         /// <summary>获取是否完成
         /// </summary>
         public virtual bool IsCompleted { get; private set; }
+        /// <summary>Tags集合
+        /// </summary>
+        public virtual IEnumerable<Tag> Tags { get { return _tags; } }
         /// <summary>获取创建时间
         /// </summary>
         public virtual DateTime CreateTime { get; private set; }
@@ -92,12 +99,29 @@ namespace Cooper.Model.Tasks
             this.DueTime = dueTime;
             this.MakeChange();
         }
-        //UNDONE:允许外部直接更改lastUpdateTime可能对后期业务设计带来隐患
-        /// <summary>设置最后更新时间
+        /// <summary>新增一个Tag
         /// </summary>
-        public virtual void SetLastUpdateTime(DateTime lastUpdateTime)
+        /// <param name="tag"></param>
+        internal virtual void AddTag(Tag tag)
         {
-            this.LastUpdateTime = lastUpdateTime;
+            Assert.IsNotNull(tag);
+            Assert.IsValidKey(tag.Name);
+            Assert.AreEqual(this.ID, tag.ReferenceEntityId);
+
+            _tags.Add(tag);
+            this.MakeChange();
+        }
+        /// <summary>移除一个Tag
+        /// </summary>
+        /// <param name="tag"></param>
+        internal virtual void RemoveTag(Tag tag)
+        {
+            Assert.IsValid(tag);
+            Assert.AreEqual(this.ID, tag.ReferenceEntityId);
+            var tagToRemove = _tags.Single(x => x.ID == tag.ID);
+            Assert.IsNotNull(tagToRemove);
+            _tags.Remove(tagToRemove);
+            this.MakeChange();
         }
 
         protected void MakeChange()
