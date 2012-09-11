@@ -141,11 +141,11 @@ UI_List_Due.prototype.appendTask = function (p) {
 
         var dueTime = active.due();
         if (dueTime != null) {
-            t['data']['dueTime'] = dueTime;
+            //t['data']['dueTime'] = dueTime;
             t.setDueTime(dueTime);
             this.byDueTime.flush();
         } else {
-            t['data']['priority'] = active.priority();
+            //t['data']['priority'] = active.priority();
             t.setPriority(active.priority());
             this.getSortByKey(t.priority()).flush();
         }

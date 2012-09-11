@@ -115,7 +115,7 @@ UI_List_Priority.prototype.appendTask = function (p) {
     if ($row != null && !this._isArchivedRow($row)) {
         var active = this.getTask($row);
         this._appendTaskToRow($row, t, active);
-        t['data']['priority'] = active.priority(); //为避免新增任务生成变更记录，需调整成其他更合理方式
+        //t['data']['priority'] = active.priority(); //为避免新增任务生成变更记录，需调整成其他更合理方式
         t.setPriority(active.priority());
         this.getSortByKey(t.priority()).flush();
     }
