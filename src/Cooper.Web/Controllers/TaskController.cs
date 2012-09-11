@@ -168,6 +168,12 @@ namespace Cooper.Web.Controllers
                     t.MarkAsCompleted();
                 else
                     t.MarkAsInCompleted();
+            //UNDONE:执行Tag Add Remove变更
+            //else if (n.Equals("tags"))
+            //    if (c.Type == ChangeType.Insert)
+            //        t.AddTag(c.Value);
+            //    else if (c.Type == ChangeType.Delete)
+            //        t.RemoveTag(c.Value);
         }
 
         private void ApplyChanges(Account account
