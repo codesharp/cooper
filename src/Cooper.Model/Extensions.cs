@@ -63,6 +63,14 @@ internal class Assert : NUnit.Framework.Assert
         Assert.IsNotNull(task);
         Assert.Greater(task.ID, 0);
     }
+    /// <summary>断言个人任务是否有效
+    /// </summary>
+    /// <param name="task"></param>
+    public static void IsValid(Cooper.Model.Tasks.PersonalTask task)
+    {
+        Assert.IsValid((Cooper.Model.Tasks.Task)task);
+        Assert.Greater(task.CreatorAccountId, 0);
+    }
     /// <summary>断言任务表是否有效
     /// </summary>
     /// <param name="folder"></param>
@@ -76,8 +84,7 @@ internal class Assert : NUnit.Framework.Assert
     /// <param name="task"></param>
     public static void IsValid(Cooper.Model.Teams.Task task)
     {
-        Assert.IsNotNull(task);
-        Assert.Greater(task.ID, 0);
+        Assert.IsValid((Cooper.Model.Tasks.Task)task);
         Assert.Greater(task.TeamId, 0);
     }
     /// <summary>断言团队是否有效
@@ -118,5 +125,14 @@ internal class Assert : NUnit.Framework.Assert
         Assert.IsNotNull(comment);
         Assert.Greater(comment.ID, 0);
         Assert.IsNotNullOrWhiteSpace(comment.Body);
+    }
+    /// <summary>断言Tag是否有效
+    /// </summary>
+    /// <param name="tag"></param>
+    public static void IsValid(Cooper.Model.Tag tag)
+    {
+        Assert.IsNotNull(tag);
+        Assert.Greater(tag.ID, 0);
+        Assert.IsValidKey(tag.Name);
     }
 }

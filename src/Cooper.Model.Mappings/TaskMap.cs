@@ -20,6 +20,7 @@ namespace Cooper.Model.Mappings
             Map(m => m.Priority).CustomType<Priority>();
             Map(m => m.DueTime).Nullable();
             Map(m => m.IsCompleted);
+            HasMany(m => m.Tags).KeyColumn("ReferenceEntityId").Cascade.SaveUpdate();
             Map(m => m.CreateTime);
             Map(m => m.LastUpdateTime);
 

@@ -128,6 +128,38 @@ namespace Cooper.Model.Test
             Assert.AreEqual(1, this._personalTaskService.GetIncompletedTasks(a, folder).Count());
             Assert.AreEqual(1, this._personalTaskService.GetIncompletedTasksAndNotBelongAnyFolder(a).Count());
         }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void AddTag()
+        {
+            var account = this.CreateAccount();
+            var task = new PersonalTask(account);
+            this._personalTaskService.Create(task);
+            var tag = this._personalTaskService.AddTaskTag(task, RandomString());
+
+            this.Evict(task);
+
+            task = this._personalTaskService.GetTask(task.ID);
+            Assert.AreEqual(1, task.Tags.Count());
+            Assert.IsTrue(task.Tags.Any(x => x.ReferenceEntityId == task.ID && x.ID == tag.ID));
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void RemoveTag()
+        {
+            var account = this.CreateAccount();
+            var task = new PersonalTask(account);
+            this._personalTaskService.Create(task);
+            var tag1 = this._personalTaskService.AddTaskTag(task, RandomString());
+            var tag2 = this._personalTaskService.AddTaskTag(task, RandomString());
+            this._personalTaskService.RemoveTaskTag(task, tag1);
+
+            this.Evict(task);
+
+            task = this._personalTaskService.GetTask(task.ID);
+            Assert.AreEqual(1, task.Tags.Count());
+            Assert.IsTrue(task.Tags.Any(x => x.ReferenceEntityId == task.ID && x.ID == tag2.ID));
+        }
 
         private void Dump(params PersonalTask[] tasks)
         {
