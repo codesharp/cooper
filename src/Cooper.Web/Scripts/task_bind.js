@@ -252,7 +252,7 @@ UI_List_Common.prototype.detail_array_control_bind = function (task,
                 var $i = $('<span></span>');
                 //防止html/script注入
                 $i.text((n['name'] || n));
-                $i.append('&nbsp;<a class="flag_remove" id="'
+                $i.append('&nbsp;<a class="flag_remove" val="'
                     + (n['id'] || n)
                     + '" title="'
                     + lang.remove_from_task
@@ -273,7 +273,7 @@ UI_List_Common.prototype.detail_array_control_bind = function (task,
         $text.unbind('click').click(function (e) {
             var $el = $(e.target);
             if ($el.hasClass('flag_remove')) {
-                var i = $el.attr('id');
+                var i = $el.attr('val');
                 //TODO:获取详情区域容器
                 //TODO:支持批量设置
                 /*for (var i = 0; i < ids.length; i++) {

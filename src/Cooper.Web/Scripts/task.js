@@ -125,8 +125,9 @@ Task.prototype = {
         this.setDetail_Assignee(this.assignee());
         this.setDetail_Projects(this.projects());
         this.setDetail_Comments(this.comments());
-        this.setDetail_Editable(this.editable);
         this.setDetail_Tags(this.tags());
+        //设置编辑状态
+        this.setDetail_Editable(this.editable);
         //设置url快捷链接区域 临时方案
         var $urls = this.$el_detail.find('#urls');
         $urls.find('ul').empty();
@@ -253,7 +254,7 @@ Task.prototype = {
     setEditable: function (b) {
         this.editable = b;
         //使用keyup来屏蔽变更
-        //设置readonly会导致del事件无法在list区域处理的问题
+        //HACK:设置readonly会导致del事件无法在list区域处理的问题
         if (!this.editable)
             this._getRowEl('subject').css('cursor', 'not-allowed');
         //.attr('readonly', !this.editable);
@@ -391,10 +392,11 @@ Task.prototype = {
         this._getDetailEl('body').attr('disabled', !this.editable);
         this._getDetailEl('dueTime').attr('disabled', !this.editable);
         this._getDetailEl('priority').find('button').attr('disabled', !this.editable);
+        this._getDetailEl('tags').find('.flag_remove')[this.editable ? 'show' : 'hide']();
+        this._getDetailEl('tags_btn')[this.editable ? 'show' : 'hide']();
         this._getDetailEl('assignee_btn')[this.editable ? 'show' : 'hide']();
-        this._getDetailEl('projects').find('.flag_removeProject')[this.editable ? 'show' : 'hide']();
+        this._getDetailEl('projects').find('.flag_remove')[this.editable ? 'show' : 'hide']();
         this._getDetailEl('projects_btn')[this.editable ? 'show' : 'hide']();
-        this._getDetailEl('assignee_btn')[this.editable ? 'show' : 'hide']();
     },
     setDetail_Tags: function (tags) {
         if (!this.$el_detail || !tags) return;
