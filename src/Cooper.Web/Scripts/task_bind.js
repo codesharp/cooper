@@ -247,6 +247,7 @@ UI_List_Common.prototype.detail_array_control_bind = function (task,
             $e.empty();
             $.each(data, function (i, n) {
                 var $i = $('<span></span>');
+                //防止html/script注入
                 $i.text((n['name'] || n));
                 $i.append('&nbsp;<a class="flag_remove" id="'
                     + (n['id'] || n)

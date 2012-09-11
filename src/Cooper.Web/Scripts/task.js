@@ -302,6 +302,7 @@ Task.prototype = {
         var color = ['label-info', 'label-warning', 'label-important', 'label-success', 'label-inverse', 'label'];
         for (var i = 0; i < tags.length; i++) {
             var $i = $('<span class="label ' + color[i % color.length] + '"></span> ');
+            //防止html/script注入
             this._getRowEl(k).append($i.text(tags[i])).append('&nbsp;');
         }
         //渲染详情
