@@ -11,7 +11,7 @@ namespace Cooper.Model.Teams
 {
     /// <summary>团队模型
     /// </summary>
-    public class Team : EntityBase<int>, IAggregateRoot
+    public class Team : ExtensiableEntityBase<int>, IAggregateRoot
     {
         private IList<Member> _members = new List<Member>();
         private IList<Project> _projects = new List<Project>();

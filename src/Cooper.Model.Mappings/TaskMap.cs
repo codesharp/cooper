@@ -16,11 +16,11 @@ namespace Cooper.Model.Mappings
             Table("Cooper_Task");
             Id(m => m.ID);
             Map(m => m.Subject).Length(255);
-            Map(m => m.Body).Length(1000);
+            Map(m => m.Body).Length(10000);
             Map(m => m.Priority).CustomType<Priority>();
             Map(m => m.DueTime).Nullable();
             Map(m => m.IsCompleted);
-            HasMany(m => m.Tags).KeyColumn("ReferenceEntityId").Cascade.SaveUpdate();
+            Map(m => m.Tags).Length(1000);
             Map(m => m.CreateTime);
             Map(m => m.LastUpdateTime);
 

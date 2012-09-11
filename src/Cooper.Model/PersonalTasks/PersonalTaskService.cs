@@ -35,6 +35,12 @@ namespace Cooper.Model.Tasks
         /// <param name="account"></param>
         /// <returns></returns>
         IEnumerable<PersonalTask> GetTasks(Account account);
+        /// <summary>获取指定账号的指定Tag相关的任务
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        IEnumerable<PersonalTask> GetTasks(Account account, string tag);
         /// <summary>获取指定账号的所有不属于任何任务表的任务
         /// </summary>
         /// <param name="account"></param>
@@ -51,6 +57,12 @@ namespace Cooper.Model.Tasks
         /// <param name="account"></param>
         /// <returns></returns>
         IEnumerable<PersonalTask> GetIncompletedTasks(Account account);
+        /// <summary>获取指定账号的所有未完成的指定Tag相关的任务
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        IEnumerable<PersonalTask> GetIncompletedTasks(Account account, string tag);
         /// <summary>获取指定账号的所有未完成且不属于任何任务表的任务
         /// </summary>
         /// <param name="account"></param>
@@ -62,17 +74,6 @@ namespace Cooper.Model.Tasks
         /// <param name="folder"></param>
         /// <returns></returns>
         IEnumerable<PersonalTask> GetIncompletedTasks(Account account, TaskFolder folder);
-        /// <summary>新增个人任务Tag
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        PersonalTaskTag AddTaskTag(PersonalTask task, string name);
-        /// <summary>移除一个个人任务Tag
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="tag"></param>
-        void RemoveTaskTag(PersonalTask task, Tag tag);
     }
     /// <summary>个人任务服务
     /// </summary>
@@ -118,6 +119,10 @@ namespace Cooper.Model.Tasks
         {
             return _repository.FindBy(account);
         }
+        IEnumerable<PersonalTask> IPersonalTaskService.GetTasks(Account account, string tag)
+        {
+            return _repository.FindByTag(account, tag);
+        }
         IEnumerable<PersonalTask> IPersonalTaskService.GetTasksNotBelongAnyFolder(Account account)
         {
             return _repository.FindBy(account, null);
@@ -130,6 +135,10 @@ namespace Cooper.Model.Tasks
         {
             return _repository.FindBy(account, false);
         }
+        IEnumerable<PersonalTask> IPersonalTaskService.GetIncompletedTasks(Account account, string tag)
+        {
+            return _repository.FindByTag(account, false, tag);
+        }
         IEnumerable<PersonalTask> IPersonalTaskService.GetIncompletedTasksAndNotBelongAnyFolder(Account account)
         {
             return _repository.FindBy(account, false, null);
@@ -137,20 +146,6 @@ namespace Cooper.Model.Tasks
         IEnumerable<PersonalTask> IPersonalTaskService.GetIncompletedTasks(Account account, TaskFolder folder)
         {
             return _repository.FindBy(account, false, folder);
-        }
-        [Transaction(TransactionMode.Requires)]
-        PersonalTaskTag IPersonalTaskService.AddTaskTag(PersonalTask task, string name)
-        {
-            var tag = new PersonalTaskTag(name, task);
-            task.AddTag(tag);
-            _repository.Update(task);
-            return tag;
-        }
-        [Transaction(TransactionMode.Requires)]
-        void IPersonalTaskService.RemoveTaskTag(PersonalTask task, Tag tag)
-        {
-            task.RemoveTag(tag);
-            _repository.Update(task);
         }
         #endregion
     }

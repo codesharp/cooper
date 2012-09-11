@@ -14,6 +14,8 @@ namespace Cooper.Model.Tasks
     public interface IPersonalTaskRepository : IRepository<long, PersonalTask>
     {
         IEnumerable<PersonalTask> FindBy(Account account);
+        IEnumerable<PersonalTask> FindByTag(Account account, string tag);
+        IEnumerable<PersonalTask> FindByTag(Account account, bool isCompleted, string tag);
         //folder为空则查找不属于任何folder的任务
         IEnumerable<PersonalTask> FindBy(Account account, TaskFolder folder);
         IEnumerable<PersonalTask> FindBy(Account account, bool isCompleted);

@@ -11,8 +11,6 @@ namespace Cooper.Model.Tasks
     /// </summary>
     public abstract class Task : EntityBase<long>, IAggregateRoot
     {
-        private IList<Tag> _tags = new List<Tag>();
-
         /// <summary>获取标题/主题
         /// </summary>
         public virtual string Subject { get; private set; }
@@ -28,9 +26,9 @@ namespace Cooper.Model.Tasks
         /// <summary>获取是否完成
         /// </summary>
         public virtual bool IsCompleted { get; private set; }
-        /// <summary>Tags集合
+        /// <summary>Tags
         /// </summary>
-        public virtual IEnumerable<Tag> Tags { get { return _tags; } }
+        public virtual string Tags { get; private set; }
         /// <summary>获取创建时间
         /// </summary>
         public virtual DateTime CreateTime { get; private set; }
@@ -102,25 +100,39 @@ namespace Cooper.Model.Tasks
         /// <summary>新增一个Tag
         /// </summary>
         /// <param name="tag"></param>
-        internal virtual void AddTag(Tag tag)
+        public virtual void AddTag(string tag)
         {
-            Assert.IsNotNull(tag);
-            Assert.IsValidKey(tag.Name);
-            Assert.AreEqual(this.ID, tag.ReferenceEntityId);
+            Assert.IsNotNullOrWhiteSpace(tag);
+            Assert.LessOrEqual(tag.Length, 50);
+            //Tag不允许包含分号
+            Assert.IsTrue(tag.IndexOf(';') == -1);
+            Assert.IsTrue(tag.IndexOf('；') == -1);
 
-            _tags.Add(tag);
+            if (string.IsNullOrWhiteSpace(this.Tags))
+            {
+                this.Tags = tag;
+            }
+            else
+            {
+                this.Tags = this.Tags + ";" + tag;
+            }
             this.MakeChange();
         }
         /// <summary>移除一个Tag
         /// </summary>
         /// <param name="tag"></param>
-        internal virtual void RemoveTag(Tag tag)
+        public virtual void RemoveTag(string tag)
         {
-            Assert.IsValid(tag);
-            Assert.AreEqual(this.ID, tag.ReferenceEntityId);
-            var tagToRemove = _tags.Single(x => x.ID == tag.ID);
-            Assert.IsNotNull(tagToRemove);
-            _tags.Remove(tagToRemove);
+            Assert.IsNotNullOrWhiteSpace(tag);
+            Assert.LessOrEqual(tag.Length, 50);
+
+            if (!string.IsNullOrWhiteSpace(this.Tags))
+            {
+                var tags = this.Tags
+                    .Split(new char[] { ';' })
+                    .Where(x => string.Compare(x, tag, true) != 0);
+                this.Tags = string.Join(";", tags.ToArray());
+            }
             this.MakeChange();
         }
 

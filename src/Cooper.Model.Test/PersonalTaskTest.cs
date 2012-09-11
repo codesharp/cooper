@@ -132,33 +132,121 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void AddTag()
         {
-            //var account = this.CreateAccount();
-            //var task = new PersonalTask(account);
-            //this._personalTaskService.Create(task);
-            //var tag = this._personalTaskService.AddTaskTag(task, RandomString());
+            var account = this.CreateAccount();
+            var task = new PersonalTask(account);
+            task.AddTag("程序设计");
+            task.AddTag(".NET");
+            task.AddTag("001_Tag_001");
+            this._personalTaskService.Create(task);
 
-            //this.Evict(task);
+            this.Evict(task);
 
-            //task = this._personalTaskService.GetTask(task.ID);
-            //Assert.AreEqual(1, task.Tags.Count());
-            //Assert.IsTrue(task.Tags.Any(x => x.ReferenceEntityId == task.ID && x.ID == tag.ID));
+            task = this._personalTaskService.GetTask(task.ID);
+            Assert.AreEqual("程序设计;.NET;001_Tag_001", task.Tags);
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void RemoveTag()
         {
-            //var account = this.CreateAccount();
-            //var task = new PersonalTask(account);
-            //this._personalTaskService.Create(task);
-            //var tag1 = this._personalTaskService.AddTaskTag(task, RandomString());
-            //var tag2 = this._personalTaskService.AddTaskTag(task, RandomString());
-            //this._personalTaskService.RemoveTaskTag(task, tag1);
+            var account = this.CreateAccount();
+            var task = new PersonalTask(account);
+            task.AddTag("程序设计");
+            task.AddTag(".NET");
+            task.AddTag("001_Tag_001");
+            this._personalTaskService.Create(task);
 
-            //this.Evict(task);
+            this.Evict(task);
 
-            //task = this._personalTaskService.GetTask(task.ID);
-            //Assert.AreEqual(1, task.Tags.Count());
-            //Assert.IsTrue(task.Tags.Any(x => x.ReferenceEntityId == task.ID && x.ID == tag2.ID));
+            task = this._personalTaskService.GetTask(task.ID);
+            Assert.AreEqual("程序设计;.NET;001_Tag_001", task.Tags);
+
+            task.RemoveTag(".net");
+            task.RemoveTag("001_tag_001");
+
+            this._personalTaskService.Update(task);
+
+            this.Evict(task);
+
+            task = this._personalTaskService.GetTask(task.ID);
+            Assert.AreEqual("程序设计", task.Tags);
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void GetTags()
+        {
+            var account = this.CreateAccount();
+            var task1 = new PersonalTask(account);
+            task1.AddTag("程序设计");
+            task1.AddTag(".NET");
+            task1.AddTag("001_Tag_001");
+            task1.MarkAsCompleted();
+            this._personalTaskService.Create(task1);
+            var task2 = new PersonalTask(account);
+            task2.AddTag("Mono");
+            task2.AddTag(".net");
+            task2.AddTag("JAVA");
+            task2.AddTag("001_tag_001");
+            this._personalTaskService.Create(task2);
+
+            this.Evict(task1);
+            this.Evict(task2);
+
+            var tasks = this._personalTaskService.GetTasks(account, ".net");
+            Assert.AreEqual(2, tasks.Count());
+            tasks = this._personalTaskService.GetTasks(account, "java");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._personalTaskService.GetTasks(account, "程序设计");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._personalTaskService.GetTasks(account, "Mono");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._personalTaskService.GetTasks(account, "001_tag_001");
+            Assert.AreEqual(2, tasks.Count());
+
+            tasks = this._personalTaskService.GetIncompletedTasks(account, ".net");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._personalTaskService.GetIncompletedTasks(account, "java");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._personalTaskService.GetIncompletedTasks(account, "程序设计");
+            Assert.AreEqual(0, tasks.Count());
+            tasks = this._personalTaskService.GetIncompletedTasks(account, "Mono");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._personalTaskService.GetIncompletedTasks(account, "001_tag_001");
+            Assert.AreEqual(1, tasks.Count());
+
+            task1 = this._personalTaskService.GetTask(task1.ID);
+            task2 = this._personalTaskService.GetTask(task2.ID);
+
+            task1.RemoveTag(".net");
+            task2.RemoveTag("001_tag_001");
+            task2.RemoveTag("JAVA");
+
+            this._personalTaskService.Update(task1);
+            this._personalTaskService.Update(task2);
+
+            this.Evict(task1);
+            this.Evict(task2);
+
+            tasks = this._personalTaskService.GetTasks(account, ".net");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._personalTaskService.GetTasks(account, "java");
+            Assert.AreEqual(0, tasks.Count());
+            tasks = this._personalTaskService.GetTasks(account, "程序设计");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._personalTaskService.GetTasks(account, "Mono");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._personalTaskService.GetTasks(account, "001_tag_001");
+            Assert.AreEqual(1, tasks.Count());
+
+            tasks = this._personalTaskService.GetIncompletedTasks(account, ".net");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._personalTaskService.GetIncompletedTasks(account, "java");
+            Assert.AreEqual(0, tasks.Count());
+            tasks = this._personalTaskService.GetIncompletedTasks(account, "程序设计");
+            Assert.AreEqual(0, tasks.Count());
+            tasks = this._personalTaskService.GetIncompletedTasks(account, "Mono");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._personalTaskService.GetIncompletedTasks(account, "001_tag_001");
+            Assert.AreEqual(0, tasks.Count());
         }
 
         private void Dump(params PersonalTask[] tasks)

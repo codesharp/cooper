@@ -1,8 +1,8 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
-using Cooper.Model.Contacts;
-using FluentNHibernate.Mapping;
 using Cooper.Model.Teams;
+using FluentNHibernate;
+using FluentNHibernate.Mapping;
 
 namespace Cooper.Model.Mappings
 {
@@ -13,6 +13,7 @@ namespace Cooper.Model.Mappings
             Table("Cooper_Team");
             Id(m => m.ID);
             Map(m => m.Name).Length(255);
+            Map(Reveal.Member<Team>("_extensions")).Column("Extensions").Length(10000);
             Map(m => m.CreateTime);
             HasMany(m => m.Members)
                 .KeyColumn("TeamId")

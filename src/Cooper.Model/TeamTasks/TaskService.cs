@@ -45,6 +45,18 @@ namespace Cooper.Model.Teams
         /// <param name="account"></param>
         /// <returns></returns>
         IEnumerable<Task> GetIncompletedTasksByAccount(Team team, Account account);
+        /// <summary>获取指定团队中指定Tag相关的任务
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetTasksByTag(Team team, string tag);
+        /// <summary>获取指定团队中指定Tag相关的未完成的任务
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetIncompletedTasksByTag(Team team, string tag);
         /// <summary>获取指定项目的所有任务
         /// </summary>
         /// <param name="project"></param>
@@ -65,17 +77,6 @@ namespace Cooper.Model.Teams
         /// <param name="member"></param>
         /// <returns></returns>
         IEnumerable<Task> GetIncompletedTasksByMember(Member member);
-        /// <summary>新增团队任务Tag
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        Tag AddTaskTag(Task task, string name);
-        /// <summary>移除一个团队任务Tag
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="tag"></param>
-        void RemoveTaskTag(Task task, Tag tag);
     }
     /// <summary>团队任务领域服务
     /// </summary>
@@ -128,6 +129,14 @@ namespace Cooper.Model.Teams
         {
             return _repository.FindBy(team, account, false);
         }
+        IEnumerable<Task> ITaskService.GetTasksByTag(Team team, string tag)
+        {
+            return _repository.FindByTag(team, tag);
+        }
+        IEnumerable<Task> ITaskService.GetIncompletedTasksByTag(Team team, string tag)
+        {
+            return _repository.FindByTag(team, false, tag);
+        }
         IEnumerable<Task> ITaskService.GetTasksByProject(Project project)
         {
             var team = _teamRepository.FindBy(project.TeamId);
@@ -151,20 +160,6 @@ namespace Cooper.Model.Teams
             var team = _teamRepository.FindBy(member.TeamId);
             Assert.IsNotNull(team);
             return _repository.FindBy(team, member, false);
-        }
-        [Transaction(TransactionMode.Requires)]
-        Tag ITaskService.AddTaskTag(Task task, string name)
-        {
-            var tag = new Tag(name, task);
-            task.AddTag(tag);
-            _repository.Update(task);
-            return tag;
-        }
-        [Transaction(TransactionMode.Requires)]
-        void ITaskService.RemoveTaskTag(Task task, Tag tag)
-        {
-            task.RemoveTag(tag);
-            _repository.Update(task);
         }
         #endregion
     }

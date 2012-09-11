@@ -18,6 +18,23 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("TeamId", team.ID))
                 .List<Task>();
         }
+        public IEnumerable<Task> FindByTag(Team team, string tag)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .Add(Expression.Eq("TeamId", team.ID))
+                .Add(Expression.Like("Tags", tag, MatchMode.Anywhere))
+                .List<Task>();
+        }
+        public IEnumerable<Task> FindByTag(Team team, bool isCompleted, string tag)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .Add(Expression.Eq("TeamId", team.ID))
+                .Add(Expression.Eq("IsCompleted", isCompleted))
+                .Add(Expression.Like("Tags", tag, MatchMode.Anywhere))
+                .List<Task>();
+        }
         public IEnumerable<Task> FindBy(Team team, Account account)
         {
             var criteria = BuildCreatorAndAssigneeCriteria(team, account);
@@ -85,7 +102,7 @@ namespace Cooper.Repositories
         private AbstractCriterion BuildCreatorAndAssigneeCriteria(Team team, Account account)
         {
             AbstractCriterion criteria = null;
-			var member = team.GetMember(account);
+            var member = team.GetMember(account);
             if (member != null)
             {
                 criteria = Expression.Or(Expression.Eq("CreatorMemberId", member.ID), Expression.Eq("AssigneeId", member.ID));

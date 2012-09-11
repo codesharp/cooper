@@ -314,37 +314,127 @@ namespace Cooper.Model.Test
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void AddTag()
         {
-            //var account = this.CreateAccount();
-            //var team = CreateSampleTeam();
-            //var creatorMember = AddSampleMemberToTeam(account, team);
-            //var task = new Task(creatorMember, team);
-            //this._teamTaskService.Create(task);
-            //var tag = this._teamTaskService.AddTaskTag(task, RandomString());
+            var account = this.CreateAccount();
+            var team = CreateSampleTeam();
+            var creatorMember = AddSampleMemberToTeam(account, team);
+            var task = new Task(creatorMember, team);
+            task.AddTag("程序设计");
+            task.AddTag(".NET");
+            task.AddTag("001_Tag_001");
+            this._teamTaskService.Create(task);
 
-            //this.Evict(task);
+            this.Evict(task);
 
-            //task = this._teamTaskService.GetTask(task.ID);
-            //Assert.AreEqual(1, task.Tags.Count());
-            //Assert.IsTrue(task.Tags.Any(x => x.ReferenceEntityId == task.ID && x.ID == tag.ID));
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.AreEqual("程序设计;.NET;001_Tag_001", task.Tags);
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
         public void RemoveTag()
         {
-            //var account = this.CreateAccount();
-            //var team = CreateSampleTeam();
-            //var creatorMember = AddSampleMemberToTeam(account, team);
-            //var task = new Task(creatorMember, team);
-            //this._teamTaskService.Create(task);
-            //var tag1 = this._teamTaskService.AddTaskTag(task, RandomString());
-            //var tag2 = this._teamTaskService.AddTaskTag(task, RandomString());
-            //this._teamTaskService.RemoveTaskTag(task, tag1);
+            var account = this.CreateAccount();
+            var team = CreateSampleTeam();
+            var creatorMember = AddSampleMemberToTeam(account, team);
+            var task = new Task(creatorMember, team);
+            task.AddTag("程序设计");
+            task.AddTag(".NET");
+            task.AddTag("001_Tag_001");
+            this._teamTaskService.Create(task);
 
-            //this.Evict(task);
+            this.Evict(task);
 
-            //task = this._teamTaskService.GetTask(task.ID);
-            //Assert.AreEqual(1, task.Tags.Count());
-            //Assert.IsTrue(task.Tags.Any(x => x.ReferenceEntityId == task.ID && x.ID == tag2.ID));
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.AreEqual("程序设计;.NET;001_Tag_001", task.Tags);
+
+            task.RemoveTag(".net");
+            task.RemoveTag("001_tag_001");
+
+            this._teamTaskService.Update(task);
+
+            this.Evict(task);
+
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.AreEqual("程序设计", task.Tags);
+        }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void GetTags()
+        {
+            var account = this.CreateAccount();
+            var team = CreateSampleTeam();
+            var creatorMember = AddSampleMemberToTeam(account, team);
+            var task1 = new Task(creatorMember, team);
+            task1.AddTag("程序设计");
+            task1.AddTag(".NET");
+            task1.AddTag("001_Tag_001");
+            task1.MarkAsCompleted();
+            this._teamTaskService.Create(task1);
+            var task2 = new Task(creatorMember, team);
+            task2.AddTag("Mono");
+            task2.AddTag(".net");
+            task2.AddTag("JAVA");
+            task2.AddTag("001_tag_001");
+            this._teamTaskService.Create(task2);
+
+            this.Evict(task1);
+            this.Evict(task2);
+
+            var tasks = this._teamTaskService.GetTasksByTag(team, ".net");
+            Assert.AreEqual(2, tasks.Count());
+            tasks = this._teamTaskService.GetTasksByTag(team, "java");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._teamTaskService.GetTasksByTag(team, "程序设计");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._teamTaskService.GetTasksByTag(team, "Mono");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._teamTaskService.GetTasksByTag(team, "001_tag_001");
+            Assert.AreEqual(2, tasks.Count());
+
+            tasks = this._teamTaskService.GetIncompletedTasksByTag(team, ".net");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._teamTaskService.GetIncompletedTasksByTag(team, "java");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._teamTaskService.GetIncompletedTasksByTag(team, "程序设计");
+            Assert.AreEqual(0, tasks.Count());
+            tasks = this._teamTaskService.GetIncompletedTasksByTag(team, "Mono");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._teamTaskService.GetIncompletedTasksByTag(team, "001_tag_001");
+            Assert.AreEqual(1, tasks.Count());
+
+            task1 = this._teamTaskService.GetTask(task1.ID);
+            task2 = this._teamTaskService.GetTask(task2.ID);
+
+            task1.RemoveTag(".net");
+            task2.RemoveTag("001_tag_001");
+            task2.RemoveTag("JAVA");
+
+            this._teamTaskService.Update(task1);
+            this._teamTaskService.Update(task2);
+
+            this.Evict(task1);
+            this.Evict(task2);
+
+            tasks = this._teamTaskService.GetTasksByTag(team, ".net");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._teamTaskService.GetTasksByTag(team, "java");
+            Assert.AreEqual(0, tasks.Count());
+            tasks = this._teamTaskService.GetTasksByTag(team, "程序设计");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._teamTaskService.GetTasksByTag(team, "Mono");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._teamTaskService.GetTasksByTag(team, "001_tag_001");
+            Assert.AreEqual(1, tasks.Count());
+
+            tasks = this._teamTaskService.GetIncompletedTasksByTag(team, ".net");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._teamTaskService.GetIncompletedTasksByTag(team, "java");
+            Assert.AreEqual(0, tasks.Count());
+            tasks = this._teamTaskService.GetIncompletedTasksByTag(team, "程序设计");
+            Assert.AreEqual(0, tasks.Count());
+            tasks = this._teamTaskService.GetIncompletedTasksByTag(team, "Mono");
+            Assert.AreEqual(1, tasks.Count());
+            tasks = this._teamTaskService.GetIncompletedTasksByTag(team, "001_tag_001");
+            Assert.AreEqual(0, tasks.Count());
         }
     }
 }
