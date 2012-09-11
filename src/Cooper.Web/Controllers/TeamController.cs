@@ -238,8 +238,7 @@ namespace Cooper.Web.Controllers
                     }
                     if (!string.IsNullOrWhiteSpace(tag))
                     {
-                        //UNDONE:设置任务标签
-                        //t.addTag(tag);
+                        t.AddTag(tag);
                         if (this._log.IsInfoEnabled)
                             this._log.InfoFormat("默认为新任务设置标签#{0}", tag);
                     }
@@ -269,9 +268,8 @@ namespace Cooper.Web.Controllers
                     }
                     else if (!string.IsNullOrWhiteSpace(tag))
                     {
-                        //UNDONE:存储至团队标签排序数据
-                        //team[this.GetSortKey(by, tag)] = o;
-                        //this._teamService.Update(team);
+                        team[this.GetSortKey(by, tag)] = o;
+                        this._teamService.Update(team);
                     }
                     #endregion
                 }));
@@ -462,11 +460,11 @@ namespace Cooper.Web.Controllers
         }
         private IEnumerable<Teams.Task> GetTasksByTag(Teams.Team team, string tag)
         {
-            return new List<Teams.Task>();
+            return this._teamTaskService.GetTasksByTag(team, tag);
         }
         private IEnumerable<Teams.Task> GetIncompletedTasksByTag(Teams.Team team, string tag)
         {
-            return new List<Teams.Task>();
+            return this._teamTaskService.GetIncompletedTasksByTag(team, tag);
         }
         private TeamInfo Parse(Teams.Team team)
         {
@@ -637,11 +635,9 @@ namespace Cooper.Web.Controllers
         private Sort[] GetSorts(Teams.Team team, string tag, string by)
         {
             var key = this.GetSortKey(by, tag);
-            return _emptySorts;
-            //UNDONE:team[key]也需要extension设计
-            //return !string.IsNullOrWhiteSpace(t[key])
-            //    ? _serializer.JsonDeserialize<Sort[]>(t[key])
-            //    : _emptySorts;
+            return !string.IsNullOrWhiteSpace(team[key])
+                ? _serializer.JsonDeserialize<Sort[]>(team[key])
+                : _emptySorts;
         }
         private string GetSortKey(Teams.Team team, string by)
         {

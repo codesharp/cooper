@@ -73,8 +73,7 @@ namespace Cooper.Web.Controllers
                 t.DueTime = o.DueTime.HasValue ? o.DueTime.Value.Date.ToString("yyyy-MM-dd") : null;
                 t.Priority = (int)o.Priority;
                 t.IsCompleted = o.IsCompleted;
-                //UNDONE:Task DTO 标签数组
-                t.Tags = new string[] { "webui", "mobi", "hybrid", "model" };
+                t.Tags = o.Tags != null ? o.Tags.Split(new char[] { ';' }) : new string[] { };
                 filter(o, t);
                 return t;
             }).ToArray();
@@ -168,12 +167,11 @@ namespace Cooper.Web.Controllers
                     t.MarkAsCompleted();
                 else
                     t.MarkAsInCompleted();
-            //UNDONE:执行Tag Add Remove变更
-            //else if (n.Equals("tags"))
-            //    if (c.Type == ChangeType.Insert)
-            //        t.AddTag(c.Value);
-            //    else if (c.Type == ChangeType.Delete)
-            //        t.RemoveTag(c.Value);
+            else if (n.Equals("tags"))
+                if (c.Type == ChangeType.Insert)
+                    t.AddTag(c.Value);
+                else if (c.Type == ChangeType.Delete)
+                    t.RemoveTag(c.Value);
         }
 
         private void ApplyChanges(Account account
