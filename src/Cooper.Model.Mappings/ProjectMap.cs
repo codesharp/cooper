@@ -15,7 +15,7 @@ namespace Cooper.Model.Mappings
             Map(m => m.Name).Length(255);
             Map(m => m.IsPublic);
             Map(m => m.TeamId);
-            Map(Reveal.Member<Project>("_extensions")).Column("Extensions").Length(4000);
+            Map(Reveal.Member<Project>("_extensions")).Column("Extensions").Length(10000);
             Map(m => m.CreateTime);
         }
     }

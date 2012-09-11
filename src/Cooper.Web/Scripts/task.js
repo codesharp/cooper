@@ -465,7 +465,8 @@ Sort.prototype = {
         var $els = this._getRows();
         var ary = new Array($els.length);
         $els.each(function (i, n) { ary[i] = $(n).attr('id'); });
-        this['idx'] = ary; //$.grep(ary, function (n) { return n != '' && n != null });
+        //this['idx'] = ary;
+        this['idx'] = $.grep(ary, function (n) { return n.indexOf('temp_') < 0; });
         return this['idx'];
     },
     append: function (t, b) { this._append(t.el()); this.flush(b); }, //不可this.flush(true)
