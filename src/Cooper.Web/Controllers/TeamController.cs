@@ -181,7 +181,7 @@ namespace Cooper.Web.Controllers
         public ActionResult UpdateMember(string teamId, string memberId, string name, string email)
         {
             var t = this.GetTeamOfFullMember(teamId);
-            var m = this.GetCurrentMember(t);//UNDONE:只允许修改自己的？
+            var m = this.GetCurrentMember(t);//TODO:只允许修改自己的？
             m.SetName(name);
             //UNDONE:还未支持修改Member的Email
             this._teamService.Update(t);
@@ -301,7 +301,7 @@ namespace Cooper.Web.Controllers
                 case "comments":
                     if (c.Type == ChangeType.Insert)
                         teamTask.AddComment(this.GetCurrentMember(team), c.Value);
-                    //UNDONE:目前暂不支持删除评论
+                    //HACK:目前暂不支持删除评论
                     break;
             }
         }
