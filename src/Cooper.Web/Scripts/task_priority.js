@@ -86,7 +86,7 @@ UI_List_Priority.prototype.render = function (b) {//b=是否显示归档区域
 }
 UI_List_Priority.prototype.archiveTasks = function () {
     var base = this;
-    //TODO:归档时按完成时间排序？
+    //归档时按完成时间排序？
     this.eachTask(function (t) {
         if (t.isCompleted())
             base.archive.el().append(t.el());

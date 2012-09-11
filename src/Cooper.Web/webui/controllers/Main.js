@@ -95,7 +95,6 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         $rootScope.currentMember = findBy($scope.team.members, 'accountId', account.id);
         debuger.debug('currentMember=', $rootScope.currentMember);
         //tag
-        $rootScope.team.tags = ['cooper', 'ntfe', 'nsf'];//TODO:team.tags
         $rootScope.tag = p.tag;
         //html.title
         if ($rootScope.project)

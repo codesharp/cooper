@@ -296,10 +296,15 @@ Task.prototype = {
         if (!tags) return;
         var k = 'tags';
         this['data'][k] = tags; //直接更新tags数组
-        //TODO:重构tags
         //渲染row_task
         this._getRowEl(k)[tags.length != 0 ? 'show' : 'hide']().empty();
-        var color = ['label-info', 'label-warning', 'label-important', 'label-success', 'label-inverse', 'label'];
+        var color = [
+            'label-info',
+            'label-warning',
+            'label-important',
+            'label-success',
+            'label-inverse',
+            'label'];
         for (var i = 0; i < tags.length; i++) {
             var $i = $('<span class="label ' + color[i % color.length] + '"></span> ');
             //防止html/script注入

@@ -14,6 +14,7 @@
   <property name="xpath.flag_refresh" value="/configuration/appSettings/add[@key='AutoRefreshSettingsFlag']/@value"/>
   <property name="xpath.compilation" value="/configuration/system.web/compilation/@debug"/>
   <property name="xpath.customErrors" value="/configuration/system.web/customErrors/@mode"/>
+  <property name="xpath.trace" value="/configuration/system.web/trace/@enabled"/>
   <!--nuget-->
   <property name="nuget" value="${path::get-full-path(dir.tools)}" />
   <property name="nuget.packages" value="${dir}\packages" />
@@ -72,10 +73,14 @@
       <xmlpoke file="${build.absolutepath}\cooper_web\web.config" 
                xpath="${xpath.compilation}"
                value="false" />
+      <!--RemoteOnly will no error message shown-->
       <xmlpoke file="${build.absolutepath}\cooper_web\web.config"
                xpath="${xpath.customErrors}"
                value="Off" />
-      <!--RemoteOnly will no error message shown-->
+      <!--webtrace not work compilation.debug=false-->
+      <xmlpoke file="${build.absolutepath}\cooper_web\web.config"
+               xpath="${xpath.trace}"
+               value="false" />
     </if>
     <!--change scripts-->
     <echo file="${build.absolutepath}\cooper_web\scripts\common.js" append="true" if="${msbuild.config=='Release'}">

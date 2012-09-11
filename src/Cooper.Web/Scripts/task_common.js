@@ -184,7 +184,7 @@ UI_List_Common.prototype = {
         $row.parents('tbody').eq(0).show();
     },
     _setEditable: function ($el) {
-        //TODO:task管理自身的可编辑性，此处只负责处理列表的可编辑性，如：排序
+        //HACK:task管理自身的可编辑性，此处只负责处理列表的可编辑性，如：排序
     },
     _appendTaskToRow: function ($row, t, a) {
         var active = a == undefined ? this.getTask($row) : a;

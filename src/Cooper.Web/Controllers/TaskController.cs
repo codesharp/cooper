@@ -73,6 +73,8 @@ namespace Cooper.Web.Controllers
                 t.DueTime = o.DueTime.HasValue ? o.DueTime.Value.Date.ToString("yyyy-MM-dd") : null;
                 t.Priority = (int)o.Priority;
                 t.IsCompleted = o.IsCompleted;
+                //UNDONE:Task DTO 标签数组
+                t.Tags = new string[] { "webui", "mobi", "hybrid", "model" };
                 filter(o, t);
                 return t;
             }).ToArray();
@@ -236,7 +238,7 @@ namespace Cooper.Web.Controllers
             , string sorts
             , IDictionary<string, string> idChanges
             , Func<bool> isPersonalSorts
-            , Func<string, string> getSortKey
+            , Func<string, string> getPersonalSortKey
             , Action<string> saveSorts)
         {
             //没有变更则无需提交排序数据
@@ -259,7 +261,7 @@ namespace Cooper.Web.Controllers
                 if (isPersonalSorts())
                 {
                     //更新排序信息至用户设置
-                    account.SetProfile(getSortKey(by), d);
+                    account.SetProfile(getPersonalSortKey(by), d);
                     this._accountService.Update(account);
                 }
                 else
@@ -329,6 +331,9 @@ namespace Cooper.Web.Controllers
         /// <summary>是否完成
         /// </summary>
         public bool IsCompleted { get; set; }
+        /// <summary>标签列表
+        /// </summary>
+        public string[] Tags { get; set; }
 
         //额外属性
 

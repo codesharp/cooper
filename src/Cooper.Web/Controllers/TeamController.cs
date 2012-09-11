@@ -51,53 +51,65 @@ namespace Cooper.Web.Controllers
         #region 各种列表排序模式
         //优先级列表模式 所有任务
         [HttpPost]
-        public ActionResult GetByPriority(string teamId, string projectId, string memberId)
+        public ActionResult GetByPriority(string teamId, string projectId, string memberId, string tag)
         {
             return this.GetBy(teamId
                 , projectId
                 , memberId
+                , tag
                 , this.GetTasksByAccount
                 , this.GetTasksByMember
                 , this.GetTasksByProject
+                , this.GetTasksByTag
+                , this.ParseSortsByPriority
                 , this.ParseSortsByPriority
                 , this.ParseSortsByPriority);
         }
         //优先级列表模式 不含已经完成
         [HttpPost]
-        public ActionResult GetIncompletedByPriority(string teamId, string projectId, string memberId)
+        public ActionResult GetIncompletedByPriority(string teamId, string projectId, string memberId, string tag)
         {
             return this.GetBy(teamId
                 , projectId
                 , memberId
+                , tag
                 , this.GetIncompletedTasksByAccount
                 , this.GetIncompletedTasksByMember
                 , this.GetIncompletedTasksByProject
+                , this.GetIncompletedTasksByTag
+                , this.ParseSortsByPriority
                 , this.ParseSortsByPriority
                 , this.ParseSortsByPriority);
         }
         //DueTime列表模式
         [HttpPost]
-        public ActionResult GetByDueTime(string teamId, string projectId, string memberId)
+        public ActionResult GetByDueTime(string teamId, string projectId, string memberId, string tag)
         {
             return this.GetBy(teamId
                 , projectId
                 , memberId
+                , tag
                 , this.GetTasksByAccount
                 , this.GetTasksByMember
                 , this.GetTasksByProject
+                , this.GetTasksByTag
+                , this.ParseSortsByDueTime
                 , this.ParseSortsByDueTime
                 , this.ParseSortsByDueTime);
         }
         //UNDONE:Assignee排序模式
         [HttpPost]
-        public ActionResult GetByAssignee(string teamId, string projectId)
+        public ActionResult GetByAssignee(string teamId, string projectId, string tag)
         {
             return this.GetBy(teamId
                 , projectId
                 , null
+                , tag
                 , this.GetTasksByAccount
                 , this.GetTasksByMember
                 , this.GetTasksByProject
+                , this.GetTasksByTag
+                , this.ParseSortsByDueTime
                 , this.ParseSortsByDueTime
                 , this.ParseSortsByDueTime);
         }
@@ -190,28 +202,49 @@ namespace Cooper.Web.Controllers
         /// <param name="teamId">团队标识</param>
         /// <param name="projectId">项目标识，可以为空</param>
         /// <param name="memberId">成员标识，可以为空</param>
+        /// <param name="tag">团队标签文本，可以为空</param>
         /// <param name="changes"></param>
         /// <param name="by"></param>
         /// <param name="sorts"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult Sync(string teamId, string projectId, string memberId, string changes, string by, string sorts)
+        public ActionResult Sync(string teamId, string projectId, string memberId, string tag, string changes, string by, string sorts)
         {
             var a = this.Context.Current;
             var team = this.GetTeamOfCurrentAccount(teamId);
             var project = string.IsNullOrWhiteSpace(projectId) ? null : this.GetProject(team, projectId);
             var member = string.IsNullOrWhiteSpace(memberId) ? null : this.GetMember(team, memberId);
             var currentMember = this.GetCurrentMember(team);
+            tag = (tag ?? string.Empty).Trim();
 
             return Json(this.Sync(changes, by, sorts
                 , () =>
                 {
                     var t = new Teams.Task(currentMember, team);
+                    
+                    #region 默认值设置
                     if (project != null)
+                    {
                         t.AddToProject(project);
+                        if (this._log.IsInfoEnabled)
+                            this._log.InfoFormat("默认为新任务设置项目#{0}|{1}", project.ID, project.Name);
+                    }
                     if (member != null)
+                    {
                         t.AssignTo(member);
+                        if (this._log.IsInfoEnabled)
+                            this._log.InfoFormat("默认将新任务分配给#{0}|{1}", member.ID, member.Name);
+                    }
+                    if (!string.IsNullOrWhiteSpace(tag))
+                    {
+                        //UNDONE:设置任务标签
+                        //t.addTag(tag);
+                        if (this._log.IsInfoEnabled)
+                            this._log.InfoFormat("默认为新任务设置标签#{0}", tag);
+                    }
+                    #endregion
+
                     return t;
                 }
                 , o =>
@@ -220,23 +253,34 @@ namespace Cooper.Web.Controllers
                     //创建者或执行人
                     Assert.IsTrue(this.IsCreator(team, task, a) || this.IsAssignee(task, currentMember));
                 }
+                //是否是属于个人的排序
                 , () => project == null && string.IsNullOrWhiteSpace(memberId)
+                //个人排序key
                 , o => this.GetSortKey(team, o)
                 , o =>
                 {
+                    #region 保存非个人排序数据
                     //HACK:若有memberId则认为是查看member视图，此时不对排序数据做保存
                     if (project != null)
                     {
+                        //存储至项目排序数据
                         project[by] = o;
                         this._teamService.Update(team);
                     }
+                    else if (!string.IsNullOrWhiteSpace(tag))
+                    {
+                        //UNDONE:存储至团队标签排序数据
+                        //team[this.GetSortKey(by, tag)] = o;
+                        //this._teamService.Update(team);
+                    }
+                    #endregion
                 }));
         }
-        protected override void ApplyUpdate(Task t, ChangeLog c)
+        protected override void ApplyUpdate(Task task, ChangeLog c)
         {
-            base.ApplyUpdate(t, c);
+            base.ApplyUpdate(task, c);
 
-            var teamTask = t as Teams.Task;
+            var teamTask = task as Teams.Task;
             var team = this.GetTeamOfCurrentAccount<Teams.Member>(teamTask.TeamId);//普通成员即可
 
             switch (c.Name.ToLower())
@@ -416,6 +460,14 @@ namespace Cooper.Web.Controllers
         {
             return this._teamTaskService.GetIncompletedTasksByProject(p);
         }
+        private IEnumerable<Teams.Task> GetTasksByTag(Teams.Team team, string tag)
+        {
+            return new List<Teams.Task>();
+        }
+        private IEnumerable<Teams.Task> GetIncompletedTasksByTag(Teams.Team team, string tag)
+        {
+            return new List<Teams.Task>();
+        }
         private TeamInfo Parse(Teams.Team team)
         {
             return new TeamInfo()
@@ -423,7 +475,9 @@ namespace Cooper.Web.Controllers
                 id = team.ID.ToString(),
                 name = team.Name,
                 projects = team.Projects.Select(o => this.Parse(o)).ToArray(),
-                members = team.Members.Select(o => this.Parse(o)).ToArray()
+                members = team.Members.Select(o => this.Parse(o)).ToArray(),
+                //UNDONE:Team.Tags DTO转换
+                tags = new string[] { "webui", "hybrid", "mobi", "ios", "model" }
             };
         }
         private TeamProjectInfo Parse(Teams.Project project)
@@ -484,11 +538,14 @@ namespace Cooper.Web.Controllers
         private ActionResult GetBy(string teamId
             , string projectId
             , string memberId
+            , string tag
             , Func<Teams.Team, Account, IEnumerable<Teams.Task>> taskByAccount//获取用户在指定team任务
             , Func<Teams.Member, IEnumerable<Teams.Task>> taskByMember//获取成员在指定team任务
             , Func<Teams.Project, IEnumerable<Teams.Task>> taskByProject//获取项目内的所有任务
-            , Func<Account, Teams.Team, TaskInfo[], Sort[]> sortsOfAccount//获取用户在指定team的排序信息
-            , Func<Teams.Project, TaskInfo[], Sort[]> sortsOfProject)//获取项目的排序信息
+            , Func<Teams.Team, string, IEnumerable<Teams.Task>> taskByTag//获取团队标签的任务
+            , Func<Teams.Team, Account, TaskInfo[], Sort[]> sortsOfAccount//获取用户在指定team的排序信息
+            , Func<Teams.Project, TaskInfo[], Sort[]> sortsOfProject//获取项目的排序信息
+            , Func<Teams.Team, string, TaskInfo[], Sort[]> sortsOfTag)//获取团队标签的排序信息
         {
             var a = this.Context.Current;
             var team = this.GetTeam(teamId);//允许匿名访问
@@ -518,16 +575,22 @@ namespace Cooper.Web.Controllers
                 {
                     //查看指定成员任务时只能编辑属于当前用户的成员
                     //editable = member.AssociatedAccountId == current.ID;
-                    sorts = sortsOfAccount(this._accountService
-                        .GetAccount(member.AssociatedAccountId.Value), team, tasks);
+                    sorts = sortsOfAccount(team
+                        , this._accountService.GetAccount(member.AssociatedAccountId.Value)
+                        , tasks);
                 }
                 else
-                    sorts = sortsOfAccount(a, team, tasks);
+                    sorts = sortsOfAccount(team, a, tasks);
+            }
+            else if (!string.IsNullOrWhiteSpace(tag))
+            {
+                tasks = this.Parse(taskByTag(team, tag), team);
+                sorts = sortsOfTag(team, tag, tasks);
             }
             else
             {
                 tasks = this.Parse(taskByAccount(team, a), team);
-                sorts = sortsOfAccount(a, team, tasks);
+                sorts = sortsOfAccount(team, a, tasks);
             }
 
             return Json(new
@@ -537,7 +600,7 @@ namespace Cooper.Web.Controllers
                 Sorts = sorts ?? _emptySorts,
             });
         }
-        private Sort[] ParseSortsByPriority(Account account, Teams.Team team, params TaskInfo[] tasks)
+        private Sort[] ParseSortsByPriority(Teams.Team team, Account account, params TaskInfo[] tasks)
         {
             return this.ParseSortsByPriority(this.GetSorts(account, team, SORT_PRIORITY), tasks);
         }
@@ -545,7 +608,11 @@ namespace Cooper.Web.Controllers
         {
             return this.ParseSortsByPriority(this.GetSorts(project, SORT_PRIORITY), tasks);
         }
-        private Sort[] ParseSortsByDueTime(Account account, Teams.Team team, params TaskInfo[] tasks)
+        private Sort[] ParseSortsByPriority(Teams.Team team, string tag, params TaskInfo[] tasks)
+        {
+            return this.ParseSortsByPriority(this.GetSorts(team, tag, SORT_PRIORITY), tasks);
+        }
+        private Sort[] ParseSortsByDueTime(Teams.Team team, Account account, params TaskInfo[] tasks)
         {
             return this.ParseSortsByDueTime(this.GetSorts(account, team, SORT_DUETIME), tasks);
         }
@@ -553,9 +620,13 @@ namespace Cooper.Web.Controllers
         {
             return this.ParseSortsByDueTime(this.GetSorts(project, SORT_DUETIME), tasks);
         }
-        private Sort[] GetSorts(Account a, Teams.Team t, string by)
+        private Sort[] ParseSortsByDueTime(Teams.Team team, string tag, params TaskInfo[] tasks)
         {
-            return this.GetSorts(a, this.GetSortKey(t, by));
+            return this.ParseSortsByDueTime(this.GetSorts(team, tag, SORT_DUETIME), tasks);
+        }
+        private Sort[] GetSorts(Account a, Teams.Team team, string by)
+        {
+            return this.GetSorts(a, this.GetSortKey(team, by));
         }
         private Sort[] GetSorts(Teams.Project p, string by)
         {
@@ -563,9 +634,22 @@ namespace Cooper.Web.Controllers
                 ? _serializer.JsonDeserialize<Sort[]>(p[by])
                 : _emptySorts;
         }
-        private string GetSortKey(Teams.Team t, string by)
+        private Sort[] GetSorts(Teams.Team team, string tag, string by)
         {
-            return by + "_" + t.ID;
+            var key = this.GetSortKey(by, tag);
+            return _emptySorts;
+            //UNDONE:team[key]也需要extension设计
+            //return !string.IsNullOrWhiteSpace(t[key])
+            //    ? _serializer.JsonDeserialize<Sort[]>(t[key])
+            //    : _emptySorts;
+        }
+        private string GetSortKey(Teams.Team team, string by)
+        {
+            return by + "_" + team.ID;
+        }
+        private string GetSortKey(string by, string tag)
+        {
+            return by + "_" + tag;
         }
     }
 
@@ -576,6 +660,7 @@ namespace Cooper.Web.Controllers
         public string Name { get; set; }
         public string Email { get; set; }
     }
+    //TODO:最终确认DTO以及大小写格式
     public class TeamInfo
     {
         public string id { get; set; }
@@ -583,6 +668,7 @@ namespace Cooper.Web.Controllers
 
         public TeamMemberInfo[] members { get; set; }
         public TeamProjectInfo[] projects { get; set; }
+        public string[] tags { get; set; }
     }
     public class TeamMemberInfo
     {
