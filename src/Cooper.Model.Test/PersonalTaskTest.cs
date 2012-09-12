@@ -189,6 +189,7 @@ namespace Cooper.Model.Test
             var task1 = new PersonalTask(account);
             task1.AddTag("程序设计");
             task1.AddTag(".NET");
+            task1.AddTag("ASP.NET");
             task1.AddTag("001_Tag_001");
             task1.MarkAsCompleted();
             this._personalTaskService.Create(task1);
@@ -196,6 +197,7 @@ namespace Cooper.Model.Test
             task2.AddTag("Mono");
             task2.AddTag(".net");
             task2.AddTag("JAVA");
+            task1.AddTag("JAVA.NET");
             task2.AddTag("001_tag_001");
             this._personalTaskService.Create(task2);
 
@@ -204,25 +206,35 @@ namespace Cooper.Model.Test
 
             var tasks = this._personalTaskService.GetTasks(account, ".net");
             Assert.AreEqual(2, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains(".net", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetTasks(account, "java");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("java", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetTasks(account, "程序设计");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("程序设计", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetTasks(account, "Mono");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("Mono", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetTasks(account, "001_tag_001");
             Assert.AreEqual(2, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("001_tag_001", StringComparer.OrdinalIgnoreCase)));
 
             tasks = this._personalTaskService.GetIncompletedTasks(account, ".net");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains(".net", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetIncompletedTasks(account, "java");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("java", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetIncompletedTasks(account, "程序设计");
             Assert.AreEqual(0, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("程序设计", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetIncompletedTasks(account, "Mono");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("Mono", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetIncompletedTasks(account, "001_tag_001");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("001_tag_001", StringComparer.OrdinalIgnoreCase)));
 
             task1 = this._personalTaskService.GetTask(task1.ID);
             task2 = this._personalTaskService.GetTask(task2.ID);
@@ -239,25 +251,35 @@ namespace Cooper.Model.Test
 
             tasks = this._personalTaskService.GetTasks(account, ".net");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains(".net", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetTasks(account, "java");
             Assert.AreEqual(0, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("java", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetTasks(account, "程序设计");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("程序设计", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetTasks(account, "Mono");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("Mono", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetTasks(account, "001_tag_001");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("001_tag_001", StringComparer.OrdinalIgnoreCase)));
 
             tasks = this._personalTaskService.GetIncompletedTasks(account, ".net");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains(".net", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetIncompletedTasks(account, "java");
             Assert.AreEqual(0, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("java", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetIncompletedTasks(account, "程序设计");
             Assert.AreEqual(0, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("程序设计", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetIncompletedTasks(account, "Mono");
             Assert.AreEqual(1, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("Mono", StringComparer.OrdinalIgnoreCase)));
             tasks = this._personalTaskService.GetIncompletedTasks(account, "001_tag_001");
             Assert.AreEqual(0, tasks.Count());
+            Assert.IsFalse(!tasks.All(x => x.Tags.Contains("001_tag_001", StringComparer.OrdinalIgnoreCase)));
         }
 
         private void Dump(params PersonalTask[] tasks)
