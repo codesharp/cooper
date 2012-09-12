@@ -126,13 +126,4 @@ internal class Assert : NUnit.Framework.Assert
         Assert.Greater(comment.ID, 0);
         Assert.IsNotNullOrWhiteSpace(comment.Body);
     }
-    /// <summary>断言Tag是否有效
-    /// </summary>
-    /// <param name="tag"></param>
-    public static void IsValid(Cooper.Model.Tag tag)
-    {
-        Assert.IsNotNull(tag);
-        Assert.Greater(tag.ID, 0);
-        Assert.IsValidKey(tag.Name);
-    }
 }
