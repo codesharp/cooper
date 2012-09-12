@@ -100,6 +100,8 @@ Task.prototype = {
     },
     ///////////////////////////////////////////////////////////////////////////////
     renderRow: function () {
+        //ie8下首次_generateItem导致内容显示截断
+        this.setSubject(this.subject(),true);
         this.setCompleted(this.isCompleted());
         this.setPriority(this.priority());
         this.setDueTime(this.due());
@@ -307,9 +309,15 @@ Task.prototype = {
             'label-inverse',
             'label'];
         for (var i = 0; i < tags.length; i++) {
-            var $i = $('<span class="label ' + color[i % color.length] + '"></span> ');
+            var $i = $('<span class="label '
+                //+ color[1]//UNDONE:色调过于混乱？
+                + color[i % color.length]
+                + '"></span> ');
+            var max = i == 3;
+            var t = max ? '...' : tags[i];
             //防止html/script注入
-            this._getRowEl(k).append($i.text(tags[i])).append('&nbsp;');
+            this._getRowEl(k).append($i.text(t)).append('&nbsp;');
+            if (max) break;
         }
         //渲染详情
         this.setDetail_Tags(tags);

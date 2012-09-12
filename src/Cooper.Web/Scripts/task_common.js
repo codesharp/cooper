@@ -96,12 +96,16 @@ UI_List_Common.prototype = {
         var base = this;
         var fn = function () {
             var ids = [$rows.length];
-            var editable, isCompleted, priority;
+            var tasks = [$rows.length];
+            var editable, isCompleted, priority, tags, projects;
             $rows.each(function (i, n) {
                 var id = base.getTaskId($(n));
                 ids[i] = id;
                 var task = base.getTaskById(id);
+                tasks[i] = task;
+                //有一个可编辑即可
                 if (task.editable) editable = true;
+                //以首个任务为准
                 if (i == 0) {
                     isCompleted = task.isCompleted();
                     priority = task.priority();
@@ -129,8 +133,20 @@ UI_List_Common.prototype = {
                     .addClass('active');
             else
                 base.$batchDetail.find('#priority button').removeClass('active');
-
+            //呈现
             base.$wrapper_detail.empty().append(base.$batchDetail);
+
+            //部分未全局处理的事件绑定
+            //批量详情绑定，如：标签
+            base.bind_detail(base.$batchDetail, tasks);
+            //TODO:批量标签
+            //base.detail_array_control_render(base.$batchDetail.find('#tags'), tags, 'render_detail_tags');
+            //批量团队相关的详情，如：项目、分配
+            if (base.bind_detail_team)
+                base.bind_detail_team(base.$batchDetail, tasks);
+            //TODO:批量项目
+            //TODO:批量分配
+
             //批量编辑状态
             base.$batchDetail.find('#isCompleted').attr('disabled', !editable);
             base.$batchDetail.find('#priority button').attr('disabled', !editable);

@@ -300,6 +300,30 @@
                             <td colspan="2" id="subject">
                             </td>
                         </tr>
+                        <tr ng-show="team!=null">
+                            <td class="detail-item">
+                                {{lang.assignee}}
+                            </td>
+                            <td class="detail-content">
+                                <span id="assignee"></span>
+                                <input id="assignee_input" type="text" class="input-small" style="display: none" />
+                                <button id="assignee_btn" class="btn btn-mini">
+                                    <i class="icon-pencil"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr ng-show="team!=null">
+                            <td class="detail-item">
+                                {{lang.project}}
+                            </td>
+                            <td class="detail-content">
+                                <span id="projects"></span>
+                                <input id="projects_input" type="text" class="input-small" style="display: none" />
+                                <button id="projects_btn" class="btn btn-mini">
+                                    <i class="icon-plus"></i>
+                                </button>
+                            </td>
+                        </tr>
                         <tr>
                             <td class="detail-item">
                                 {{lang.priority}}
@@ -316,6 +340,18 @@
                                         <i class="icon-pause" priority="2"></i>
                                     </button>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="detail-item">
+                                {{lang.tags}}
+                            </td>
+                            <td class="detail-content">
+                                <span id="tags"></span>
+                                <input id="tags_input" type="text" class="input-small" style="display: none" maxlength="15"/>
+                                <button id="tags_btn" class="btn btn-mini">
+                                    <i class="icon-plus"></i>
+                                </button>
                             </td>
                         </tr>
                         <tr>

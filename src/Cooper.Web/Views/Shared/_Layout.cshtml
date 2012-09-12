@@ -66,6 +66,18 @@
                         </tr>
                         <tr>
                             <td class="detail-item">
+                                @this.Lang().tags
+                            </td>
+                            <td class="detail-content">
+                                <span id="tags"></span>
+                                <input id="tags_input" type="text" class="input-small" style="display: none" maxlength="15"/>
+                                <button id="tags_btn" class="btn btn-mini">
+                                    <i class="icon-plus"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="detail-item">
                                 @this.Lang().dueTime
                             </td>
                             <td class="detail-content">
