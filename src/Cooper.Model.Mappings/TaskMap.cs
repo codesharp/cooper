@@ -17,7 +17,11 @@ namespace Cooper.Model.Mappings
             Map(m => m.Priority).CustomType<Priority>();
             Map(m => m.DueTime).Nullable();
             Map(m => m.IsCompleted);
-            Component(Reveal.Member<Task, StringList>("_tagList"));
+            Component(Reveal.Member<Task, StringList>("_tagList"),
+                component =>
+                {
+                    component.Map(Reveal.Member<StringList>("_serializedValue")).Column("Tags").Length(1000);
+                });
             Map(m => m.CreateTime);
             Map(m => m.LastUpdateTime);
 
