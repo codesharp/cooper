@@ -320,15 +320,34 @@ namespace Cooper.Model.Test
             var task = new Task(creatorMember, team);
             task.AddTag("程序设计");
             task.AddTag(".NET");
+            task.AddTag(".net");
+            task.AddTag("∮   ∮；∮;");
+            task.AddTag("∮bb∮");
+            task.AddTag("∮∮ ∮b∮a∮");
+            task.AddTag("A ");
+            task.AddTag("∮∮ ∮)∮）∮）");
+            task.AddTag("∮∮ ∮)∮）∮)");
             task.AddTag("001_Tag_001");
             this._teamTaskService.Create(task);
 
             this.Evict(task);
 
             task = this._teamTaskService.GetTask(task.ID);
-            Assert.AreEqual(3, task.Tags.Count());
+            Assert.AreEqual(8, task.Tags.Count());
+
+            Assert.IsFalse(task.Tags.Any(x => x == ".NET"));
+            Assert.IsFalse(task.Tags.Any(x => x == "a"));
+            Assert.IsFalse(task.Tags.Any(x => x == "A "));
+            Assert.IsFalse(task.Tags.Any(x => x == "；"));
+            Assert.IsFalse(task.Tags.Any(x => x == "）"));
+
             Assert.IsTrue(task.Tags.Any(x => x == "程序设计"));
-            Assert.IsTrue(task.Tags.Any(x => x == ".NET"));
+            Assert.IsTrue(task.Tags.Any(x => x == ".net"));
+            Assert.IsTrue(task.Tags.Any(x => x == ";"));
+            Assert.IsTrue(task.Tags.Any(x => x == "bb"));
+            Assert.IsTrue(task.Tags.Any(x => x == "A"));
+            Assert.IsTrue(task.Tags.Any(x => x == "b"));
+            Assert.IsTrue(task.Tags.Any(x => x == ")"));
             Assert.IsTrue(task.Tags.Any(x => x == "001_Tag_001"));
         }
         [Test]
@@ -341,31 +360,55 @@ namespace Cooper.Model.Test
             var task = new Task(creatorMember, team);
             task.AddTag("程序设计");
             task.AddTag(".NET");
+            task.AddTag(".net");
+            task.AddTag("∮   ∮；∮;");
+            task.AddTag("∮bb∮");
+            task.AddTag("∮∮ ∮b∮a∮");
+            task.AddTag("A");
+            task.AddTag("∮∮ ∮)∮）∮）");
+            task.AddTag("∮∮ ∮)∮）∮)");
             task.AddTag("001_Tag_001");
             this._teamTaskService.Create(task);
 
             this.Evict(task);
 
             task = this._teamTaskService.GetTask(task.ID);
-            Assert.AreEqual(3, task.Tags.Count());
+            Assert.AreEqual(8, task.Tags.Count());
+            Assert.IsFalse(task.Tags.Any(x => x == ".NET"));
+            Assert.IsFalse(task.Tags.Any(x => x == "；"));
+            Assert.IsFalse(task.Tags.Any(x => x == "a"));
+            Assert.IsFalse(task.Tags.Any(x => x == "）"));
+
             Assert.IsTrue(task.Tags.Any(x => x == "程序设计"));
-            Assert.IsTrue(task.Tags.Any(x => x == ".NET"));
+            Assert.IsTrue(task.Tags.Any(x => x == ".net"));
+            Assert.IsTrue(task.Tags.Any(x => x == ";"));
+            Assert.IsTrue(task.Tags.Any(x => x == "bb"));
+            Assert.IsTrue(task.Tags.Any(x => x == "A"));
+            Assert.IsTrue(task.Tags.Any(x => x == "b"));
+            Assert.IsTrue(task.Tags.Any(x => x == ")"));
             Assert.IsTrue(task.Tags.Any(x => x == "001_Tag_001"));
 
-            task.RemoveTag(".net");
-            task.RemoveTag("001_tag_001");
+            task.RemoveTag("）");
+            task.RemoveTag(".Net");
+            task.RemoveTag("∮a∮bba");
+            task.RemoveTag("∮；∮  b");
+            task.RemoveTag(" A ");
 
             this._teamTaskService.Update(task);
 
             this.Evict(task);
 
             task = this._teamTaskService.GetTask(task.ID);
-            Assert.AreEqual(1, task.Tags.Count());
-            Assert.IsTrue(task.Tags.Any(x => x == "程序设计"));
-            Assert.IsFalse(task.Tags.Any(x => x == ".NET"));
+            Assert.AreEqual(3, task.Tags.Count());
             Assert.IsFalse(task.Tags.Any(x => x == ".net"));
-            Assert.IsFalse(task.Tags.Any(x => x == "001_Tag_001"));
-            Assert.IsFalse(task.Tags.Any(x => x == "001_tag_001"));
+            Assert.IsFalse(task.Tags.Any(x => x == "A"));
+            Assert.IsFalse(task.Tags.Any(x => x == "b"));
+            Assert.IsFalse(task.Tags.Any(x => x == ";"));
+            Assert.IsFalse(task.Tags.Any(x => x == ")"));
+
+            Assert.IsTrue(task.Tags.Any(x => x == "程序设计"));
+            Assert.IsTrue(task.Tags.Any(x => x == "bb"));
+            Assert.IsTrue(task.Tags.Any(x => x == "001_Tag_001"));
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]

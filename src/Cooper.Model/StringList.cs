@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Cooper.Model
@@ -15,7 +16,7 @@ namespace Cooper.Model
     {
         private string _serializedValue;
         private IList<string> _items;
-        private string _seperator = "$";
+        public static readonly string Seperator = "∮";
 
         /// <summary>添加一个字符串item
         /// </summary>
@@ -26,7 +27,15 @@ namespace Cooper.Model
             Assert.IsNotNullOrWhiteSpace(item);
             if (this._items == null)
                 this._items = Deserialize(this._serializedValue);
-            this._items.Add(item);
+
+            //处理每个有效的item.
+            foreach (var validItem in Deserialize(item))
+            {
+                //总是先移除再新增，确保不会有重复，判断相等不区分大小写
+                this._items = this._items.Where(x => CompareStringIgnoreCaseAndWidth(x, validItem) != 0).ToList();
+                this._items.Add(validItem);
+            }
+
             this._serializedValue = Serialize(this._items);
             return this;
         }
@@ -39,7 +48,14 @@ namespace Cooper.Model
             Assert.IsNotNullOrWhiteSpace(item);
             if (this._items == null)
                 this._items = Deserialize(this._serializedValue);
-            this._items = this._items.Where(x => string.Compare(x, item, true) != 0).ToList();
+
+            //处理每个有效的item.
+            foreach (var validItem in Deserialize(item))
+            {
+                //总是先移除再新增，确保不会有重复，判断相等不区分大小写
+                this._items = this._items.Where(x => CompareStringIgnoreCaseAndWidth(x, validItem) != 0).ToList();
+            }
+
             this._serializedValue = Serialize(this._items);
             return this;
         }
@@ -67,16 +83,27 @@ namespace Cooper.Model
         {
             return string.IsNullOrWhiteSpace(serializedValue)
                 ? new List<string>()
-                : serializedValue.Split(new string[] { this._seperator }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                : serializedValue.Split(new string[] { Seperator }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(x => x.Trim())
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .ToList();
         }
         private string Serialize(IList<string> items)
         {
-            var value = string.Join(this._seperator, items.Where(item => !string.IsNullOrWhiteSpace(item)).ToArray());
+            var value = string.Join(
+                Seperator,
+                items.Where(item => !string.IsNullOrWhiteSpace(item))
+                    .Select(x => x.Trim())
+                    .ToArray());
             if (!string.IsNullOrEmpty(value))
             {
-                return string.Format("${0}$", value);
+                return string.Format("{1}{0}{1}", value, Seperator);
             }
             return value;
+        }
+        private int CompareStringIgnoreCaseAndWidth(string x, string y)
+        {
+            return CultureInfo.InvariantCulture.CompareInfo.Compare(x, y, CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
         }
     }
 }

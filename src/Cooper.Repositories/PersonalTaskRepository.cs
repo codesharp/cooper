@@ -1,6 +1,7 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System.Collections.Generic;
+using Cooper.Model;
 using Cooper.Model.Accounts;
 using Cooper.Model.Tasks;
 using NHibernate.Criterion;
@@ -17,11 +18,11 @@ namespace Cooper.Repositories
         }
         public IEnumerable<PersonalTask> FindByTag(Account account, string tag)
         {
-            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Like("_tagList._serializedValue", string.Format("${0}$", tag), MatchMode.Anywhere));
+            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere));
         }
         public IEnumerable<PersonalTask> FindByTag(Account account, bool isCompleted, string tag)
         {
-            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Eq("IsCompleted", isCompleted), Expression.Like("_tagList._serializedValue", string.Format("${0}$", tag), MatchMode.Anywhere));
+            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Eq("IsCompleted", isCompleted), Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere));
         }
         public IEnumerable<PersonalTask> FindBy(Account account, TaskFolder folder)
         {

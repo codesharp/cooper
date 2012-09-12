@@ -1,8 +1,8 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System.Collections.Generic;
-using System.Linq;
 using CodeSharp.Core.Castles;
+using Cooper.Model;
 using Cooper.Model.Accounts;
 using Cooper.Model.Teams;
 using NHibernate.Criterion;
@@ -23,7 +23,7 @@ namespace Cooper.Repositories
             return this.GetSession()
                 .CreateCriteria<Task>()
                 .Add(Expression.Eq("TeamId", team.ID))
-                .Add(Expression.Like("_tagList._serializedValue", string.Format("${0}$", tag), MatchMode.Anywhere))
+                .Add(Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere))
                 .List<Task>();
         }
         public IEnumerable<Task> FindByTag(Team team, bool isCompleted, string tag)
@@ -32,7 +32,7 @@ namespace Cooper.Repositories
                 .CreateCriteria<Task>()
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("IsCompleted", isCompleted))
-                .Add(Expression.Like("_tagList._serializedValue", string.Format("${0}$", tag), MatchMode.Anywhere))
+                .Add(Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Team team, Account account)
