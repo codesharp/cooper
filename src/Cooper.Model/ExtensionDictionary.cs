@@ -6,10 +6,9 @@ using CodeSharp.Core.Utils;
 
 namespace Cooper.Model
 {
-    /// <summary>提供扩展功能的实体抽象类
+    /// <summary>提供支持基于字典的扩展功能的Component
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public abstract class ExtensiableEntityBase<T> : EntityBase<T>
+    public class ExtensionDictionary
     {
         private static readonly Serializer _serializer = new Serializer();
         private string _extensions { get; set; }

@@ -11,6 +11,8 @@ namespace Cooper.Model.Tasks
     /// </summary>
     public abstract class Task : EntityBase<long>, IAggregateRoot
     {
+        private StringList _tagList { get; set; }
+
         /// <summary>获取标题/主题
         /// </summary>
         public virtual string Subject { get; private set; }
@@ -28,7 +30,15 @@ namespace Cooper.Model.Tasks
         public virtual bool IsCompleted { get; private set; }
         /// <summary>Tags
         /// </summary>
-        public virtual string Tags { get; private set; }
+        public virtual string[] Tags
+        {
+            get
+            {
+                if (this._tagList == null)
+                    this._tagList = new StringList();
+                return this._tagList.GetAllItems().ToArray();
+            }
+        }
         /// <summary>获取创建时间
         /// </summary>
         public virtual DateTime CreateTime { get; private set; }
@@ -104,18 +114,9 @@ namespace Cooper.Model.Tasks
         {
             Assert.IsNotNullOrWhiteSpace(tag);
             Assert.LessOrEqual(tag.Length, 50);
-            //Tag不允许包含分号
-            Assert.IsTrue(tag.IndexOf(';') == -1);
-            Assert.IsTrue(tag.IndexOf('；') == -1);
-
-            if (string.IsNullOrWhiteSpace(this.Tags))
-            {
-                this.Tags = tag;
-            }
-            else
-            {
-                this.Tags = this.Tags + ";" + tag;
-            }
+            if (this._tagList == null)
+                this._tagList = new StringList();
+            this._tagList.Add(tag);
             this.MakeChange();
         }
         /// <summary>移除一个Tag
@@ -125,14 +126,9 @@ namespace Cooper.Model.Tasks
         {
             Assert.IsNotNullOrWhiteSpace(tag);
             Assert.LessOrEqual(tag.Length, 50);
-
-            if (!string.IsNullOrWhiteSpace(this.Tags))
-            {
-                var tags = this.Tags
-                    .Split(new char[] { ';' })
-                    .Where(x => string.Compare(x, tag, true) != 0);
-                this.Tags = string.Join(";", tags.ToArray());
-            }
+            if (this._tagList == null)
+                this._tagList = new StringList();
+            this._tagList.Remove(tag);
             this.MakeChange();
         }
 

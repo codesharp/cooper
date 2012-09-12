@@ -1,11 +1,8 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FluentNHibernate.Mapping;
 using Cooper.Model.Tasks;
+using FluentNHibernate;
+using FluentNHibernate.Mapping;
 
 namespace Cooper.Model.Mappings
 {
@@ -20,7 +17,11 @@ namespace Cooper.Model.Mappings
             Map(m => m.Priority).CustomType<Priority>();
             Map(m => m.DueTime).Nullable();
             Map(m => m.IsCompleted);
-            Map(m => m.Tags).Length(1000);
+            Component(Reveal.Member<Task, StringList>("_tagList"),
+                component =>
+                {
+                    component.Map(Reveal.Member<StringList>("_serializedValue")).Column("Tags").Length(1000);
+                });
             Map(m => m.CreateTime);
             Map(m => m.LastUpdateTime);
 
