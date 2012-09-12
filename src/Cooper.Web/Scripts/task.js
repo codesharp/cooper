@@ -100,6 +100,8 @@ Task.prototype = {
     },
     ///////////////////////////////////////////////////////////////////////////////
     renderRow: function () {
+        //ie8下首次_generateItem导致内容显示截断
+        this.setSubject(this.subject(),true);
         this.setCompleted(this.isCompleted());
         this.setPriority(this.priority());
         this.setDueTime(this.due());
