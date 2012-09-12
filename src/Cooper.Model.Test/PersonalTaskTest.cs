@@ -142,7 +142,10 @@ namespace Cooper.Model.Test
             this.Evict(task);
 
             task = this._personalTaskService.GetTask(task.ID);
-            Assert.AreEqual("程序设计;.NET;001_Tag_001", task.Tags);
+            Assert.AreEqual(3, task.Tags.Count());
+            Assert.IsTrue(task.Tags.Any(x => x == "程序设计"));
+            Assert.IsTrue(task.Tags.Any(x => x == ".NET"));
+            Assert.IsTrue(task.Tags.Any(x => x == "001_Tag_001"));
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
@@ -158,7 +161,10 @@ namespace Cooper.Model.Test
             this.Evict(task);
 
             task = this._personalTaskService.GetTask(task.ID);
-            Assert.AreEqual("程序设计;.NET;001_Tag_001", task.Tags);
+            Assert.AreEqual(3, task.Tags.Count());
+            Assert.IsTrue(task.Tags.Any(x => x == "程序设计"));
+            Assert.IsTrue(task.Tags.Any(x => x == ".NET"));
+            Assert.IsTrue(task.Tags.Any(x => x == "001_Tag_001"));
 
             task.RemoveTag(".net");
             task.RemoveTag("001_tag_001");
@@ -168,7 +174,12 @@ namespace Cooper.Model.Test
             this.Evict(task);
 
             task = this._personalTaskService.GetTask(task.ID);
-            Assert.AreEqual("程序设计", task.Tags);
+            Assert.AreEqual(1, task.Tags.Count());
+            Assert.IsTrue(task.Tags.Any(x => x == "程序设计"));
+            Assert.IsFalse(task.Tags.Any(x => x == ".NET"));
+            Assert.IsFalse(task.Tags.Any(x => x == ".net"));
+            Assert.IsFalse(task.Tags.Any(x => x == "001_Tag_001"));
+            Assert.IsFalse(task.Tags.Any(x => x == "001_tag_001"));
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
