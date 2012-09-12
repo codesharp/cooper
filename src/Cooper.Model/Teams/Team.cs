@@ -11,10 +11,11 @@ namespace Cooper.Model.Teams
 {
     /// <summary>团队模型
     /// </summary>
-    public class Team : ExtensiableEntityBase<int>, IAggregateRoot
+    public class Team : EntityBase<int>, IAggregateRoot
     {
         private IList<Member> _members = new List<Member>();
         private IList<Project> _projects = new List<Project>();
+        private ExtensionDictionary _extensionDictionary = new ExtensionDictionary();
 
         /// <summary>获取团队名称
         /// </summary>
@@ -29,8 +30,26 @@ namespace Cooper.Model.Teams
         /// </summary>
         public IEnumerable<Project> Projects { get { return _projects; } }
 
+        /// <summary>根据键获取对应设置
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public string this[string key]
+        {
+            get { return _extensionDictionary[key]; }
+            set { _extensionDictionary[key] = value; }
+        }
+        /// <summary>获取所有扩展信息字典
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, string> GetExtensions()
+        {
+            return _extensionDictionary.GetExtensions();
+        }
+
         protected Team() { this.CreateTime = DateTime.Now; }
-        public Team(string name) : this()
+        public Team(string name)
+            : this()
         {
             this.SetName(name);
         }
@@ -51,14 +70,14 @@ namespace Cooper.Model.Teams
         {
             return _members.SingleOrDefault(x => x.Email == email);
         }
-		/// <summary>根据账号获取成员
+        /// <summary>根据账号获取成员
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-		public Member GetMember(Account account)
-		{
-			return this._members.SingleOrDefault (x => x.AssociatedAccountId != null && x.AssociatedAccountId.Value == account.ID);
-		}
+        public Member GetMember(Account account)
+        {
+            return this._members.SingleOrDefault(x => x.AssociatedAccountId != null && x.AssociatedAccountId.Value == account.ID);
+        }
         /// <summary>根据项目标识获取项目
         /// </summary>
         /// <param name="id"></param>

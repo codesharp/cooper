@@ -28,7 +28,11 @@ namespace Cooper.Model.Mappings
                 .Column("AccountId")
                 .GeneratedBy.Foreign("_account");
             HasOne<Account>(Reveal.Member<Profile>("_account"));
-            Map(Reveal.Member<Profile>("_extensions")).Column("Profile").Length(10000);
+            Component(Reveal.Member<Profile, ExtensionDictionary>("_extensionDictionary"),
+                component =>
+                {
+                    component.Map(Reveal.Member<ExtensionDictionary>("_extensions")).Column("Profile").Length(10000);
+                });
         }
     }
 }

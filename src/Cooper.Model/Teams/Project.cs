@@ -11,8 +11,10 @@ namespace Cooper.Model.Teams
 {
     /// <summary>项目模型
     /// </summary>
-    public class Project : ExtensiableEntityBase<int>
+    public class Project : EntityBase<int>
     {
+        private ExtensionDictionary _extensionDictionary = new ExtensionDictionary();
+
         /// <summary>获取团队项目名称
         /// </summary>
         public string Name { get; private set; }
@@ -28,6 +30,22 @@ namespace Cooper.Model.Teams
         /// <summary>创建时间
         /// </summary>
         public DateTime CreateTime { get; private set; }
+        /// <summary>根据键获取对应设置
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public string this[string key]
+        {
+            get { return _extensionDictionary[key]; }
+            set { _extensionDictionary[key] = value; }
+        }
+        /// <summary>获取所有扩展信息字典
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, string> GetExtensions()
+        {
+            return _extensionDictionary.GetExtensions();
+        }
 
         protected Project() { this.CreateTime = DateTime.Now; }
         internal Project(string name, Team team) : this()

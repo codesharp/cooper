@@ -68,6 +68,19 @@ namespace Cooper.Model.Test
 
             Assert.IsNull(team3);
         }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void TeamExtensionsTest()
+        {
+            var team = CreateSampleTeam();
+            team["key"] = "abc";
+            this._teamService.Update(team);
+
+            this.Evict(team);
+
+            team = _teamService.GetTeam(team.ID);
+            Assert.AreEqual("abc", team["key"]);
+        }
 
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
@@ -350,7 +363,7 @@ namespace Cooper.Model.Test
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
-        public void ExtensionsTest()
+        public void ProjectExtensionsTest()
         {
             var team = CreateSampleTeam();
 
