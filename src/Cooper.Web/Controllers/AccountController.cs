@@ -200,14 +200,16 @@ namespace Cooper.Web.Controllers
         /// </summary>
         /// <param name="error">异常信息</param>
         /// <param name="code"></param>
-        /// <param name="state">指定回调动作，login、connect</param>
+        /// <param name="state">
+        /// 指定回调动作，login、connect、joke，
+        /// 使用joke会忽略请求
+        /// </param>
         /// <param name="mobi">是否是来自mobi的回调请求</param>
-        /// <param name="joke">Joke? 将忽略joke请求</param>
         /// <returns></returns>
-        public ActionResult GoogleLogin(string error, string code, string state, string mobi, string joke)
+        public ActionResult GoogleLogin(string error, string code, string state, string mobi)
         {
             //it's a joke?!
-            if (Convert.ToBoolean(joke))
+            if (state == "joke")
                 return Json(false, JsonRequestBehavior.AllowGet);
 
             if (!string.IsNullOrWhiteSpace(error))
@@ -225,7 +227,7 @@ namespace Cooper.Web.Controllers
                 this.Connect<GoogleConnection>(email, grant);
 
             return Convert.ToBoolean(mobi)
-                ? Json(true, JsonRequestBehavior.AllowGet)
+                ? Json(email, JsonRequestBehavior.AllowGet)
                 : this.StateResult(state);
         }
         //Git

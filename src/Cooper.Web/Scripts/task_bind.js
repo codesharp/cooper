@@ -249,10 +249,13 @@ UI_List_Common.prototype.detail_array_control_bind = function (task,
         task[fn_render] = function ($e, data) {
             $e.empty();
             $.each(data, function (i, n) {
-                var $i = $('<span></span>');
+                //简单处理tag呈现
+                var $i = fn_render.indexOf('tag') >= 0
+                    ? $('<span class="label" style="font-weight:normal;"></span>')
+                    : $('<span></span>');
                 //防止html/script注入
                 $i.text((n['name'] || n));
-                $i.append('&nbsp;<a class="flag_remove" val="'
+                $i.append('&nbsp;<a style="color:#000;" class="flag_remove" val="'
                     + (n['id'] || n)
                     + '" title="'
                     + lang.remove_from_task
