@@ -23,7 +23,7 @@ namespace Cooper.Repositories
             return this.GetSession()
                 .CreateCriteria<Task>()
                 .Add(Expression.Eq("TeamId", team.ID))
-                .Add(Expression.Like("_tags", string.Format("${0}$", tag), MatchMode.Anywhere))
+                .Add(Expression.Like("_tagList._serializedValue", string.Format("${0}$", tag), MatchMode.Anywhere))
                 .List<Task>();
         }
         public IEnumerable<Task> FindByTag(Team team, bool isCompleted, string tag)
@@ -32,7 +32,7 @@ namespace Cooper.Repositories
                 .CreateCriteria<Task>()
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("IsCompleted", isCompleted))
-                .Add(Expression.Like("_tags", string.Format("${0}$", tag), MatchMode.Anywhere))
+                .Add(Expression.Like("_tagList._serializedValue", string.Format("${0}$", tag), MatchMode.Anywhere))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Team team, Account account)

@@ -11,7 +11,7 @@ namespace Cooper.Model.Tasks
     /// </summary>
     public abstract class Task : EntityBase<long>, IAggregateRoot
     {
-        private string _tags { get; set; }
+        private StringList _tagList { get; set; }
 
         /// <summary>获取标题/主题
         /// </summary>
@@ -34,10 +34,9 @@ namespace Cooper.Model.Tasks
         {
             get
             {
-                if (!string.IsNullOrWhiteSpace(this._tags))
-                    return new StringList(this._tags).GetAllItems().ToArray();
-                else
-                    return new string[] { };
+                if (this._tagList == null)
+                    this._tagList = new StringList();
+                return this._tagList.GetAllItems().ToArray();
             }
         }
         /// <summary>获取创建时间
@@ -115,7 +114,9 @@ namespace Cooper.Model.Tasks
         {
             Assert.IsNotNullOrWhiteSpace(tag);
             Assert.LessOrEqual(tag.Length, 50);
-            this._tags = new StringList(this._tags).Add(tag).ToString();
+            if (this._tagList == null)
+                this._tagList = new StringList();
+            this._tagList.Add(tag);
             this.MakeChange();
         }
         /// <summary>移除一个Tag
@@ -125,7 +126,9 @@ namespace Cooper.Model.Tasks
         {
             Assert.IsNotNullOrWhiteSpace(tag);
             Assert.LessOrEqual(tag.Length, 50);
-            this._tags = new StringList(this._tags).Remove(tag).ToString();
+            if (this._tagList == null)
+                this._tagList = new StringList();
+            this._tagList.Remove(tag);
             this.MakeChange();
         }
 

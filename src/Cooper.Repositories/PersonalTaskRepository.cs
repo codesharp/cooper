@@ -17,11 +17,11 @@ namespace Cooper.Repositories
         }
         public IEnumerable<PersonalTask> FindByTag(Account account, string tag)
         {
-            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Like("_tags", string.Format("${0}$", tag), MatchMode.Anywhere));
+            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Like("_tagList._serializedValue", string.Format("${0}$", tag), MatchMode.Anywhere));
         }
         public IEnumerable<PersonalTask> FindByTag(Account account, bool isCompleted, string tag)
         {
-            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Eq("IsCompleted", isCompleted), Expression.Like("_tags", string.Format("${0}$", tag), MatchMode.Anywhere));
+            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Eq("IsCompleted", isCompleted), Expression.Like("_tagList._serializedValue", string.Format("${0}$", tag), MatchMode.Anywhere));
         }
         public IEnumerable<PersonalTask> FindBy(Account account, TaskFolder folder)
         {

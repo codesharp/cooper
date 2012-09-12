@@ -13,13 +13,9 @@ namespace Cooper.Model
     /// </summary>
     public class StringList
     {
+        private string _serializedValue;
         private IList<string> _items;
         private string _seperator = "$";
-
-        public StringList(string initialStringValue)
-        {
-            this._items = Deserialize(initialStringValue);
-        }
 
         /// <summary>添加一个字符串item
         /// </summary>
@@ -29,8 +25,9 @@ namespace Cooper.Model
         {
             Assert.IsNotNullOrWhiteSpace(item);
             if (this._items == null)
-                this._items = new List<string>();
+                this._items = Deserialize(this._serializedValue);
             this._items.Add(item);
+            this._serializedValue = Serialize(this._items);
             return this;
         }
         /// <summary>移除一个字符串item
@@ -41,27 +38,29 @@ namespace Cooper.Model
         {
             Assert.IsNotNullOrWhiteSpace(item);
             if (this._items == null)
-                this._items = new List<string>();
+                this._items = Deserialize(this._serializedValue);
             this._items = this._items.Where(x => string.Compare(x, item, true) != 0).ToList();
+            this._serializedValue = Serialize(this._items);
             return this;
         }
-
         /// <summary>获取所有List中的所有Item
         /// </summary>
         /// <returns></returns>
         public IEnumerable<string> GetAllItems()
         {
             if (this._items == null)
-                this._items = new List<string>();
+                this._items = Deserialize(this._serializedValue);
             return this._items;
         }
-
         /// <summary>返回将List中的StringItem进行拼接后的字符串，拼接分隔符为$
+        /// <remarks>
+        /// 格式如：$123$abc$
+        /// </remarks>
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
+        public string GetSerializedString()
         {
-            return Serialize(this._items);
+            return this._serializedValue;
         }
 
         private IList<string> Deserialize(string serializedValue)

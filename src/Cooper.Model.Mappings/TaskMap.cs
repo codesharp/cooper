@@ -17,7 +17,7 @@ namespace Cooper.Model.Mappings
             Map(m => m.Priority).CustomType<Priority>();
             Map(m => m.DueTime).Nullable();
             Map(m => m.IsCompleted);
-            Map(Reveal.Member<Task>("_tags")).Column("Tags").Length(1000);
+            Component(Reveal.Member<Task, StringList>("_tagList"));
             Map(m => m.CreateTime);
             Map(m => m.LastUpdateTime);
 
