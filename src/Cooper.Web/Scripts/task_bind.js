@@ -3,6 +3,7 @@
 ///<reference path="../Content/jquery/jquery-1.7.2.min.js" />
 ///<reference path="task.js" />
 ///<reference path="task_common.js" />
+///<reference path="task_detail.js" />
 ///<reference path="task_row.js" />
 
 //wrapper主体事件绑定，处理全局事件
@@ -240,9 +241,11 @@ UI_List_Common.prototype.bind_detail = function ($el_detail, task) {
         },
         function (val) {
             debuger.debug('add-tags-val', val);
-            if (batch)
+            if (batch) {
                 for (var i = 0; i < task.length; i++)
-                    task[i].addTag(val);
+                    if (task[i].editable)
+                        task[i].addTag(val);
+            }
             else
                 task.addTag(val);
             //同时添加进全局
@@ -286,7 +289,8 @@ UI_List_Common.prototype.detail_array_control_bind = function (task,
                 if (batch) {
                     for (var i = 0; i < task.length; i++)
                         task[i][fn_remove](val);
-                    //TODO:重新渲染$text
+                    //重新渲染$text
+                    that.renderBatchDetail(task);
                 }
                 else
                     task[fn_remove](val);
@@ -300,6 +304,13 @@ UI_List_Common.prototype.detail_array_control_bind = function (task,
         sorter: sorter,
         updater: updater
     };
+    if (batch)
+        option.updater = function () {
+            var val = updater.apply(this, arguments);
+            //对于批量编辑变更时，重新render
+            that.renderBatchDetail(task);
+            return val;
+        }
     if (highlighter)
         option.highlighter = highlighter;
     $input.typeahead(option);
@@ -317,12 +328,18 @@ UI_List_Common.prototype.detail_array_control_bind = function (task,
 UI_List_Common.prototype.detail_array_control_render = function ($text, data, append) {
     if (!append)
         $text.empty();
+    var filter = {};
     $.each(data, function (i, n) {
+        var id = n['id'] || n;
+        if (filter[id])
+            return;
+        else
+            filter[id] = true;
         var $i = $('<span></span>');
         //防止html/script注入
         $i.text((n['name'] || n));
         $i.append('&nbsp;<a style="color:#000;" class="flag_remove" val="'
-            + (n['id'] || n)
+            + id
             + '" title="'
             + lang.remove_from_task
             + '">x</a>');

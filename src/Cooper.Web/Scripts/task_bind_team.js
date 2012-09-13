@@ -59,9 +59,11 @@ UI_List_Common.prototype.bind_detail_team = function ($el_detail, task) {
             debuger.debug('updater-assignee-val', val);
             var item = getItem(val);
             debuger.debug('updater-assignee-item', item);
-            if (batch)
+            if (batch) {
                 for (var i = 0; i < task.length; i++)
-                    task[i].setAssignee(item);
+                    if (task[i].editable)
+                        task[i].setAssignee(item);
+            }
             else
                 task.setAssignee(item);
             $assignee_input.blur();
@@ -94,9 +96,11 @@ UI_List_Common.prototype.bind_detail_team = function ($el_detail, task) {
             debuger.debug('updater-projects-val', val);
             var item = getItem(val);
             debuger.debug('updater-projects-item', item);
-            if (batch)
+            if (batch) {
                 for (var i = 0; i < task.length; i++)
-                    task[i].addProject(item);
+                    if (task[i].editable)
+                        task[i].addProject(item);
+            }
             else
                 task.addProject(item);
             $projects_input.blur();
