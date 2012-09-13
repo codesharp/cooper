@@ -195,7 +195,7 @@ UI_List_Common.prototype._bind = function () {
     Task.prototype.bind_detail = function () { base.bind_detail.apply(base, arguments); };//延续this
 }
 //详情区域绑定，能同时处理批量详情
-//TODO:将更多的任务详情渲染放在此进行
+//TODO:将更多的任务详情渲染放在此进行以使逻辑清晰
 UI_List_Common.prototype.bind_detail = function ($el_detail, task) {
     //此函数的this要注意处理
     var base = this;
@@ -243,6 +243,7 @@ UI_List_Common.prototype.bind_detail = function ($el_detail, task) {
             debuger.debug('add-tags-val', val);
             if (batch) {
                 for (var i = 0; i < task.length; i++)
+                    //TODO:可重构至detail_array_control_bind进行统一拦截
                     if (task[i].editable)
                         task[i].addTag(val);
             }
@@ -250,7 +251,7 @@ UI_List_Common.prototype.bind_detail = function ($el_detail, task) {
                 task.addTag(val);
             //同时添加进全局
             base.addTag(val);
-            $tags_input.blur();
+            //$tags_input.blur();
             return val;
         }
     );
@@ -288,7 +289,8 @@ UI_List_Common.prototype.detail_array_control_bind = function (task,
                 //支持批量设置
                 if (batch) {
                     for (var i = 0; i < task.length; i++)
-                        task[i][fn_remove](val);
+                        if (task[i].editable)
+                            task[i][fn_remove](val);
                     //重新渲染$text
                     that.renderBatchDetail(task);
                 }
@@ -297,19 +299,33 @@ UI_List_Common.prototype.detail_array_control_bind = function (task,
             }
         });
     }
-    //搜索
+    //自动完成、搜索
     var option = {
         source: source,
         matcher: matcher,
-        sorter: sorter,
-        updater: updater
+        sorter: sorter
     };
     if (batch)
         option.updater = function () {
             var val = updater.apply(this, arguments);
             //对于批量编辑变更时，重新render
             that.renderBatchDetail(task);
-            return val;
+            if (single) {
+                $input.blur();
+                return val;
+            }
+            $btn.hide();
+            $input.show().focus();
+            return '';//返回空则清空$input
+        }
+    else
+        option.updater = function () {
+            var val = updater.apply(this, arguments);
+            if (single) {
+                $input.blur();
+                return val;
+            }
+            return '';//返回空则清空$input
         }
     if (highlighter)
         option.highlighter = highlighter;

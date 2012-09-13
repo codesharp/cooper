@@ -66,7 +66,6 @@ UI_List_Common.prototype.bind_detail_team = function ($el_detail, task) {
             }
             else
                 task.setAssignee(item);
-            $assignee_input.blur();
             return item['name'];
         },
         highlighter,
@@ -103,7 +102,6 @@ UI_List_Common.prototype.bind_detail_team = function ($el_detail, task) {
             }
             else
                 task.addProject(item);
-            $projects_input.blur();
             return item['name'];
         },
         highlighter

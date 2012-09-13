@@ -118,6 +118,7 @@ UI_List_Common.prototype.renderBatchDetail = function (tasks) {
     //批量团队属性编辑状态
     base.$batchDetail.find('#assignee_btn')[editable ? 'show' : 'hide']();
     base.$batchDetail.find('#projects_btn')[editable ? 'show' : 'hide']();
+    base.$batchDetail.find('.flag_remove')[editable ? 'show' : 'hide']();
 
     //datepicker重复初始化问题 应先append再初始化
     if (editable)
