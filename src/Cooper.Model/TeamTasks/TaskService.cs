@@ -77,6 +77,11 @@ namespace Cooper.Model.Teams
         /// <param name="member"></param>
         /// <returns></returns>
         IEnumerable<Task> GetIncompletedTasksByMember(Member member);
+        /// <summary>获取指定团队内已废弃的任务
+        /// </summary>
+        /// <param name="team"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetTrashedTasks(Team team);
     }
     /// <summary>团队任务领域服务
     /// </summary>
@@ -113,13 +118,14 @@ namespace Cooper.Model.Teams
         [Transaction(TransactionMode.Requires)]
         void ITaskService.Delete(Task task)
         {
-            _repository.Remove(task);
+            task.MarkAsTrashed();
+            _repository.Update(task);
             if (this._log.IsInfoEnabled)
-                this._log.InfoFormat("删除团队任务#{0}", task.ID);
+                this._log.InfoFormat("废弃团队任务#{0}", task.ID);
         }
         Task ITaskService.GetTask(long id)
         {
-            return _repository.FindBy(id);
+            return _repository.FindNotTrashedTaskBy(id);
         }
         IEnumerable<Task> ITaskService.GetTasksByAccount(Team team, Account account)
         {
@@ -160,6 +166,10 @@ namespace Cooper.Model.Teams
             var team = _teamRepository.FindBy(member.TeamId);
             Assert.IsNotNull(team);
             return _repository.FindBy(team, member, false);
+        }
+        IEnumerable<Task> ITaskService.GetTrashedTasks(Team team)
+        {
+            return _repository.FindTrashedTasksBy(team);
         }
         #endregion
     }

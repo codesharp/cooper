@@ -325,6 +325,47 @@ namespace Cooper.Model.Test
             Assert.IsFalse(!tasks.All(x => x.Tags.Contains("001_tag_001", StringComparer.OrdinalIgnoreCase)));
         }
 
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void TrashTaskTest()
+        {
+            var account = this.CreateAccount();
+            var task = new PersonalTask(account);
+            this._personalTaskService.Create(task);
+
+            var taskId = task.ID;
+
+            this.Evict(task);
+
+            task = this._personalTaskService.GetTask(task.ID);
+
+            this._personalTaskService.Delete(task);
+
+            this.Evict(task);
+
+            task = this._personalTaskService.GetTask(task.ID);
+            Assert.IsNull(task);
+
+            var tasks = this._personalTaskService.GetTasks(account);
+            Assert.AreEqual(0, tasks.Count());
+
+            tasks = this._personalTaskService.GetTrashedTasks(account);
+            Assert.AreEqual(1, tasks.Count());
+            Assert.AreEqual(taskId, tasks.First().ID);
+
+            task = tasks.First();
+            task.MarkAsUnTrashed();
+            this._personalTaskService.Update(task);
+
+            this.Evict(task);
+
+            task = this._personalTaskService.GetTask(task.ID);
+            Assert.IsNotNull(task);
+
+            tasks = this._personalTaskService.GetTrashedTasks(account);
+            Assert.AreEqual(0, tasks.Count());
+        }
+
         private void Dump(params PersonalTask[] tasks)
         {
             if (tasks == null) return;

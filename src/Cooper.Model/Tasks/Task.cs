@@ -15,22 +15,22 @@ namespace Cooper.Model.Tasks
 
         /// <summary>获取标题/主题
         /// </summary>
-        public virtual string Subject { get; private set; }
+        public string Subject { get; private set; }
         /// <summary>获取内容/描述
         /// </summary>
-        public virtual string Body { get; private set; }
+        public string Body { get; private set; }
         /// <summary>获取基本优先级
         /// </summary>
-        public virtual Priority Priority { get; private set; }
+        public Priority Priority { get; private set; }
         /// <summary>获取截止时间
         /// </summary>
-        public virtual DateTime? DueTime { get; private set; }
+        public DateTime? DueTime { get; private set; }
         /// <summary>获取是否完成
         /// </summary>
-        public virtual bool IsCompleted { get; private set; }
+        public bool IsCompleted { get; private set; }
         /// <summary>Tags
         /// </summary>
-        public virtual IEnumerable<string> Tags
+        public IEnumerable<string> Tags
         {
             get
             {
@@ -41,10 +41,13 @@ namespace Cooper.Model.Tasks
         }
         /// <summary>获取创建时间
         /// </summary>
-        public virtual DateTime CreateTime { get; private set; }
+        public DateTime CreateTime { get; private set; }
         /// <summary>获取最后更新时间
         /// </summary>
-        public virtual DateTime LastUpdateTime { get; private set; }
+        public DateTime LastUpdateTime { get; private set; }
+        /// <summary>是否已废弃
+        /// </summary>
+        public bool IsTrashed { get; private set; }
 
         protected Task() { this.CreateTime = this.LastUpdateTime = DateTime.Now; }
 
@@ -52,7 +55,7 @@ namespace Cooper.Model.Tasks
 
         /// <summary>标记为完成
         /// </summary>
-        public virtual void MarkAsCompleted()
+        public void MarkAsCompleted()
         {
             if (this.IsCompleted) return;
             this.IsCompleted = true;
@@ -60,7 +63,7 @@ namespace Cooper.Model.Tasks
         }
         /// <summary>标记为未完成
         /// </summary>
-        public virtual void MarkAsInCompleted()
+        public void MarkAsInCompleted()
         {
             if (!this.IsCompleted) return;
             this.IsCompleted = false;
@@ -70,7 +73,7 @@ namespace Cooper.Model.Tasks
         /// <remarks>长度应小于500</remarks>
         /// </summary>
         /// <param name="subject"></param>
-        public virtual void SetSubject(string subject)
+        public void SetSubject(string subject)
         {
             if (subject != null)
                 Assert.LessOrEqual(subject.Length, 255);
@@ -82,7 +85,7 @@ namespace Cooper.Model.Tasks
         /// <remarks>长度应小于5000</remarks>
         /// </summary>
         /// <param name="body"></param>
-        public virtual void SetBody(string body)
+        public void SetBody(string body)
         {
             if (body != null)
                 Assert.LessOrEqual(body.Length, 1000);
@@ -93,7 +96,7 @@ namespace Cooper.Model.Tasks
         /// <summary>设置优先级
         /// </summary>
         /// <param name="priority"></param>
-        public virtual void SetPriority(Priority priority)
+        public void SetPriority(Priority priority)
         {
             if (this.Priority == priority) return;
             this.Priority = priority;
@@ -102,7 +105,7 @@ namespace Cooper.Model.Tasks
         /// <summary>设置截止日期
         /// </summary>
         /// <param name="dueTime"></param>
-        public virtual void SetDueTime(DateTime? dueTime)
+        public void SetDueTime(DateTime? dueTime)
         {
             this.DueTime = dueTime;
             this.MakeChange();
@@ -110,7 +113,7 @@ namespace Cooper.Model.Tasks
         /// <summary>新增一个Tag
         /// </summary>
         /// <param name="tag"></param>
-        public virtual void AddTag(string tag)
+        public void AddTag(string tag)
         {
             Assert.IsNotNullOrWhiteSpace(tag);
             Assert.LessOrEqual(tag.Length, 50);
@@ -122,13 +125,29 @@ namespace Cooper.Model.Tasks
         /// <summary>移除一个Tag
         /// </summary>
         /// <param name="tag"></param>
-        public virtual void RemoveTag(string tag)
+        public void RemoveTag(string tag)
         {
             Assert.IsNotNullOrWhiteSpace(tag);
             Assert.LessOrEqual(tag.Length, 50);
             if (this._tagList == null)
                 this._tagList = new StringList();
             this._tagList.Remove(tag);
+            this.MakeChange();
+        }
+        /// <summary>标记为已废弃
+        /// </summary>
+        public void MarkAsTrashed()
+        {
+            if (this.IsTrashed) return;
+            this.IsTrashed = true;
+            this.MakeChange();
+        }
+        /// <summary>标记为未废弃
+        /// </summary>
+        public void MarkAsUnTrashed()
+        {
+            if (!this.IsTrashed) return;
+            this.IsTrashed = false;
             this.MakeChange();
         }
 

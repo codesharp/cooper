@@ -512,5 +512,49 @@ namespace Cooper.Model.Test
             Assert.AreEqual(0, tasks.Count());
             Assert.IsFalse(!tasks.All(x => x.Tags.Contains("001_tag_001", StringComparer.OrdinalIgnoreCase)));
         }
+
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void TrashTaskTest()
+        {
+            var account = this.CreateAccount();
+            var team = CreateSampleTeam();
+            var creatorMember = AddSampleMemberToTeam(account, team);
+            var task = new Task(creatorMember, team);
+
+            this._teamTaskService.Create(task);
+
+            var taskId = task.ID;
+
+            this.Evict(task);
+
+            task = this._teamTaskService.GetTask(task.ID);
+
+            this._teamTaskService.Delete(task);
+
+            this.Evict(task);
+
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNull(task);
+
+            var tasks = this._teamTaskService.GetTasksByAccount(team, account);
+            Assert.AreEqual(0, tasks.Count());
+
+            tasks = this._teamTaskService.GetTrashedTasks(team);
+            Assert.AreEqual(1, tasks.Count());
+            Assert.AreEqual(taskId, tasks.First().ID);
+
+            task = tasks.First();
+            task.MarkAsUnTrashed();
+            this._teamTaskService.Update(task);
+
+            this.Evict(task);
+
+            task = this._teamTaskService.GetTask(task.ID);
+            Assert.IsNotNull(task);
+
+            tasks = this._teamTaskService.GetTrashedTasks(team);
+            Assert.AreEqual(0, tasks.Count());
+        }
     }
 }

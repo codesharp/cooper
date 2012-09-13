@@ -11,11 +11,17 @@ namespace Cooper.Repositories
 {
     public class TeamTaskRepository : NHibernateRepositoryBase<long, Task>, ITaskRepository
     {
+        public Task FindNotTrashedTaskBy(long id)
+        {
+            var task = this.FindBy(id);
+            return task == null ? null : task.IsTrashed ? null : task;
+        }
         public IEnumerable<Task> FindBy(Team team)
         {
             return this.GetSession()
                 .CreateCriteria<Task>()
                 .Add(Expression.Eq("TeamId", team.ID))
+                .Add(Expression.Eq("IsTrashed", false))
                 .List<Task>();
         }
         public IEnumerable<Task> FindByTag(Team team, string tag)
@@ -24,6 +30,7 @@ namespace Cooper.Repositories
                 .CreateCriteria<Task>()
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere))
+                .Add(Expression.Eq("IsTrashed", false))
                 .List<Task>();
         }
         public IEnumerable<Task> FindByTag(Team team, bool isCompleted, string tag)
@@ -33,6 +40,7 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("IsCompleted", isCompleted))
                 .Add(Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere))
+                .Add(Expression.Eq("IsTrashed", false))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Team team, Account account)
@@ -44,6 +52,7 @@ namespace Cooper.Repositories
                     .CreateCriteria<Task>()
                     .Add(Expression.Eq("TeamId", team.ID))
                     .Add(criteria)
+                    .Add(Expression.Eq("IsTrashed", false))
                     .List<Task>();
             }
             return new List<Task>();
@@ -58,6 +67,7 @@ namespace Cooper.Repositories
                     .Add(Expression.Eq("TeamId", team.ID))
                     .Add(Expression.Eq("IsCompleted", isCompleted))
                     .Add(criteria)
+                    .Add(Expression.Eq("IsTrashed", false))
                     .List<Task>();
             }
             return new List<Task>();
@@ -69,6 +79,7 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("TeamId", team.ID))
                 .CreateAlias("ProjectIds", "projectIds")
                 .Add(Expression.Eq("projectIds.ID", project.ID))
+                .Add(Expression.Eq("IsTrashed", false))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Team team, Project project, bool isCompleted)
@@ -79,6 +90,7 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("IsCompleted", isCompleted))
                 .Add(Expression.Eq("projectIds.ID", project.ID))
+                .Add(Expression.Eq("IsTrashed", false))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Team team, Member member)
@@ -87,6 +99,7 @@ namespace Cooper.Repositories
                 .CreateCriteria<Task>()
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("AssigneeId", member.ID))
+                .Add(Expression.Eq("IsTrashed", false))
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Team team, Member member, bool isCompleted)
@@ -96,6 +109,15 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("AssigneeId", member.ID))
                 .Add(Expression.Eq("IsCompleted", isCompleted))
+                .Add(Expression.Eq("IsTrashed", false))
+                .List<Task>();
+        }
+        public IEnumerable<Task> FindTrashedTasksBy(Team team)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .Add(Expression.Eq("TeamId", team.ID))
+                .Add(Expression.Eq("IsTrashed", true))
                 .List<Task>();
         }
 

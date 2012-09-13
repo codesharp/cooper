@@ -12,36 +12,62 @@ namespace Cooper.Repositories
     {
         #region IPersonalTaskRepository Members
 
+        public PersonalTask FindNotTrashedTaskBy(long id)
+        {
+            var task = this.FindBy(id);
+            return task == null ? null : task.IsTrashed ? null : task;
+        }
         public IEnumerable<PersonalTask> FindBy(Account account)
         {
-            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID));
+            return this.FindAll(
+                Expression.Eq("CreatorAccountId", account.ID),
+                Expression.Eq("IsTrashed", false));
         }
         public IEnumerable<PersonalTask> FindByTag(Account account, string tag)
         {
-            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere));
+            return this.FindAll(
+                Expression.Eq("CreatorAccountId", account.ID),
+                Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere),
+                Expression.Eq("IsTrashed", false));
         }
         public IEnumerable<PersonalTask> FindByTag(Account account, bool isCompleted, string tag)
         {
-            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Eq("IsCompleted", isCompleted), Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere));
+            return this.FindAll(
+                Expression.Eq("CreatorAccountId", account.ID),
+                Expression.Eq("IsCompleted", isCompleted),
+                Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere),
+                Expression.Eq("IsTrashed", false));
         }
         public IEnumerable<PersonalTask> FindBy(Account account, TaskFolder folder)
         {
             return this.FindAll(Expression.Eq("CreatorAccountId", account.ID)
                 , folder == null
                 ? Expression.IsNull("TaskFolderId")
-                : Expression.Eq("TaskFolderId", folder.ID));
+                : Expression.Eq("TaskFolderId", folder.ID),
+                Expression.Eq("IsTrashed", false));
         }
         public IEnumerable<PersonalTask> FindBy(Account account, bool isCompleted)
         {
-            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID), Expression.Eq("IsCompleted", isCompleted));
+            return this.FindAll(
+                Expression.Eq("CreatorAccountId", account.ID),
+                Expression.Eq("IsCompleted", isCompleted),
+                Expression.Eq("IsTrashed", false));
         }
         public IEnumerable<PersonalTask> FindBy(Account account, bool isCompleted, TaskFolder folder)
         {
-            return this.FindAll(Expression.Eq("CreatorAccountId", account.ID)
-                , Expression.Eq("IsCompleted", isCompleted)
+            return this.FindAll(
+                Expression.Eq("CreatorAccountId", account.ID),
+                Expression.Eq("IsCompleted", isCompleted)
                 , folder == null
                 ? Expression.IsNull("TaskFolderId")
-                : Expression.Eq("TaskFolderId", folder.ID));
+                : Expression.Eq("TaskFolderId", folder.ID),
+                Expression.Eq("IsTrashed", false));
+        }
+        public IEnumerable<PersonalTask> FindTrashedTasksBy(Account account)
+        {
+            return this.FindAll(
+                Expression.Eq("CreatorAccountId", account.ID),
+                Expression.Eq("IsTrashed", true));
         }
 
         #endregion

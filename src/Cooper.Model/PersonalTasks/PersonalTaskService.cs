@@ -1,6 +1,7 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System.Collections.Generic;
+using System.Linq;
 using Castle.Services.Transaction;
 using CodeSharp.Core;
 using CodeSharp.Core.RepositoryFramework;
@@ -74,6 +75,11 @@ namespace Cooper.Model.Tasks
         /// <param name="folder"></param>
         /// <returns></returns>
         IEnumerable<PersonalTask> GetIncompletedTasks(Account account, TaskFolder folder);
+        /// <summary>获取指定账号的所有已废弃任务
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        IEnumerable<PersonalTask> GetTrashedTasks(Account account);
     }
     /// <summary>个人任务服务
     /// </summary>
@@ -107,13 +113,14 @@ namespace Cooper.Model.Tasks
         [Transaction(TransactionMode.Requires)]
         void IPersonalTaskService.Delete(PersonalTask task)
         {
-            _repository.Remove(task);
+            task.MarkAsTrashed();
+            _repository.Update(task);
             if (this._log.IsInfoEnabled)
-                this._log.InfoFormat("删除任务#{0}", task.ID);
+                this._log.InfoFormat("废弃任务#{0}", task.ID);
         }
         PersonalTask IPersonalTaskService.GetTask(long id)
         {
-            return _repository.FindBy(id);
+            return _repository.FindNotTrashedTaskBy(id);
         }
         IEnumerable<PersonalTask> IPersonalTaskService.GetTasks(Account account)
         {
@@ -146,6 +153,10 @@ namespace Cooper.Model.Tasks
         IEnumerable<PersonalTask> IPersonalTaskService.GetIncompletedTasks(Account account, TaskFolder folder)
         {
             return _repository.FindBy(account, false, folder);
+        }
+        IEnumerable<PersonalTask> IPersonalTaskService.GetTrashedTasks(Account account)
+        {
+            return _repository.FindTrashedTasksBy(account);
         }
         #endregion
     }

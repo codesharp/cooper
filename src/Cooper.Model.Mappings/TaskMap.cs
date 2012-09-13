@@ -24,6 +24,7 @@ namespace Cooper.Model.Mappings
                 });
             Map(m => m.CreateTime);
             Map(m => m.LastUpdateTime);
+            Map(m => m.IsTrashed);
 
             DiscriminateSubClassesOnColumn("TaskType").Length(255);
         }
