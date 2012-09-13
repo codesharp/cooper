@@ -92,6 +92,16 @@ debuger.isWarnEnable = debuger.enable && true;
 debuger.isErrorEnable = debuger.enable && true;
       ]]>
     </echo>
+    <!--templateflag-->
+    <checksum algorithm="MD5" fileext="MD5">
+      <fileset>
+        <include name="${build.absolutepath}\cooper_web\webui\task\list.htm"/>
+      </fileset>
+    </checksum>
+    <loadfile file="${build.absolutepath}\cooper_web\webui\task\list.htm.md5" property="md5" />
+    <echo file="${build.absolutepath}\cooper_web\webui\modules\cooper.js" append="true">
+template_flag_tasklist='${md5}';
+    </echo>
     <!--compress-->
     <!--third-->
     <javaScriptCompressor outputFile="${build.absolutepath}\cooper_web\scripts\third.js"
@@ -166,6 +176,7 @@ debuger.isErrorEnable = debuger.enable && true;
       <sourceFiles>
         <include name="${build.absolutepath}\cooper_web\scripts\task.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_common.js" />
+        <include name="${build.absolutepath}\cooper_web\scripts\task_detail.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_row.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_bind.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_bind_shortcuts.js" />

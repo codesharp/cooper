@@ -8,6 +8,7 @@
 "use strict"
 
 var cooper = angular.module('cooper', []);
+var template_flag_tasklist = '';
 
 (function () {
     if (!window.url_root)
@@ -64,7 +65,7 @@ var cooper = angular.module('cooper', []);
         '$routeProvider',
         '$locationProvider',
         function ($routeProvider, $locationProvider) {
-            var url = url_root_webui + '/task/list.htm';
+            var url = url_root_webui + '/task/list.htm?_=' + template_flag_tasklist;
             $routeProvider.
             when('/t', {
                 templateUrl: url,
@@ -93,3 +94,4 @@ var cooper = angular.module('cooper', []);
         }
     ]);
 })();
+//在此覆盖template_flag_tasklist
