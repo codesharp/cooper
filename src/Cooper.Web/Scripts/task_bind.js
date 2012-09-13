@@ -316,7 +316,6 @@ UI_List_Common.prototype.detail_array_control_bind = function (task,
             //对于批量编辑变更时，重新render
             that.renderBatchDetail(task);
             if (single) {
-                alert();
                 $input.blur();
                 return val;
             }
