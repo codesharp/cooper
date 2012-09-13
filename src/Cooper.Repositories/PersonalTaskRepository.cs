@@ -1,7 +1,6 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System.Collections.Generic;
-using System.Linq;
 using Cooper.Model;
 using Cooper.Model.Accounts;
 using Cooper.Model.Tasks;
@@ -15,7 +14,7 @@ namespace Cooper.Repositories
 
         public override IEnumerable<PersonalTask> FindAll()
         {
-            return base.FindAll(Expression.Eq("IsTrashed", false));
+            return base.FindAll(IsNotTrashedCriteria);
         }
         public override PersonalTask FindBy(long key)
         {
@@ -26,20 +25,20 @@ namespace Cooper.Repositories
         {
             return base.FindAll(
                 Expression.In("ID", keys),
-                Expression.Eq("IsTrashed", false));
+                IsNotTrashedCriteria);
         }
         public IEnumerable<PersonalTask> FindBy(Account account)
         {
             return this.FindAll(
                 Expression.Eq("CreatorAccountId", account.ID),
-                Expression.Eq("IsTrashed", false));
+                IsNotTrashedCriteria);
         }
         public IEnumerable<PersonalTask> FindByTag(Account account, string tag)
         {
             return this.FindAll(
                 Expression.Eq("CreatorAccountId", account.ID),
                 Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere),
-                Expression.Eq("IsTrashed", false));
+                IsNotTrashedCriteria);
         }
         public IEnumerable<PersonalTask> FindByTag(Account account, bool isCompleted, string tag)
         {
@@ -47,7 +46,7 @@ namespace Cooper.Repositories
                 Expression.Eq("CreatorAccountId", account.ID),
                 Expression.Eq("IsCompleted", isCompleted),
                 Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere),
-                Expression.Eq("IsTrashed", false));
+                IsNotTrashedCriteria);
         }
         public IEnumerable<PersonalTask> FindBy(Account account, TaskFolder folder)
         {
@@ -55,14 +54,14 @@ namespace Cooper.Repositories
                 , folder == null
                 ? Expression.IsNull("TaskFolderId")
                 : Expression.Eq("TaskFolderId", folder.ID),
-                Expression.Eq("IsTrashed", false));
+                IsNotTrashedCriteria);
         }
         public IEnumerable<PersonalTask> FindBy(Account account, bool isCompleted)
         {
             return this.FindAll(
                 Expression.Eq("CreatorAccountId", account.ID),
                 Expression.Eq("IsCompleted", isCompleted),
-                Expression.Eq("IsTrashed", false));
+                IsNotTrashedCriteria);
         }
         public IEnumerable<PersonalTask> FindBy(Account account, bool isCompleted, TaskFolder folder)
         {
@@ -72,7 +71,7 @@ namespace Cooper.Repositories
                 , folder == null
                 ? Expression.IsNull("TaskFolderId")
                 : Expression.Eq("TaskFolderId", folder.ID),
-                Expression.Eq("IsTrashed", false));
+                IsNotTrashedCriteria);
         }
         public IEnumerable<PersonalTask> FindTrashedTasksBy(Account account)
         {
@@ -82,5 +81,13 @@ namespace Cooper.Repositories
         }
 
         #endregion
+
+        private ICriterion IsNotTrashedCriteria
+        {
+            get
+            {
+                return Expression.Or(Expression.Eq("IsTrashed", false), Expression.IsNull("IsTrashed"));
+            }
+        }
     }
 }
