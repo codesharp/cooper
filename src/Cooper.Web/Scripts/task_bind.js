@@ -125,6 +125,11 @@ UI_List_Common.prototype._bind = function () {
         else if (isBody)
             task.setBody($el.val());
     });
+    this.$wrapper_detail.keydown(function (e) {
+        //防止ie回车键下提交表单
+        if (e.keyCode == 13)
+            return false;
+    });
     //priority
     this.$wrapper_detail.click(function (e) {
         var $el = $(e.target);
@@ -311,9 +316,11 @@ UI_List_Common.prototype.detail_array_control_bind = function (task,
             //对于批量编辑变更时，重新render
             that.renderBatchDetail(task);
             if (single) {
+                alert();
                 $input.blur();
                 return val;
             }
+            //TODO:ie下无效，批量无法连贯设置
             $btn.hide();
             $input.show().focus();
             return '';//返回空则清空$input
