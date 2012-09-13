@@ -35,8 +35,12 @@ Task.prototype = {
         this.$el_row = this._generateItem(this['data']);
         this.$el_detail = null;
 
-        if (debuger.isDebugEnable)
-            this._getRowEl('subject').attr('placeholder', '#' + this.id());
+        try{
+            if (debuger.isDebugEnable)
+                this._getRowEl('subject').attr('placeholder', '#' + this.id());
+        } catch (e) {
+            debuger.error('placeholder not support', e);
+        }
     },
     _mapMember: function (n) {
         return {
@@ -202,8 +206,14 @@ Task.prototype = {
         this['data']['id'] = i;
         this.$el_row.attr('id', i);
         this.setDetail_Id(i);
-        if (debuger.isDebugEnable)
-            this._getRowEl('subject').attr('placeholder', '#' + this.id());
+
+        try{
+            if (debuger.isDebugEnable)
+                //ie7以及以下没有placeholder属性
+                this._getRowEl('subject').attr('placeholder', '#' + this.id());
+        } catch (e) {
+            debuger.error('placeholder not support', e);
+        }
     },
     setIndex: function (i) { this._getRowEl('index').html(i); },
     setSubject: function (s, f) {

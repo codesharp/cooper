@@ -64,6 +64,19 @@ sh build.sh test_model Debug
 sh build.sh web [Debug/Test/Release]
 ```
 
+## Run
+
+.NET
+```shell
+run.ps1
+run_local.ps1 #for dev
+```
+
+MONO
+```shell
+sh run.sh
+sh run_local.sh #for dev
+```
 
 ## Style Reference
 
@@ -76,6 +89,18 @@ sh build.sh web [Debug/Test/Release]
 - 蓝色文字 = #1c5daf 加粗
 - 图标风格 = 白色 + 投影1
 - ios topbar 中间白色字体间距放小 
+
+## Browser Support
+
+- Good
+	- Chrome
+	- Safari
+	- FireFox
+	- IE9+
+- Low
+	- IE7/8
+- Not
+	- IE6
 
 ## License
 
