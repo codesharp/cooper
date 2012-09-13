@@ -9,11 +9,19 @@ namespace Cooper.Model.Accounts
     public class Profile : EntityBase<int>
     {
         private Account _account { get; set; }
-        private ExtensionDictionary _settings = new ExtensionDictionary();
+        private ExtensionDictionary _settings;
 
-        /// <summary>Profile Settings字典
+        /// <summary>自定义扩展信息字典
         /// </summary>
-        public ExtensionDictionary Settings { get { return _settings; } }
+        public ExtensionDictionary Settings
+        {
+            get
+            {
+                if (this._settings == null)
+                    this._settings = new ExtensionDictionary();
+                return _settings;
+            }
+        }
 
         protected Profile() { }
         internal Profile(Account account)

@@ -59,7 +59,11 @@ namespace Cooper.Model.Test
             var a = new Account(this.RandomString());
             //未初始化profile
             this._accountService.Create(a);
+
+            this.Evict(a);
+
             //此时才初始化profile
+            a = this._accountService.GetAccount(a.ID);
             a.SetProfile("test", "test");
             this._accountService.Update(a);
 

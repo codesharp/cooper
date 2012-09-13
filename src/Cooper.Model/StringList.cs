@@ -18,6 +18,11 @@ namespace Cooper.Model
         private IList<string> _items;
         public static readonly string Seperator = "∮";
 
+        public StringList()
+        {
+            this._serializedValue = string.Empty;
+        }
+
         /// <summary>添加一个字符串item
         /// </summary>
         /// <param name="item"></param>

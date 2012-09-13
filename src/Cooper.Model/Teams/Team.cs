@@ -15,7 +15,7 @@ namespace Cooper.Model.Teams
     {
         private IList<Member> _members = new List<Member>();
         private IList<Project> _projects = new List<Project>();
-        private ExtensionDictionary _settings = new ExtensionDictionary();
+        private ExtensionDictionary _settings;
 
         /// <summary>获取团队名称
         /// </summary>
@@ -32,7 +32,15 @@ namespace Cooper.Model.Teams
 
         /// <summary>自定义扩展信息字典
         /// </summary>
-        public ExtensionDictionary Settings { get { return _settings; } }
+        public ExtensionDictionary Settings
+        {
+            get
+            {
+                if (this._settings == null)
+                    this._settings = new ExtensionDictionary();
+                return _settings;
+            }
+        }
 
         protected Team() { this.CreateTime = DateTime.Now; }
         public Team(string name)
