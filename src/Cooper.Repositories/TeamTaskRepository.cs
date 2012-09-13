@@ -11,10 +11,20 @@ namespace Cooper.Repositories
 {
     public class TeamTaskRepository : NHibernateRepositoryBase<long, Task>, ITaskRepository
     {
-        public Task FindNotTrashedTaskBy(long id)
+        public override IEnumerable<Task> FindAll()
         {
-            var task = this.FindBy(id);
+            return base.FindAll(Expression.Eq("IsTrashed", false));
+        }
+        public override Task FindBy(long key)
+        {
+            var task = base.FindBy(key);
             return task == null ? null : task.IsTrashed ? null : task;
+        }
+        public override IEnumerable<Task> FindBy(params long[] keys)
+        {
+            return base.FindAll(
+                Expression.In("ID", keys),
+                Expression.Eq("IsTrashed", false));
         }
         public IEnumerable<Task> FindBy(Team team)
         {

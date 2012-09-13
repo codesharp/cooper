@@ -120,7 +120,7 @@ namespace Cooper.Model.Tasks
         }
         PersonalTask IPersonalTaskService.GetTask(long id)
         {
-            return _repository.FindNotTrashedTaskBy(id);
+            return _repository.FindBy(id);
         }
         IEnumerable<PersonalTask> IPersonalTaskService.GetTasks(Account account)
         {

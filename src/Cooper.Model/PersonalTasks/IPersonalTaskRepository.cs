@@ -13,7 +13,6 @@ namespace Cooper.Model.Tasks
     /// </summary>
     public interface IPersonalTaskRepository : IRepository<long, PersonalTask>
     {
-        PersonalTask FindNotTrashedTaskBy(long id);
         IEnumerable<PersonalTask> FindBy(Account account);
         IEnumerable<PersonalTask> FindByTag(Account account, string tag);
         IEnumerable<PersonalTask> FindByTag(Account account, bool isCompleted, string tag);

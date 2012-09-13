@@ -125,7 +125,7 @@ namespace Cooper.Model.Teams
         }
         Task ITaskService.GetTask(long id)
         {
-            return _repository.FindNotTrashedTaskBy(id);
+            return _repository.FindBy(id);
         }
         IEnumerable<Task> ITaskService.GetTasksByAccount(Team team, Account account)
         {

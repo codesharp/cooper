@@ -1,6 +1,7 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System.Collections.Generic;
+using System.Linq;
 using Cooper.Model;
 using Cooper.Model.Accounts;
 using Cooper.Model.Tasks;
@@ -12,10 +13,20 @@ namespace Cooper.Repositories
     {
         #region IPersonalTaskRepository Members
 
-        public PersonalTask FindNotTrashedTaskBy(long id)
+        public override IEnumerable<PersonalTask> FindAll()
         {
-            var task = this.FindBy(id);
+            return base.FindAll(Expression.Eq("IsTrashed", false));
+        }
+        public override PersonalTask FindBy(long key)
+        {
+            var task = base.FindBy(key);
             return task == null ? null : task.IsTrashed ? null : task;
+        }
+        public override IEnumerable<PersonalTask> FindBy(params long[] keys)
+        {
+            return base.FindAll(
+                Expression.In("ID", keys),
+                Expression.Eq("IsTrashed", false));
         }
         public IEnumerable<PersonalTask> FindBy(Account account)
         {
