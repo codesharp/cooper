@@ -15,7 +15,7 @@ namespace Cooper.Model.Mappings
             Map(m => m.Name).Length(255);
             Map(m => m.IsPublic);
             Map(m => m.TeamId);
-            Component(Reveal.Member<Project, ExtensionDictionary>("_extensionDictionary"),
+            Component(m => m.Settings,
                 component =>
                 {
                     component.Map(Reveal.Member<ExtensionDictionary>("_extensions")).Column("Extensions").Length(10000);

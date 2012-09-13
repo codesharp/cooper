@@ -13,7 +13,7 @@ namespace Cooper.Model.Mappings
             Table("Cooper_Team");
             Id(m => m.ID);
             Map(m => m.Name).Length(255);
-            Component(Reveal.Member<Team, ExtensionDictionary>("_extensionDictionary"),
+            Component(m => m.Settings,
                 component =>
                 {
                     component.Map(Reveal.Member<ExtensionDictionary>("_extensions")).Column("Extensions").Length(10000);

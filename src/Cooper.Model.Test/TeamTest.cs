@@ -73,13 +73,13 @@ namespace Cooper.Model.Test
         public void TeamExtensionsTest()
         {
             var team = CreateSampleTeam();
-            team["key"] = "abc";
+            team.Settings["key"] = "abc";
             this._teamService.Update(team);
 
             this.Evict(team);
 
             team = _teamService.GetTeam(team.ID);
-            Assert.AreEqual("abc", team["key"]);
+            Assert.AreEqual("abc", team.Settings["key"]);
         }
 
         [Test]
@@ -368,7 +368,7 @@ namespace Cooper.Model.Test
             var team = CreateSampleTeam();
 
             var project = AddSampleProjectToTeam(team);
-            project["key"] = "abc";
+            project.Settings["key"] = "abc";
             this._teamService.Update(team);
 
             this.Evict(project);
@@ -376,7 +376,7 @@ namespace Cooper.Model.Test
 
             team = _teamService.GetTeam(team.ID);
             project = team.GetProject(project.ID);
-            Assert.AreEqual("abc", project["key"]);
+            Assert.AreEqual("abc", project.Settings["key"]);
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]

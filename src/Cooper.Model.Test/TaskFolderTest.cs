@@ -54,13 +54,13 @@ namespace Cooper.Model.Test
         {
             var a = this.CreateAccount();
             var folder = new PersonalTaskFolder("default", a);
-            folder["key"] = "abc";
+            folder.Settings["key"] = "abc";
             this._taskFolderService.Create(folder);
 
             this.Evict(folder);
 
             folder = this._taskFolderService.GetTaskFolder(folder.ID) as PersonalTaskFolder;
-            Assert.AreEqual("abc", folder["key"]);
+            Assert.AreEqual("abc", folder.Settings["key"]);
         }
 
         [Test]

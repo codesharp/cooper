@@ -18,7 +18,7 @@ namespace Cooper.Model.Mappings
             Id(m => m.ID);
             Map(m => m.CreateTime);
             Map(m => m.Name).Length(50);
-            Component(Reveal.Member<TaskFolder, ExtensionDictionary>("_extensionDictionary"),
+            Component(m => m.Settings,
                 component =>
                 {
                     component.Map(Reveal.Member<ExtensionDictionary>("_extensions")).Column("Extensions").Length(10000);

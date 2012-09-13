@@ -263,12 +263,12 @@ namespace Cooper.Web.Controllers
                     if (project != null)
                     {
                         //存储至项目排序数据
-                        project[by] = o;
+                        project.Settings[by] = o;
                         this._teamService.Update(team);
                     }
                     else if (!string.IsNullOrWhiteSpace(tag))
                     {
-                        team[this.GetSortKey(by, tag)] = o;
+                        team.Settings[this.GetSortKey(by, tag)] = o;
                         this._teamService.Update(team);
                     }
                     #endregion
@@ -628,15 +628,15 @@ namespace Cooper.Web.Controllers
         }
         private Sort[] GetSorts(Teams.Project p, string by)
         {
-            return !string.IsNullOrWhiteSpace(p[by])
-                ? _serializer.JsonDeserialize<Sort[]>(p[by])
+            return !string.IsNullOrWhiteSpace(p.Settings[by])
+                ? _serializer.JsonDeserialize<Sort[]>(p.Settings[by])
                 : _emptySorts;
         }
         private Sort[] GetSorts(Teams.Team team, string tag, string by)
         {
             var key = this.GetSortKey(by, tag);
-            return !string.IsNullOrWhiteSpace(team[key])
-                ? _serializer.JsonDeserialize<Sort[]>(team[key])
+            return !string.IsNullOrWhiteSpace(team.Settings[key])
+                ? _serializer.JsonDeserialize<Sort[]>(team.Settings[key])
                 : _emptySorts;
         }
         private string GetSortKey(Teams.Team team, string by)
