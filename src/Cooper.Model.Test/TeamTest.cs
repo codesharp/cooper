@@ -73,6 +73,9 @@ namespace Cooper.Model.Test
         public void TeamExtensionsTest()
         {
             var team = CreateSampleTeam();
+            this.Evict(team);
+            team = _teamService.GetTeam(team.ID);
+
             team.Settings["key"] = "abc";
             this._teamService.Update(team);
 
@@ -366,8 +369,14 @@ namespace Cooper.Model.Test
         public void ProjectExtensionsTest()
         {
             var team = CreateSampleTeam();
-
             var project = AddSampleProjectToTeam(team);
+
+            this.Evict(project);
+            this.Evict(team);
+
+            team = _teamService.GetTeam(team.ID);
+            project = team.GetProject(project.ID);
+
             project.Settings["key"] = "abc";
             this._teamService.Update(team);
 

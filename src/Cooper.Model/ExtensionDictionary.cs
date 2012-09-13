@@ -14,6 +14,11 @@ namespace Cooper.Model
         private string _extensions { get; set; }
         private IDictionary<string, string> _dict;
 
+        public ExtensionDictionary()
+        {
+            this._extensions = string.Empty;
+        }
+
         /// <summary>根据键获取对应设置
         /// </summary>
         /// <param name="key"></param>
