@@ -49,9 +49,9 @@ namespace Cooper.Model
 
         private IDictionary<string, string> Parse()
         {
-            return string.IsNullOrWhiteSpace(this._extensions)
-                ? new Dictionary<string, string>()
-                : _serializer.JsonDeserialize<IDictionary<string, string>>(this._extensions);
+            return (string.IsNullOrWhiteSpace(this._extensions)
+                    ? new Dictionary<string, string>() : _serializer.JsonDeserialize<IDictionary<string, string>>(this._extensions)
+                   ) ?? new Dictionary<string, string>();
         }
     }
 }
