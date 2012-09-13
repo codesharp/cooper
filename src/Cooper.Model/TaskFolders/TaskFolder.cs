@@ -16,7 +16,7 @@ namespace Cooper.Model.Tasks
     /// </summary>
     public abstract class TaskFolder : EntityBase<int>, IAggregateRoot
     {
-        private ExtensionDictionary _settings = new ExtensionDictionary();
+        private ExtensionDictionary _settings;
 
         /// <summary>获取任务表名称
         /// </summary>

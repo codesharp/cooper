@@ -15,7 +15,7 @@ namespace Cooper.Model.Teams
     {
         private IList<Member> _members = new List<Member>();
         private IList<Project> _projects = new List<Project>();
-        private ExtensionDictionary _settings = new ExtensionDictionary();
+        private ExtensionDictionary _settings;
 
         /// <summary>获取团队名称
         /// </summary>

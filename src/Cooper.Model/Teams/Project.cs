@@ -13,7 +13,7 @@ namespace Cooper.Model.Teams
     /// </summary>
     public class Project : EntityBase<int>
     {
-        private ExtensionDictionary _settings = new ExtensionDictionary();
+        private ExtensionDictionary _settings;
 
         /// <summary>获取团队项目名称
         /// </summary>
