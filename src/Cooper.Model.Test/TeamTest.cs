@@ -533,5 +533,41 @@ namespace Cooper.Model.Test
             member = this._teamService.AddFullMember(RandomString(), email, team);
             Assert.IsTrue(member.ID > 0);
         }
+
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void GetTags()
+        {
+            var account = this.CreateAccount();
+            var team = CreateSampleTeam();
+            var creatorMember = AddSampleMemberToTeam(account, team);
+            var task1 = new Task(creatorMember, team);
+            task1.AddTag("程序设计");
+            task1.AddTag(".NET");
+            task1.AddTag("ASP.NET");
+            task1.AddTag("001_Tag_001");
+            task1.MarkAsCompleted();
+            this._teamTaskService.Create(task1);
+            var task2 = new Task(creatorMember, team);
+            task2.AddTag("Mono");
+            task2.AddTag(".net");
+            task2.AddTag("JAVA");
+            task2.AddTag("JAVA.NET");
+            task2.AddTag("001_tag_001");
+            this._teamTaskService.Create(task2);
+
+            this.Evict(task1);
+            this.Evict(task2);
+
+            var tags = this._teamService.GetTagsByTeam(team);
+            Assert.AreEqual(7, tags.Count());
+            Assert.IsTrue(tags.Any(x => x == "程序设计"));
+            Assert.IsTrue(tags.Any(x => x == ".NET"));
+            Assert.IsTrue(tags.Any(x => x == "ASP.NET"));
+            Assert.IsTrue(tags.Any(x => x == "001_Tag_001"));
+            Assert.IsTrue(tags.Any(x => x == "Mono"));
+            Assert.IsTrue(tags.Any(x => x == "JAVA"));
+            Assert.IsTrue(tags.Any(x => x == "JAVA.NET"));
+        }
     }
 }

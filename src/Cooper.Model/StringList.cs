@@ -37,7 +37,7 @@ namespace Cooper.Model
             foreach (var validItem in Deserialize(item))
             {
                 //总是先移除再新增，确保不会有重复，判断相等不区分大小写
-                this._items = this._items.Where(x => CompareStringIgnoreCaseAndWidth(x, validItem) != 0).ToList();
+                this._items = this._items.Where(x => StringHelper.CompareStringIgnoreCaseAndWidth(x, validItem) != 0).ToList();
                 this._items.Add(validItem);
             }
 
@@ -58,7 +58,7 @@ namespace Cooper.Model
             foreach (var validItem in Deserialize(item))
             {
                 //总是先移除再新增，确保不会有重复，判断相等不区分大小写
-                this._items = this._items.Where(x => CompareStringIgnoreCaseAndWidth(x, validItem) != 0).ToList();
+                this._items = this._items.Where(x => StringHelper.CompareStringIgnoreCaseAndWidth(x, validItem) != 0).ToList();
             }
 
             this._serializedValue = Serialize(this._items);
@@ -105,10 +105,6 @@ namespace Cooper.Model
                 return string.Format("{1}{0}{1}", value, Seperator);
             }
             return value;
-        }
-        private int CompareStringIgnoreCaseAndWidth(string x, string y)
-        {
-            return CultureInfo.InvariantCulture.CompareInfo.Compare(x, y, CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
         }
     }
 }

@@ -23,5 +23,6 @@ namespace Cooper.Model.Teams
         IEnumerable<Task> FindBy(Team team, Member member);
         IEnumerable<Task> FindBy(Team team, Member member, bool isCompleted);
         IEnumerable<Task> FindTrashedTasksBy(Team team);
+        IEnumerable<Task> FindNotEmptyTagTasks(Team team);
     }
 }

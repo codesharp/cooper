@@ -114,6 +114,11 @@ namespace Cooper.Model.Teams
         /// <param name="project"></param>
         /// <param name="team"></param>
         void RemoveProject(Project project, Team team);
+        /// <summary>获取团队内所有任务的所有不重复标签
+        /// </summary>
+        /// <param name="team"></param>
+        /// <returns></returns>
+        IEnumerable<string> GetTagsByTeam(Team team);
     }
     /// <summary>团队领域服务
     /// </summary>
@@ -289,6 +294,24 @@ namespace Cooper.Model.Teams
                 task.RemoveFromProject(project);
                 _taskRepository.Update(task);
             }
+        }
+        IEnumerable<string> ITeamService.GetTagsByTeam(Team team)
+        {
+            var tasks = _taskRepository.FindNotEmptyTagTasks(team);
+            var tags = new List<string>();
+
+            foreach (var task in tasks)
+            {
+                foreach (var tag in task.Tags)
+                {
+                    if (!tags.Any(x => StringHelper.CompareStringIgnoreCaseAndWidth(x, tag) == 0))
+                    {
+                        tags.Add(tag);
+                    }
+                }
+            }
+
+            return tags;
         }
         #endregion
 

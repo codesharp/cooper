@@ -64,6 +64,7 @@
     <Compile Include="Contacts\IContactRepository.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="StringHelper.cs" />
     <Compile Include="StringList.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Lock.cs" />

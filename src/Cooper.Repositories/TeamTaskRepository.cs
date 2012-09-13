@@ -130,6 +130,15 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("IsTrashed", true))
                 .List<Task>();
         }
+        public IEnumerable<Task> FindNotEmptyTagTasks(Team team)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .Add(Expression.Eq("TeamId", team.ID))
+                .Add(Expression.Not(Expression.Or(Expression.IsNull("_tagList._serializedValue"), Expression.Eq("_tagList._serializedValue", string.Empty))))
+                .Add(Expression.Eq("IsTrashed", false))
+                .List<Task>();
+        }
 
         private AbstractCriterion BuildCreatorAndAssigneeCriteria(Team team, Account account)
         {
