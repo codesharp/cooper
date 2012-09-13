@@ -139,10 +139,13 @@ Task.prototype = {
         $urls.find('ul').empty();
         var i = 0;
         this.get('body').replace(/[http|https|ftp]+:\/\/\S*/ig, function (m) {
+            var href = m.substring(0, 30) + '...';
             if (i++ == 0)
-                $urls.find('button:first a').attr('href', m).attr('title', m).html(m);
+                $urls.find('button:first')
+                    .unbind('click').click(function () { window.open(m); })
+                    .html('<i class="icon-file"></i> <a>' + href + '</a>');
             else
-                $urls.find('ul').append('<li><a target="_blank" href="' + m + '" title="' + m + '">' + m.substring(0, 30) + '...</a></li>');
+                $urls.find('ul').append('<li><a target="_blank" href="' + m + '" title="' + m + '">' + href + '</a></li>');
         });
         $urls.parents('tr')[i == 0 ? 'hide' : 'show']();
         $urls.find('button:eq(1)')[i == 1 ? 'hide' : 'show']();

@@ -127,7 +127,7 @@ UI_List_Common.prototype._bind = function () {
     });
     this.$wrapper_detail.keydown(function (e) {
         //防止ie回车键下提交表单
-        if (e.keyCode == 13)
+        if (e.keyCode == 13 && $(e.target).is('input'))
             return false;
     });
     //priority
