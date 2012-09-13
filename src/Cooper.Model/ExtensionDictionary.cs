@@ -37,16 +37,6 @@ namespace Cooper.Model
             }
         }
 
-        /// <summary>获取所有扩展信息字典
-        /// </summary>
-        /// <returns></returns>
-        public IDictionary<string, string> GetExtensions()
-        {
-            if (this._dict == null)
-                this._dict = this.Parse();
-            return this._dict;
-        }
-
         private IDictionary<string, string> Parse()
         {
             return (string.IsNullOrWhiteSpace(this._extensions)

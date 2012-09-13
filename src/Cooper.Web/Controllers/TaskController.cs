@@ -73,7 +73,7 @@ namespace Cooper.Web.Controllers
                 t.DueTime = o.DueTime.HasValue ? o.DueTime.Value.Date.ToString("yyyy-MM-dd") : null;
                 t.Priority = (int)o.Priority;
                 t.IsCompleted = o.IsCompleted;
-                t.Tags = o.Tags;
+                t.Tags = o.Tags.ToArray();
                 filter(o, t);
                 return t;
             }).ToArray();

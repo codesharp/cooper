@@ -30,13 +30,13 @@ namespace Cooper.Model.Tasks
         public virtual bool IsCompleted { get; private set; }
         /// <summary>Tags
         /// </summary>
-        public virtual string[] Tags
+        public virtual IEnumerable<string> Tags
         {
             get
             {
                 if (this._tagList == null)
                     this._tagList = new StringList();
-                return this._tagList.GetAllItems().ToArray();
+                return this._tagList.GetAllItems();
             }
         }
         /// <summary>获取创建时间

@@ -66,7 +66,7 @@ namespace Cooper.Model.Accounts
         /// <returns></returns>
         public virtual string GetProfile(string key)
         {
-            return this._profile == null ? null : this._profile[key];
+            return this._profile == null ? null : this._profile.Settings[key];
         }
         /// <summary>设置个人设置
         /// </summary>
@@ -76,7 +76,7 @@ namespace Cooper.Model.Accounts
         {
             if (this._profile == null)
                 this._profile = new Profile(this);
-            this._profile[key] = value;
+            this._profile.Settings[key] = value;
         }
 
         /// <summary>检查密码正确性
