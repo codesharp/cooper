@@ -204,8 +204,8 @@
             $('.btn').tooltip({ placement: 'bottom', delay: 800 });
 
             //TODO:仅在变更时处理
-            if (sys_versionFlag == 'release')
-                window.onbeforeunload = function () { return 'Cooper Task'; };
+            //if (sys_versionFlag == 'release')
+                //window.onbeforeunload = function () { return 'Cooper Task'; };
         });
         function resize() {
             $('.todolist_wrapper').height($(window).height() - 170);

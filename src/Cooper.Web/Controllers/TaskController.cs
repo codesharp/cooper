@@ -132,7 +132,7 @@ namespace Cooper.Web.Controllers
             , string by
             , string sorts
             , Func<Task> ifNew
-            , Action<Task> verify
+            , Action<Task, ChangeLog> verify
             , Func<bool> isPersonalSorts
             , Func<string, string> getSortKey
             , Action<string> saveSorts)
@@ -178,7 +178,7 @@ namespace Cooper.Web.Controllers
             , ChangeLog[] list
             , IDictionary<string, string> idChanges
             , Func<Task> ifNew
-            , Action<Task> verify)
+            , Action<Task, ChangeLog> verify)
         {
             foreach (var c in list)
             {
@@ -207,16 +207,15 @@ namespace Cooper.Web.Controllers
                     }
 
                     //执行变更权限验证
-                    verify(t);
+                    verify(t, c);
 
                     //UNDONE:根据最后更新时间判断变更记录有效性，时间间隔过长的变更会被丢弃?
                     //由于LastUpdateTime粒度过大，不适合这种细粒度变更比对，需要引入Merge机制来处理文本更新合并问题
                     DateTime createTime;
                     if (DateTime.TryParse(c.CreateTime, out createTime))
                         if (t.LastUpdateTime - createTime > TimeSpan.FromMinutes(5))
-                            if (this._log.IsInfoEnabled)
-                                this._log.InfoFormat("变更创建时间{0}与任务最后更新时间{1}的隔间过长", c.CreateTime, t.LastUpdateTime);
-                    
+                            this._log.WarnFormat("变更创建时间{0}与任务最后更新时间{1}的隔间过长", c.CreateTime, t.LastUpdateTime);
+
                     if (this.IsTaskDelete(c))
                         this._taskService.Delete(t);
                     else

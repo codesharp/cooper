@@ -11,6 +11,7 @@ using CodeSharp.Framework.Castles;
 using CodeSharp.Core.Castles;
 using CodeSharp.Core.Web;
 using System.Reflection;
+using AppfailReporting;
 
 namespace Cooper.Web
 {
@@ -288,5 +289,34 @@ internal class Assert : NUnit.Framework.Assert
         Assert.IsNotNullOrEmpty(input);
         Assert.IsNotNullOrEmpty(input.Trim());
         //Assert.IsFalse(string.IsNullOrWhiteSpace(input));
+    }
+}
+/// <summary>向appfail投递errorlog
+/// </summary>
+public class AppFailAppender : log4net.Appender.IAppender
+{
+    public void Close()
+    {
+
+    }
+
+    public void DoAppend(log4net.Core.LoggingEvent loggingEvent)
+    {
+        if (loggingEvent.Level >= log4net.Core.Level.Error)
+            if (loggingEvent.ExceptionObject != null)
+                loggingEvent.ExceptionObject.SendToAppfail();
+        //TODO:提交更丰富log properties
+    }
+
+    public string Name
+    {
+        get
+        {
+            return "appfail";
+        }
+        set
+        {
+
+        }
     }
 }

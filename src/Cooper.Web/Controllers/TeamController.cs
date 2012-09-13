@@ -222,7 +222,7 @@ namespace Cooper.Web.Controllers
                 , () =>
                 {
                     var t = new Teams.Task(currentMember, team);
-                    
+
                     #region 默认值设置
                     if (project != null)
                     {
@@ -246,11 +246,16 @@ namespace Cooper.Web.Controllers
 
                     return t;
                 }
-                , o =>
+                , (o, c) =>
                 {
                     var task = o as Teams.Task;
-                    //创建者或执行人
-                    Assert.IsTrue(this.IsCreator(team, task, a) || this.IsAssignee(task, currentMember));
+
+                    //团队成员可发表评论
+                    if (c.Name.Equals("comments", StringComparison.InvariantCultureIgnoreCase))
+                        Assert.IsTrue(this.IsTeamOfCurrentAccount(team));
+                    else
+                        //任务创建者或执行人
+                        Assert.IsTrue(this.IsCreator(team, task, a) || this.IsAssignee(task, currentMember));
                 }
                 //是否是属于个人的排序
                 , () => project == null && string.IsNullOrWhiteSpace(memberId)

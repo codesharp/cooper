@@ -175,7 +175,7 @@ namespace Cooper.Web.Controllers
                         o.SetTaskFolder(folder);
                     return o;
                 }
-                , o =>
+                , (o, c) =>
                 {
                     var task = o as PersonalTask;
                     //只有创建者才能更新个人任务
