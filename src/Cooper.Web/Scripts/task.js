@@ -431,9 +431,9 @@ var Sort = function () { this._init.apply(this, arguments); }
 Sort.prototype = {
     $el_region: null,
     _init: function () {
-        this['by'] = arguments[0];
-        this['key'] = arguments[1]; //0,1,2,prj1,team1
-        this['name'] = arguments[2]; //今天、稍后、迟些、项目1、团队1
+        this['by'] = arguments[0];//排序依据，对应task属性，如：priority，assignee
+        this['key'] = arguments[1]; //0,1,2,{id:1,name:'wsky'}
+        this['name'] = arguments[2]; //今天、稍后、迟些、项目1、团队1、wsky
         this['idx'] = arguments[3]; //[0,1,2,4]
         this.$el_region = $(render($('#tmp_region').html(), this));
         this._clearRegion();
