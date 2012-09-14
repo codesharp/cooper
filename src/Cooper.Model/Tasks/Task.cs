@@ -46,6 +46,15 @@ namespace Cooper.Model.Tasks
         /// </summary>
         public DateTime LastUpdateTime { get; private set; }
         /// <summary>是否已废弃
+        /// <remarks>
+        /// 设计该属性的意图是为了在用户删除一个task时，不做直接物理删除，而是放入废纸篓；
+        /// 这样以便于用户后面想恢复该task时可以恢复；
+        /// 该字段就是用来标记当前任务是否已标记为逻辑删除，即是否已放入废纸篓；
+        /// 目前只有任务支持废纸篓，将来会实现团队成员也支持废纸篓功能；
+        /// 相关问题链接：
+        /// https://github.com/codesharp/cooper/issues/88
+        /// https://github.com/codesharp/cooper/issues/79
+        /// </remarks>
         /// </summary>
         public bool IsTrashed { get; private set; }
 
