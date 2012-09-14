@@ -48,6 +48,7 @@ UI_List_Common.prototype = {
     commitDeletes: null,
     eachTask: null,
     getTaskById: null,
+    getSortKeys: null,
     getSortByKey: null,
     setTask: null,
     addTag: function (t) { },

@@ -15,7 +15,11 @@ var cached_tasks = null;
 var cached_sorts = null;
 var changes = []; //用于记录未提交至server的变更
 
-var ui_list_helper, ui_list_helper_priority, ui_list_helper_due;
+var ui_list_helper, 
+    ui_list_helper_priority, 
+    ui_list_helper_due,
+    ui_list_helper_assignee;
+
 var isShowArchive = false; //是否显示归档区域
 
 var currentList = null; //当前任务表标识
@@ -190,6 +194,31 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
             });
         });
     }
+    //TODO:重构byxxx
+    function byAssignee(fn1, fn2) {
+        currentMode = byAssignee;
+        $el_wrapper_region.empty().append($('#loading').html());
+        $el_wrapper_detail.empty();
+        fixBeforeSyncOrReload();
+        sync(function () {
+            if (fn1 && typeof (fn1) == 'function') fn1();
+            $.ajax({
+                url: url_task_byAssignee,
+                data: getPostData(),
+                type: 'POST',
+                dataType: 'json',
+                beforeSend: function () { $el_wrapper_region.empty().append($('#loading').html()); },
+                success: function (data) {
+                    endRequest();
+                    init(data.List, data.Sorts);
+                    (ui_list_helper = ui_list_helper_assignee).render();
+                    fixAfterSyncOrReload(data.Editable);
+                    $('.flag_by').hide();
+                    if (fn2 && typeof (fn2) == 'function') fn2();
+                }
+            });
+        });
+    }
     //同步执行一些额外的修正工作，主要针对缓冲数据以及模式切换时的全局变量
     function fixBeforeSyncOrReload() {
         if (!ui_list_helper) return;
@@ -323,6 +352,7 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
 
         $('.flag_byPriority').click(byPriority);
         $('.flag_byDueTime').click(byDueTime);
+        $('.flag_byAssignee').click(byAssignee);
 
         $('.flag_openTaskFolder').click(openTaskFolder);
         $('.flag_addTaskFolder').click(function () { doAddTaskFolder(this); });
@@ -374,6 +404,7 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
         UI_List_Common.prototype.eachTask = function (fn) { for (var id in cached_tasks) if (cached_tasks[id]) fn(cached_tasks[id]); };
         UI_List_Common.prototype.getTaskById = function (i) { return cached_tasks[i]; };
         UI_List_Common.prototype.getSortByKey = function (k) { return cached_sorts[k]; };
+        UI_List_Common.prototype.getSortKeys = function (k) { return cached_sorts;};
         UI_List_Common.prototype.setTask = function (i, t) { cached_tasks[i] = t; };
         //团队相关
         // *****************************************************
@@ -391,6 +422,7 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
 
         ui_list_helper_priority = create_UI_List_Priority();
         ui_list_helper_due = create_UI_List_Due();
+        ui_list_helper_assignee = create_UI_List_Assignee();
 
         globalBinds();
         ajaxSetup();

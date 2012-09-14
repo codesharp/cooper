@@ -42,12 +42,13 @@ UI_List_Assignee.prototype.render = function () {
     //未分配区域
     this._renderBySort(this.noAssignee);
     //遍历所有分配者
-    for(var k in this.getSorts())
+    var keys = this.getSortKeys();
+    for(var k in keys)
         if(k!=this.noAssignee)
             this._renderBySort(k);
     //默认追加一条
     if (this.getTasks().length == 0)
-        this.appendTask(0);
+        this.appendTask();
     //绑定
     this._prepareBinds();
     //显示在其他模式下隐藏的元素
