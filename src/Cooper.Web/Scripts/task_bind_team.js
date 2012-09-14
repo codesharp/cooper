@@ -61,19 +61,31 @@ UI_List_Common.prototype.bind_detail_team = function ($el_detail, task) {
             debuger.debug('updater-assignee-item', item);
             if (batch) {
                 for (var i = 0; i < task.length; i++)
-                    if (task[i].editable)
+                    if (task[i].editable) {
+                        var old = task[i].assignee();
                         task[i].setAssignee(item);
+                        if (base.onAssigneeChange)
+                            base.onAssigneeChange(task[i], old, item);
+                    }
             }
-            else
+            else {
+                var old = task.assignee();
                 task.setAssignee(item);
+                if (base.onAssigneeChange)
+                    base.onAssigneeChange(task, old, item);
+            }
             return item['name'];
         },
         highlighter,
         function () {
             if (!batch)
                 //blur事件内容清空时移除assignee
-                if ($assignee_input.val() == '')
+                if ($assignee_input.val() == '') {
+                    var old = task.assignee();
                     task.setAssignee(null);
+                    if (base.onAssigneeChange)
+                        base.onAssigneeChange(task, old, null);
+                }
         }
     );
 

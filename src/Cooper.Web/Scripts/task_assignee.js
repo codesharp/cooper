@@ -11,7 +11,8 @@ UI_List_Assignee.prototype = new UI_List_Common();
 UI_List_Assignee.prototype.mode = 'ByAssignee';
 UI_List_Assignee.prototype.modeArgs = {
     //快捷键开关
-    shortcuts_move: true,
+    //是否允许ctrl+up/down
+    shortcuts_move: false,
     //是否允许对invalid区域的任务变更完成状态非
     shortcuts_canSetCompleted_RowOfInValidRegion: false,
     //是否可编辑
@@ -21,17 +22,20 @@ UI_List_Assignee.prototype.noAssignee = 0;
 ////////////////////////////////////////////////////////////////////////////////////////
 //额外实现父级定义的扩展
 //刷新索引时
-UI_List_Assignee.prototype.onFlushSorts = function () {
-    
-}
+UI_List_Assignee.prototype.onFlushSorts = function () { }
 //binds时
-UI_List_Assignee.prototype.onPrepareBinds = function () {
-}
+UI_List_Assignee.prototype.onPrepareBinds = function () { }
 //优先级调整时
-UI_List_Assignee.prototype.onPriorityChange = function ($r, task, old, p) {
-}
+UI_List_Assignee.prototype.onPriorityChange = function ($r, task, old, p) { }
 //是否完成调整时
 UI_List_Assignee.prototype.onCompletedChange = function (task, old, b) {
+}
+//TODO:assignee变更时
+UI_List_Assignee.prototype.onAssigneeChange = function (task, old, assignee) {
+    if (old == null && assignee == null) return;
+    if (old != null && assignee != null && old.id == assignee.id) return;
+    this.getSortByKey(assignee == null ? 0 : assignee.id).append(task, true);
+    this.getSortByKey(old == null ? 0 : old.id).flush();
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //覆盖父级实现
@@ -43,8 +47,8 @@ UI_List_Assignee.prototype.render = function () {
     this._renderBySort(this.noAssignee);
     //遍历所有分配者
     var keys = this.getSortKeys();
-    for(var k in keys)
-        if(k!=this.noAssignee)
+    for (var k in keys)
+        if (k != this.noAssignee)
             this._renderBySort(k);
     //默认追加一条
     if (this.getTasks().length == 0)
@@ -65,7 +69,7 @@ UI_List_Assignee.prototype.appendTask = function () {
     //追加到焦点行之后
     if (this._$focusRow != null)
         $row = this._$focusRow;
-    //追加到选中行之后
+        //追加到选中行之后
     else if (($actives = this.getActives()).length == 1)
         $row = $actives;
     if ($row != null) {
@@ -76,7 +80,7 @@ UI_List_Assignee.prototype.appendTask = function () {
         //设置assignee为当前区域的assignee
         this.getSortByKey(t.assignee() == null ? 0 : t.assignee().id).flush();
     }
-    //默认追加到NoAssignee
+        //默认追加到NoAssignee
     else {
         t['data']['assignee'] = null;
         t.setAssignee(null);

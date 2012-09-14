@@ -119,6 +119,26 @@ namespace Cooper.Web.Controllers
                 ? _serializer.JsonDeserialize<Sort[]>(a.GetProfile(key))
                 : _emptySorts;
         }
+        protected void RepairIndexs(Sort sort, IDictionary<string, TaskInfo> tasks)
+        {
+            var temp = (sort.Indexs ?? new string[0]).ToList();
+            if (this._log.IsDebugEnabled)
+                this._log.DebugFormat("原始排序为{0}|{1}|{2}|{3}", sort.By, sort.Key, sort.Name, string.Join(",", temp));
+            //移除索引中不存在的项
+            temp.RemoveAll(o => string.IsNullOrWhiteSpace(o) || !tasks.ContainsKey(o));
+            if (this._log.IsDebugEnabled)
+                this._log.DebugFormat("过滤后排序为{0}", string.Join(",", temp));
+            //合并未在索引中出现的项
+            sort.Indexs = temp.Union(tasks.Select(o => o.Value.ID)).ToArray();
+            if (this._log.IsDebugEnabled)
+                this._log.DebugFormat("合并后排序为{0}", string.Join(",", sort.Indexs));
+        }
+        protected IDictionary<string, TaskInfo> Parse(TaskInfo[] tasks, Func<TaskInfo, bool> filter)
+        {
+            return tasks.Where(filter)
+                .Select(o => new KeyValuePair<string, TaskInfo>(o.ID, o))
+                .ToDictionary(o => o.Key, o => o.Value);
+        }
         /// <summary>用于接收终端的变更同步数据
         /// </summary>
         /// <param name="changes">变更数据 changelog[]</param>
@@ -280,26 +300,6 @@ namespace Cooper.Web.Controllers
             }
         }
 
-        private void RepairIndexs(Sort sort, IDictionary<string, TaskInfo> tasks)
-        {
-            var temp = (sort.Indexs ?? new string[0]).ToList();
-            if (this._log.IsDebugEnabled)
-                this._log.DebugFormat("原始排序为{0}|{1}|{2}|{3}", sort.By, sort.Key, sort.Name, string.Join(",", temp));
-            //移除索引中不存在的项
-            temp.RemoveAll(o => string.IsNullOrWhiteSpace(o) || !tasks.ContainsKey(o));
-            if (this._log.IsDebugEnabled)
-                this._log.DebugFormat("过滤后排序为{0}", string.Join(",", temp));
-            //合并未在索引中出现的项
-            sort.Indexs = temp.Union(tasks.Select(o => o.Value.ID)).ToArray();
-            if (this._log.IsDebugEnabled)
-                this._log.DebugFormat("合并后排序为{0}", string.Join(",", sort.Indexs));
-        }
-        private IDictionary<string, TaskInfo> Parse(TaskInfo[] tasks, Func<TaskInfo, bool> filter)
-        {
-            return tasks.Where(filter)
-                .Select(o => new KeyValuePair<string, TaskInfo>(o.ID, o))
-                .ToDictionary(o => o.Key, o => o.Value);
-        }
         private static int _flag = 0;
         private void TryFail()
         {

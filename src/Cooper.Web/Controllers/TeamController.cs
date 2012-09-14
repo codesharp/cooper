@@ -16,6 +16,7 @@ namespace Cooper.Web.Controllers
     /// </summary>
     public class TeamController : TaskController
     {
+        protected static readonly string SORT_ASSIGNEE = "ByAssignee";
         private Teams.ITeamService _teamService;
         private Teams.ITaskService _teamTaskService;
         protected IAccountConnectionService _accountConnectionService;
@@ -97,7 +98,7 @@ namespace Cooper.Web.Controllers
                 , this.ParseSortsByDueTime
                 , this.ParseSortsByDueTime);
         }
-        //UNDONE:Assignee排序模式
+        //Assignee排序模式
         [HttpPost]
         public ActionResult GetByAssignee(string teamId, string projectId, string tag)
         {
@@ -110,7 +111,7 @@ namespace Cooper.Web.Controllers
                 , this.GetTasksByProject
                 , this.GetTasksByTag
                 , this.ParseSortsByDueTime
-                , this.ParseSortsByDueTime
+                , (p, tasks) => this.ParseSortsByAssignee(this.GetTeam(teamId), p, tasks)
                 , this.ParseSortsByDueTime);
         }
         #endregion
@@ -626,6 +627,28 @@ namespace Cooper.Web.Controllers
         private Sort[] ParseSortsByDueTime(Teams.Team team, string tag, params TaskInfo[] tasks)
         {
             return this.ParseSortsByDueTime(this.GetSorts(team, tag, SORT_DUETIME), tasks);
+        }
+        private Sort[] ParseSortsByAssignee(Teams.Team team, Teams.Project project, params TaskInfo[] tasks)
+        {
+            var result = new List<Sort>();
+            var sorts = this.GetSorts(project, SORT_ASSIGNEE);
+
+            var noAssignee = sorts.FirstOrDefault(o => o.Key == "0") ?? new Sort() { By = "assignee", Key = "0" };
+            noAssignee.Name = this.Lang().noAssignee;
+            this.RepairIndexs(noAssignee, this.Parse(tasks, o => (o as TeamTaskInfo).Assignee == null));
+            result.Add(noAssignee);
+
+            foreach (var m in team.Members)
+            {
+                var sort = sorts.FirstOrDefault(o => 
+                    o.Key == m.ID.ToString()) ?? new Sort() { By = "assignee", Key = m.ID.ToString() };
+                sort.Name = m.Name;
+                this.RepairIndexs(sort, this.Parse(tasks
+                    , o => (o as TeamTaskInfo).Assignee != null
+                        && (o as TeamTaskInfo).Assignee.id == m.ID.ToString()));
+                result.Add(sort);
+            }
+            return result.ToArray();
         }
         private Sort[] GetSorts(Account a, Teams.Team team, string by)
         {
