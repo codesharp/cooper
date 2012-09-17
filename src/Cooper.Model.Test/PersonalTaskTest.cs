@@ -338,8 +338,8 @@ namespace Cooper.Model.Test
             this.Evict(task);
 
             task = this._personalTaskService.GetTask(task.ID);
-
-            this._personalTaskService.Delete(task);
+            task.MarkAsTrashed();
+            this._personalTaskService.Update(task);
 
             this.Evict(task);
 

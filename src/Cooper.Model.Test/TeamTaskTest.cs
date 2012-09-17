@@ -530,7 +530,8 @@ namespace Cooper.Model.Test
 
             task = this._teamTaskService.GetTask(task.ID);
 
-            this._teamTaskService.Delete(task);
+            task.MarkAsTrashed();
+            this._teamTaskService.Update(task);
 
             this.Evict(task);
 

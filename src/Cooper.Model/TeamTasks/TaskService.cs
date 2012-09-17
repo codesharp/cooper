@@ -118,10 +118,9 @@ namespace Cooper.Model.Teams
         [Transaction(TransactionMode.Requires)]
         void ITaskService.Delete(Task task)
         {
-            task.MarkAsTrashed();
-            _repository.Update(task);
+            _repository.Remove(task);
             if (this._log.IsInfoEnabled)
-                this._log.InfoFormat("废弃团队任务#{0}", task.ID);
+                this._log.InfoFormat("删除团队任务#{0}", task.ID);
         }
         Task ITaskService.GetTask(long id)
         {

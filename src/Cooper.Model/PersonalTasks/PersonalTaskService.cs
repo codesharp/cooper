@@ -113,10 +113,9 @@ namespace Cooper.Model.Tasks
         [Transaction(TransactionMode.Requires)]
         void IPersonalTaskService.Delete(PersonalTask task)
         {
-            task.MarkAsTrashed();
-            _repository.Update(task);
+            _repository.Remove(task);
             if (this._log.IsInfoEnabled)
-                this._log.InfoFormat("废弃任务#{0}", task.ID);
+                this._log.InfoFormat("删除任务#{0}", task.ID);
         }
         PersonalTask IPersonalTaskService.GetTask(long id)
         {
