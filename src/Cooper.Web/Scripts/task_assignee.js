@@ -12,7 +12,7 @@ UI_List_Assignee.prototype.mode = 'ByAssignee';
 UI_List_Assignee.prototype.modeArgs = {
     //快捷键开关
     //是否允许ctrl+up/down
-    shortcuts_move: false,
+    shortcuts_move: false,//UNDONE:目前暂不支持，需要完成完整的taskrow可编辑性判断
     //是否允许对invalid区域的任务变更完成状态非
     shortcuts_canSetCompleted_RowOfInValidRegion: false,
     //是否可编辑
@@ -39,7 +39,7 @@ UI_List_Assignee.prototype.onAssigneeChange = function (task, old, assignee) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //覆盖父级实现
-//UI_List_Assignee.prototype._isValidRegion = function ($r) { return !this._isArchivedRegion($r); }
+UI_List_Assignee.prototype._isValidRegion = function ($r) { return false; }//禁止跨分组移动
 //UI_List_Assignee.prototype._isRowOfValidRegion = function ($r) { return !this._isArchivedRow($r); }
 UI_List_Assignee.prototype.render = function () {
     this.$wrapper.empty();

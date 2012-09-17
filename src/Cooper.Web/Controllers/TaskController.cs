@@ -248,7 +248,7 @@ namespace Cooper.Web.Controllers
                 }
                 catch (Exception e)
                 {
-                    this._log.Error(string.Format("执行变更时异常：{0}|{1}|{2}", c.ID, c.Name, c.Value), e);
+                    this._log.Error(string.Format("执行变更时异常：{0}|{1}|{2}|{3}", c.Type, c.ID, c.Name, c.Value), e);
                 }
             }
         }

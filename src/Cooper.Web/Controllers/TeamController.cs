@@ -252,7 +252,8 @@ namespace Cooper.Web.Controllers
                     var task = o as Teams.Task;
 
                     //团队成员可发表评论
-                    if (c.Name.Equals("comments", StringComparison.InvariantCultureIgnoreCase))
+                    if (!string.IsNullOrWhiteSpace(c.Name)//delete变更没有name
+                        && c.Name.Equals("comments", StringComparison.InvariantCultureIgnoreCase))
                         Assert.IsTrue(this.IsTeamOfCurrentAccount(team));
                     else
                         //任务创建者或执行人
