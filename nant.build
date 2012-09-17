@@ -183,6 +183,7 @@ template_flag_tasklist='${md5}';
         <include name="${build.absolutepath}\cooper_web\scripts\task_priority.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_due.js" />
         <!--team-->
+        <include name="${build.absolutepath}\cooper_web\scripts\task_assignee.js" />
         <include name="${build.absolutepath}\cooper_web\scripts\task_bind_team.js" />
       </sourceFiles>
     </javaScriptCompressor>
