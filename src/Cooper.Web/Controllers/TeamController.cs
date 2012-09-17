@@ -481,8 +481,8 @@ namespace Cooper.Web.Controllers
                 name = team.Name,
                 projects = team.Projects.Select(o => this.Parse(o)).ToArray(),
                 members = team.Members.Select(o => this.Parse(o)).ToArray(),
-                //UNDONE:Team.Tags DTO转换
-                tags = new string[] { "webui", "hybrid", "mobi", "ios", "model" }
+                //TODO:Team.Tags获取方式优化
+                tags = this._teamService.GetTagsByTeam(team).ToArray()
             };
         }
         private TeamProjectInfo Parse(Teams.Project project)
