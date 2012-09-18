@@ -260,7 +260,7 @@ namespace Cooper.Web.Controllers
                         Assert.IsTrue(this.IsCreator(team, task, a) || this.IsAssignee(task, currentMember));
                 }
                 //是否是属于个人的排序
-                , () => project == null && string.IsNullOrWhiteSpace(memberId)
+                , () => project == null && string.IsNullOrWhiteSpace(memberId) && string.IsNullOrWhiteSpace(tag)
                 //个人排序key
                 , o => this.GetSortKey(team, o)
                 , o =>
@@ -272,11 +272,15 @@ namespace Cooper.Web.Controllers
                         //存储至项目排序数据
                         project.Settings[by] = o;
                         this._teamService.Update(team);
+                        if (this._log.IsDebugEnabled)
+                            this._log.DebugFormat("将{0}排序数据保存至项目#{1}：{2}", by, project.ID, o);
                     }
                     else if (!string.IsNullOrWhiteSpace(tag))
                     {
                         team.Settings[this.GetSortKey(by, tag)] = o;
                         this._teamService.Update(team);
+                        if (this._log.IsDebugEnabled)
+                            this._log.DebugFormat("将{0}|{1}排序数据保存至团队#{2}：{3}", by, tag, team.ID, o);
                     }
                     #endregion
                 }));

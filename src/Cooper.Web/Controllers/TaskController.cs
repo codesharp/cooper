@@ -286,6 +286,8 @@ namespace Cooper.Web.Controllers
                     //更新排序信息至用户设置
                     account.SetProfile(getPersonalSortKey(by), d);
                     this._accountService.Update(account);
+                    if (this._log.IsDebugEnabled)
+                        this._log.DebugFormat("将{0}排序数据保存至当前用户", by);
                 }
                 else
                     //更新排序信息到非个人存储区域
@@ -296,7 +298,7 @@ namespace Cooper.Web.Controllers
             }
             catch (Exception e)
             {
-                this._log.Error(string.Format("保存排序信息至用户设置时异常"), e);
+                this._log.Error(string.Format("保存排序信息时异常"), e);
             }
         }
 
