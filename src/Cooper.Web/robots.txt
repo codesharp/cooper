@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /account/login
+Disallow: /content
+Disallow: /webui
+Disallow: /hybrid
