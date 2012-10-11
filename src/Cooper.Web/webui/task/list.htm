@@ -6,9 +6,16 @@
                 <i class="icon-remove"></i></a>
     </div>
     <!--顶部按钮区域-->
-    <div style="padding: 10px 5px 0;">
+    <div id="todolist_header" style="padding: 10px 5px 0;">
         <ul class="nav nav-tabs">
-            <li class="dropdown active"><a href="javascript:;">{{team.name}} {{project.name}} {{member.name}} {{tag}}</a></li>
+            <li class="dropdown active">
+                <a href="javascript:;" class="flag_title">
+                    <i class="icon-flag" ng-show="project"></i>
+                    <i class="icon-user" ng-show="member"></i>
+                    {{team.name}} {{project.name}} {{member.name}} {{tag}}
+                </a>
+            </li>
+            <!--<li><a href="javascript:;" style="padding-left:3px;padding-right:3px;"><i class="icon-star" title="{{lang.see_detail}}"></i></a></li>-->
             <li class="dropdown pull-right"><a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
                 {{lang.more}} <b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -369,5 +376,44 @@
         <ul id="tmp_taskFolder_item">
             <li><a href="javascript:;" class="flag_changeFolder" id="{id}"><i class="icon-list"></i><span>{name}</span></a></li>
         </ul>
+        <div id="tmp_detail_project">
+            <div class="region_detail_project">
+                <div class="btn-toolbar">                    
+                </div>
+                <table class="detail">
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <i class="icon-flag"></i>
+                                <span id="name"></span>
+                                <!--<input id="name" type="text" class="detail-title" value="" maxlength="255"/>-->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <textarea id="description" class="detail-note"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="detail-item">
+                                URL
+                            </td>
+                            <td class="detail-content">
+                                <div id="urls" class="btn-group">
+                                    <button class="btn" style="width: 80%; height: 28px; text-align: left; overflow: hidden;
+                                        word-break: break-all; text-overflow: ellipsis;">
+                                    </button>
+                                    <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>

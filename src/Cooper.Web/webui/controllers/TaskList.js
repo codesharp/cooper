@@ -396,6 +396,7 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
 
         Sort.prototype._getTask = function (i) { return cached_tasks[i]; };
         //为ui设置全局变量
+        UI_List_Common.prototype.$wrapper_header = $('#todolist_header');
         UI_List_Common.prototype.$wrapper = $el_wrapper_region;
         UI_List_Common.prototype.$wrapper_detail = $el_wrapper_detail;
         UI_List_Common.prototype.$cancel_delete = $el_cancel_delete;
@@ -411,7 +412,9 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
         // taskpage.js main changes here
         // *****************************************************
         UI_List_Common.prototype.getProjects = function () { return $scope.team.projects; }
+        UI_List_Common.prototype.getProject = function () { return $scope.project; }
         UI_List_Common.prototype.getTeamMembers = function () { return $scope.team.members; }
+        UI_List_Common.prototype.getTeamMember = function () { return $scope.member; }
         UI_List_Common.prototype.getTags = function () { return $scope.team.tags; }
         UI_List_Common.prototype.addTag = function (t) {
             //对rootscope变更
@@ -436,4 +439,5 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
         $scope.$on('ready_team', renderTeamTask);
     }
     //else renderPersonalTask();
+
 }

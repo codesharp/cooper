@@ -140,28 +140,11 @@ Task.prototype = {
         this.setDetail_Tags(this.tags());
         //设置编辑状态
         this.setDetail_Editable(this.editable);
-        //设置url快捷链接区域 临时方案
-        var $urls = this.$el_detail.find('#urls');
-        $urls.find('ul').empty();
-        var i = 0;
-        this.get('body').replace(/[http|https|ftp]+:\/\/\S*/ig, function (m) {
-            var href = m.substring(0, 30) + '...';
-            if (i++ == 0)
-                $urls.find('button:first')
-                    .unbind('click').click(function () { window.open(m); })
-                    .html('<i class="icon-file"></i> <a>' + href + '</a>');
-            else
-                $urls.find('ul').append('<li><a target="_blank" href="' + m + '" title="' + m + '">' + href + '</a></li>');
-        });
-        $urls.parents('tr')[i == 0 ? 'hide' : 'show']();
-        $urls.find('button:eq(1)')[i == 1 ? 'hide' : 'show']();
-        $urls.find('url')[i == 1 ? 'hide' : 'show']();
-        //TODO:详情插件扩展在此追加
         return this.$el_detail;
     },
     //额外修正一些显示问题 由于未呈现(append)导致的UI问题
     fixDetail: function () {
-        this.setDetail_Body(this.get('body'));
+        //this.setDetail_Body(this.get('body'));
     },
     dispose: function () {
         if (this.$el_row) {
@@ -362,17 +345,6 @@ Task.prototype = {
     },
     setDetail_Body: function (b, f) {
         if (!this.$el_detail) return;
-        var $el = this._getDetailEl('body');
-        //修正高度 自适应
-        var base = $el[0];
-        //$el.height('');//auto
-        base.rows = base.value.split('\n').length + 1;
-        var l = parseInt($el.css('line-height').replace('px', ''));
-        //ie下不兼容
-        if (isNaN(l) || base.scrollHeight == 0) return;
-        base.rows = Math.floor(base.scrollHeight / l);
-        //无需此步骤
-        //$el.html(b);
     },
     setDetail_Priority: function (p) {
         if (!this.$el_detail) return;

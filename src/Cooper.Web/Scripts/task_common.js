@@ -54,7 +54,9 @@ UI_List_Common.prototype = {
     addTag: function (t) { },
     getTags: function () { return ['']; },
     getProjects: null,
+    getProject: null,
     getTeamMembers: null,
+    getTeamMember: null,
     getTask: function ($r) { return this.getTaskById(this.getTaskId($r)); },
     getSort: function ($region) { return this.getSortByKey($region.attr('key')); },
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -62,6 +64,16 @@ UI_List_Common.prototype = {
     _renderBySort: function (k) {
         this.getSortByKey(k).render();
         this.$wrapper.append(this.getSortByKey(k).el());
+    },
+    //详情区域渲染
+    _renderDetail: function (fn) {
+        if (this.detail_timer)
+            clearTimeout(this.detail_timer);
+        var base = this;
+        if (this.detail_timer_enable)
+            this.detail_timer = setTimeout(fn, 100);//增加timer延迟优化UI感受性能
+        else
+            fn();
     },
     ////////////////////////////////////////////////////////////////////////////////////////
     //批量对wrapper中的当前region执行flush操作

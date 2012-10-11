@@ -9,9 +9,18 @@
 UI_List_Common.prototype._bindTeam = function () {
     var base = this;
 
-    ////////////////////////////////////////////////////////////////////////////////////////
+    //列表顶部区域
+    //project/member title点击详情显示处理
+    this.$wrapper_header.click(function (e) {
+        var $el = $(e.target);
+        if (!$el.hasClass('flag_title')) return; 
+        if (base.getTeamMember())
+            base._renderMemberDetail(base.getTeamMember());
+        if (base.getProject())
+            base._renderProjectDetail(base.getProject());
+    });
+    
     //详情区域
-    ////////////////////////////////////////////////////////////////////////////////////////
     /*this.$wrapper_detail.click(function (e) {
         var $el = $(e.target);
         var ids = getIds($el);
@@ -36,7 +45,6 @@ UI_List_Common.prototype._bindTeam = function () {
     }
     Task.prototype.bind_detail_team = function () { base.bind_detail_team.apply(base, arguments); };
 }
-
 UI_List_Common.prototype.bind_detail_team = function ($el_detail, task) {
     var base = this;
     var batch = $.isArray(task);
@@ -171,4 +179,20 @@ UI_List_Common.prototype.bind_detail_team = function ($el_detail, task) {
             'name': a[1].split('(')[0]//name(email)
         };
     }
+}
+UI_List_Common.prototype._renderProjectDetail = function (p) {
+    var base = this;
+    var fn = function () {
+        //TODO:封装project实现以下渲染逻辑，处理可编辑性，变更记录等
+        var $e = $($('#tmp_detail_project').html());
+        $e.find('#name').text(p.name);
+        $e.find('#description').text(p.name);
+        base.detail_url_control_render($e.find('#urls'), p.description);
+        base.$wrapper_detail.empty().append($e);
+        base.detail_autoHeight_textarea($e.find('#description'));
+    }
+    this._renderDetail(fn);
+}
+UI_List_Common.prototype._renderMemberDetail = function (m) {
+
 }

@@ -32,7 +32,7 @@ UI_List_Common.prototype._fireRowClick = function ($r, c, s) {
     //详情呈现
     var $actives = this.getActives();
     if ($actives.length == 1)
-        this._renderDetail(this.$focusRow);
+        this._renderTaskDetail(this.$focusRow);
     if ($actives.length > 1)
         this._renderBatchDetail($actives);
 }

@@ -79,7 +79,7 @@ UI_List_Common.prototype._bind = function () {
             $avtives = base.getActives();
             //呈现详情
             if ($avtives.length == 1)
-                base._renderDetail($focus);
+                base._renderTaskDetail($focus);
                 //批量详情
             else if ($avtives.length > 1)
                 base._renderBatchDetail($avtives);
@@ -111,19 +111,22 @@ UI_List_Common.prototype._bind = function () {
     });
     ////////////////////////////////////////////////////////////////////////////////////////
     //详情区域 支持批量处理
-    //TODO:各自重构为控件区域
     ////////////////////////////////////////////////////////////////////////////////////////
-    //subject、body
+    //textarea、subject、body
     this.$wrapper_detail.keyup(function (e) {
         var $el = $(e.target);
         var isSubject = $el.is('#subject');
         var isBody = $el.is('#body');
-        //if (!isSubject && !isBody) return;
         var task = base.getTaskById($el.parents('.region_detail').eq(0).attr('id'));
-        if (isSubject)
-            task.setSubject($el.val(), true);
-        else if (isBody)
-            task.setBody($el.val());
+
+        if ($el.is('textarea'))
+            base.detail_autoHeight_textarea($el);
+        if (task) {
+            if (isSubject)
+                task.setSubject($el.val(), true);
+            else if (isBody)
+                task.setBody($el.val());
+        }
     });
     this.$wrapper_detail.keydown(function (e) {
         //防止ie回车键下提交表单
@@ -198,6 +201,10 @@ UI_List_Common.prototype._bind = function () {
 
     //部分Task事件，不适合全局绑定
     Task.prototype.bind_detail = function () { base.bind_detail.apply(base, arguments); };//延续this
+    Task.prototype.fixDetail = function () {
+        //只有在append之后才有效
+        base.detail_autoHeight_textarea(this._getDetailEl('body'));
+    }
 }
 //详情区域绑定，能同时处理批量详情
 //TODO:将更多的任务详情渲染放在此进行以使逻辑清晰
@@ -211,6 +218,9 @@ UI_List_Common.prototype.bind_detail = function ($el_detail, task) {
         $el_detail.find('#dueTime').removeClass('hasDatepicker');
         if (task.editable)
             $el_detail.find('#dueTime').datepicker();
+
+        //url链接区域
+        this.detail_url_control_render($el_detail.find('#urls'), task.body());
     }
 
     //标签设置区域初始化
@@ -367,4 +377,34 @@ UI_List_Common.prototype.detail_array_control_render = function ($text, data, ap
             + '">x</a>');
         $text.append($i).append('&nbsp;');
     });
+}
+//url链接控件渲染 临时
+UI_List_Common.prototype.detail_url_control_render = function ($urls, text) {
+    //设置url快捷链接区域 临时方案
+    $urls.find('ul').empty();
+    var i = 0;
+    if (text)
+        text.replace(/[http|https|ftp]+:\/\/\S*/ig, function (m) {
+            var href = m.substring(0, 30) + '...';
+            if (i++ == 0)
+                $urls.find('button:first')
+                    .unbind('click').click(function () { window.open(m); })
+                    .html('<i class="icon-file"></i> <a>' + href + '</a>');
+            else
+                $urls.find('ul').append('<li><a target="_blank" href="' + m + '" title="' + m + '">' + href + '</a></li>');
+        });
+    $urls.parents('tr')[i == 0 ? 'hide' : 'show']();
+    $urls.find('button:eq(1)')[i == 1 ? 'hide' : 'show']();
+    $urls.find('url')[i == 1 ? 'hide' : 'show']();
+}
+//textarea控件的高度自适应修正
+UI_List_Common.prototype.detail_autoHeight_textarea = function ($text) {
+    //修正高度 自适应
+    var base = $text[0];
+    //$el.height('');//auto
+    base.rows = base.value.split('\n').length + 1;
+    var l = parseInt($text.css('line-height').replace('px', ''));
+    //ie下不兼容
+    if (isNaN(l) || base.scrollHeight == 0) return;
+    base.rows = Math.floor(base.scrollHeight / l);
 }

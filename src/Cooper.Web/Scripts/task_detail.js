@@ -16,9 +16,7 @@ UI_List_Common.prototype.repairBatchDetailId = function (old, id) {
     this.$batchDetail.attr('id', arr.join(','));
 }
 //详情区域渲染
-UI_List_Common.prototype._renderDetail = function ($r) {
-    if (this.detail_timer)
-        clearTimeout(this.detail_timer);
+UI_List_Common.prototype._renderTaskDetail = function ($r) {
     var base = this;
     var fn = function () {
         var t = base.getTask($r);
@@ -26,26 +24,17 @@ UI_List_Common.prototype._renderDetail = function ($r) {
         //额外修正一些由于未append导致的显示问题
         t.fixDetail();
     }
-    if (this.detail_timer_enable)
-        this.detail_timer = setTimeout(fn, 100); //增加timer延迟优化性能
-    else
-        fn();
+    this._renderDetail(fn);
 }
 //批量详情区域渲染
 UI_List_Common.prototype._renderBatchDetail = function ($rows) {
-    if (this.detail_timer)
-        clearTimeout(this.detail_timer);
-
     var base = this;
     var fn = function () {
         var tasks = [$rows.length];
         $rows.each(function (i, n) { tasks[i] = base.getTask($(n)); });
         base.renderBatchDetail(tasks);
     }
-    if (this.detail_timer_enable)
-        this.detail_timer = setTimeout(fn, 100); //增加timer延迟优化操作感观性能
-    else
-        fn();
+    this._renderDetail(fn);
 }
 UI_List_Common.prototype.renderBatchDetail = function (tasks) {
     if (!this.$batchDetail)
