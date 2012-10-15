@@ -83,10 +83,6 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
                 $rootScope.$broadcast('no_team');
             return;
         }
-        //project
-        $rootScope.project = findBy($scope.team.projects, 'id', p.projectId);
-        debuger.debug('projectId=', p.projectId);
-        debuger.debug('project', $scope.project);
         //member
         $rootScope.member = findBy($scope.team.members, 'id', p.memberId);
         debuger.debug('memberId=', p.memberId);
@@ -94,6 +90,20 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         //currentMember
         $rootScope.currentMember = findBy($scope.team.members, 'accountId', account.id);
         debuger.debug('currentMember=', $rootScope.currentMember);
+
+        //TODO:controller结构要再做梳理
+        //project
+        var projects = [$scope.team.projects.length];
+        //HACK:转换为为UI抽象的Project
+        for (var i = 0; i < $scope.team.projects.length; i++)
+            projects[i] = new Project($scope.team.projects[i], $rootScope);
+        $scope.team.projects = projects;
+        $rootScope.project = findBy($scope.team.projects, 'id', p.projectId);
+        //可编辑性
+        if ($rootScope.project)
+            $rootScope.project.editable = $rootScope.currentMember != null;
+        debuger.debug('projectId=', p.projectId);
+        debuger.debug('project', $scope.project);
         //tag
         $rootScope.tag = p.tag;
         //html.title

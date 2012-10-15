@@ -200,8 +200,10 @@
     <Content Include="Content\jquery\jquery-1.7.2.min.js" />
     <Content Include="Content\jquery\jquery-ui-1.8.21.custom.min.js" />
     <Content Include="robots.txt" />
+    <Content Include="Scripts\sync.js" />
     <Content Include="Scripts\task_assignee.js" />
     <Content Include="Scripts\task_detail.js" />
+    <Content Include="Scripts\team.js" />
     <Content Include="webui\controllers\TaskList.js" />
     <Content Include="webui\modules\cooper.js" />
     <Content Include="webui\controllers\Main.js" />

@@ -1,6 +1,7 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 ///<reference path="task.js" />
+///<reference path="team.js" />
 ///<reference path="task_common.js" />
 ///<reference path="task_row.js" />
 ///<reference path="task_bind.js" />
@@ -44,6 +45,22 @@ UI_List_Common.prototype._bindTeam = function () {
         });
     }
     Task.prototype.bind_detail_team = function () { base.bind_detail_team.apply(base, arguments); };
+    Project.prototype.bind_detail = function ($detail, project) {
+        base.detail_url_control_render(this._getDetailEl('#urls'), project.description);
+
+        this._getDetailEl('name').change(function () {
+            var n = $.trim($(this).val());
+            if (n == '') return;
+            project.setName($(this).val());
+        });
+        this._getDetailEl('description').change(function () {
+            project.setDescription($(this).val());
+        });
+    }
+    Project.prototype.fixDetail = function () {
+        //只有在append之后才有效
+        base.detail_autoHeight_textarea(this._getDetailEl('description'));
+    }
 }
 UI_List_Common.prototype.bind_detail_team = function ($el_detail, task) {
     var base = this;
@@ -183,13 +200,8 @@ UI_List_Common.prototype.bind_detail_team = function ($el_detail, task) {
 UI_List_Common.prototype._renderProjectDetail = function (p) {
     var base = this;
     var fn = function () {
-        //TODO:封装project实现以下渲染逻辑，处理可编辑性，变更记录等
-        var $e = $($('#tmp_detail_project').html());
-        $e.find('#name').text(p.name);
-        $e.find('#description').text(p.name);
-        base.detail_url_control_render($e.find('#urls'), p.description);
-        base.$wrapper_detail.empty().append($e);
-        base.detail_autoHeight_textarea($e.find('#description'));
+        base.$wrapper_detail.empty().append(p.renderDetail());
+        p.fixDetail();
     }
     this._renderDetail(fn);
 }

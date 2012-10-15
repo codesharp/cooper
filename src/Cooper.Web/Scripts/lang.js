@@ -52,6 +52,7 @@ lang.comment_must_less_than_500 = '评论字数不能超过500';
 lang.create_task = '创建了任务';
 lang.tags = '标签';
 lang.remove_tag_from_task = '移除该标签';
+lang.project_detail = '项目详情';
 
 lang.my_task = '个人任务';
 lang.my_profile = '我的设置';

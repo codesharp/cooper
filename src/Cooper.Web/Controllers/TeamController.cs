@@ -495,6 +495,8 @@ namespace Cooper.Web.Controllers
             {
                 id = project.ID.ToString(),
                 name = project.Name
+                //UNDONE:新增project.Description
+                //description = project.Description
             };
         }
         private TeamMemberInfo Parse(Teams.Member member)
@@ -710,6 +712,7 @@ namespace Cooper.Web.Controllers
     {
         public string id { get; set; }
         public string name { get; set; }
+        public string description { get; set; }
     }
     public class TeamTaskInfo : TaskInfo
     {

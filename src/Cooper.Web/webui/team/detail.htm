@@ -12,7 +12,7 @@
             <ul class="nav nav-list">
                 <li class="nav-header" ng-click="addProject(lang.new_project_name)" ng-show="currentMember" style="cursor:pointer"><i class="icon-plus"></i>{{lang.add_project}}</li>
                 <li ng-repeat="p in team.projects" class="{{activeClass(p.id==project.id)}}">
-                    <a href="{{urls.project(team,p)}}" contenteditable="{{!ie7}}">{{p.name}}</a>
+                    <a href="{{urls.project(team,p)}}">{{p.name}}</a>
                 </li>
             </ul>
             <br />
