@@ -67,7 +67,7 @@ namespace Cooper.Web.Controllers
                 t.ID = o.ID.ToString();
                 t.Subject = o.Subject;
                 t.Body = o.Body;
-                //UNDONE:UTC时间按当前时区格式化
+                //TODO:UTC时间按当前时区格式化
                 t.CreateTime = o.CreateTime.ToString("yyyy-MM-dd HH:mm:ss");
                 //HACK:DueTime格式化按Date.ToString("yyyy-MM-dd")精度到天
                 t.DueTime = o.DueTime.HasValue ? o.DueTime.Value.Date.ToString("yyyy-MM-dd") : null;
@@ -151,6 +151,7 @@ namespace Cooper.Web.Controllers
         protected IEnumerable<Correction> Sync(string changes
             , string by
             , string sorts
+            , Action<IEnumerable<ChangeLog>> otherChanges
             , Func<Task> ifNew
             , Action<Task, ChangeLog> verify
             , Func<bool> isPersonalSorts
@@ -163,8 +164,14 @@ namespace Cooper.Web.Controllers
             var account = this.Context.Current;
             var list = _serializer.JsonDeserialize<ChangeLog[]>(changes);
             var idChanges = new Dictionary<string, string>();//old,new
-            //同步变更
-            this.ApplyChanges(account, list, idChanges, ifNew, verify);
+            //HACK:任务之外的数据变更 Flag!=task
+            otherChanges(list.Where(o => !string.IsNullOrWhiteSpace(o.Flag) && o.Flag != "task"));
+            //同步任务变更
+            this.ApplyChanges(account
+                , list.Where(o => string.IsNullOrWhiteSpace(o.Flag) || o.Flag == "task")
+                , idChanges
+                , ifNew
+                , verify);
             //同步排序数据
             this.UpdateSorts(account, by, sorts, idChanges, isPersonalSorts, getSortKey, saveSorts);
             //返回修正记录
@@ -195,7 +202,7 @@ namespace Cooper.Web.Controllers
         }
 
         private void ApplyChanges(Account account
-            , ChangeLog[] list
+            , IEnumerable<ChangeLog> list
             , IDictionary<string, string> idChanges
             , Func<Task> ifNew
             , Action<Task, ChangeLog> verify)
@@ -229,7 +236,7 @@ namespace Cooper.Web.Controllers
                     //执行变更权限验证
                     verify(t, c);
 
-                    //UNDONE:根据最后更新时间判断变更记录有效性，时间间隔过长的变更会被丢弃?
+                    //TODO:根据最后更新时间判断变更记录有效性，时间间隔过长的变更会被丢弃?
                     //由于LastUpdateTime粒度过大，不适合这种细粒度变更比对，需要引入Merge机制来处理文本更新合并问题
                     DateTime createTime;
                     if (DateTime.TryParse(c.CreateTime, out createTime))
@@ -352,6 +359,9 @@ namespace Cooper.Web.Controllers
     /// </summary>
     public class ChangeLog
     {
+        /// <summary>变更对应的数据标记，如：task,project等
+        /// </summary>
+        public string Flag { get; set; }
         /// <summary>变更类型
         /// </summary>
         public ChangeType Type { get; set; }

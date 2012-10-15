@@ -154,7 +154,6 @@ Task.prototype = {
         if (this['data'][k] == v) return false;
         this['data'][k] = v;
         this._addUpdateChange(k, v);
-        //this._addChange(k, { 'Name': k, 'Value': v });
         return true;
     },
     set: function (k, v) {

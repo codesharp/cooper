@@ -184,7 +184,7 @@ namespace Cooper.Web.Controllers
             var t = this.GetTeamOfFullMember(teamId);
             var m = this.GetCurrentMember(t);//TODO:只允许修改自己的？
             m.SetName(name);
-            //UNDONE:还未支持修改Member的Email
+            //TODO:还未支持修改Member的Email
             this._teamService.Update(t);
             return Json(true);
         }
@@ -220,6 +220,7 @@ namespace Cooper.Web.Controllers
             tag = (tag ?? string.Empty).Trim();
 
             return Json(this.Sync(changes, by, sorts
+                , o => this.ApplyOtherChanges(team, o)
                 , () =>
                 {
                     var t = new Teams.Task(currentMember, team);
@@ -312,6 +313,34 @@ namespace Cooper.Web.Controllers
                         teamTask.AddComment(this.GetCurrentMember(team), c.Value);
                     //HACK:目前暂不支持删除评论
                     break;
+            }
+        }
+        //过渡设计，若后期有更多类似变更记录需求则重构
+        private void ApplyOtherChanges(Teams.Team team, IEnumerable<ChangeLog> o)
+        {
+            foreach (var c in o)
+            {
+                try
+                {
+                    if (c.Flag == "project")
+                    {
+                        var p = this.GetProject(team, c.ID);
+
+                        if (c.Name == "name")
+                            p.SetName(c.Value);
+                        //UNDONE:变更project.SetDescription()
+                        //else if (c.Name == "description")
+                        //    p.SetDescription(c.Value);
+                        this._teamService.Update(team);
+                    }
+
+                    if (this._log.IsInfoEnabled)
+                        this._log.InfoFormat("执行变更{0}|{1}|{2}|{3}|{4}|{5}", c.Flag, c.Type, c.ID, c.Name, c.Value, c.CreateTime);
+                }
+                catch (Exception e)
+                {
+                    this._log.Error(string.Format("执行变更时异常：{0}|{1}|{2}|{3}|{4}", c.Flag, c.Type, c.ID, c.Name, c.Value), e);
+                }
             }
         }
 

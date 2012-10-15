@@ -265,6 +265,8 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
         }
         //合并最新的变更记录
         changes = $.merge(changes, popChangelogs('task'));
+        //增加project的同步
+        changes = $.merge(changes, popChangelogs('project'));
         //id修正 避免同步间隙间对新增记录的变更导致此次同步时被重复新增
         for (var i = 0; i < changes.length; i++) {
             if (idChanges[changes[i]['ID']] != undefined) {

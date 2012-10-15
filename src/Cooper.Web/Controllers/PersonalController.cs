@@ -168,6 +168,7 @@ namespace Cooper.Web.Controllers
             var folder = this.GetTaskFolder(taskFolderId ?? tasklistId);
             var a = this.Context.Current;
             return Json(this.Sync(changes, by, sorts
+                , o => { }
                 , () =>
                 {
                     var o = new PersonalTask(a);
