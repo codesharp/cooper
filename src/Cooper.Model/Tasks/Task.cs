@@ -97,7 +97,7 @@ namespace Cooper.Model.Tasks
         public void SetBody(string body)
         {
             if (body != null)
-                Assert.LessOrEqual(body.Length, 1000);
+                Assert.LessOrEqual(body.Length, 10000);
             if (this.Body == body) return;
             this.Body = body;
             this.MakeChange();
