@@ -328,9 +328,8 @@ namespace Cooper.Web.Controllers
 
                         if (c.Name == "name")
                             p.SetName(c.Value);
-                        //UNDONE:变更project.SetDescription()
-                        //else if (c.Name == "description")
-                        //    p.SetDescription(c.Value);
+                        else if (c.Name == "description")
+                            p.SetDescription(c.Value);
                         this._teamService.Update(team);
                     }
 
@@ -523,9 +522,8 @@ namespace Cooper.Web.Controllers
             return new TeamProjectInfo()
             {
                 id = project.ID.ToString(),
-                name = project.Name
-                //UNDONE:新增project.Description
-                //description = project.Description
+                name = project.Name,
+                description = project.Description
             };
         }
         private TeamMemberInfo Parse(Teams.Member member)

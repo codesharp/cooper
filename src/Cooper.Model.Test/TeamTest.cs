@@ -242,6 +242,7 @@ namespace Cooper.Model.Test
             Assert.IsNotNull(project);
 
             project.SetName(project.Name + "_updated");
+            project.SetDescription(project.Description + "_updated");
             project.SetIsPublic(!project.IsPublic);
 
             this._teamService.Update(team);
@@ -253,6 +254,7 @@ namespace Cooper.Model.Test
             var projectUpdated = team.GetProject(project.ID);
 
             Assert.AreEqual(project.Name, projectUpdated.Name);
+            Assert.AreEqual(project.Description, projectUpdated.Description);
             Assert.AreEqual(project.IsPublic, projectUpdated.IsPublic);
         }
         [Test]

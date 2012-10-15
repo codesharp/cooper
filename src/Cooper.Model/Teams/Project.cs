@@ -18,6 +18,9 @@ namespace Cooper.Model.Teams
         /// <summary>获取团队项目名称
         /// </summary>
         public string Name { get; private set; }
+        /// <summary>获取团队项目描述
+        /// </summary>
+        public string Description { get; private set; }
         /// <summary>获取团队项目是否公开
         /// <remarks>
         /// 公开的项目可以被非团队成员浏览
@@ -63,6 +66,23 @@ namespace Cooper.Model.Teams
             if (this.Name != name)
             {
                 this.Name = name;
+            }
+        }
+        /// <summary>设置描述
+        /// <remarks>
+        /// 长度应小于2000
+        /// </remarks>
+        /// </summary>
+        public void SetDescription(string description)
+        {
+            if (!string.IsNullOrEmpty(description))
+            {
+                Assert.LessOrEqual(description.Length, 2000);
+            }
+
+            if (this.Description != description)
+            {
+                this.Description = description;
             }
         }
         /// <summary>设置是否公开
