@@ -2,6 +2,7 @@
 
 ///<reference path="lang.js" />
 ///<reference path="common.js" />
+///<reference path="changelog.js" />
 ///<reference path="../Content/js/moment.min.js" />
 
 var identity = 0;
@@ -90,23 +91,15 @@ Task.prototype = {
         return str.join(s);
     },
     _addDeleteChange: function (k, i, b) {
-        this._addChange(k + i, { 'Name': k, 'Value': i, 'Type': 1 }, b);
+        if (!this.editable && !b) return;
+        appendDeleteChange('task', this.id(), k, i);
     },
     _addInsertChange: function (k, i, b) {
-        this._addChange(k + i, { 'Name': k, 'Value': i, 'Type': 2 }, b);
-    },
-    //b=是否忽略可编辑性判断，部分变更允许对非可编辑状态的任务进行，如comment
-    _addChange: function (k, c, b) {
-        c['ID'] = this.id();
-        //变更列表，用于提交到server
-        if (!this.changes)
-            this.changes = {};
         if (!this.editable && !b) return;
-        //只记录最后一次
-        this.changes[k] = c;
-        //统一增加时间戳
-        this.changes[k]['CreateTime'] = new Date().toUTCString();
-        debuger.info('new changelog for ' + k + ' of task#' + this.id(), this.changes[k]);
+        appendInsertChange('task', this.id(), k, i);
+    },
+    _addUpdateChange: function (k, v) {
+        appendUpdateChange('task', this.id(), k, v);
     },
     ///////////////////////////////////////////////////////////////////////////////
     renderRow: function () {
@@ -160,7 +153,8 @@ Task.prototype = {
     update: function (k, v) {
         if (this['data'][k] == v) return false;
         this['data'][k] = v;
-        this._addChange(k, { 'Name': k, 'Value': v });
+        this._addUpdateChange(k, v);
+        //this._addChange(k, { 'Name': k, 'Value': v });
         return true;
     },
     set: function (k, v) {
@@ -168,14 +162,6 @@ Task.prototype = {
             this.setPriority(v);
         if (k == 'dueTime')
             this.setDueTime(v);
-    },
-    popChanges: function () {
-        if (!this.changes) return [];
-        var arr = [];
-        for (var k in this.changes)
-            arr = $.merge(arr, [this.changes[k]]);
-        this.changes = null;
-        return arr;
     },
     ///////////////////////////////////////////////////////////////////////////////
     //常用属性

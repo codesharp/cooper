@@ -2,6 +2,7 @@
 
 ///<reference path="lang.js" />
 ///<reference path="common.js" />
+///<reference path="changelog.js" />
 
 //team相关模型，设计意图同task
 
@@ -23,26 +24,12 @@ Project.prototype = {
             this.$el_detail[k] = this.$el_detail.find('#' + p);
         return this.$el_detail[k];
     },
-    _addChange: function (k, c) {
-        if (!this.editable)
-            return;
-
-        if (!this.changes)
-            this.changes = {};
-
-        c['ID'] = this.id;
-        //只记录最后一次
-        this.changes[k] = c;
-        //统一增加时间戳
-        this.changes[k]['CreateTime'] = new Date().toUTCString();
-
-        debuger.info('new changelog for ' + k + ' of project#' + this.id, this.changes[k]);
-    },
     _update: function (k, v) {
         if (this[k] == v)
             return false;
         this[k] = v;
-        this._addChange(k, { 'Name': k, 'Value': v });
+        if (this.editable)
+            appendUpdateChange('project', this.id, k, v);
         return true;
     },
     renderDetail: function () {

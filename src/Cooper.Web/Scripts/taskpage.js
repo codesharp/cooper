@@ -1,5 +1,6 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
+///<reference path="changelog.js" />
 ///<reference path="task.js" />
 ///<reference path="task_common.js" />
 
@@ -226,9 +227,7 @@
             return;
         }
         //合并最新的变更记录
-        for (var i in cached_tasks)
-            if (cached_tasks[i])
-                changes = $.merge(changes, cached_tasks[i].popChanges());
+        changes = $.merge(changes, popChangelogs('task'));
         //id修正 避免同步间隙间对新增记录的变更导致此次同步时被重复新增
         for (var i = 0; i < changes.length; i++) {
             if (idChanges[changes[i]['ID']] != undefined) {
