@@ -1,0 +1,41 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="../src/cooper.web/content/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+	<br/>
+	combo-search: <input type="text" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script src="../src/cooper.web/content/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		$('input').typeahead({
+			source:[''],
+			matcher:function(item){
+				var base=this;
+				//do ajax search
+				if(this['timer'])
+					clearTimeout(this['timer']);
+				this['timer']=setTimeout(function(){
+					base.render(['a','b','c','d']);
+					console.log('render');
+				},1000);
+				return true;
+			},
+			highlighter:function(item){
+				if(item=='')
+				return '<i class="icon-refresh"></i> loading...';
+				return '<i class="icon-ok"></i> '+item;
+			},
+			sorter:function(items){
+				return items;
+			},
+			updater:function(item){
+				//...
+				return this.query;
+			}
+		});
+	});
+	</script>
+</body>
+</html>
