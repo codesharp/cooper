@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="GetAllTaskFolders">获取远程任务表</string>
+    <string name="GetLocalTaskFolders">获取本地任务表</string>
+    <string name="ApplicationName">CooperDemo</string>
+</resources>
