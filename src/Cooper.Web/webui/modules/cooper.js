@@ -93,6 +93,14 @@ var template_flag_tasklist = '';
                 templateUrl: url,
                 controller: MainCtrl
             }).
+            when('/t/:teamId/key/:taskKey', {
+                templateUrl: url,
+                controller: MainCtrl
+            }).
+            when('/t/:teamId/task/:taskId', {
+                templateUrl: url,
+                controller: MainCtrl
+            }).
             otherwise({
                 redirectTo: '/t/0'
             });

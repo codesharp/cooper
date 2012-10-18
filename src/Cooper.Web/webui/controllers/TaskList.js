@@ -341,6 +341,10 @@ function TaskListCtrl($scope, $element, $routeParams, $location, urls) {
             d.memberId = $scope.member.id;
         if ($scope.tag)
             d.tag = $scope.tag;
+        if ($scope.taskKey)
+            d.taskKey = $scope.taskKey;
+        if ($scope.taskId)
+            d.taskId = $scope.taskId;
         return d;
     }
     function endRequest() {

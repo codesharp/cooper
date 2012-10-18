@@ -106,6 +106,10 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
         debuger.debug('project', $scope.project);
         //tag
         $rootScope.tag = p.tag;
+        //task key
+        $rootScope.taskKey = p.taskKey;
+        //task id
+        $rootScope.taskId = p.taskId;
         //html.title
         if ($rootScope.project)
             $rootScope.title = $rootScope.project.name;
@@ -113,6 +117,8 @@ function MainCtrl($scope, $rootScope, $http, $routeParams, $location, tmp, urls,
             $rootScope.title = $rootScope.member.name;
         else if($rootScope.tag)
             $rootScope.title = $rootScope.tag;
+        else if ($rootScope.taskKey)
+            $rootScope.title = $rootScope.taskKey;
         else if ($rootScope.team)
             $rootScope.title = $rootScope.team.name;
         $rootScope.title = $rootScope.title == $rootScope.team.name ? $rootScope.title : $rootScope.title + ' - ' + $rootScope.team.name;
@@ -220,7 +226,7 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account,
         matcher: function (item) {
             var base = this;
 
-            //HACK:How to cancel $http promise?
+            //TODO:How to cancel $http promise? or change to $.get?
             //https://github.com/angular/angular.js/issues/1159
             $http.post('/team/search', { teamId: $scope.team.id, key: this.query }).success(function (data, status, headers, config) {
                 for (var i = 0; i < data.length; i++)
