@@ -198,6 +198,29 @@ namespace Cooper.Web.Controllers
         }
         #endregion
 
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult Search(string teamId, string key)
+        {
+            var team = this.GetTeamOfCurrentAccount(teamId);
+            var result = new List<object>();
+            result.AddRange(this._teamService.GetTagsByTeam(team).Where(o => o.Contains(key)).Select(o => new { tag = o }));
+            result.AddRange(team.Members.Where(o => o.Name.Contains(key)).Select(o => new { id = o.ID, member = o.Name }));
+            result.AddRange(team.Projects.Where(o => o.Name.Contains(key)).Select(o => new { id = o.ID, project = o.Name }));
+            result.Add(key);
+            //TODO:team task search
+            return Json(result);
+            //demo
+            return Json(new object[] { 
+                new{ tag = key },
+                new{ id = 1, member = key },
+                new{ id = 1, project = key },
+                key,
+                new{ id = 1, task = key, snapshot = "关键字前几个文字"+ key + "关键字后几个文字" },
+                new{ id = 2, task = key, snapshot = "关键字前几个文字"+ key + "关键字后几个文字" }
+            });
+        }
+
         /// <summary>用于接收终端的变更同步数据，按team同步
         /// </summary>
         /// <param name="teamId">团队标识</param>

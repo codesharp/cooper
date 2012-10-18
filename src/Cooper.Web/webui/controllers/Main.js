@@ -222,7 +222,7 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account,
 
             //HACK:How to cancel $http promise?
             //https://github.com/angular/angular.js/issues/1159
-            $http.post('/team/search', { key: this.query }).success(function (data, status, headers, config) {
+            $http.post('/team/search', { teamId: $scope.team.id, key: this.query }).success(function (data, status, headers, config) {
                 for (var i = 0; i < data.length; i++)
                     data[i] = $.toJSON(data[i]);
                 base.render(data);
@@ -253,18 +253,18 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account,
                 return '<i class="icon-refresh"></i> loading...';
             item = $.parseJSON(item);
             if (item.tag)
-                return '<i class="icon-tag"></i> ' + item.tag;
+                return '<i class="icon-tag"></i> ' + highlight(item.tag, this.query);
             else if (item.member)
-                return '<i class="icon-user"></i> ' + item.member;
+                return '<i class="icon-user"></i> ' + highlight(item.member, this.query);
             else if (item.project)
-                return '<i class="icon-flag"></i> ' + item.project;
+                return '<i class="icon-flag"></i> ' + highlight(item.project, this.query);
             else if (item.task)
                 return '<div style="border-top:1px solid #ccc;padding-top:5px;">\
                     \<i class="icon-inbox"></i> '
-                    + item.task
-                    + '<br> ' + item.snapshot + '</div>';
+                   + highlight(item.task, this.query)
+                   + '<br> ' + highlight(item.snapshot, this.query) + '</div>';
             else
-                return '<i class="icon-search"></i> ' + item;
+                return '<i class="icon-search"></i> ' + highlight(item, this.query);
         },
         sorter: function (items) {
             return items;
@@ -363,4 +363,9 @@ function findBy(a, k, v) {
         if (a[i][k] == v)
             return a[i];
     return null;
+}
+function highlight(item, k) {
+    return item.replace(new RegExp('(' + k + ')', 'ig'), function ($1, match) {
+        return '<strong>' + match + '</strong>'
+    });
 }
