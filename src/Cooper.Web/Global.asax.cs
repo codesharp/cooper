@@ -36,6 +36,8 @@ namespace Cooper.Web
             routes.MapRoute("TeamProject", "t/{teamId}/p/{projectId}", new { controller = "Team", action = "Index" });
             routes.MapRoute("TeamMember", "t/{teamId}/m/{memberId}", new { controller = "Team", action = "Index" });
             routes.MapRoute("TeamTag", "t/{teamId}/tag/{tag}", new { controller = "Team", action = "Index" });
+            routes.MapRoute("TeamTask", "t/{teamId}/task/{taskId}", new { controller = "Team", action = "Index" });
+            routes.MapRoute("TeamTaskSearch", "t/{teamId}/key/{key}", new { controller = "Team", action = "Index" });
             routes.MapRoute("TeamDefault", "Team/{action}", new { controller = "Team", action = "Index" });
             routes.MapRoute("Account", "Account/{action}/{id}", new { controller = "Account", action = "Profile", id = UrlParameter.Optional });
             routes.MapRoute("Default", "{controller}/{action}/{id}", new { controller = "Home", action = "Index", id = UrlParameter.Optional });

@@ -365,7 +365,12 @@ function findBy(a, k, v) {
     return null;
 }
 function highlight(item, k) {
-    return item.replace(new RegExp('(' + k + ')', 'ig'), function ($1, match) {
-        return '<strong>' + match + '</strong>'
-    });
+    try{
+        return item.replace(new RegExp('(' + k + ')', 'ig'), function ($1, match) {
+            return '<strong>' + match + '</strong>'
+        });
+    } catch (e)
+    {
+        return item;
+    }
 }
