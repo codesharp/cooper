@@ -35,7 +35,7 @@ var template_flag_tasklist = '';
     cooper.value('urls', {
         personal: url_root + '/per',
         account: url_root + '/account',
-        
+
         // /team#/t/1 or /t/1
         team: function (t) { if (t) return url_root + prefix + t.id; },
         // /t/1
@@ -43,12 +43,18 @@ var template_flag_tasklist = '';
 
         member: function (t, m) { if (t && m) return url_root + prefix + t.id + '/m/' + m.id; },
         memberPath: function (t, m) { if (t && m) return url_root + prefixPath + t.id + '/m/' + m.id; },
-        
+
         project: function (t, p) { if (t && p) return url_root + prefix + t.id + '/p/' + p.id; },
         projectPath: function (t, p) { if (t && p) return url_root + prefixPath + t.id + '/p/' + p.id; },
 
         tag: function (t, tag) { if (t && tag) return url_root + prefix + t.id + '/tag/' + tag; },
-        tagPath: function (t, tag) { if (t && tag) return url_root + prefixPath + t.id + '/tag/' + escape(tag); }
+        tagPath: function (t, tag) { if (t && tag) return url_root + prefixPath + t.id + '/tag/' + tag; },
+
+        key: function (t, key) { if (t && key) return url_root + prefix + t.id + '/key/' + key; },
+        keyPath: function (t, key) { if (t && key) return url_root + prefixPath + t.id + '/key/' + key; },
+
+        task: function (t, task) { if (t && task) return url_root + prefix + t.id + '/task/' + task.id; },
+        taskPath: function (t, task) { if (t && task) return url_root + prefixPath + t.id + '/task/' + task.id; }
     });
 
     //当前路由参数[obsolete]

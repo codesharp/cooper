@@ -190,6 +190,7 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account,
     }
     //处理project名称变更
     //TODO:迁移到task sync之外的同步设计中
+    //obsolete:已经增加project详情功能
     var timer;
     $element.bind('keyup', function (e) {
         var $e = $(e.target);
@@ -212,6 +213,78 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account,
                 $scope.project.name = name;
             });
         }, 500);
+    });
+    //任务搜索
+    $element.find('input#txtSearch').typeahead({
+        source: [''],
+        matcher: function (item) {
+            var base = this;
+
+            //HACK:How to cancel $http promise?
+            //https://github.com/angular/angular.js/issues/1159
+            $http.post('/team/search', { key: this.query }).success(function (data, status, headers, config) {
+                for (var i = 0; i < data.length; i++)
+                    data[i] = $.toJSON(data[i]);
+                base.render(data);
+            });
+            
+            /*if (this['timer'])
+                clearTimeout(this['timer']);
+            this['timer'] = setTimeout(function () {
+                //tag
+                //member
+                //project
+                //by key task
+                //single task combo top 5
+                //base.render(['a', 'b', 'c', 'd']);
+                base.render([
+                    $.toJSON({ tag: base.query }),
+                    $.toJSON({ id: 1, member: base.query }),
+                    $.toJSON({ id: 1, project: base.query }),
+                    $.toJSON(base.query),
+                    $.toJSON({ id: 1, task: base.query, snapshot: base.query }),
+                    $.toJSON({ id: 2, task: base.query, snapshot: base.query })
+                ]);
+            }, 200);*/
+            return true;
+        },
+        highlighter: function (item) {
+            if (item == '')
+                return '<i class="icon-refresh"></i> loading...';
+            item = $.parseJSON(item);
+            if (item.tag)
+                return '<i class="icon-tag"></i> ' + item.tag;
+            else if (item.member)
+                return '<i class="icon-user"></i> ' + item.member;
+            else if (item.project)
+                return '<i class="icon-flag"></i> ' + item.project;
+            else if (item.task)
+                return '<div style="border-top:1px solid #ccc;padding-top:5px;">\
+                    \<i class="icon-inbox"></i> '
+                    + item.task
+                    + '<br> ' + item.snapshot + '</div>';
+            else
+                return '<i class="icon-search"></i> ' + item;
+        },
+        sorter: function (items) {
+            return items;
+        },
+        updater: function (item) {
+            debuger.debug(item);
+            item = $.parseJSON(item);
+            if (item.tag)
+                $scope.$apply(function () { $location.path(urls.tagPath($scope.team, item.tag)); });
+            else if (item.member)
+                $scope.$apply(function () { $location.path(urls.memberPath($scope.team, item)); });
+            else if (item.project)
+                $scope.$apply(function () { $location.path(urls.projectPath($scope.team, item)); });
+            else if (item.task)
+                $scope.$apply(function () { $location.path(urls.taskPath($scope.team, item)); });
+            else
+                $scope.$apply(function () { $location.path(urls.keyPath($scope.team, item)); });
+
+            return this.query;
+        }
     });
 }
 function TeamSettingsFormCtrl($scope, $element, $http) {
