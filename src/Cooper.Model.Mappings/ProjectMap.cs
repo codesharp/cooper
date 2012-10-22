@@ -13,7 +13,7 @@ namespace Cooper.Model.Mappings
             Table("Cooper_Project");
             Id(m => m.ID);
             Map(m => m.Name).Length(255);
-            Map(m => m.Description).Length(2000);
+            Map(m => m.Description).Length(10000);
             Map(m => m.IsPublic);
             Map(m => m.TeamId);
             Component(m => m.Settings,
