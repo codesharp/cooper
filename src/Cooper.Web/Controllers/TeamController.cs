@@ -233,7 +233,7 @@ namespace Cooper.Web.Controllers
             result.AddRange(team.Members.Where(o => o.Name.Contains(key)).Select(o => new { id = o.ID, member = o.Name }));
             result.AddRange(team.Projects.Where(o => o.Name.Contains(key)).Select(o => new { id = o.ID, project = o.Name }));
             result.Add(key);
-            //UNDONE:[Model]team task search, 返回task列表，搜索title/body/comments即可，如teamService.search(team,key);
+            result.AddRange(this._teamTaskService.GetTasksByKey(team, key).Select(o => new { id = o.ID, member = o.Subject }));
             //UNDONE:单独提供一个缩略方法对任务列题和匹配内容缩略（snapshot）
             return Json(result);
             //demo
@@ -568,13 +568,11 @@ namespace Cooper.Web.Controllers
         }
         private IEnumerable<Teams.Task> GetTasksByKey(Teams.Team team, string key)
         {
-            //UNDONE:_teamTaskService.GetTasksByKey?
-            return this._teamTaskService.GetTasksByTag(team, key);
+            return this._teamTaskService.GetTasksByKey(team, key);
         }
         private IEnumerable<Teams.Task> GetIncompletedTasksByKey(Teams.Team team, string key)
         {
-            //UNDONE:_teamTaskService.GetIncompletedTasksByKey?
-            return this._teamTaskService.GetIncompletedTasksByTag(team, key);
+            return this._teamTaskService.GetIncompletedTasksByKey(team, key);
         }
         private IEnumerable<Teams.Task> GetTasksById(Teams.Team team, string taskId)
         {
