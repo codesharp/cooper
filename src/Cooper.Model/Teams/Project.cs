@@ -77,7 +77,7 @@ namespace Cooper.Model.Teams
         {
             if (!string.IsNullOrEmpty(description))
             {
-                Assert.LessOrEqual(description.Length, 2000);
+                Assert.LessOrEqual(description.Length, 10000);
             }
 
             if (this.Description != description)
