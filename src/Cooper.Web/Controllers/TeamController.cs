@@ -233,18 +233,9 @@ namespace Cooper.Web.Controllers
             result.AddRange(team.Members.Where(o => o.Name.Contains(key)).Select(o => new { id = o.ID, member = o.Name }));
             result.AddRange(team.Projects.Where(o => o.Name.Contains(key)).Select(o => new { id = o.ID, project = o.Name }));
             result.Add(key);
-            result.AddRange(this._teamTaskService.GetTasksByKey(team, key).Select(o => new { id = o.ID, member = o.Subject }));
             //UNDONE:单独提供一个缩略方法对任务列题和匹配内容缩略（snapshot）
+            result.AddRange(this._teamTaskService.GetTasksByKey(team, key).Select(o => new { id = o.ID, task = o.Subject, snapshot = "关键字前几个文字" + key + "关键字后几个文字" }));
             return Json(result);
-            //demo
-            return Json(new object[] { 
-                new{ tag = key },
-                new{ id = 1, member = key },
-                new{ id = 1, project = key },
-                key,
-                new{ id = 1, task = key, snapshot = "关键字前几个文字"+ key + "关键字后几个文字" },
-                new{ id = 2, task = key, snapshot = "关键字前几个文字"+ key + "关键字后几个文字" }
-            });
         }
 
         /// <summary>用于接收终端的变更同步数据，按team同步
@@ -713,13 +704,13 @@ namespace Cooper.Web.Controllers
                 editable = false;
                 tasks = this.Parse(taskByKey(team, taskKey), team);
                 //暂不存储搜索排序数据
-                sorts = sortsOfTag(team, taskKey, tasks);
+                sorts = sortsOfTaskKey(team, taskKey, tasks);
             }
             else if (!string.IsNullOrWhiteSpace(taskId))
             {
                 editable = false;
                 tasks = this.Parse(taskById(team, taskId), team);
-                sorts = sortsOfTag(team, taskId, tasks);
+                sorts = sortsOfTaskId(team, taskId, tasks);
             }
             else
             {
