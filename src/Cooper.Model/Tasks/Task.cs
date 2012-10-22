@@ -79,7 +79,7 @@ namespace Cooper.Model.Tasks
             this.MakeChange();
         }
         /// <summary>设置标题
-        /// <remarks>长度应小于500</remarks>
+        /// <remarks>长度应小于255</remarks>
         /// </summary>
         /// <param name="subject"></param>
         public void SetSubject(string subject)
@@ -91,7 +91,7 @@ namespace Cooper.Model.Tasks
             this.MakeChange();
         }
         /// <summary>设置内容
-        /// <remarks>长度应小于5000</remarks>
+        /// <remarks>长度应小于10000</remarks>
         /// </summary>
         /// <param name="body"></param>
         public void SetBody(string body)

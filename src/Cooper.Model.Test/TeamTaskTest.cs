@@ -512,6 +512,74 @@ namespace Cooper.Model.Test
             Assert.AreEqual(0, tasks.Count());
             Assert.IsFalse(!tasks.All(x => x.Tags.Contains("001_tag_001", StringComparer.OrdinalIgnoreCase)));
         }
+        [Test]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
+        public void GetTasksByKeyTest()
+        {
+            var account = CreateAccount();
+            var team = CreateSampleTeam();
+            var member = AddSampleMemberToTeam(account, team);
+
+            var teamTask1 = new Task(member, team);
+            teamTask1.SetSubject(".NET 4.5 researching");
+            teamTask1.SetBody("Research what is new in .NET 4.5, and is there any problems to upgrade to .NET4.5");
+            teamTask1.MarkAsInCompleted();
+
+            var teamTask2 = new Task(member, team);
+            teamTask2.SetSubject("Compare .NET and Java platform.");
+            teamTask2.SetBody("Compare the most important differences between .NET and java platform.");
+            teamTask2.MarkAsInCompleted();
+
+            var teamTask3 = new Task(member, team);
+            teamTask3.SetSubject("A sample task to test GetTasksByKey interface.");
+            teamTask3.AddComment(member, ".net");
+            teamTask3.AddComment(member, "java");
+            teamTask3.AddComment(member, "other");
+            teamTask3.MarkAsCompleted();
+
+            this._teamTaskService.Create(teamTask1);
+            this._teamTaskService.Create(teamTask2);
+            this._teamTaskService.Create(teamTask3);
+
+            var tasks = this._teamTaskService.GetTasksByKey(team, ".NET");
+            var incompletedTasks = this._teamTaskService.GetIncompletedTasksByKey(team, ".NET");
+            Assert.AreEqual(3, tasks.Count());
+            Assert.IsTrue(tasks.Any(x => x.ID == teamTask1.ID));
+            Assert.IsTrue(tasks.Any(x => x.ID == teamTask2.ID));
+            Assert.IsTrue(tasks.Any(x => x.ID == teamTask3.ID));
+            Assert.AreEqual(2, incompletedTasks.Count());
+            Assert.IsTrue(incompletedTasks.Any(x => x.ID == teamTask1.ID));
+            Assert.IsTrue(incompletedTasks.Any(x => x.ID == teamTask2.ID));
+
+            tasks = this._teamTaskService.GetTasksByKey(team, "JAVA");
+            incompletedTasks = this._teamTaskService.GetIncompletedTasksByKey(team, "JAVA");
+            Assert.AreEqual(2, tasks.Count());
+            Assert.IsTrue(tasks.Any(x => x.ID == teamTask2.ID));
+            Assert.IsTrue(tasks.Any(x => x.ID == teamTask3.ID));
+            Assert.AreEqual(1, incompletedTasks.Count());
+            Assert.IsTrue(incompletedTasks.Any(x => x.ID == teamTask2.ID));
+
+            tasks = this._teamTaskService.GetTasksByKey(team, "OTHER");
+            incompletedTasks = this._teamTaskService.GetIncompletedTasksByKey(team, "OTHER");
+            Assert.AreEqual(1, tasks.Count());
+            Assert.IsTrue(tasks.Any(x => x.ID == teamTask3.ID));
+            Assert.AreEqual(0, incompletedTasks.Count());
+
+            tasks = this._teamTaskService.GetTasksByKey(team, "Not Exist Key");
+            incompletedTasks = this._teamTaskService.GetIncompletedTasksByKey(team, "Not Exist Key");
+            Assert.AreEqual(0, tasks.Count());
+            Assert.AreEqual(0, incompletedTasks.Count());
+
+            tasks = this._teamTaskService.GetTasksByKey(team, null);
+            incompletedTasks = this._teamTaskService.GetIncompletedTasksByKey(team, null);
+            Assert.AreEqual(0, tasks.Count());
+            Assert.AreEqual(0, incompletedTasks.Count());
+
+            tasks = this._teamTaskService.GetTasksByKey(team, string.Empty);
+            incompletedTasks = this._teamTaskService.GetIncompletedTasksByKey(team, string.Empty);
+            Assert.AreEqual(0, tasks.Count());
+            Assert.AreEqual(0, incompletedTasks.Count());
+        }
 
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]

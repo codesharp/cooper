@@ -70,7 +70,7 @@ namespace Cooper.Model.Teams
         }
         /// <summary>设置描述
         /// <remarks>
-        /// 长度应小于2000
+        /// 长度应小于10000
         /// </remarks>
         /// </summary>
         public void SetDescription(string description)

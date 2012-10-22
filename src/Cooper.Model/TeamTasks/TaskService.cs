@@ -57,6 +57,24 @@ namespace Cooper.Model.Teams
         /// <param name="tag"></param>
         /// <returns></returns>
         IEnumerable<Task> GetIncompletedTasksByTag(Team team, string tag);
+        /// <summary>获取指定团队中指定key相关的任务
+        /// <remarks>
+        /// key会跟任务的title/body/comments分别进行模糊匹配，只有要任何一个匹配key，则认为符合条件
+        /// </remarks>
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetTasksByKey(Team team, string key);
+        /// <summary>获取指定团队中指定key相关的未完成的任务
+        /// <remarks>
+        /// key会跟任务的title/body/comments分别进行模糊，只有要任何一个匹配key，则认为符合条件
+        /// </remarks>
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        IEnumerable<Task> GetIncompletedTasksByKey(Team team, string key);
         /// <summary>获取指定项目的所有任务
         /// </summary>
         /// <param name="project"></param>
@@ -136,11 +154,35 @@ namespace Cooper.Model.Teams
         }
         IEnumerable<Task> ITaskService.GetTasksByTag(Team team, string tag)
         {
+            if (string.IsNullOrEmpty(tag))
+            {
+                return new List<Task>();
+            }
             return _repository.FindByTag(team, tag);
         }
         IEnumerable<Task> ITaskService.GetIncompletedTasksByTag(Team team, string tag)
         {
+            if (string.IsNullOrEmpty(tag))
+            {
+                return new List<Task>();
+            }
             return _repository.FindByTag(team, false, tag);
+        }
+        IEnumerable<Task> ITaskService.GetTasksByKey(Team team, string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                return new List<Task>();
+            }
+            return _repository.FindByKey(team, key);
+        }
+        IEnumerable<Task> ITaskService.GetIncompletedTasksByKey(Team team, string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                return new List<Task>();
+            }
+            return _repository.FindByKey(team, false, key);
         }
         IEnumerable<Task> ITaskService.GetTasksByProject(Project project)
         {

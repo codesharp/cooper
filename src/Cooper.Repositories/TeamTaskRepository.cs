@@ -6,6 +6,7 @@ using Cooper.Model;
 using Cooper.Model.Accounts;
 using Cooper.Model.Teams;
 using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 
 namespace Cooper.Repositories
 {
@@ -50,6 +51,35 @@ namespace Cooper.Repositories
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("IsCompleted", isCompleted))
                 .Add(Expression.Like("_tagList._serializedValue", string.Format("{1}{0}{1}", tag, StringList.Seperator), MatchMode.Anywhere))
+                .Add(IsNotTrashedCriteria)
+                .List<Task>();
+        }
+        public IEnumerable<Task> FindByKey(Team team, string key)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .CreateAlias("Comments", "comments", JoinType.LeftOuterJoin)
+                .Add(Expression.Eq("TeamId", team.ID))
+                .Add(Expression.Or(
+                        Expression.Or(
+                            Expression.Like("Subject", key, MatchMode.Anywhere),
+                            Expression.Like("Body", key, MatchMode.Anywhere)),
+                        Expression.Like("comments.Body", key, MatchMode.Anywhere)))
+                .Add(IsNotTrashedCriteria)
+                .List<Task>();
+        }
+        public IEnumerable<Task> FindByKey(Team team, bool isCompleted, string key)
+        {
+            return this.GetSession()
+                .CreateCriteria<Task>()
+                .CreateAlias("Comments", "comments", JoinType.LeftOuterJoin)
+                .Add(Expression.Eq("TeamId", team.ID))
+                .Add(Expression.Eq("IsCompleted", isCompleted))
+                .Add(Expression.Or(
+                        Expression.Or(
+                            Expression.Like("Subject", key, MatchMode.Anywhere),
+                            Expression.Like("Body", key, MatchMode.Anywhere)),
+                        Expression.Like("comments.Body", key, MatchMode.Anywhere)))
                 .Add(IsNotTrashedCriteria)
                 .List<Task>();
         }
