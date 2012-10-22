@@ -511,6 +511,21 @@ namespace Cooper.Model.Test
             tasks = this._teamTaskService.GetIncompletedTasksByTag(team, "001_tag_001");
             Assert.AreEqual(0, tasks.Count());
             Assert.IsFalse(!tasks.All(x => x.Tags.Contains("001_tag_001", StringComparer.OrdinalIgnoreCase)));
+
+            tasks = this._teamTaskService.GetTasksByTag(team, null);
+            var incompletedTasks = this._teamTaskService.GetIncompletedTasksByTag(team, null);
+            Assert.AreEqual(0, tasks.Count());
+            Assert.AreEqual(0, incompletedTasks.Count());
+
+            tasks = this._teamTaskService.GetTasksByTag(team, string.Empty);
+            incompletedTasks = this._teamTaskService.GetIncompletedTasksByTag(team, string.Empty);
+            Assert.AreEqual(0, tasks.Count());
+            Assert.AreEqual(0, incompletedTasks.Count());
+
+            tasks = this._teamTaskService.GetTasksByTag(team, " ");
+            incompletedTasks = this._teamTaskService.GetIncompletedTasksByTag(team, " ");
+            Assert.AreEqual(0, tasks.Count());
+            Assert.AreEqual(0, incompletedTasks.Count());
         }
         [Test]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod]
@@ -577,6 +592,11 @@ namespace Cooper.Model.Test
 
             tasks = this._teamTaskService.GetTasksByKey(team, string.Empty);
             incompletedTasks = this._teamTaskService.GetIncompletedTasksByKey(team, string.Empty);
+            Assert.AreEqual(0, tasks.Count());
+            Assert.AreEqual(0, incompletedTasks.Count());
+
+            tasks = this._teamTaskService.GetTasksByKey(team, " ");
+            incompletedTasks = this._teamTaskService.GetIncompletedTasksByKey(team, " ");
             Assert.AreEqual(0, tasks.Count());
             Assert.AreEqual(0, incompletedTasks.Count());
         }
