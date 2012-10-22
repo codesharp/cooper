@@ -548,6 +548,7 @@ namespace Cooper.Model.Test
             var teamTask3 = new Task(member, team);
             teamTask3.SetSubject("A sample task to test GetTasksByKey interface.");
             teamTask3.AddComment(member, ".net");
+            teamTask3.AddComment(member, ".net");
             teamTask3.AddComment(member, "java");
             teamTask3.AddComment(member, "other");
             teamTask3.MarkAsCompleted();
