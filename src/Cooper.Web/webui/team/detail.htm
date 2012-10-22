@@ -1,7 +1,7 @@
 ﻿<ul class="nav nav-list">
     <li class="nav-header">{{team.name}}</li>
 </ul>
-<input id="txtSearch" type="text" ng-show="currentMember" style="width:95%;margin-bottom:4px" placeholder="{{lang.search}}" value="{{taskKey}}" />
+<input id="txtSearch" type="text" ng-show="currentMember" style="width:95%;margin-bottom:4px" placeholder="{{lang.search}}" value="{{taskKey}}" maxlength="20" />
 <ul ng-show="currentMember" class="nav nav-tabs nav-stacked" style="margin-bottom:5px">
     <li class="{{activeClass(!project&&!member)}}"><a href="{{urls.team(team)}}"><i class="icon-inbox"></i> {{lang.my_team_task}}</a></li>
     <li><a href="javascript:;" title="{{lang.comming_soon}}"><i class="icon-envelope"></i> {{lang.inbox}}</a></li>    

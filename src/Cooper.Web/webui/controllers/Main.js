@@ -278,18 +278,26 @@ function TeamDetailCtrl($scope, $http, $element, $location, urls, lang, account,
         updater: function (item) {
             debuger.debug(item);
             item = $.parseJSON(item);
-            if (item.tag)
+            if (item.tag) {
                 $scope.$apply(function () { $location.path(urls.tagPath($scope.team, item.tag)); });
-            else if (item.member)
+                return item.tag;
+            }
+            else if (item.member) {
                 $scope.$apply(function () { $location.path(urls.memberPath($scope.team, item)); });
-            else if (item.project)
+                return item.member;
+            }
+            else if (item.project) {
                 $scope.$apply(function () { $location.path(urls.projectPath($scope.team, item)); });
-            else if (item.task)
+                return item.project;
+            }
+            else if (item.task) {
                 $scope.$apply(function () { $location.path(urls.taskPath($scope.team, item)); });
-            else
+                return item.task;
+            }
+            else {
                 $scope.$apply(function () { $location.path(urls.keyPath($scope.team, item)); });
-
-            return this.query;
+                return item;
+            }
         }
     });
 }
