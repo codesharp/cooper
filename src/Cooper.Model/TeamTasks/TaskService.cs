@@ -154,35 +154,35 @@ namespace Cooper.Model.Teams
         }
         IEnumerable<Task> ITaskService.GetTasksByTag(Team team, string tag)
         {
-            if (string.IsNullOrEmpty(tag))
+            if (string.IsNullOrWhiteSpace(tag))
             {
                 return new List<Task>();
             }
-            return _repository.FindByTag(team, tag);
+            return _repository.FindByTag(team, tag.Trim());
         }
         IEnumerable<Task> ITaskService.GetIncompletedTasksByTag(Team team, string tag)
         {
-            if (string.IsNullOrEmpty(tag))
+            if (string.IsNullOrWhiteSpace(tag))
             {
                 return new List<Task>();
             }
-            return _repository.FindByTag(team, false, tag);
+            return _repository.FindByTag(team, false, tag.Trim());
         }
         IEnumerable<Task> ITaskService.GetTasksByKey(Team team, string key)
         {
-            if (string.IsNullOrEmpty(key))
+            if (string.IsNullOrWhiteSpace(key))
             {
                 return new List<Task>();
             }
-            return _repository.FindByKey(team, key);
+            return _repository.FindByKey(team, key.Trim());
         }
         IEnumerable<Task> ITaskService.GetIncompletedTasksByKey(Team team, string key)
         {
-            if (string.IsNullOrEmpty(key))
+            if (string.IsNullOrWhiteSpace(key))
             {
                 return new List<Task>();
             }
-            return _repository.FindByKey(team, false, key);
+            return _repository.FindByKey(team, false, key.Trim());
         }
         IEnumerable<Task> ITaskService.GetTasksByProject(Project project)
         {

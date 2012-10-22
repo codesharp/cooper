@@ -7,6 +7,7 @@ using Cooper.Model.Accounts;
 using Cooper.Model.Teams;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
+using NHibernate.Transform;
 
 namespace Cooper.Repositories
 {
@@ -60,12 +61,13 @@ namespace Cooper.Repositories
                 .CreateCriteria<Task>()
                 .CreateAlias("Comments", "comments", JoinType.LeftOuterJoin)
                 .Add(Expression.Eq("TeamId", team.ID))
-                .Add(Expression.Or(
-                        Expression.Or(
-                            Expression.Like("Subject", key, MatchMode.Anywhere),
-                            Expression.Like("Body", key, MatchMode.Anywhere)),
-                        Expression.Like("comments.Body", key, MatchMode.Anywhere)))
+                .Add(Expression.Like("Subject", key, MatchMode.Anywhere)
+                     || Expression.Like("Body", key, MatchMode.Anywhere)
+                     || Expression.Like("comments.Body", key, MatchMode.Anywhere))
                 .Add(IsNotTrashedCriteria)
+                //TODO，下面这行是为了过滤掉重复的任务。因为这里目前不需要分页，所以可以这样做；
+                //如果以后会分页或者要优化性能，则再调整这里的查询实现；
+                .SetResultTransformer(Transformers.DistinctRootEntity)
                 .List<Task>();
         }
         public IEnumerable<Task> FindByKey(Team team, bool isCompleted, string key)
@@ -75,12 +77,13 @@ namespace Cooper.Repositories
                 .CreateAlias("Comments", "comments", JoinType.LeftOuterJoin)
                 .Add(Expression.Eq("TeamId", team.ID))
                 .Add(Expression.Eq("IsCompleted", isCompleted))
-                .Add(Expression.Or(
-                        Expression.Or(
-                            Expression.Like("Subject", key, MatchMode.Anywhere),
-                            Expression.Like("Body", key, MatchMode.Anywhere)),
-                        Expression.Like("comments.Body", key, MatchMode.Anywhere)))
+                .Add(Expression.Like("Subject", key, MatchMode.Anywhere)
+                     || Expression.Like("Body", key, MatchMode.Anywhere)
+                     || Expression.Like("comments.Body", key, MatchMode.Anywhere))
                 .Add(IsNotTrashedCriteria)
+                //TODO，下面这行是为了过滤掉重复的任务。因为这里目前不需要分页，所以可以这样做；
+                //如果以后会分页或者要优化性能，则再调整这里的查询实现；
+                .SetResultTransformer(Transformers.DistinctRootEntity)
                 .List<Task>();
         }
         public IEnumerable<Task> FindBy(Team team, Account account)
