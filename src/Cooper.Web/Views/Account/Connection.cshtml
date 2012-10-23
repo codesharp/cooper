@@ -49,6 +49,11 @@
         <button class="btn btn-inverse" onclick="window.open('@ViewBag.GitUrl')">
             @this.Lang().add_git_connection</button>
     }
+    @if (!cs.Any(o => o is EverNoteConnection))
+    {
+        <button class="btn btn-inverse" onclick="window.open('@ViewBag.EverNoteUrl')">
+            @this.Lang().add_evernote_connection</button>
+    }
 </div>
 @section Bottom{
     <script type="text/javascript">

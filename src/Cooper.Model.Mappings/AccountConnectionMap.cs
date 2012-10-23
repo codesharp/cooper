@@ -34,4 +34,12 @@ namespace Cooper.Model.Mappings
             DiscriminatorValue("git");
         }
     }
+    public class EverNoteConnectionMap : SubclassMap<EverNoteConnection>
+    {
+        public EverNoteConnectionMap()
+        {
+            Table("Cooper_AccountConnection");
+            DiscriminatorValue("evernote");
+        }
+    }
 }

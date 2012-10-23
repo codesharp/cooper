@@ -9,12 +9,14 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
-using Cooper.Model.Accounts;
 using CodeSharp.Core;
 using CodeSharp.Core.Services;
 using CodeSharp.Core.Utils;
-using System.Text.RegularExpressions;
+using Cooper.Model.Accounts;
 using Cooper.Model.Teams;
+using Evernote.EDAM.UserStore;
+using Thrift.Protocol;
+using Thrift.Transport;
 
 namespace Cooper.Web.Controllers
 {
@@ -47,6 +49,12 @@ namespace Cooper.Web.Controllers
         private string _gitClientSecret;
         private string _gitScope;
 
+        private string _consumerKey;
+        private string _consumerSecret;
+        private string _userAuthorizationUrl;
+        private string _getOAuthTokenUrl;
+        private string _userStoreUrl;
+
         public AccountController(ILoggerFactory factory
             , IContextService context
             , IAccountHelper accountHelper
@@ -71,7 +79,13 @@ namespace Cooper.Web.Controllers
             , string gitOAuthUserUrl
             , string gitClientId
             , string gitClientSecret
-            , string gitScope)
+            , string gitScope
+
+            , string consumerKey
+            , string consumerSecret
+            , string userAuthorizationUrl
+            , string getOAuthTokenUrl
+            , string userStoreUrl)
         {
             this._log = factory.Create(typeof(AccountController));
             this._context = context;
@@ -99,6 +113,12 @@ namespace Cooper.Web.Controllers
             this._gitClientId = gitClientId;
             this._gitClientSecret = gitClientSecret;
             this._gitScope = gitScope;
+
+            this._consumerKey = consumerKey;
+            this._consumerSecret = consumerSecret;
+            this._userAuthorizationUrl = userAuthorizationUrl;
+            this._getOAuthTokenUrl = getOAuthTokenUrl;
+            this._userStoreUrl = userStoreUrl;
         }
 
         //处理个别需要登录的Action
@@ -250,6 +270,42 @@ namespace Cooper.Web.Controllers
 
             return this.StateResult(state);
         }
+        //evernote
+        public ActionResult EvernoteLogin(string state)
+        {
+            var redirectUrl = Url.ToPublicUrl(Url.Action("EvernoteLoginCallBack") + "?state=" + state);
+            var getTemporaryOAuthTokenUrl = string.Format("{0}?oauth_consumer_key={1}&oauth_signature={2}&oauth_signature_method=PLAINTEXT&oauth_timestamp={3}&oauth_nonce={4}&oauth_callback={5}",
+                _getOAuthTokenUrl,
+                _consumerKey,
+                _consumerSecret,
+                DateTime.UtcNow.Ticks,
+                DateTime.UtcNow.Ticks,
+                redirectUrl);
+
+            var tempOAuthToken = RequestEverNoteUrl(getTemporaryOAuthTokenUrl)["oauth_token"];
+            return Redirect(string.Format("{0}?oauth_token={1}", _userAuthorizationUrl, tempOAuthToken));
+        }
+        public ActionResult EvernoteLoginCallBack(string oauth_token, string oauth_verifier, string state)
+        {
+            var getAccessTokenUrl = string.Format("{0}?oauth_consumer_key={1}&oauth_signature={2}&oauth_signature_method=PLAINTEXT&oauth_timestamp={3}&oauth_nonce={4}&oauth_token={5}&oauth_verifier={6}",
+                _getOAuthTokenUrl,
+                _consumerKey,
+                _consumerSecret,
+                DateTime.UtcNow.Ticks,
+                DateTime.UtcNow.Ticks,
+                oauth_token,
+                oauth_verifier);
+
+            var aAuthToken = RequestEverNoteUrl(getAccessTokenUrl)["oauth_token"];
+            var account = GetEvernoteAccount(aAuthToken);
+
+            if (state == "login")
+                this.SetLogin<EverNoteConnection>(account, aAuthToken);
+            else if (state == "connect")
+                this.Connect<EverNoteConnection>(account, aAuthToken);
+
+            return this.StateResult(state);
+        }
 
         protected ActionResult Home()
         {
@@ -293,6 +349,8 @@ namespace Cooper.Web.Controllers
                 this._accountConnectionService.Create(c = new GoogleConnection(name, token, a));
             else if (typeof(T) == typeof(GitHubConnection))
                 this._accountConnectionService.Create(c = new GitHubConnection(name, token, a));
+            else if (typeof(T) == typeof(EverNoteConnection))
+                this._accountConnectionService.Create(c = new EverNoteConnection(name, token, a));
             //HACK:连接账号时自动关联一切可以关联的信息
             this.AssociateEverything(c);
         }
@@ -300,6 +358,7 @@ namespace Cooper.Web.Controllers
         {
             ViewBag.GoogleUrl = this.GetGoogleUrl(state);
             ViewBag.GitUrl = this.GetGitUrl(state);
+            ViewBag.EverNoteUrl = this.GetEverNoteUrl(state);
         }
         protected ActionResult StateResult(string state)
         {
@@ -449,6 +508,43 @@ namespace Cooper.Web.Controllers
                 result = wc.DownloadString(this._gitOAuthUserUrl + "?access_token=" + access_token);
             this._log.Debug(result);
             return _serializer.JsonDeserialize<IDictionary<string, object>>(result)["login"].ToString();//TODO:外部连接若用户名可变更，需要同时记录id，如Git
+        }
+
+        private string GetEverNoteUrl(string state)
+        {
+            return Url.Action("EvernoteLogin") + "?state=" + state;
+        }
+        private IDictionary<string, string> RequestEverNoteUrl(string url)
+        {
+            var request = WebRequest.Create(url) as HttpWebRequest;
+            var response = request.GetResponse() as HttpWebResponse;
+            string result;
+
+            using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+            {
+                result = HttpUtility.UrlDecode(reader.ReadToEnd());
+                reader.Close();
+            }
+
+            var items = result.Split(new char[] { '&' });
+            var dic = new Dictionary<string, string>();
+            foreach (var item in items)
+            {
+                var index = item.IndexOf('=');
+                dic.Add(item.Substring(0, index), item.Substring(index + 1));
+            }
+
+            return dic;
+        }
+        private string GetEvernoteAccount(string authToken)
+        {
+            var userStore = new UserStore.Client(new TBinaryProtocol(new THttpClient(new Uri(_userStoreUrl))));
+            var user = userStore.getUser(authToken);
+            if (user != null)
+            {
+                return user.Username;
+            }
+            return null;
         }
     }
 }

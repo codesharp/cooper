@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountConnections\AccountConnectionService.cs" />
+    <Compile Include="AccountConnections\Connections\EverNoteConnection.cs" />
     <Compile Include="AccountConnections\Connections\WeiboConnection.cs" />
     <Compile Include="AccountConnections\Connections\GitHubConnection.cs" />
     <Compile Include="AccountConnections\IAccountConnectionRepository.cs" />

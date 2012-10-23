@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.Web", "src\Cooper.We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigFiles", "src\ConfigFiles\ConfigFiles.csproj", "{0D3B0610-7FC5-43E6-8B51-DDCFFF7DF855}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cooper.TextSnippetService", "src\Cooper.TextSnippetService\Cooper.TextSnippetService.csproj", "{CEF0B128-FBBA-4AA3-97F2-1184B0F2A405}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{0D3B0610-7FC5-43E6-8B51-DDCFFF7DF855}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D3B0610-7FC5-43E6-8B51-DDCFFF7DF855}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D3B0610-7FC5-43E6-8B51-DDCFFF7DF855}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEF0B128-FBBA-4AA3-97F2-1184B0F2A405}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEF0B128-FBBA-4AA3-97F2-1184B0F2A405}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEF0B128-FBBA-4AA3-97F2-1184B0F2A405}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEF0B128-FBBA-4AA3-97F2-1184B0F2A405}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

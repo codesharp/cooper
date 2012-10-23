@@ -89,7 +89,7 @@ namespace Cooper.Web
             this.ParpareExtend(r);
             //Cooper模型相关
             windsor.RegisterRepositories(Assembly.Load("Cooper.Repositories"));
-            windsor.RegisterServices(Assembly.Load("Cooper.Model"));
+            windsor.RegisterServices(Assembly.Load("Cooper.Model"), Assembly.Load("Cooper.TextSnippetService"));
             windsor.RegisterComponent(Assembly.Load("Cooper.Model"));
             //Controller注入
             windsor.ControllerFactory();
