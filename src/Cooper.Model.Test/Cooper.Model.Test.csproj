@@ -115,6 +115,10 @@
       <Project>{B11C1DA3-29C6-4312-8790-17DB4F900C51}</Project>
       <Name>Cooper.Repositories</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Cooper.TextSnippetService\Cooper.TextSnippetService.csproj">
+      <Project>{cef0b128-fbba-4aa3-97f2-1184b0f2a405}</Project>
+      <Name>Cooper.TextSnippetService</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
