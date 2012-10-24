@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TextSnippetService.cs" />
     <Compile Include="TextSnippet.cs" />
     <Compile Include="EverNoteService.cs" />
     <Compile Include="HtmlParseService.cs" />
