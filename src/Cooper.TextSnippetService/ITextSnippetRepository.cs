@@ -20,12 +20,11 @@ namespace Cooper.TextSnippetService
         /// <param name="type"></param>
         /// <param name="key"></param>
         /// <param name="snippet"></param>
-        /// <returns>返回TextSnippet的唯一标识</returns>
-        Guid AddTextSnippet(TextSnippetType type, string key, string snippet);
+        void AddTextSnippet(TextSnippetType type, string key, string snippet);
         /// <summary>
         /// 移除一个指定的文本缩略信息
         /// </summary>
         /// <param name="id"></param>
-        void RemoveTextSnippet(Guid id);
+        void RemoveTextSnippet(long id);
     }
 }

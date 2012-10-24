@@ -8,9 +8,9 @@ namespace Cooper.TextSnippetService
     public class TextSnippet
     {
         /// <summary>
-        /// 唯一表示，自动生成
+        /// 唯一标识，自增的long型
         /// </summary>
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         /// <summary>
         /// 一个Key，可以为一个URL，或者一个evernote笔记的ID，等等
         /// </summary>
