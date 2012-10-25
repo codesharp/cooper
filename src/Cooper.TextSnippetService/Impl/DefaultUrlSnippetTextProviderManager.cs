@@ -6,7 +6,7 @@ using CodeSharp.Core.Services;
 
 namespace Cooper.TextSnippetService
 {
-    [Component]
+    [Component(LifeStyle = LifeStyle.Singleton)]
     public class DefaultUrlSnippetTextProviderManager : IUrlSnippetTextProviderManager
     {
         private IDictionary<UrlType, IUrlSnippetTextProvider> _typeProviderMappings;
