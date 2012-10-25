@@ -9,7 +9,6 @@ namespace Cooper.TextSnippetService
     /// <summary>
     /// 解析github的issue的json中的issue的描述内容
     /// </summary>
-    [Component]
     public class GithubIssueUrlSnippetTextProvider : IUrlSnippetTextProvider
     {
         public string GetSnippetText(string url)

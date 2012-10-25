@@ -14,8 +14,8 @@ namespace Cooper.TextSnippetService
         public DefaultUrlSnippetTextProviderManager()
         {
             _typeProviderMappings = new Dictionary<UrlType, IUrlSnippetTextProvider>();
-            _typeProviderMappings.Add(UrlType.UnKnown, DependencyResolver.Resolve<UnKnownUrlSnippetTextProvider>());
-            _typeProviderMappings.Add(UrlType.GithubIssue, DependencyResolver.Resolve<GithubIssueUrlSnippetTextProvider>());
+            _typeProviderMappings.Add(UrlType.UnKnown, new UnKnownUrlSnippetTextProvider());
+            _typeProviderMappings.Add(UrlType.GithubIssue, new GithubIssueUrlSnippetTextProvider());
         }
 
         public void RegisterProvider(UrlType urlType, IUrlSnippetTextProvider provider)
