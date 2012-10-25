@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
+
+using System;
 using System.Collections.Generic;
 using Evernote.EDAM.NoteStore;
 using Evernote.EDAM.Type;
@@ -8,19 +10,11 @@ using Thrift.Transport;
 
 namespace Cooper.TextSnippetService
 {
-    /// <summary>
-    /// 提供提取指定EventNote账号中的笔记信息的服务
-    /// </summary>
-    public interface IEverNoteService
-    {
-        IEnumerable<EverNote> GetDefaultNoteBookNotes(string authToken, int maxReturnCount = 1000);
-        string GetNoteContent(string authToken, string noteId);
-    }
-    public class EverNoteService : IEverNoteService
+    public class DefaultEverNoteService : IEverNoteService
     {
         private string _userStoreUrl;
 
-        public EverNoteService(string userStoreUrl)
+        public DefaultEverNoteService(string userStoreUrl)
         {
             _userStoreUrl = userStoreUrl;
         }
@@ -75,20 +69,11 @@ namespace Cooper.TextSnippetService
 
         private string GetNoteStoreUrl(string authToken)
         {
-            var userStore = new UserStore.Client(new TBinaryProtocol(new THttpClient(new Uri(_userStoreUrl))));
+            var transport = new THttpClient(new Uri(_userStoreUrl));
+            var protocol = new TBinaryProtocol(transport);
+            var userStore = new UserStore.Client(protocol);
+
             return userStore.getNoteStoreUrl(authToken);
-        }
-    }
-
-    public class EverNote
-    {
-        public string Id { get; private set; }
-        public string Title { get; private set; }
-
-        public EverNote(string id, string title)
-        {
-            Id = id;
-            Title = title;
         }
     }
 }

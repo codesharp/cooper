@@ -60,17 +60,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TextSnippetService.cs" />
-    <Compile Include="TextSnippet.cs" />
-    <Compile Include="EverNoteService.cs" />
-    <Compile Include="HtmlParseService.cs" />
-    <Compile Include="ITextSnippetRepository.cs" />
-    <Compile Include="NHibernateTextSnippetRepository.cs" />
+    <Compile Include="Impl\DefaultUrlSnippetTextProviderManager.cs" />
+    <Compile Include="Impl\DefaultEverNoteService.cs" />
+    <Compile Include="Impl\DefaultUrlTypeParseService.cs" />
+    <Compile Include="Impl\Providers\GithubIssueUrlSnippetTextProvider.cs" />
+    <Compile Include="ISnippetTextService.cs" />
+    <Compile Include="IUrlSnippetTextProviderManager.cs" />
+    <Compile Include="IUrlSnippetTextProvider.cs" />
+    <Compile Include="IUrlTypeParseService.cs" />
+    <Compile Include="Impl\DefaultSnippetTextService.cs" />
+    <Compile Include="IEverNoteService.cs" />
+    <Compile Include="Impl\Providers\UnKnownUrlSnippetTextProvider.cs" />
+    <Compile Include="ISnippetTextRepository.cs" />
+    <Compile Include="Impl\NHibernateSnippetTextRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
