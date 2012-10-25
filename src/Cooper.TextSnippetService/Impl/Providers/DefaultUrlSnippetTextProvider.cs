@@ -10,7 +10,7 @@ namespace Cooper.TextSnippetService
     /// <summary>
     /// 利用Majestic13组件实现对Html的默认纯文本解析
     /// </summary>
-    public class UnKnownUrlSnippetTextProvider : IUrlSnippetTextProvider
+    public class DefaultUrlSnippetTextProvider : IUrlSnippetTextProvider
     {
         public string GetSnippetText(string url)
         {

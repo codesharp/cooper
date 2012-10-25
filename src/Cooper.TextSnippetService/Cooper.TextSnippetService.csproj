@@ -62,15 +62,13 @@
   <ItemGroup>
     <Compile Include="Impl\DefaultUrlSnippetTextProviderManager.cs" />
     <Compile Include="Impl\DefaultEverNoteService.cs" />
-    <Compile Include="Impl\DefaultUrlTypeParseService.cs" />
     <Compile Include="Impl\Providers\GithubIssueUrlSnippetTextProvider.cs" />
     <Compile Include="ISnippetTextService.cs" />
     <Compile Include="IUrlSnippetTextProviderManager.cs" />
     <Compile Include="IUrlSnippetTextProvider.cs" />
-    <Compile Include="IUrlTypeParseService.cs" />
     <Compile Include="Impl\DefaultSnippetTextService.cs" />
     <Compile Include="IEverNoteService.cs" />
-    <Compile Include="Impl\Providers\UnKnownUrlSnippetTextProvider.cs" />
+    <Compile Include="Impl\Providers\DefaultUrlSnippetTextProvider.cs" />
     <Compile Include="ISnippetTextRepository.cs" />
     <Compile Include="Impl\NHibernateSnippetTextRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

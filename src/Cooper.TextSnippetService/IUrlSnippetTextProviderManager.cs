@@ -1,6 +1,7 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
 using System;
+using System.Text.RegularExpressions;
 
 namespace Cooper.TextSnippetService
 {
@@ -9,14 +10,28 @@ namespace Cooper.TextSnippetService
         /// <summary>
         /// 注册URL类型及其对应的URL纯文本解析Provider
         /// </summary>
-        /// <param name="urlType"></param>
+        /// <param name="providerKey"></param>
         /// <param name="provider"></param>
-        void RegisterProvider(UrlType urlType, IUrlSnippetTextProvider provider);
+        void RegisterProvider(UrlSnippetTextProviderKey providerKey, IUrlSnippetTextProvider provider);
         /// <summary>
-        /// 根据指定的URL类型返回一个适当的IUrlSnippetTextProvider
+        /// 根据指定的url返回一个适当的IUrlSnippetTextProvider
         /// </summary>
-        /// <param name="urlType">URL类型</param>
+        /// <param name="url"></param>
         /// <returns></returns>
-        IUrlSnippetTextProvider GetProvider(UrlType urlType);
+        IUrlSnippetTextProvider GetProvider(string url);
+    }
+
+    public class UrlSnippetTextProviderKey
+    {
+        public string UrlRegexPattern { get; set; }
+
+        public bool IsUrlMatch(string url)
+        {
+            if (!string.IsNullOrEmpty(UrlRegexPattern))
+            {
+                return new Regex(UrlRegexPattern).IsMatch(url);
+            }
+            return false;
+        }
     }
 }
