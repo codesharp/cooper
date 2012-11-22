@@ -1,5 +1,6 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
+using System;
 using System.Collections.Generic;
 using Castle.Services.Transaction;
 using CodeSharp.Core;
@@ -24,7 +25,7 @@ namespace Cooper.Model.Contacts
         void Delete(Contact contact);
         /// <summary>根据唯一标识获取联系人
         /// </summary>
-        Contact GetContact(int id);
+        Contact GetContact(Guid id);
         /// <summary>获取指定通讯簿的所有联系人
         /// </summary>
         IEnumerable<Contact> GetContacts(AddressBook addressBook);
@@ -39,7 +40,7 @@ namespace Cooper.Model.Contacts
 
         static ContactService()
         {
-            _repository = RepositoryFactory.GetRepository<IContactRepository, int, Contact>();
+            _repository = RepositoryFactory.GetRepository<IContactRepository, Guid, Contact>();
         }
 
         public ContactService(ILoggerFactory factory)
@@ -70,7 +71,7 @@ namespace Cooper.Model.Contacts
                 this._log.InfoFormat("删除联系人#{0}", contact.ID);
             }
         }
-        Contact IContactService.GetContact(int id)
+        Contact IContactService.GetContact(Guid id)
         {
             return _repository.FindBy(id);
         }

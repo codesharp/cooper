@@ -1,5 +1,6 @@
 ﻿//Copyright (c) CodeSharp.  All rights reserved. - http://www.icodesharp.com/
 
+using System;
 using System.Collections.Generic;
 using CodeSharp.Core.Castles;
 using Cooper.Model.Contacts;
@@ -7,7 +8,7 @@ using NHibernate.Criterion;
 
 namespace Cooper.Repositories
 {
-    public class ContactRepository : NHibernateRepositoryBase<int, Contact>, IContactRepository
+    public class ContactRepository : NHibernateRepositoryBase<Guid, Contact>, IContactRepository
     {
         #region IContactRepository Members
 

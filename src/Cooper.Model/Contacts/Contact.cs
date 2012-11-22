@@ -13,9 +13,9 @@ namespace Cooper.Model.Contacts
     /// 目前仅描述联系人基本属性和最小关联属性，一个联系人必须属于一个通讯录
     /// </remarks>
     /// </summary>
-    public class Contact : EntityBase<int>, IAggregateRoot
+    public class Contact : EntityBase<Guid>, IAggregateRoot
     {
-        protected Contact() { this.CreateTime = this.LastUpdateTime = DateTime.Now; }
+        protected Contact() { this.ID = Guid.NewGuid(); this.CreateTime = this.LastUpdateTime = DateTime.Now; }
         public Contact(AddressBook addressBook, string fullName, string email) : this()
         {
             Assert.IsNotNull(addressBook);

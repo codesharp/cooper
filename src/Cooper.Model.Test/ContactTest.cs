@@ -23,7 +23,7 @@ namespace Cooper.Model.Test
             Assert.AreNotEqual(DateTime.MinValue, contact.CreateTime);
 
             this._contactService.Create(contact);
-            Assert.Greater(contact.ID, 0);
+            Assert.AreNotEqual(contact.ID, Guid.Empty);
 
             this.Evict(contact);
 
@@ -46,7 +46,7 @@ namespace Cooper.Model.Test
             Assert.AreNotEqual(DateTime.MinValue, contact.CreateTime);
 
             this._contactService.Create(contact);
-            Assert.Greater(contact.ID, 0);
+            Assert.AreNotEqual(contact.ID, Guid.Empty);
 
             this.Evict(contact);
 
