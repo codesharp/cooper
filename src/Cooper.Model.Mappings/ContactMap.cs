@@ -18,6 +18,7 @@ namespace Cooper.Model.Mappings
             Map(m => m.Phone).Length(100);
             Map(m => m.CreateTime);
             Map(m => m.LastUpdateTime);
+            DiscriminateSubClassesOnColumn("ContactType");
         }
     }
 }
